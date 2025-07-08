@@ -1,0 +1,283 @@
+/* Genel sıfırlama ve temel stiller */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  background: #fff;
+  color: #222;
+  font-size: 16px;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #222;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navbar-logo {
+  width: 40px;
+  height: auto;
+}
+
+.navbar-logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navbar > div {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.links {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.links:hover {
+  color: #f5a623;
+}
+
+/* Hamburger Menü - Mobil için */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background-color: #fff;
+}
+
+/* Sections */
+.sections {
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Banner */
+.banner-left {
+  flex: 1;
+}
+
+.banner-h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.banner-p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.banner-list-items {
+  font-weight: 600;
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.contact-us-con {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contact-us {
+  background-color: #f5a623;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  color: #222;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.contact-us:hover {
+  background-color: #d4881c;
+}
+
+.banner-right img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Services cards */
+.services-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.services-cards {
+  flex: 1 1 30%;
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.services-cards:hover {
+  transform: translateY(-5px);
+}
+
+.services-logos {
+  width: 60px;
+  margin-bottom: 1rem;
+}
+
+.services-cards-titles {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222;
+}
+
+/* Technologies */
+.technologies-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.technologies-items {
+  flex: 1 1 120px;
+  text-align: center;
+}
+
+.technologies-img {
+  width: 60px;
+  height: auto;
+  margin-bottom: 0.5rem;
+}
+
+.technologies-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* Contact form */
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inputs {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.submit {
+  background-color: #222;
+  color: #fff;
+  border: none;
+  padding: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.submit:hover {
+  background-color: #555;
+}
+
+/* Footer */
+footer {
+  background-color: #222;
+  color: #eee;
+  padding: 2rem;
+  text-align: center;
+}
+
+.footer-logo-container,
+.footer-info-container,
+.standort-container {
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive - Mobil için */
+@media (max-width: 768px) {
+
+  .navbar > div {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .sections {
+    padding: 2rem 1rem;
+  }
+
+  .banner-left {
+    text-align: center;
+  }
+
+  .banner-h1 {
+    font-size: 1.8rem;
+  }
+
+  .services-card-container {
+    flex-direction: column;
+  }
+
+  .services-cards {
+    flex: 1 1 100%;
+  }
+
+  .technologies-container {
+    flex-direction: column;
+  }
+
+  .technologies-items {
+    flex: 1 1 100%;
+  }
+
+  /* Görseller ve iframe gibi taşmaları önleme */
+  img, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Contact form input genişliği */
+  .contact-form {
+    width: 100%;
+  }
+}

@@ -17,48 +17,6 @@
       <h2 id="result"></h2>
     </div>
 
-    <script>
-      
-      btn.addEventListener('click', () => {
-        const $ = (par) => document.querySelector(par)
-        const inputDate = document.getElementById("age");
-        const btn = document.getElementById("btn");
-        inputDate.focus();
-
-        const current = new Date()
-        let birthDate = new Date(inputDate.value)
-    
-        if( birthDate.getTime() > current){
-          alert('BirthDate can\'t be small than today!')
-          return false
-        }
-
-        let days, months, years
-        years = current.getFullYear() - birthDate.getFullYear()
-
-        if(current.getMonth() >= birthDate.getMonth()){
-          months = current.getMonth() - birthDate.getMonth()
-        } else {
-          years--;
-          months = 12 + current.getMonth() - birthDate.getMonth()
-        }
-        
-        if(current.getDate() >= birthDate.getDate()){
-          days = current.getDate() - birthDate.getDate()
-        } else {
-          months--
-          days = getDaysInMonth(birthDate.getFullYear(), birthDate.getMonth()) + current.getDate() - birthDate.getDate()
-        }
-
-        if(months < 0){
-          months = 11
-          years--
-        }
-        function getDaysInMonth(year, month){
-          return new Date(year, month, 0).getDate()
-        }
-        $('#result').innerText = `${years} Years - ${months} Months - ${days} Days`
-      })
-    </script>
+   <script src="./index.js"></script>
   </body>
 </html>
