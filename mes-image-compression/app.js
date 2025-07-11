@@ -47,9 +47,7 @@ const resize = multer({
 
 app.post('/api/compression/:quality/:imagepath', resize.array('files', 20), async (req, res, ) => {
   try {
-    fs.mkdir(path.resolve('./dist/uploads/', req.params.imagepath), { recursive: true }, () => {
-      return false
-    })
+    await fs.promises.mkdir(path.resolve('./dist/uploads/', req.params.imagepath), { recursive: true });
     const originalName = []
     const quality = Number(req.params.quality)
     for (const item of req.files) {
@@ -80,9 +78,12 @@ app.post('/api/compression/:quality/:imagepath', resize.array('files', 20), asyn
         .toFile('./dist/uploads/'+ req.params.imagepath +'/'+ item.originalname)
       }
 
-      fs.unlink(item.path, () => {
-        originalName.push(item.originalname)
-      })
+      try {
+        await fs.promises.unlink(item.path);
+        originalName.push(item.originalname); // Dosya silindikten SONRA çalışır
+      } catch (err) {
+        console.error('Dosya silinemedi:', err);
+      }
     }
     res.status(200).json({files:req.files})
   } catch (error) {
@@ -92,39 +93,42 @@ app.post('/api/compression/:quality/:imagepath', resize.array('files', 20), asyn
 
 app.post('/api/download/:imagepath', async (req, res) => {
   const imagePath = `./dist/uploads/${req.params.imagepath}`
-  if (fs.existsSync(imagePath)){
-    fs.readdir(`./dist/uploads/${req.params.imagepath}`, function (err, files) {
-      if (err) return console.log('Unable to scan directory: ' + err)
-      const allFiles = files.map(item => {
-        return {
-          path: `${imagePath}/${item}`,
-          name: item
-        }
-      })
-      res.zip(allFiles);
-    })
-  } else {
+  if (fs.existsSync(imagePath)) {
+  try {
+    const files = await fs.promises.readdir(`./dist/uploads/${req.params.imagepath}`);
+    const allFiles = files.map(item => {
+      return {
+        path: `${imagePath}/${item}`,
+        name: item
+      }
+    });
+    
+    // ZIP için express-zip veya benzer middleware kullanın
+    res.zip(allFiles);
+  } catch (err) {
+    console.log('Unable to scan directory: ' + err);
+    res.status(500).json({ error: 'Directory scan failed' });
+  }
+} else {
     res.json({code: 400, message:'Sorry no images to download!'})
   }
 })
 app.post('/api/remove-images', async (req, res) => {
-  const imagePath = './dist/uploads/'+req.body.imagepath
-  if (fs.existsSync(imagePath)){
-    fs.rmSync(imagePath, { recursive: true }, () => {
-      res.json({code:200})
-    })
-  } else {
-    res.json({code: 400, message:'Sorry no images to remove!'})
+  const imagePath = path.resolve('./dist/uploads/', req.body.imagepath)
+  try {
+    await fs.promises.access(imagePath)
+    await fs.promises.rm(imagePath, { recursive: true, force: true })
+    res.json({ code: 200 })
+  } catch {
+    res.status(400).json({ code: 400, message: 'Sorry no images to remove!' })
   }
 })
 app.use((error, req, res, next) => {
   if(error.code == 'LIMIT_FILE_TYPES'){
     res.json({error:'Wrong file type!'})
-    next()
   }
   if(error.code == 'LIMIT_FILE_SIZE'){
     res.json({error:'File to large! Each file must be less 10 MB'})
-    next()
   }
 })
 
