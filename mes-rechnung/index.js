@@ -1,37 +1,33 @@
 import { app, BrowserWindow } from 'electron'
-// import path from 'path' // kullanmıyorsan kaldırabilirsin
+import path from 'path' // kullanmıyorsan kaldırabilirsin
+import { fileURLToPath } from 'url'
 
-let win;
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-function createWindow() {
-  win = new BrowserWindow({
-    width: 1000,
-    height: 800,
+function createWindow () {
+  const win = new BrowserWindow({
+    width: 800,
+    height: 600,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false //for access Nodejs APi
     }
-  });
-
-  win.loadFile('index.html');
-// win.webContents.openDevTools()
-
-  win.on('closed', () => {
-    win = null;
-  });
+  })
+  win.loadFile('index.html')
+  win.webContents.openDevTools()
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow()
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
+  })
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    app.quit()
   }
-});
-
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
-
+})
