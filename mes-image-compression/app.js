@@ -114,7 +114,7 @@ app.post('/api/download/:imagepath', async (req, res) => {
   }
 })
 app.post('/api/remove-images', async (req, res) => {
-  const imagePath = path.resolve('./dist/uploads/', req.body.imagepath)
+  const imagePath = './dist/uploads/'+req.body.imagepath
   try {
     await fs.promises.access(imagePath)
     await fs.promises.rm(imagePath, { recursive: true, force: true })
