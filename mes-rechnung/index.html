@@ -2,29 +2,14 @@
 <html>
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
   <title>Rechnung App</title>
 </head>
 <body>
-  <h1>Rechnung Programm</h1>
-  <form id="invoiceForm">
-  <label for="name">Kundenname:</label><br />
-  <input type="text" id="name" placeholder="Max Mustermann"><br />
+  <h1>Rechnung App</h1>
 
-  <label for="address">Adresse:</label><br />
-  <input type="text" id="address" placeholder="Musterstraße 1, 12345 Berlin"><br />
-
-  <label for="amount">Betrag (€):</label><br />
-  <input type="number" id="amount" placeholder="100"><br />
-
-  <label for="vat">MwSt (%):</label><br />
-  <select id="vat">
-    <option value="19">19 % (Standard)</option>
-    <option value="7">7 % (Ermäßigt)</option>
-  </select><br /><br />
-
-  <button type="submit">Rechnung erstellen</button>
-</form>
 
   <script src="./dom.js"></script>
 </body>
 </html>
+
