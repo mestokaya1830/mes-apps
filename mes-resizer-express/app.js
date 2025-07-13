@@ -7,6 +7,9 @@ import fs from 'fs'
 import 'dotenv/config'
 import path from 'path'
 import zip from 'express-zip'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 app.use(helmet())
 app.use(express.json())
@@ -15,7 +18,7 @@ app.use(express.static('dist'))
 
 if(process.env.NODE_ENV == 'production'){
   app.use(express.static('dist'))
-  app.get('*', (req, res) => res.sendFile(path.resolve('dist/index.html')))
+  app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'dist/index.html')))
 }
 
 const storage = multer.diskStorage({
@@ -47,9 +50,7 @@ const resize = multer({
 
 app.post('/api/resize/:width/:heigth/:imagepath', resize.array('files', 20), async (req, res, ) => {
   try {
-    fs.mkdir(path.resolve('./dist/uploads/', req.params.imagepath), { recursive: true }, () => {
-      return false
-    })
+    await fs.promises.mkdir(path.resolve(__dirname, 'dist/uploads/', req.params.imagepath), { recursive: true })
     const originalName = []
     for (const item of req.files) {
       const imageType = item.filename.split('.').pop()
@@ -57,25 +58,22 @@ app.post('/api/resize/:width/:heigth/:imagepath', resize.array('files', 20), asy
         await sharp(item.path, {animated: true})
         .resize(Number(req.params.width), Number(req.params.heigth))
         .gif({ quality: 80, interFrameMaxError: 8 })
-        .toFile('./dist/uploads/'+ req.params.imagepath +'/'+ item.originalname)
-        fs.unlink(item.path, () => {
-          originalName.push(item.originalname)
-        })
+        .toFile(path.resolve(__dirname, 'dist/uploads/'+ req.params.imagepath +'/'+ item.originalname))
+        await fs.promises.unlink(item.path)
+        originalName.push(item.originalname)
       } else if(imageType == 'jpeg' || imageType == 'jpg') {
         await sharp(item.path)
         .resize(Number(req.params.width), Number(req.params.heigth))
         .jpeg({ quality: 80, progressive: true })
-        .toFile('./dist/uploads/'+ req.params.imagepath +'/'+ item.originalname)
-        fs.unlink(item.path, () => {
-          originalName.push(item.originalname)
-        })
+        .toFile(path.resolve(__dirname, 'dist/uploads/'+ req.params.imagepath +'/'+ item.originalname))
+        await fs.promises.unlink(item.path)
+        originalName.push(item.originalname)
       } else {
         await sharp(item.path)
         .resize(Number(req.params.width), Number(req.params.heigth))
-        .toFile('./dist/uploads/'+ req.params.imagepath +'/'+ item.originalname)
-        fs.unlink(item.path, () => {
-          originalName.push(item.originalname)
-        })
+        .toFile(path.resolve(__dirname, 'dist/uploads/'+ req.params.imagepath +'/'+ item.originalname))
+        await fs.promises.unlink(item.path)
+        originalName.push(item.originalname)
       }
     }
     res.status(200).json({files:req.files})
@@ -85,42 +83,43 @@ app.post('/api/resize/:width/:heigth/:imagepath', resize.array('files', 20), asy
 })
 
 app.post('/api/download/:imagepath', async (req, res) => {
-  const imagePath = `./dist/uploads/${req.params.imagepath}`
-  if (fs.existsSync(imagePath)){
-    fs.readdir(`./dist/uploads/${req.params.imagepath}`, function (err, files) {
-      if (err) return console.log('Unable to scan directory: ' + err)
-      const allFiles = files.map(item => {
-        return {
-          path: `${imagePath}/${item}`,
-          name: item
-        }
-      })
-      res.zip(allFiles);
-    })
-  } else {
-    res.json({code: 400, message:'Sorry no images to download!'})
+   const imagePath = `./dist/uploads/${req.params.imagepath}`;
+  const resolvedPath = path.resolve(__dirname, imagePath);
+
+  try {
+    await fs.promises.access(resolvedPath);
+    const files = await fs.promises.readdir(resolvedPath);
+    const allFiles = files.map(item => ({
+      path: `${imagePath}/${item}`,
+      name: item
+    }));
+    res.zip(allFiles);
+  } catch (err) {
+    console.error('Error reading directory:', err);
+    res.status(400).json({ code: 400, message: 'Sorry no images to download!' });
   }
 })
 
 app.post('/api/remove-images', async (req, res) => {
-  const imagePath = './dist/uploads/'+req.body.imagepath
-  if (fs.existsSync(imagePath)){
-    fs.rmSync(imagePath, { recursive: true }, () => {
-      res.json({code:200})
-    })
-  } else {
-    res.json({code: 400, message:'Sorry no images to remove!'})
+  const imagePath = path.join('dist/uploads/', String(req.body.imagepath));
+  const resolvedPath = path.resolve(__dirname, imagePath);
+
+  try {
+    await fs.promises.access(resolvedPath);
+    await fs.promises.rm(resolvedPath, { recursive: true, force: true });
+    res.json({ code: 200 });
+  } catch (err) {
+    console.error('Error deleting folder:', err);
+    res.status(400).json({ code: 400, message: 'Sorry no images to remove!' });
   }
 })
 
 app.use((error, req, res, next) => {
   if(error.code == 'LIMIT_FILE_TYPES'){
     res.json({error:'Wrong file type!'})
-    next()
   }
   if(error.code == 'LIMIT_FILE_SIZE'){
     res.json({error:'File to large! Each file must be less then 10 MB'})
-    next()
   }
 })
 
