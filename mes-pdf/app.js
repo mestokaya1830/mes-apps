@@ -6,6 +6,9 @@ import sharp from 'sharp'
 import fs from 'fs'
 import dotenv from 'dotenv'
 import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 dotenv.config()
 app.use(helmet())
@@ -15,7 +18,7 @@ app.use(express.static('dist'))
 
 if(process.env.NODE_ENV == 'production'){
   app.use(express.static('dist'))
-  app.get('*', (req, res) => res.sendFile(path.resolve('dist/index.html')))
+  app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'dist/index.html')))
 }
 
 const storage = multer.diskStorage({
@@ -52,17 +55,14 @@ app.post('/api/upload/:imagepath/:pdfformat', resize.array('files', 50), async (
       width = 1122
       height = 794
     }
-    fs.mkdir(path.resolve('./dist/uploads/', req.params.imagepath), { recursive: true }, () => {
-      return false
-    })
+    await fs.promises.mkdir(path.resolve(__dirname, 'dist/uploads/', req.params.imagepath), { recursive: true })
     const originalName = []
     for (const item of req.files) {
       await sharp(item.path)
       .resize(width, height, {fit: 'fill'})
       .toFile('./dist/uploads/'+ req.params.imagepath +'/'+ item.originalname)
-      fs.unlink(item.path, () => {
-        originalName.push(item.originalname)
-      })
+      await fs.promises.unlink(item.path)
+      originalName.push(item.originalname)
     }
     const files = req.files.map(item => '/uploads/'+ req.params.imagepath +'/'+ item.originalname)
     res.status(200).json({files})
@@ -72,23 +72,27 @@ app.post('/api/upload/:imagepath/:pdfformat', resize.array('files', 50), async (
 })
 
 app.post('/api/remove-images', async (req, res) => {
-  const imagePath = './dist/uploads/'+req.body.imagepath
-  if (fs.existsSync(imagePath)){
-    fs.rmSync(imagePath, { recursive: true }, () => {
-      res.json({code:200})
-    })
+  try {
+    const imagePath = './dist/uploads/'+req.body.imagepath
+    await fs.promises.access(imagePath);
+    await fs.promises.rm(imagePath, { recursive: true, force: true });
+    res.json({ code: 200, message: 'Images removed successfully' });
+} catch (error) {
+  if (error.code === 'ENOENT') {
+    res.json({ code: 400, message: 'Sorry no images to remove!' });
   } else {
-    res.json({code: 400, message:'Sorry no images to remove!'})
+    console.error('Error removing images:', error);
+    res.json({ code: 500, message: 'Error removing images' });
   }
+}
 })
+
 app.use((error, req, res, next) => {
   if(error.code == 'LIMIT_FILE_TYPES'){
     res.json({error:'Wrong file type!'})
-    next()
   }
   if(error.code == 'LIMIT_FILE_SIZE'){
     res.json({error:'File to large! Each file must be less then 10 MB'})
-    next()
   }
 })
 
