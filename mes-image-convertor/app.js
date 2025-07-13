@@ -112,25 +112,32 @@ app.post('/api/convert/:format/:imagepath', upload.array('files', 20), async (re
 
 // Download Endpoint
 app.post('/api/download/:imagepath', async (req, res) => {
+ try {
+  const folder = path.basename(req.params.imagepath)
+  const folderPath = path.join(__dirname, 'dist/uploads', folder)
+
   try {
-    const folder = path.basename(req.params.imagepath)
-    const folderPath = path.join(__dirname, 'dist/uploads', folder)
-
-    if (!fs.existsSync(folderPath)) {
-      return res.status(400).json({ code: 400, message: 'No images found' })
-    }
-
-    const files = await fs.promises.readdir(folderPath)
-    const zipFiles = files.map(file => ({
-      path: path.join(folderPath, file),
-      name: file
-    }))
-
-    res.zip(zipFiles)
-  } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'Download failed' })
+    await fs.promises.access(folderPath)
+  } catch (accessError) {
+    return res.status(400).json({ code: 400, message: 'No images found' })
   }
+
+  const files = await fs.promises.readdir(folderPath)
+  
+  if (files.length === 0) {
+    return res.status(400).json({ code: 400, message: 'No images found' })
+  }
+
+  const zipFiles = files.map(file => ({
+    path: path.join(folderPath, file),
+    name: file
+  }))
+
+  res.zip(zipFiles)
+} catch (err) {
+  console.error(err)
+  res.status(500).json({ error: 'Download failed' })
+}
 })
 
 // Remove Images Endpoint
