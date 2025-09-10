@@ -1,26 +1,41 @@
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 const path = require("path");
 
-// backend
 require("./backend/app.js");
 
 function createWindow() {
-  const win = new BrowserWindow({
-    width: 1000,
-    height: 700,
+  let win = new BrowserWindow({
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
-    }
+      nodeIntegration: false, // Disable Node.js integration in the renderer for security
+      contextIsolation: true, // Isolate context between preload and renderer to prevent prototype pollution
+      sandbox: true, // Enable Chromium's sandbox for renderer process isolation
+      enableRemoteModule: false, // Disable remote module to avoid potential security risks
+      webSecurity: true, // Enable web security features like same-origin policy and CSP enforcement
+      allowRunningInsecureContent: false, // Prevent loading of insecure (HTTP) content on secure (HTTPS) pages
+      preload: path.join(__dirname, "preload.js"), // Load preload script with controlled API exposure
+    },
   });
 
-  win.webContents.openDevTools();
-  Menu.setApplicationMenu(null);
-  win.loadFile("index.html"); // Renderer (UI)
-}
+  Menu.setApplicationMenu(null); // hide menu bar
+  win.loadFile("index.html");
+  // win.webContents.openDevTools()
 
-app.whenReady().then(createWindow);
+  win.on("closed", () => {
+    win = null;
+  });
+}
+app.enableSandbox();
+app.whenReady().then(() => {
+  createWindow();
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
 });
