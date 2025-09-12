@@ -1,5 +1,6 @@
 const apiUrl = "http://localhost:3000/customers";
 
+//add customer
 document.getElementById("customerForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const customer = {
@@ -8,7 +9,7 @@ document.getElementById("customerForm").addEventListener("submit", async (e) => 
       phone: document.getElementById("phone").value,
     };
 
-    try {
+    try { 
       await window.customerApi.addCustomer(customer);
       alert("New customer added successfully!");
       e.target.reset();
@@ -17,7 +18,7 @@ document.getElementById("customerForm").addEventListener("submit", async (e) => 
     }
   });
 
-
+// get customers
 async function fetchCustomers() {
   const customers = await window.customerApi.getCustomers();
   const list = document.getElementById("customerList");
@@ -56,6 +57,8 @@ async function fetchCustomers() {
 }
 fetchCustomers();
 
+
+// delete customer
 async function deleteCustomer(id) {
   try {
     await window.customerApi.deleteCustomer(id);
@@ -66,6 +69,8 @@ async function deleteCustomer(id) {
   await fetchCustomers();
 }
 
+
+// edit customer
 async function editCustomer(customer) {
   console.log(customer);
   customer.name = document.getElementById("nameEdit").value;
@@ -81,6 +86,7 @@ async function editCustomer(customer) {
   await fetchCustomers();
 }
 
+// back to home
 document.getElementById("btnBack").addEventListener("click", () => {
   window.location.href = "index.html";
 });
