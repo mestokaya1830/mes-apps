@@ -14,6 +14,13 @@ app.get("/customers", (req, res) => {
   });
 });
 
+// get edit customer
+app.get("/customers/:id", (req, res) => {
+  customerDB.findOne({ _id: String(req.params.id) }, (err, docs) => {
+    if (err) return res.status(500).send(err);
+    res.json(docs);
+  });
+});
 // add customer
 app.post("/customers", (req, res) => {
   customerDB.insert(req.body, (err, newDoc) => {

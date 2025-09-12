@@ -8,5 +8,6 @@ contextBridge.exposeInMainWorld("customerApi", {
   addCustomer: async (data) => await ipcRenderer.invoke("add-customer", data),
   getCustomers: async (data) => await ipcRenderer.invoke("get-customers", data),
   deleteCustomer: async (data) => await ipcRenderer.invoke("delete-customer", data),
-  editCustomer: async (data) => await ipcRenderer.invoke("edit-customer", data),
+  editCustomer: async (id) => await ipcRenderer.invoke("edit-customer", id),
+  updateCustomer: async (data) => await ipcRenderer.invoke("update-customer", { _id: data._id, ...data }),
 });

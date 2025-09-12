@@ -81,7 +81,19 @@ ipcMain.handle("delete-customer", async (event, id) => {
 });
 
 //edit customer
-ipcMain.handle("edit-customer", async (event, customer) => {
+ipcMain.handle("edit-customer", async (event, id) => {
+  try {
+    const res = await fetch(`http://localhost:3000/customers/${id}`);
+    const customer = await res.json();
+    return customer;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
+//update customer
+ipcMain.handle("update-customer", async (event, customer) => {
   try {
     const res = await fetch(`http://localhost:3000/customers/${customer._id}`, {
       method: "PUT",
