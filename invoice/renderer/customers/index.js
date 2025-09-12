@@ -8,26 +8,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     customers.forEach((data) => {
       const li = document.createElement("li");
-      const nameText = document.createElement("input");
-      nameText.id = "nameEdit";
-      nameText.value = data.name;
-
-      const emailText = document.createElement("input");
-      emailText.id = "emailEdit";
-      emailText.type = "email";
-      emailText.value = data.email;
-
-      const phoneText = document.createElement("input");
-      phoneText.id = "phoneEdit";
-      phoneText.value = data.phone;
-
-      const addressText = document.createElement("input");
-      addressText.id = "addressEdit";
-      addressText.value = data.address;
-
-      const taxNumberText = document.createElement("input");
-      taxNumberText.id = "taxnumberEdit";
-      taxNumberText.value = data.taxnumber;
+      li.innerHTML = `<span>${data.name}</span> <span>${data.email}</span> <span>${data.phone}</span> <span>${data.address}</span> <span>${data.taxnumber}</span>`;
 
       const deleteBtn = document.createElement("button");
       deleteBtn.classList.add("delete-btn");
@@ -40,11 +21,6 @@ window.addEventListener("DOMContentLoaded", () => {
         window.location.href = `../../pages/customers/edit.html?id=${data._id}`;
       });
 
-      li.appendChild(nameText);
-      li.appendChild(emailText);
-      li.appendChild(phoneText);
-      li.appendChild(addressText);
-      li.appendChild(taxNumberText);
       li.appendChild(deleteBtn);
       li.appendChild(editBtn);
       list.appendChild(li);

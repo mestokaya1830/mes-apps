@@ -43,7 +43,7 @@ app.on("window-all-closed", () => {
 //add customer
 ipcMain.handle("add-customer", async (event, customer) => {
   try {
-    const res = await fetch("http://localhost:3000/customers", {
+    const res = await fetch("http://localhost:3000/api/customers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(customer),
@@ -58,7 +58,7 @@ ipcMain.handle("add-customer", async (event, customer) => {
 //get customers
 ipcMain.handle("get-customers", async () => {
   try {
-    const res = await fetch("http://localhost:3000/customers");
+    const res = await fetch("http://localhost:3000/api/customers");
     const customers = await res.json();
     return customers;
   } catch (error) {
@@ -70,7 +70,7 @@ ipcMain.handle("get-customers", async () => {
 //delete customer
 ipcMain.handle("delete-customer", async (event, id) => {
   try {
-    await fetch(`http://localhost:3000/customers/${id}`, {
+    await fetch(`http://localhost:3000/api/customers/${id}`, {
       method: "DELETE"
     });
     return { success: true };
@@ -83,7 +83,7 @@ ipcMain.handle("delete-customer", async (event, id) => {
 //edit customer
 ipcMain.handle("edit-customer", async (event, id) => {
   try {
-    const res = await fetch(`http://localhost:3000/customers/${id}`);
+    const res = await fetch(`http://localhost:3000/api/customers/${id}`);
     const customer = await res.json();
     return customer;
   } catch (error) {
@@ -95,7 +95,7 @@ ipcMain.handle("edit-customer", async (event, id) => {
 //update customer
 ipcMain.handle("update-customer", async (event, customer) => {
   try {
-    const res = await fetch(`http://localhost:3000/customers/${customer._id}`, {
+    const res = await fetch(`http://localhost:3000/api/customers/${customer._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(customer),
