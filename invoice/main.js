@@ -18,7 +18,7 @@ function createWindow() {
 
   Menu.setApplicationMenu(null); // hide menu bar
   win.loadFile("index.html");
-  // win.webContents.openDevTools()
+  win.webContents.openDevTools()
 
   win.on("closed", () => {
     win = null;
@@ -37,5 +37,60 @@ app.whenReady().then(() => {
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
+  }
+});
+
+//add customer
+ipcMain.handle("add-customer", async (event, customer) => {
+  try {
+    const res = await fetch("http://localhost:3000/customers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customer),
+    });
+    return customer;
+  } catch (error) {
+    console.error("New customer could not be added:", error);
+    throw error;
+  }
+});
+
+//get customers
+ipcMain.handle("get-customers", async () => {
+  try {
+    const res = await fetch("http://localhost:3000/customers");
+    const customers = await res.json();
+    return customers;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+});
+
+//delete customer
+ipcMain.handle("delete-customer", async (event, id) => {
+  try {
+    await fetch(`http://localhost:3000/customers/${id}`, {
+      method: "DELETE"
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Customer could not be deleted:", error);
+    throw error;
+  }
+});
+
+//edit customer
+ipcMain.handle("edit-customer", async (event, customer) => {
+  try {
+    const res = await fetch(`http://localhost:3000/customers/${customer._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(customer),
+    });
+    return customer;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 });

@@ -1,73 +1,86 @@
 const apiUrl = "http://localhost:3000/customers";
 
+document.getElementById("customerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const customer = {
+      name: document.getElementById("name").value,
+      email: document.getElementById("email").value,
+      phone: document.getElementById("phone").value,
+    };
+
+    try {
+      await window.customerApi.addCustomer(customer);
+      alert("New customer added successfully!");
+      e.target.reset();
+    } catch (error) {
+      alert("New customer could not be added!");
+    }
+  });
+
+
 async function fetchCustomers() {
-  const res = await fetch(apiUrl);
-  const data = await res.json();
+  const customers = await window.customerApi.getCustomers();
   const list = document.getElementById("customerList");
   list.innerHTML = "";
 
-  data.forEach((c) => {
+  customers.forEach((data) => {
     const li = document.createElement("li");
+    const nameText = document.createElement("input");
+    nameText.id = "nameEdit";
+    nameText.value = data.name;
+    li.appendChild(nameText);
 
-    const text = document.createTextNode(`${c.name} - ${c.email} - ${c.phone}`);
-    li.appendChild(text);
+    const emailText = document.createElement("input");
+    emailText.id = "emailEdit";
+    emailText.type = "email";
+    emailText.value = data.email;
+    li.appendChild(emailText);
+
+    const phoneText = document.createElement("input");
+    phoneText.id = "phoneEdit";
+    phoneText.value = data.phone;
+    li.appendChild(phoneText);
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Sil";
-    deleteBtn.addEventListener("click", () => deleteCustomer(c._id));
+    deleteBtn.textContent = "Delete";
+    deleteBtn.addEventListener("click", () => deleteCustomer(data._id));
     li.appendChild(deleteBtn);
 
     const editBtn = document.createElement("button");
-    editBtn.textContent = "Düzenle";
-    editBtn.addEventListener("click", () => editCustomer(c));
+    editBtn.textContent = "Edit";
+    editBtn.addEventListener("click", () => editCustomer(data));
     li.appendChild(editBtn);
 
     list.appendChild(li);
   });
 }
+fetchCustomers();
 
 async function deleteCustomer(id) {
-  await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
-  fetchCustomers();
+  try {
+    await window.customerApi.deleteCustomer(id);
+    alert("Customer deleted successfully!");
+  } catch (error) {
+    alert("Customer could not be deleted!");
+  }
+  await fetchCustomers();
 }
 
-function editCustomer(c) {
-  document.getElementById("name").value = c.name;
-  document.getElementById("email").value = c.email;
-  document.getElementById("phone").value = c.phone;
-  document.getElementById("customerId").value = c._id;
+async function editCustomer(customer) {
+  console.log(customer);
+  customer.name = document.getElementById("nameEdit").value;
+  customer.email = document.getElementById("emailEdit").value;
+  customer.phone = document.getElementById("phoneEdit").value;
+
+  try {
+    await window.customerApi.editCustomer(customer);
+    alert("Customer updated successfully!");
+  } catch (error) {
+    alert("Customer could not be updated!");
+  }
+  await fetchCustomers();
 }
-
-document
-  .getElementById("customerForm")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const id = document.getElementById("customerId").value;
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
-    const phone = document.getElementById("phone").value;
-
-    if (id) {
-      await fetch(`${apiUrl}/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone }),
-      });
-    } else {
-      await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone }),
-      });
-    }
-
-    e.target.reset();
-    document.getElementById("customerId").value = "";
-    fetchCustomers();
-  });
 
 document.getElementById("btnBack").addEventListener("click", () => {
   window.location.href = "index.html";
 });
-
-fetchCustomers();

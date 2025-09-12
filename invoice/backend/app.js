@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// --- Müşteri CRUD ---
+// get customers
 app.get("/customers", (req, res) => {
   customerDB.find({}, (err, docs) => {
     if (err) return res.status(500).send(err);
@@ -14,6 +14,7 @@ app.get("/customers", (req, res) => {
   });
 });
 
+// add customer
 app.post("/customers", (req, res) => {
   customerDB.insert(req.body, (err, newDoc) => {
     if (err) return res.status(500).send(err);
@@ -21,19 +22,27 @@ app.post("/customers", (req, res) => {
   });
 });
 
-// --- Ürün CRUD ---
-app.get("/products", (req, res) => {
-  productDB.find({}, (err, docs) => {
+// DELETE /customers/:id
+app.delete("/customers/:id", (req, res) => {
+  customerDB.remove({ _id: String(req.params.id) }, {}, (err, numRemoved) => {
     if (err) return res.status(500).send(err);
-    res.json(docs);
+    if (numRemoved === 0) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+    res.json({ message: "Customer deleted", id: req.params.id });
   });
 });
 
-app.post("/products", (req, res) => {
-  productDB.insert(req.body, (err, newDoc) => {
-    if (err) return res.status(500).send(err);
-    res.json(newDoc);
-  });
+// UPDATE /customers/:id
+app.put("/customers/:id", (req, res) => {
+  customerDB.update({ _id: String(req.params.id) },{ $set: req.body },{},(err, numUpdated) => {
+      if (err) return res.status(500).send(err);
+      if (numUpdated === 0) {
+        return res.status(404).json({ message: "Customer not found" });
+      }
+      res.json({ message: "Customer updated", id: req.params.id });
+    }
+  );
 });
 
 app.listen(3000, () =>
