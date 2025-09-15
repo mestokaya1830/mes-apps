@@ -41,14 +41,14 @@ app.on("window-all-closed", () => {
 });
 
 //add customer
-ipcMain.handle("add-customer", async (event, customer) => {
+ipcMain.handle("add-customer", async (event, data) => {
   try {
     const res = await fetch("http://localhost:3000/api/customers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(customer),
+      body: JSON.stringify(data),
     });
-    return customer;
+    return data;
   } catch (error) {
     console.error("New customer could not be added:", error);
     throw error;
@@ -93,14 +93,14 @@ ipcMain.handle("edit-customer", async (event, id) => {
 });
 
 //update customer
-ipcMain.handle("update-customer", async (event, customer) => {
+ipcMain.handle("update-customer", async (event, data) => {
   try {
-    const res = await fetch(`http://localhost:3000/api/customers/${customer._id}`, {
+    const res = await fetch(`http://localhost:3000/api/customers/${data._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(customer),
+      body: JSON.stringify(data),
     });
-    return customer;
+    return data;
   } catch (error) {
     console.error(error);
     throw error;
