@@ -108,3 +108,4 @@ ipcMain.handle("update-customer", async (event, data) => {
     throw error;
   }
 });
+

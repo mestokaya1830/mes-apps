@@ -3,19 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      http-equiv="content-security-policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
-    />
+    <meta http-equiv="content-security-policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
     <link rel="stylesheet" href="../../css/main.css" />
     <title>Invoice App</title>
   </head>
   <body>
-    <h1>Customers</h1>
-    <a href="../../index.html"><button id="btnBack">🏠 Home</button></a>
+     <div class="app-container">
+        <app-sidebar></app-sidebar>
+        <main class="main-content">
+            <header class="header">
+                <h2>Customers</h2>
+            </header>
+            <div class="content">
+                <!-- Content will be loaded here by router -->
+            </div>
+        </main>
+    </div>
 
-    <ul id="customerList"></ul>
-    
-    <script src="../../renderer/customers/index.js"></script>
+    <script src="../../js/sidebar.js"></script>
   </body>
 </html>
