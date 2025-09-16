@@ -81,19 +81,25 @@ class AppSidebar extends HTMLElement {
             <i class="icon-dashboard"></i> Dashboard
         </div>
         <div class="nav-item" data-page="invoices" data-href="pages/invoices.html">
-            <i class="icon-invoice"></i> Faturalar
+            <i class="icon-invoice"></i> Invoices
         </div>
-        <div class="nav-item" data-page="customers" data-href="pages/customers.html">
-            <i class="icon-customers"></i> Müşteriler
+        <div class="nav-item" data-page="customers" data-href="pages/customers/customers.html">
+            <i class="icon-customers"></i> Customers
         </div>
         <div class="nav-item" data-page="products" data-href="pages/products.html">
-            <i class="icon-products"></i> Ürünler
+            <i class="icon-products"></i> Products
         </div>
         <div class="nav-item" data-page="reports" data-href="pages/reports.html">
-            <i class="icon-reports"></i> Raporlar
+            <i class="icon-reports"></i> Reports
         </div>
         <div class="nav-item" data-page="settings" data-href="pages/settings.html">
-            <i class="icon-settings"></i> Ayarlar
+            <i class="icon-settings"></i> Settings
+        </div>
+        <div class="nav-item" data-page="tse-register" data-href="pages/tseRegister.html">
+            <i class="icon-signup"></i> TSE Register
+        </div>
+        <div class="nav-item" data-page="about" data-href="pages/about.html">
+            <i class="icon-info"></i> About
         </div>
     </nav>
   `;
