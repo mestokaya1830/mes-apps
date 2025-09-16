@@ -5,6 +5,8 @@ require("./backend/app.js");
 
 function createWindow() {
   let win = new BrowserWindow({
+    width: 1200,
+    height: 800,
     webPreferences: {
       nodeIntegration: false, // Disable Node.js integration in the renderer for security
       contextIsolation: true, // Isolate context between preload and renderer to prevent prototype pollution

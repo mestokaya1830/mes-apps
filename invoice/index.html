@@ -1,17 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="content-security-policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
-  <link rel="stylesheet" href="css/main.css">
-  <title>Invoice App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <meta http-equiv="content-security-policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+    <title>BillPro - Modern Faturalama Sistemi</title>
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-<h1>Dashboard</h1>
-<div class="dashboard">
-  <a href="pages/customers/index.html"><span>👤</span>Customers</a>
-  <a href="pages/customers/create.html"><span>👤</span>Create New Customer</a>
-</div>
+    <div class="app-container">
+        <app-sidebar></app-sidebar>
+
+        <main class="main-content">
+            <header class="header">
+                <h2>Dashboard</h2>
+                <div class="header-actions">
+                    <button class="btn btn-outline">Dışa Aktar</button>
+                    <button class="btn btn-primary">Yeni Fatura</button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Content will be loaded here by router -->
+            </div>
+        </main>
+    </div>
+
+    <script src="js/sidebar.js"></script>
 </body>
 </html>
