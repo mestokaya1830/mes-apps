@@ -16,13 +16,36 @@ const db = new sqlite3.Database(dbPath, (err) => {
 })
 
 // db.run(`
+//   CREATE TABLE IF NOT EXISTS users (
+//   id INTEGER PRIMARY KEY AUTOINCREMENT,
+//   name TEXT NOT NULL,
+//   email TEXT,
+//   phone TEXT,
+//   address TEXT,
+//   firm_name TEXT,
+//   tax_number TEXT,
+//   tax_office TEXT,
+//   tax_prefix JSON,
+//   Ust_tdNr TEXT,
+//   logo TEXT,
+//   bank_name TEXT,
+//   bic TEXT,
+//   empfanger_name TEXT,
+//   iban TEXT,
+//   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+// )`)
+
+// db.run(`
 //   CREATE TABLE IF NOT EXISTS customers (
 //   id INTEGER PRIMARY KEY AUTOINCREMENT,
 //   name TEXT NOT NULL,
 //   email TEXT,
 //   phone TEXT,
 //   address TEXT,
+//   firm_name TEXT,
 //   tax_number TEXT,
+//   Ust_tdNr TEXT,
 //   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // )`)
