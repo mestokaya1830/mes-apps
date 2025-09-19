@@ -15,6 +15,10 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 })
 
+export default db
+
+
+
 //users---------------------------------------------------------------
 // db.run(`
 //   CREATE TABLE IF NOT EXISTS users (
@@ -96,19 +100,19 @@ const db = new sqlite3.Database(dbPath, (err) => {
 // `)
 
 //customers---------------------------------------------------------------
-db.run(`
-  CREATE TABLE IF NOT EXISTS customers (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  email TEXT,
-  phone TEXT,
-  address TEXT,
-  firm_name TEXT,
-  tax_number TEXT,
-  Ust_tdNr TEXT,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)`)
+// db.run(`
+//   CREATE TABLE IF NOT EXISTS customers (
+//   id INTEGER PRIMARY KEY AUTOINCREMENT,
+//   name TEXT NOT NULL,
+//   email TEXT,
+//   phone TEXT,
+//   address TEXT,
+//   firm_name TEXT,
+//   tax_number TEXT,
+//   Ust_tdNr TEXT,
+//   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+// )`)
 
 // db.run(
 //   `
@@ -196,4 +200,4 @@ db.run(`
 //   console.log(rows) // rows artık array, ilk satıra rows[0] ile ulaşabilirsin
 // })
 
-// export default db
+
