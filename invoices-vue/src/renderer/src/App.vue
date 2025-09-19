@@ -1,7 +1,15 @@
 <template lang="">
-  <RouterLink to="/">Home</RouterLink>
-  <RouterLink to="/invoices">Invoices</RouterLink>
-  <RouterLink to="/customers">Customers</RouterLink>
-  <RouterLink to="/about">About</RouterLink>
-  <RouterView></RouterView>
+  <div>
+    <Navbar></Navbar>
+    <router-view></router-view>
+  </div>
 </template>
+
+<script>
+import Navbar from './components/Navbar.vue'
+export default {
+  components: {
+    Navbar
+  }
+}
+</script>
