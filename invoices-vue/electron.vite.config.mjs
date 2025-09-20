@@ -7,6 +7,9 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()]
   },
   preload: {
+    input: {
+      index: resolve(__dirname, 'electron/preload/index.js')
+    },
     plugins: [externalizeDepsPlugin()]
   },
   renderer: {
