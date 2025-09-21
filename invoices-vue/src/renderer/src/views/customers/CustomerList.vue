@@ -1,6 +1,7 @@
 <template lang="">
   <div>
     <h1>{{ title }}</h1>
+    <router-link to="/customer-new" exact-active-class="active">Add New Customer</router-link>
   </div>
 </template>
 
@@ -8,10 +9,8 @@
 export default {
   data() {
     return {
-      title: 'Customers Page'
+      title: 'Customer List'
     }
-  },
-  mounted() {},
-  methods: {}
+  }
 }
 </script>

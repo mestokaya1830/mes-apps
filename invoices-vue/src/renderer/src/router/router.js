@@ -2,7 +2,8 @@ import { createWebHistory, createRouter } from 'vue-router'
 
 import Home from '../views/Index.vue'
 import Login from '../views/auth/Login.vue'
-import Customers from '../views/customers/Index.vue'
+import Customers from '../views/customers/CustomerList.vue'
+import CustomerNew from '../views/customers/CustomerNew.vue'
 import Invoices from '../views/Invoices.vue'
 import About from '../views/About.vue'
 import store from '../store/store.js'
@@ -39,10 +40,16 @@ const routes = [
     meta: { title: 'Invoices', auth: true }
   },
   {
-    path: '/customers',
+    path: '/customer-list',
     name: 'Customers',
     component: Customers,
     meta: { title: 'Customers', auth: true }
+  },
+  {
+    path: '/customer-new',
+    name: 'CustomerNew',
+    component: CustomerNew,
+    meta: { title: 'Add New Customer', auth: true }
   },
   {
     path: '/about',
