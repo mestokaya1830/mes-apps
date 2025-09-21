@@ -1,15 +1,32 @@
 <template lang="">
-  <div>
-    <Navbar></Navbar>
-    <router-view></router-view>
+  <div class="container">
+    <SideBar></SideBar>
+    <router-view class="layouts"></router-view>
   </div>
 </template>
 
 <script>
-import Navbar from './components/Navbar.vue'
+import SideBar from './components/SideBar.vue'
 export default {
   components: {
-    Navbar
+    SideBar
   }
 }
 </script>
+
+<style>
+.container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+.layouts {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 50px;
+  margin-left: 260px; /* Sidebar'ın genişliği kadar margin */
+  overflow-y: auto; /* İçerik taşarsa scroll */
+}
+</style>

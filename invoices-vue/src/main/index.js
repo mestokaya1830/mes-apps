@@ -2,7 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-
+import db from '../db/sqliteConn.js'
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1200,
@@ -55,6 +55,36 @@ app.on('window-all-closed', () => {
   }
 })
 
-ipcMain.handle('login', (event, user) => {
-  console.log(user)
-}) 
+ipcMain.handle('login', async (event, data) => {
+  const { email, password } = data
+  console.log(email, password)
+  return new Promise((resolve) => {
+    db.get(
+      'SELECT * FROM users WHERE email = ? AND password = ?',
+      [email, password],
+      (err, row) => {
+        if (err) {
+          console.error('DB error:', err.message)
+          resolve({ success: false, message: err.message })
+        } else if (row) {
+          resolve({ success: true, user: row })
+        } else {
+          resolve({ success: false, message: 'Invalid email or password' })
+        }
+      }
+    )
+  })
+})
+
+ipcMain.handle('getUsers', async () => {
+  return new Promise((resolve) => {
+    db.all('SELECT * FROM users', [], (err, rows) => {
+      if (err) {
+        console.error('DB error:', err.message)
+        resolve({ success: false, users: [], message: err.message })
+      } else {
+        resolve({ success: true, users: rows })
+      }
+    })
+  })
+})
