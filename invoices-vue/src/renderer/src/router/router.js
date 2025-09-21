@@ -5,17 +5,14 @@ import Login from '../views/auth/Login.vue'
 import Customers from '../views/customers/Index.vue'
 import Invoices from '../views/Invoices.vue'
 import About from '../views/About.vue'
-import store from '../store/Index.js'
+import store from '../store/store.js'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-    meta: {
-      title: 'Home',
-      registerAuth: true
-    }
+    meta: { title: 'Home', auth: true }
   },
   {
     path: '/login',
