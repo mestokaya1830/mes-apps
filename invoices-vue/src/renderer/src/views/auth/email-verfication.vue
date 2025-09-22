@@ -1,16 +1,21 @@
 <template>
-  <div class="container border rounded p-5">
-    <h3 style="margin-bottom: 30px">Email Verfication For Password Reset</h3>
-    <p class="active">{{ message.success }}</p>
-    <div class="mb-3 row">
-      <label for="email" class="form-label">Email</label>
-      <div>
-        <input id="email" v-model="email" type="email" class="form-control" />
-        <p class="error">{{ message.error }}</p>
+  <div class="form-container">
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Email Verfication</h2>
+        <p>Please enter your email</p>
       </div>
-    </div>
-    <div class="d-grid">
-      <button class="btn btn-dark btn-lg" type="submit" @click="sendEmail()">Send Email</button>
+      <form>
+        <div class="form-group">
+          <label for="email" class="form-label">Email</label>
+          <div>
+            <input id="email" v-model="email" type="email" class="form-control" />
+            <p class="error-message">{{ message.error }}</p>
+          </div>
+        </div>
+        <p class="active">{{ message.success }}</p>
+        <button class="form-btn" type="button" @click="sendEmail()">Send Email</button>
+      </form>
     </div>
   </div>
 </template>

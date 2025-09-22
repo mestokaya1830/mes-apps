@@ -24,6 +24,7 @@ export default {
 .layouts {
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   padding: 50px;
   margin-left: 260px; /* Sidebar'ın genişliği kadar margin */
