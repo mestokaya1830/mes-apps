@@ -28,7 +28,7 @@ const routes = [
     meta: { title: 'Email Verfication' }
   },
   {
-    path: '/reset-password/:id',
+    path: '/reset-password',
     name: 'reset-password',
     component: () => import('../views/auth/reset-password.vue'),
     meta: { title: 'Reset Password' }

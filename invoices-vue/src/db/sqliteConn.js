@@ -291,7 +291,15 @@ db.all("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", [], (
 // })
 
 //get all rows
-// db.all(`SELECT * FROM customers;`, [], (err, rows) => {
+db.all(`SELECT * FROM users;`, [], (err, rows) => {
+  if (err) {
+    console.error(err.message)
+    return
+  }
+  console.log(rows) // rows artık array, ilk satıra rows[0] ile ulaşabilirsin
+})
+
+// db.run('AlTER TABLE users ADD COLUMN token TEXT DEFAULT null;', [], (err, rows) => {
 //   if (err) {
 //     console.error(err.message)
 //     return
