@@ -45,7 +45,7 @@
             Forgot password?
           </router-link>
         </div>
-
+        <div v-if="error.credential" class="text error-message">{{ error.credential }}</div>
         <button type="button" class="form-btn" @click="loginUser()">Sign In</button>
       </form>
     </div>
@@ -63,7 +63,8 @@ export default {
       },
       error: {
         email: '',
-        password: ''
+        password: '',
+        credential: ''
       }
     }
   },
@@ -78,7 +79,9 @@ export default {
         const data = { email: this.user.email, password: this.user.password }
         const res = await window.api.login(data)
         console.log(res)
-        if (res.success) {
+        if (!res.success) {
+          this.error.credential = res.message
+        } else {
           this.$store.commit('setAuth', res.user)
           this.$router.push('/')
         }

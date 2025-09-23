@@ -1,42 +1,41 @@
-import sqlite3 from 'sqlite3'
+import Database from 'better-sqlite3'
 import path from 'path'
 import { fileURLToPath } from 'url'
-sqlite3.verbose()
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const dbPath = path.resolve(__dirname, '../../src/db/invoices.db')
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Connection error:', err.message)
-  } else {
-    console.log('DB Path:', dbPath)
-    console.log('Connected to the SQLite3 database.')
-  }
-})
-
+let db = null
+try {
+  db = new Database(dbPath, { verbose: console.log })
+  console.log('DB Path:', dbPath)
+  console.log('Connected to the SQLite3 database.')
+} catch (err) {
+  console.error('Connection error:', err.message)
+}
+process.on('exit', () => db.close())
 export default db
 
-// db.run(`CREATE TABLE IF NOT EXISTS users (
+// db.exec(`CREATE TABLE IF NOT EXISTS users (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
 //     first_name TEXT NOT NULL,
 //     last_name TEXT NOT NULL,
 //     password TEXT NOT NULL,
 //     email TEXT,
 //     phone TEXT,
-    
+
 //     -- Adres Bilgileri
 //     address TEXT,
 //     postal_code TEXT,
 //     city TEXT,
 //     country TEXT DEFAULT 'Deutschland',
 //     website TEXT,
-    
+
 //     -- Firma Bilgileri
 //     firm_name TEXT,
 //     legal_form TEXT,                    -- GmbH, AG, OHG vs.
 //     managing_director TEXT,             -- Geschäftsführer
-    
+
 //     -- Vergi Bilgileri
 //     tax_number TEXT,
 //     tax_office TEXT,
@@ -44,15 +43,15 @@ export default db
 //     vat_id TEXT,                        -- USt-IdNr
 //     court_registration TEXT,            -- HRB 12345 B
 //     court_location TEXT,                -- Amtsgericht Berlin
-    
+
 //     -- Fatura Ayarları
 //     invoice_categories TEXT,            -- JSON string
 //     invoice_counters TEXT,              -- JSON string
-    
+
 //     -- Logo/İmza
 //     logo TEXT,
 //     company_signature TEXT,
-    
+
 //     -- Banka Bilgileri
 //     bank_name TEXT,
 //     bic TEXT,
@@ -63,7 +62,7 @@ export default db
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
-// db.run(`INSERT INTO users (
+// db.exec(`INSERT INTO users (
 //     first_name,
 //     last_name,
 //     password,
@@ -122,11 +121,11 @@ export default db
 // );`)
 
 //customers---------------------------------------------------------
-// db.run(`CREATE TABLE customers (
+// db.exec(`CREATE TABLE customers (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
 //     customer_type TEXT NOT NULL,        -- 'individual' | 'company'
 //     company_name TEXT,                  -- Firma adı (şirketler için)
-//     first_name TEXT,                    -- Ad (bireysel müşteri için)  
+//     first_name TEXT,                    -- Ad (bireysel müşteri için)
 //     last_name TEXT,                     -- Soyad (bireysel müşteri için)
 //     address TEXT NOT NULL,
 //     postal_code TEXT NOT NULL,
@@ -170,7 +169,7 @@ export default db
 //     1
 // );`)
 
-// db.run(`INSERT INTO customers (
+// db.exec(`INSERT INTO customers (
 //     customer_type,
 //     company_name,
 //     first_name,
@@ -193,14 +192,14 @@ export default db
 //     '10115',
 //     'Berlin',
 //     'Deutschland',
-//     'hans.mueller@techsolutions.de',    -- Firma adı (şirketler için)   
+//     'hans.mueller@techsolutions.de',    -- Firma adı (şirketler için)
 //     '+49 30 12345678',
 //     '123/456/78901',
 //     'DE123456789',
 //     1
 // );`)
 
-// db.run(`INSERT INTO customers (
+// db.exec(`INSERT INTO customers (
 //     customer_type,
 //     company_name,
 //     first_name,
@@ -230,44 +229,43 @@ export default db
 //     1
 // )`)
 
-
 //invoices
-// db.run(`CREATE TABLE IF NOT EXISTS invoices (
+// db.exec(`CREATE TABLE IF NOT EXISTS invoices (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
 //     user_id INTEGER NOT NULL,           -- Fatura yazan firma (login'den gelir)
 //     customer_id INTEGER NOT NULL,       -- Seçilen müşteri
-    
+
 //     -- Fatura Bilgileri
 //     invoice_type TEXT NOT NULL,         -- 'FAT', 'SRV', 'BIL' vs.
 //     invoice_number TEXT NOT NULL,       -- SRV-0001, BIL-0005 vs.
 //     invoice_date DATE NOT NULL,         -- Fatura tarihi
 //     due_date DATE,                      -- Vade tarihi
-    
-//     -- Fatura İçeriği  
+
+//     -- Fatura İçeriği
 //     subject TEXT,                       -- Fatura başlığı
 //     invoice_items TEXT NOT NULL,        -- Yapılan işler (JSON array)
 //     notes TEXT,                         -- Ek notlar/şartlar
-    
+
 //     -- Hesaplama Sonuçları
 //     subtotal DECIMAL(10,2) NOT NULL,    -- KDV hariç toplam
 //     tax_rate DECIMAL(5,2) NOT NULL,     -- KDV oranı %19, %7, %0
 //     tax_amount DECIMAL(10,2) NOT NULL,  -- KDV tutarı
 //     total_amount DECIMAL(10,2) NOT NULL, -- Genel toplam
-    
+
 //     -- Durum Takibi
 //     status TEXT DEFAULT 'draft',        -- draft, sent, paid
 //     payment_status TEXT DEFAULT 'pending', -- pending, paid, overdue
-    
+
 //     -- Dosya
 //     pdf_path TEXT,                      -- PDF dosya yolu
-    
+
 //     -- Sistem
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
 //tokens----------------------------------------------------------
-// db.run(`CREATE TABLE tokens (
+// db.exec(`CREATE TABLE tokens (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
 //     token TEXT UNIQUE NOT NULL,
 //     user_id INTEGER,
@@ -275,48 +273,61 @@ export default db
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
-// db.run(`INSERT INTO tokens (token, user_id, expires_at) 
+// db.run(`INSERT INTO tokens (token, user_id, expires_at)
 // VALUES ('your_token_here2', 13233, datetime('now', '+15 minutes'));`)
 
-// db.run(`DELETE FROM tokens WHERE expires_at < datetime('now')`)
-//query----------------------------------------------------------
+// db.exec(`
+//   CREATE TABLE IF NOT EXISTS users (
+//   id INTEGER PRIMARY KEY AUTOINCREMENT,
+//   email TEXT,
+//   password TEXT,
+//   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+// )`)
 
-// db.run(`DROP TABLE IF EXISTS tokens;`);
 
-//get all tables
-db.all("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", [], (err, rows) => {
-  if (err) {
-    console.error(err.message)
-    return
-  }
+//queries---------------------------------------------------------
+try {
+  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all()
   console.log(
     'Tablolar:',
-    rows.map((r) => r.name)
+    tables.map((r) => r.name)
   )
-})
+} catch (err) {
+  console.error(err.message)
+}
 
-//get all columns
-// db.all(`PRAGMA table_info(users)`, [], (err, rows) => {
-//   if (err) throw err
+// try {
+//   db.prepare('INSERT INTO users (email, password) VALUES (?, ?)').run('mesto@outlook.com', '909090')
+// } catch (err) {
+//   console.error(err.message)
+// }
 
-//   rows.forEach((row) => {
-//     console.log(row.cid, row.name, row.type)
-//   })
-// })
+try {
+  const users = db.prepare('SELECT * FROM tokens').all()
+  console.log('Users:', users)
+} catch (err) {
+  console.error(err.message)
+}
 
-//get all rows
-db.all(`SELECT * FROM tokens;`, [], (err, rows) => {
-  if (err) {
-    console.error(err.message)
-    return
-  }
-  console.log(rows)
-})
+// try {
+//   const user = db.prepare('SELECT * FROM users WHERE email = ?').get('mesto@outlook.com')
+//   console.log('User:', user)
+// } catch (err) {
+//   console.error(err.message)
+// }
 
-// db.run('AlTER TABLE users ADD COLUMN token TEXT DEFAULT null;', [], (err, rows) => {
-//   if (err) {
-//     console.error(err.message)
-//     return
-//   }
-//   console.log(rows)
-// })
+// try {
+//   const user = db.prepare('UPDATE users SET email = ? WHERE id = ?').run('mesto@outlook.com', 1)
+//   console.log('User:', user)
+// } catch (err) {
+//   console.error(err.message)
+// }
+
+// try {
+//   const user = db.prepare('DELETE FROM users WHERE id = ?').run(1)
+//   console.log('User:', user)
+// } catch (err) {
+//   console.error(err.message)
+// }
+

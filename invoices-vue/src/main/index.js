@@ -60,144 +60,121 @@ app.on('window-all-closed', () => {
 ipcMain.handle('login', async (event, data) => {
   const { email, password } = data
   console.log(email, password)
-  return new Promise((resolve) => {
-    db.get(
-      'SELECT * FROM users WHERE email = ? AND password = ?',
-      [email, password],
-      (err, row) => {
-        if (err) {
-          console.error('DB error:', err.message)
-          resolve({ success: false, message: err.message })
-        } else if (row) {
-          resolve({ success: true, user: row })
-        } else {
-          resolve({ success: false, message: 'Invalid email or password' })
-        }
-      }
-    )
-  })
+  try {
+    const row = db
+      .prepare('SELECT * FROM users WHERE email = ? AND password = ?')
+      .get(email, password)
+
+    if (row) {
+      return { success: true, user: row }
+    } else {
+      return { success: false, message: 'Invalid email or password' }
+    }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })
 
 ipcMain.handle('getUsers', async () => {
-  return new Promise((resolve) => {
-    db.all('SELECT * FROM users', [], (err, rows) => {
-      if (err) {
-        console.error('DB error:', err.message)
-        resolve({ success: false, users: [], message: err.message })
-      } else {
-        resolve({ success: true, users: rows })
-      }
-    })
-  })
+  try {
+    const rows = db.prepare('SELECT * FROM users').all()
+    return { success: true, users: rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })
 
 ipcMain.handle('email-verfication', async (event, data) => {
   const { email } = data
-  const expiresAt = new Date(Date.now() + 60000 * 15)
+  const expiresAt = new Date(Date.now() + 60000 * 1)
   const token = Math.random().toString(36).substring(2, 50)
   console.log(token)
-  return new Promise((resolve) => {
-    db.run(
-      'INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)',
-      [token, '1', expiresAt.toISOString()],
-      function (err) {
-        if (err) {
-          console.error('DB error:', err.message)
-          resolve({ success: false, message: 'DB insert failed' })
-        } else if (this.changes === 0) {
-          console.warn('No user found with that email')
-          resolve({ success: false, message: 'No user found with that email' })
-        } else {
-          resolve({ success: true, message: 'Email sent and token insert' })
-        }
-      }
-    )
-  })
 
-  // return new Promise((resolve) => {
-  //   const token = Math.random().toString(36).substring(2, 50)
-  //   //email host settings
-  //   const transporter = nodeMailer.createTransport({
-  //     host: 'smtp.gmail.com',
-  //     port: 465,
-  //     auth: {
-  //       user: 'mesto1830@gmail.com',
-  //       pass: 'taao aisb gkkc evwx'
-  //     }
-  //   })
-  //   //email options
-  //   const mailoption = {
-  //     from: 'mesto1830@gmail.com',
-  //     to: email,
-  //     subject: 'Password Reset Request',
-  //     text: 'To reset password please click link below...',
-  //     html: `
+  try {
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email)
+    if (user) {
+      db.prepare('INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)').run(
+        token,
+        user.id,
+        expiresAt.toISOString()
+      )
+      return { success: true, message: 'Email sent and token insert' }
+    } else {
+      return { success: false, message: 'No user found with that email' }
+    }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: 'DB insert failed' }
+  }
+
+  // const { email } = data
+  // const token = Math.random().toString(36).substring(2, 50)
+  // const expiresAt = new Date(Date.now() + 60000 * 15) // 15 minutes
+  // //email host settings
+  // const transporter = nodeMailer.createTransport({
+  //   host: 'smtp.gmail.com',
+  //   port: 465,
+  //   auth: {
+  //     user: 'mesto1830@gmail.com',
+  //     pass: 'taao aisb gkkc evwx'
+  //   }
+  // })
+  // //email options
+  // const mailoption = {
+  //   from: 'mesto1830@gmail.com',
+  //   to: email,
+  //   subject: 'Password Reset Request',
+  //   text: 'To reset password please click link below...',
+  //   html: `
   //   <h2>To reset password please use this token'</h2>
   //   <h1>${token}</h1>
   //   `
-  //   }
-  //   //send email
-  //   transporter.sendMail(mailoption, (err, info) => {
-  //     if (err) {
-  //       console.error('Email error:', err.message)
-  //       resolve({ success: false, message: err.message })
-  //     } else {
-  //       console.log('Email sent:', info.response, token)
-  //       const expiresAt = new Date(Date.now() + 60000 * 15) // 15 minutes
-
-  //       db.run(
-  //         'INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)',
-  //         [token, '1', expiresAt.toISOString()],
-  //         function (err) {
-  //           if (err) {
-  //             console.error('DB error:', err.message)
-  //             resolve({ success: false, message: 'DB update failed' })
-  //           } else if (this.changes === 0) {
-  //             console.warn('No user found with that email')
-  //             resolve({ success: false, message: 'No user found with that email' })
-  //           } else {
-  //             resolve({ success: true, message: 'Email sent and token updated' })
-  //           }
-  //         }
-  //       )
+  // }
+  // transporter.sendMail(mailoption, (err, info) => {
+  //   if (err) {
+  //     console.error('Email error:', err.message)
+  //     return { success: false, message: err.message }
+  //   } else {
+  //     console.log('Email sent:', info.response, token)
+  //     try {
+  //       const row = db
+  //         .prepare('INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)')
+  //         .run(token, 1, expiresAt)
+  //       if (!row) {
+  //         console.warn('No user found with that email')
+  //         return { success: false, message: 'No user found with that email' }
+  //       } else {
+  //         return { success: true, message: 'Email sent and token updated' }
+  //       }
+  //     } catch {
+  //       console.error('DB error:', err.message)
+  //       return { success: false, message: err.message }
   //     }
-  //   })
+  //   }
   // })
 })
 
-// Helper functions for reset-password
-const dbRun = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) reject(err)
-      else resolve(this)
-    })
-  })
-}
-
-const dbGet = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err)
-      else resolve(row)
-    })
-  })
-}
-
 ipcMain.handle('reset-password', async (event, data) => {
   try {
-    const { password, token } = data
-    await dbRun(
-      "DELETE FROM tokens WHERE replace(substr(expires_at, 1, 19), 'T', ' ') < datetime('now');" //convert expires_at to datetime
-    )
-    const tokenRow = await dbGet('SELECT * FROM tokens WHERE token = ?', [token])
+    db.prepare("DELETE FROM tokens WHERE replace(expires_at, 'T', ' ') < datetime('now')").run()
+    const { token, password } = data
+    const tokenRow = db.prepare('SELECT * FROM tokens WHERE token = ?').get(token)
     if (!tokenRow) {
-      throw new Error('Invalid token')
+      return { success: false, message: 'Invalid token' }
+    } else {
+      const userRow = db.prepare('SELECT * FROM users WHERE id = ?').get(tokenRow.user_id)
+      if (!userRow) {
+        return { success: false, message: 'User not found' }
+      } else {
+        db.prepare('UPDATE users SET password = ? WHERE id = ?').run(password, userRow.id)
+        db.prepare('DELETE FROM tokens WHERE token = ?').run(token)
+        return { success: true, message: 'Password reset successfully' }
+      }
     }
-    await dbRun('UPDATE users SET password = ? WHERE email = ?', [password, 'user@user.de'])
-
-    return { success: true, message: 'Password reset successfully' }
   } catch (err) {
+    console.error('DB error:', err.message)
     return { success: false, message: err.message }
   }
 })
