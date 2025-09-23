@@ -40,6 +40,7 @@ export default {
         return false
       }
       const res = await window.api.emailVerfication(data)
+      console.log('result', res)
       if (res.success) {
         this.message = { success: res.success }
         this.message = res

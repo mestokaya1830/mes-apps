@@ -265,9 +265,23 @@ export default db
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
+
+//tokens----------------------------------------------------------
+// db.run(`CREATE TABLE tokens (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     token TEXT UNIQUE NOT NULL,
+//     user_id INTEGER,
+//     expires_at DATETIME NOT NULL,
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+// );`)
+
+// db.run(`INSERT INTO tokens (token, user_id, expires_at) 
+// VALUES ('your_token_here2', 13233, datetime('now', '+15 minutes'));`)
+
+// db.run(`DELETE FROM tokens WHERE expires_at < datetime('now')`)
 //query----------------------------------------------------------
 
-// db.run(`DROP TABLE IF EXISTS customers;`);
+// db.run(`DROP TABLE IF EXISTS tokens;`);
 
 //get all tables
 db.all("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", [], (err, rows) => {
@@ -291,12 +305,12 @@ db.all("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;", [], (
 // })
 
 //get all rows
-db.all(`SELECT * FROM users;`, [], (err, rows) => {
+db.all(`SELECT * FROM tokens;`, [], (err, rows) => {
   if (err) {
     console.error(err.message)
     return
   }
-  console.log(rows) // rows artık array, ilk satıra rows[0] ile ulaşabilirsin
+  console.log(rows)
 })
 
 // db.run('AlTER TABLE users ADD COLUMN token TEXT DEFAULT null;', [], (err, rows) => {
@@ -304,5 +318,5 @@ db.all(`SELECT * FROM users;`, [], (err, rows) => {
 //     console.error(err.message)
 //     return
 //   }
-//   console.log(rows) // rows artık array, ilk satıra rows[0] ile ulaşabilirsin
+//   console.log(rows)
 // })

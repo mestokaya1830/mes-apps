@@ -93,71 +93,108 @@ ipcMain.handle('getUsers', async () => {
 
 ipcMain.handle('email-verfication', async (event, data) => {
   const { email } = data
-  console.log(email)
+  const expiresAt = new Date(Date.now() + 60000 * 15)
+  const token = Math.random().toString(36).substring(2, 50)
+  console.log(token)
   return new Promise((resolve) => {
-    const token = Math.random().toString(36).substring(2, 50)
-    //email host settings
-    const transporter = nodeMailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      auth: {
-        user: 'mesto1830@gmail.com',
-        pass: 'taao aisb gkkc evwx'
+    db.run(
+      'INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)',
+      [token, '1', expiresAt.toISOString()],
+      function (err) {
+        if (err) {
+          console.error('DB error:', err.message)
+          resolve({ success: false, message: 'DB insert failed' })
+        } else if (this.changes === 0) {
+          console.warn('No user found with that email')
+          resolve({ success: false, message: 'No user found with that email' })
+        } else {
+          resolve({ success: true, message: 'Email sent and token insert' })
+        }
       }
-    })
-    //email options
-    const mailoption = {
-      from: 'mesto1830@gmail.com',
-      to: email,
-      subject: 'Password Reset Request',
-      text: 'To reset password please click link below...',
-      html: `
-    <h2>To reset password please use this token'</h2>
-    <h1>${token}</h1>
-    `
-    }
-    //send email
-    transporter.sendMail(mailoption, (err, info) => {
-      if (err) {
-        console.error('Email error:', err.message)
-        resolve({ success: false, message: err.message })
-      } else {
-        console.log('Email sent:', info.response, token)
-        db.run(
-          'UPDATE users SET token = ? WHERE email = ?',
-          [token, 'user@user.de'],
-          function (err) {
-            if (err) {
-              console.error('DB error:', err.message)
-              resolve({ success: false, message: 'DB update failed' })
-            } else if (this.changes === 0) {
-              console.warn('No user found with that email')
-              resolve({ success: false, message: 'No user found with that email' })
-            } else {
-              resolve({ success: true, message: 'Email sent and token updated' })
-            }
-          }
-        )
-      }
+    )
+  })
+
+  // return new Promise((resolve) => {
+  //   const token = Math.random().toString(36).substring(2, 50)
+  //   //email host settings
+  //   const transporter = nodeMailer.createTransport({
+  //     host: 'smtp.gmail.com',
+  //     port: 465,
+  //     auth: {
+  //       user: 'mesto1830@gmail.com',
+  //       pass: 'taao aisb gkkc evwx'
+  //     }
+  //   })
+  //   //email options
+  //   const mailoption = {
+  //     from: 'mesto1830@gmail.com',
+  //     to: email,
+  //     subject: 'Password Reset Request',
+  //     text: 'To reset password please click link below...',
+  //     html: `
+  //   <h2>To reset password please use this token'</h2>
+  //   <h1>${token}</h1>
+  //   `
+  //   }
+  //   //send email
+  //   transporter.sendMail(mailoption, (err, info) => {
+  //     if (err) {
+  //       console.error('Email error:', err.message)
+  //       resolve({ success: false, message: err.message })
+  //     } else {
+  //       console.log('Email sent:', info.response, token)
+  //       const expiresAt = new Date(Date.now() + 60000 * 15) // 15 minutes
+
+  //       db.run(
+  //         'INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)',
+  //         [token, '1', expiresAt.toISOString()],
+  //         function (err) {
+  //           if (err) {
+  //             console.error('DB error:', err.message)
+  //             resolve({ success: false, message: 'DB update failed' })
+  //           } else if (this.changes === 0) {
+  //             console.warn('No user found with that email')
+  //             resolve({ success: false, message: 'No user found with that email' })
+  //           } else {
+  //             resolve({ success: true, message: 'Email sent and token updated' })
+  //           }
+  //         }
+  //       )
+  //     }
+  //   })
+  // })
+})
+
+// Helper functions for reset-password
+const dbRun = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) reject(err)
+      else resolve(this)
     })
   })
-})
+}
+
+const dbGet = (sql, params = []) => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err)
+      else resolve(row)
+    })
+  })
+}
 
 ipcMain.handle('reset-password', async (event, data) => {
   try {
     const { password, token } = data
-    // const hashedPassword = await bcrypt.hash(password, 10)
-
-    await new Promise((resolve, reject) => {
-      db.run(
-        'UPDATE users SET password = ? WHERE email = ? AND token = ?',
-        [password, 'user@user.de', token],
-        function (err) {
-          if (err) reject(err)
-          else resolve()
-        }
-      )
-    })
+    await dbRun(
+      "DELETE FROM tokens WHERE replace(substr(expires_at, 1, 19), 'T', ' ') < datetime('now');" //convert expires_at to datetime
+    )
+    const tokenRow = await dbGet('SELECT * FROM tokens WHERE token = ?', [token])
+    if (!tokenRow) {
+      throw new Error('Invalid token')
+    }
+    await dbRun('UPDATE users SET password = ? WHERE email = ?', [password, 'user@user.de'])
 
     return { success: true, message: 'Password reset successfully' }
   } catch (err) {

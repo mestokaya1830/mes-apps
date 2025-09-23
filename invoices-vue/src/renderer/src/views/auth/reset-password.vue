@@ -47,29 +47,37 @@ export default {
       token: '',
       password: '',
       passwordConfirmation: '',
-      message: {}
+      message: {
+        success: '',
+        credential: '',
+        token: '',
+        password: '',
+        confirm: ''
+      }
     }
   },
   methods: {
     async reset() {
       this.message = {}
       if (this.token == '') {
-        this.message = { token: "Token don't be empty!" }
+        this.message.token = { token: "Token don't be empty!" }
         return false
       }
       if (this.password == '') {
-        this.message = { password: "Password don't be empty!" }
+        this.message.password = { password: "Password don't be empty!" }
         return false
       }
       if (this.password !== this.passwordConfirmation) {
-        this.message = { confirm: 'Password not match!' }
+        this.message.confirm = { confirm: 'Password not match!' }
         return false
       }
 
       const data = { password: this.password, token: this.token }
-      console.log(data)
       const res = await window.api.resetPassword(data)
-      this.message = res
+      if (res.error) {
+        this.message.credential = { credential: res.error }
+      }
+      this.message.success = res
     }
   }
 }
