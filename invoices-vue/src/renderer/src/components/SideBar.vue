@@ -8,96 +8,35 @@
 
     <nav class="sidebar-nav">
       <router-link to="/" exact-active-class="active" class="nav-item">
-        <div class="nav-icon">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9,22 9,12 15,12 15,22" />
-          </svg>
-        </div>
+        <span class="nav-icon material-icons">home</span>
         <span class="nav-text">Home</span>
       </router-link>
 
       <router-link to="/invoices" exact-active-class="active" class="nav-item">
-        <div class="nav-icon">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14,2 14,8 20,8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10,9 9,9 8,9" />
-          </svg>
-        </div>
+        <span class="nav-icon material-icons">description</span>
         <span class="nav-text">Invoices</span>
       </router-link>
 
       <router-link to="/customer-list" exact-active-class="active" class="nav-item">
-        <div class="nav-icon">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        </div>
+        <span class="nav-icon material-icons">people</span>
         <span class="nav-text">Customers</span>
       </router-link>
 
+      <router-link to="/profile" exact-active-class="active" class="nav-item">
+        <span class="nav-icon material-icons">admin_panel_settings</span>
+        <span class="nav-text">Profile</span>
+      </router-link>
+
       <router-link to="/about" exact-active-class="active" class="nav-item">
-        <div class="nav-icon">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-          </svg>
-        </div>
+        <span class="nav-icon material-icons">info</span>
         <span class="nav-text">About</span>
       </router-link>
     </nav>
 
     <div class="sidebar-footer">
-      <button @click="logout()" class="logout-btn">
-        <div class="nav-icon">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16,17 21,12 16,7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-        </div>
-        <span class="nav-text">Logout</span>
+      <button class="logout-btn" @click="logout()">
+        <span class="nav-icon material-icons">logout</span>
+        <span class="nav-text logout">Logout</span>
       </button>
     </div>
   </div>
@@ -180,9 +119,13 @@ export default {
   color: #3b82f6;
   border-left-color: #3b82f6;
   font-weight: 500;
+  width: 96%;
+  border: 5px solid transparent;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
 }
 
-.nav-item.active::before {
+/* .nav-item.active::before {
   content: '';
   position: absolute;
   right: 0;
@@ -190,18 +133,19 @@ export default {
   bottom: 0;
   width: 3px;
   background: #3b82f6;
-}
+} */
 
 .nav-icon {
   margin-right: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
+  min-width: 25px;
+  font-size: 30px;
 }
 
 .nav-text {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: 0.025em;
 }
@@ -222,7 +166,6 @@ export default {
   cursor: pointer;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
-  font-size: 0.875rem;
   font-weight: 500;
 }
 
@@ -232,7 +175,7 @@ export default {
 }
 
 .logout-btn .nav-icon {
-  margin-right: 0.75rem;
+  margin-right: 1.2rem;
 }
 
 /* Scrollbar styling */

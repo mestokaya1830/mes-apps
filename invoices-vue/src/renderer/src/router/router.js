@@ -2,10 +2,6 @@ import { createWebHistory, createRouter } from 'vue-router'
 
 import Home from '../views/Index.vue'
 import Login from '../views/auth/Login.vue'
-import Customers from '../views/customers/CustomerList.vue'
-import CustomerNew from '../views/customers/CustomerNew.vue'
-import Invoices from '../views/Invoices.vue'
-import About from '../views/About.vue'
 import store from '../store/store.js'
 
 const routes = [
@@ -24,37 +20,43 @@ const routes = [
   {
     path: '/email-verfication',
     name: 'email-verfication',
-    component: () => import('../views/auth/email-verfication.vue'),
+    component: () => import('../views/auth/Email-Verfication.vue'),
     meta: { title: 'Email Verfication' }
   },
   {
     path: '/reset-password',
     name: 'reset-password',
-    component: () => import('../views/auth/reset-password.vue'),
+    component: () => import('../views/auth/Reset-Password.vue'),
+    meta: { title: 'Reset Password' }
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('../views/auth/Profile.vue'),
     meta: { title: 'Reset Password' }
   },
   {
     path: '/invoices',
     name: 'Invoices',
-    component: Invoices,
+    component: () => import('../views/Invoices.vue'),
     meta: { title: 'Invoices', auth: true }
   },
   {
     path: '/customer-list',
     name: 'Customers',
-    component: Customers,
+    component: () => import('../views/customers/CustomerList.vue'),
     meta: { title: 'Customers', auth: true }
   },
   {
     path: '/customer-new',
     name: 'CustomerNew',
-    component: CustomerNew,
+    component: () => import('../views/customers/CustomerNew.vue'),
     meta: { title: 'Add New Customer', auth: true }
   },
   {
     path: '/about',
     name: 'About',
-    component: About,
+    component: () => import('../views/About.vue'),
     meta: { title: 'About' }
   }
 ]
