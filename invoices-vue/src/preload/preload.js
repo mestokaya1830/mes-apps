@@ -1,8 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('api', {
-  login: async (user) => ipcRenderer.invoke('login', user),
-  emailVerfication: async (email) => ipcRenderer.invoke('email-verfication', email),
+  controlWindow: (data) => ipcRenderer.invoke('control-window', data),
+  login: async (data) => ipcRenderer.invoke('login', data),
+  emailVerfication: async (data) => ipcRenderer.invoke('email-verfication', data),
   resetPassword: async (data) => ipcRenderer.invoke('reset-password', data),
   updateProfile: async (data) => ipcRenderer.invoke('update-profile', data)
 })

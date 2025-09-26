@@ -5,11 +5,13 @@ import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
 import nodeMailer from 'nodemailer'
 
+let mainWindow = null
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     show: false,
+    frame: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -54,6 +56,22 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
+  }
+})
+
+ipcMain.handle('control-window', (event, data) => {
+  console.log(data)
+  if (!mainWindow) return
+  switch (data) {
+    case 'minimize':
+      mainWindow.minimize()
+      break
+    case 'maximize':
+      mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()
+      break
+    case 'close':
+      mainWindow.close()
+      break
   }
 })
 

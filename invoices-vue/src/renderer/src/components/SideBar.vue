@@ -64,13 +64,12 @@ export default {
 <style scoped>
 .sidebar {
   width: 260px;
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
   color: #e2e8f0;
   display: flex;
   flex-direction: column;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  position: fixed;
   left: 0;
   top: 0;
   z-index: 1000;

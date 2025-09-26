@@ -21,7 +21,7 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: () => import('../views/auth/Register.vue'),
-    meta: { title: 'Email Verfication' }
+    meta: { title: 'Register' }
   },
   {
     path: '/email-verfication',
