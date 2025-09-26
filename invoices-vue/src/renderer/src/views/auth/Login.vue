@@ -36,11 +36,10 @@
         </div>
 
         <div class="form-options">
-          <label class="checkbox">
-            <input id="rememberMe" type="checkbox" />
-            <span class="checkmark"></span>
-            Remember me
-          </label>
+          <router-link v-if="!checkRegister" to="register" class="forgot-password">
+            Setup
+          </router-link>
+          <div v-else class="registered">Reistered</div>
           <router-link to="email-verfication" class="forgot-password">
             Forgot password?
           </router-link>
@@ -65,7 +64,8 @@ export default {
         email: '',
         password: '',
         credential: ''
-      }
+      },
+      checkRegister: false
     }
   },
   methods: {

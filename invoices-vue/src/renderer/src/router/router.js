@@ -18,6 +18,12 @@ const routes = [
     meta: { title: 'Login' }
   },
   {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/auth/Register.vue'),
+    meta: { title: 'Email Verfication' }
+  },
+  {
     path: '/email-verfication',
     name: 'email-verfication',
     component: () => import('../views/auth/Email-Verfication.vue'),
@@ -32,13 +38,13 @@ const routes = [
   {
     path: '/profile',
     name: 'profile',
-    component: () => import('../views/auth/Profile.vue'),
+    component: () => import('../views/settings/Profile.vue'),
     meta: { title: 'Profile' }
   },
   {
     path: '/settings',
     name: 'settings',
-    component: () => import('../views/auth/Settings.vue'),
+    component: () => import('../views/settings/Settings.vue'),
     meta: { title: 'Settings' }
   },
   {

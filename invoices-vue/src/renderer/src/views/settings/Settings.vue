@@ -19,8 +19,9 @@
         <input id="bic" v-model="settings.bic" type="text" />
       </div>
       <div>
-        <label for="language">Language</label>
-        <input id="language" v-model="settings.language" type="text" />
+        <label for="logo">Logo</label>
+        <img src="" alt="" />
+        <input id="logo" @change="settings.logo" type="file" />
       </div>
     </form>
     {{ settings }}
@@ -42,7 +43,7 @@ export default {
       iban: this.$store.state.auth.iban,
       bank_account_holder: this.$store.state.auth.bank_account_holder,
       bic: this.$store.state.auth.bic,
-      language: this.$store.state.auth.language
+      logo: this.$store.state.auth.logo
     }
   },
   methods: {
