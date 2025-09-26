@@ -1,11 +1,13 @@
 <template>
   <div>
     <h1>{{ title }}</h1>
-    <ul>
-      <li v-for="(value, key) in profile" :key="key">
-        <strong>{{ key }}:</strong> {{ value }}
-      </li>
-    </ul>
+    <template v-for="(value, key) in profile" :key="key">
+      <div class="profile-container">
+        <div class="profile-label">{{ key }}:</div>
+        {{ value }}
+      </div>
+    </template>
+    <router-link to="/settings">Settings</router-link>
   </div>
 </template>
 

@@ -33,7 +33,13 @@ const routes = [
     path: '/profile',
     name: 'profile',
     component: () => import('../views/auth/Profile.vue'),
-    meta: { title: 'Reset Password' }
+    meta: { title: 'Profile' }
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: () => import('../views/auth/Settings.vue'),
+    meta: { title: 'Settings' }
   },
   {
     path: '/invoices',
