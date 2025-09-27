@@ -7,25 +7,7 @@
 body{
   font-family: 'Poppins', sans-serif;
 }
-#titlebar {
-  height: 60px;       /* Burada yüksekliği sen belirlersin */
-  background: #2f3542;
-  color: white;
-  -webkit-app-region: drag; /* sürüklenebilirlik */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-}
 
-#window-controls button {
-  -webkit-app-region: no-drag; /* butonlar tıklanabilir olmalı */
-}
 .form-container {
   min-height: 100vh;
   display: flex;

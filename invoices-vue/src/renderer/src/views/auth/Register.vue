@@ -99,7 +99,11 @@
           </div>
           <div>
             <label class="">Logo URL</label>
-            <input v-model="user.logo" type="text" class="" placeholder="/assets/logo.png" />
+            <input type="file" placeholder="/assets/logo.png" class="" @change="setLogo($event)" />
+          </div>
+          <div>
+            <label class="">Preview Logo</label>
+            <img :src="user.logo" class="logo-preview"/>
           </div>
         </div>
       </div>
@@ -241,10 +245,28 @@ export default {
         bic: '',
         iban: '',
         bank_account_holder: ''
-      }
+      },
+      currentBase64: null
     }
   },
   methods: {
+    async setLogo(event) {
+      const file = event.target.files[0]
+      if (!file) return
+      const reader = new FileReader()
+      reader.onload = () => {
+        this.currentBase64 = reader.result
+        this.user.logo = this.currentBase64
+        console.log(this.currentBase64)
+      }
+      reader.readAsDataURL(file)
+    },
+    async saveImage(event) {
+      if (!this.currentBase64) return alert('No image selected!')
+      const savedPath = await window.api.saveImage(this.currentBase64, 'saved.png')
+      if (savedPath) alert(`Image saved: ${savedPath}`)
+      else alert('Image could not be saved!')
+    },
     // Submit form
     async saveUser() {
       // this.isSubmitting = true
@@ -257,5 +279,132 @@ export default {
 </script>
 
 <style scoped>
-/* Optional: Add any component-specific styles here */
+/* Genel Form Alanı */
+form {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  font-family: Arial, sans-serif;
+}
+
+/* Başlıklar */
+h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+h3 {
+  margin: 1.5rem 0 1rem;
+  font-size: 1.2rem;
+  color: #444;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.3rem;
+}
+
+/* Grid Yapısı */
+form > div > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+form > div > div > div {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label */
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+  color: #333;
+}
+
+/* Input ve Textarea */
+input,
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+/* Tek kolon alanları */
+.md\:col-span-2 {
+  grid-column: span 2;
+}
+
+/* Buton */
+button {
+  background-color: #40434b;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.9rem 2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.25s ease;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+button:disabled {
+  background: #bbb;
+  cursor: not-allowed;
+}
+
+/* Success & Error */
+[v-cloak] {
+  display: none;
+}
+
+div[v-if='showSuccess'],
+div[v-if='errorMessage'] {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+div[v-if='showSuccess'] {
+  background: #e7f9ed;
+  color: #1e7e34;
+}
+
+div[v-if='errorMessage'] {
+  background: #fdeaea;
+  color: #b71c1c;
+}
+
+.logo-preview {
+  width: 100px;
+  height: 60px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+/* Responsive */
+@media (max-width: 768px) {
+  form > div > div {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

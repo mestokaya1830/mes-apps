@@ -65,7 +65,7 @@ export default {
 .sidebar {
   width: 260px;
   height: 100%;
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  background: #2f3542;
   color: #e2e8f0;
   display: flex;
   flex-direction: column;
