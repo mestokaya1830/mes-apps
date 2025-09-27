@@ -1,9 +1,65 @@
 <template>
   <div class="container">
     <h1>{{ title }}</h1>
-    <span class="form-btn">
-      <router-link to="/customer-new" class="link">Add New Customer</router-link>
-    </span>
+    <form class="customer-card" @submit.prevent="updateCustomer()">
+      <div class="customer-card-item">
+        <label>Company Type</label>
+        <input v-model="customer.first_name" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Company Name</label>
+        <input v-model="customer.compnay_name" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>First Name</label>
+        <input v-model="customer.first_name" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Last Name</label>
+        <input v-model="customer.last_name" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Address</label>
+        <input v-model="customer.address" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Postal Code</label>
+        <input v-model="customer.postal_code" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>City</label>
+        <input v-model="customer.cisty" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Conutry</label>
+        <input v-model="customer.country" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Email</label>
+        <input v-model="customer.email" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Phone</label>
+        <input v-model="customer.phone" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Tax Number</label>
+        <input v-model="customer.tax_number" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Vat Id</label>
+        <input v-model="customer.vat_id" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Status</label>
+        <input v-model="customer.is_active" type="text" />
+      </div>
+      <div class="customer-card-item">
+        <label>Created Time</label>
+        <input v-model="customer.created_at" type="text" />
+      </div>
+      <button type="submit">Update</button>
+    </form>
   </div>
 </template>
 
@@ -22,7 +78,16 @@ export default {
     async customerDetails() {
       try {
         const result = await window.api.customerDetails(this.$route.params.id)
-        this.customer = result
+        this.customer = result.customer
+        console.log(result)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async updateCustomer() {
+      try {
+        const data = { id: this.$route.params.id, ...this.customer }
+        const result = await window.api.updateCustomer(data)
         console.log(result)
       } catch (error) {
         console.error(error)
@@ -40,6 +105,8 @@ export default {
 }
 
 .customer-card {
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -49,6 +116,9 @@ export default {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
+.customer-card-item {
+  min-width: 50%;
+}
 .customer-card h2 {
   margin-bottom: 15px;
   color: #333;
