@@ -261,7 +261,7 @@ export default {
       }
       reader.readAsDataURL(file)
     },
-    async saveImage(event) {
+    async saveImage() {
       if (!this.currentBase64) return alert('No image selected!')
       const savedPath = await window.api.saveImage(this.currentBase64, 'saved.png')
       if (savedPath) alert(`Image saved: ${savedPath}`)
