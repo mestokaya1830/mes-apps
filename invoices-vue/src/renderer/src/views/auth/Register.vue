@@ -193,7 +193,7 @@
       </div>
       <!-- Submit Button -->
       <div class="flex justify-center pt-6">
-        <button type="submit" :disabled="isSubmitting" class="">
+        <button type="submit" :disabled="isSubmitting" class="form-btn">
           <span v-if="isSubmitting">Saving...</span>
           <span v-else>Save User</span>
         </button>
@@ -349,23 +349,6 @@ textarea:focus {
   grid-column: span 2;
 }
 
-/* Buton */
-button {
-  background-color: #40434b;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 0.9rem 2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.25s ease;
-}
-
-button:hover {
-  background: #0056b3;
-}
-
 button:disabled {
   background: #bbb;
   cursor: not-allowed;
@@ -399,6 +382,9 @@ div[v-if='errorMessage'] {
   height: 60px;
   border-radius: 5px;
   object-fit: cover;
+}
+.form-btn {
+  margin-top: 2rem;
 }
 /* Responsive */
 @media (max-width: 768px) {
