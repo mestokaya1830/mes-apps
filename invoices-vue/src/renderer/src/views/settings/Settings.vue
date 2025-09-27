@@ -21,7 +21,7 @@
       <div>
         <label for="logo">Logo</label>
         <img src="" alt="" />
-        <input id="logo" @change="settings.logo" type="file" />
+        <input id="logo" type="file" @change="settings.logo" />
       </div>
     </form>
     {{ settings }}

@@ -139,7 +139,7 @@ export default db
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
-// db.run(`INSERT INTO customers (
+// db.exec(`INSERT INTO customers (
 //     customer_type,
 //     company_name,
 //     first_name,
@@ -303,12 +303,12 @@ try {
 //   console.error(err.message)
 // }
 
-try {
-  const users = db.prepare('SELECT * FROM tokens').all()
-  console.log('Users:', users)
-} catch (err) {
-  console.error(err.message)
-}
+// try {
+//   const users = db.prepare('SELECT * FROM customers').all()
+//   console.log('Users:', users)
+// } catch (err) {
+//   console.error(err.message)
+// }
 
 // try {
 //   const user = db.prepare('SELECT * FROM users WHERE email = ?').get('mesto@outlook.com')

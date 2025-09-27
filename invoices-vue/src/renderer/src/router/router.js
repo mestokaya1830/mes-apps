@@ -57,13 +57,19 @@ const routes = [
     path: '/customer-list',
     name: 'Customers',
     component: () => import('../views/customers/CustomerList.vue'),
-    meta: { title: 'Customers', auth: true }
+    meta: { title: 'Customers' }
   },
   {
     path: '/customer-new',
     name: 'CustomerNew',
     component: () => import('../views/customers/CustomerNew.vue'),
-    meta: { title: 'Add New Customer', auth: true }
+    meta: { title: 'Add New Customer' }
+  },
+  {
+    path: '/customer-details/:id',
+    name: 'CustomerDetails',
+    component: () => import('../views/customers/CustomerDetails.vue'),
+    meta: { title: 'Customer Details' }
   },
   {
     path: '/about',

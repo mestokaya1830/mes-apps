@@ -8,7 +8,9 @@ import nodeMailer from 'nodemailer'
 let win = null
 function createWindow() {
   win = new BrowserWindow({
-    fullscreen: true,
+    // fullscreen: true,
+    width: 1200,
+    height: 800,
     show: false,
     frame: false,
     autoHideMenuBar: true,
@@ -46,6 +48,7 @@ app.whenReady().then(async () => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+
   createWindow()
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -190,6 +193,26 @@ ipcMain.handle('reset-password', async (event, data) => {
         return { success: true, message: 'Password reset successfully' }
       }
     }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-customers', async () => {
+  try {
+    const rows = db.prepare('SELECT * FROM customers').all()
+    return { success: true, customers: rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('customer-details', async (event, id) => {
+  try {
+    const row = db.prepare('SELECT * FROM customers WHERE id = ?').get(id)
+    return { success: true, customer: row }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
