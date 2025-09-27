@@ -257,7 +257,6 @@ export default {
       reader.onload = () => {
         this.currentBase64 = reader.result
         this.user.logo = this.currentBase64
-        console.log(this.currentBase64)
       }
       reader.readAsDataURL(file)
     },

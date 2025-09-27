@@ -4,7 +4,7 @@
       <span id="title">My App</span>
       <div id="window-controls">
         <button @click="minimize()">–</button>
-        <button @click="maximize()">☐</button>
+        <!-- <button @click="maximize()">☐</button> -->
         <button @click="close()">×</button>
       </div>
     </div>
@@ -29,9 +29,9 @@ export default {
       console.log('minimize')
       await window.api.controlWindow('minimize')
     },
-    async maximize() {
-      await window.api.controlWindow('maximize')
-    },
+    // async maximize() {
+    //   await window.api.controlWindow('maximize')
+    // },
     async close() {
       await window.api.controlWindow('close')
     }

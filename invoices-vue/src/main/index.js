@@ -5,11 +5,10 @@ import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
 import nodeMailer from 'nodemailer'
 
-let mainWindow = null
+let win = null
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+  win = new BrowserWindow({
+    fullscreen: true,
     show: false,
     frame: false,
     autoHideMenuBar: true,
@@ -25,20 +24,20 @@ function createWindow() {
     }
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-    mainWindow.setTitle('Mes Invoices App')
+  win.on('ready-to-show', () => {
+    win.show()
+    win.setTitle('Mes Invoices App')
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    win.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    win.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
 
@@ -61,16 +60,16 @@ app.on('window-all-closed', () => {
 
 ipcMain.handle('control-window', (event, data) => {
   console.log(data)
-  if (!mainWindow) return
+  if (!win) return
   switch (data) {
     case 'minimize':
-      mainWindow.minimize()
+      win.minimize()
       break
-    case 'maximize':
-      mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize()
-      break
+    // case 'maximize':
+    //   win.isMaximized() ? win.unmaximize() : win.maximize()
+    //   break
     case 'close':
-      mainWindow.close()
+      win.close()
       break
   }
 })
