@@ -2,22 +2,20 @@
   <div class="">
     <h2 class="">Customer Registration Form</h2>
     <form @submit.prevent="saveCustomer">
-      <!-- Personal Information -->
+      <!-- Customer Information -->
       <div class="">
         <h3 class="">Customer Information</h3>
         <div class="">
           <div>
             <label class="">Company Type *</label>
             <input
-              v-model="customer.company_type"
+              v-model="customer.customer_type"
               type="text"
               required
               class=""
-              placeholder="Enter your company type"
+              placeholder="Enter company type"
             />
           </div>
-        </div>
-        <div class="">
           <div>
             <label class="">Company Name *</label>
             <input
@@ -25,11 +23,95 @@
               type="text"
               required
               class=""
-              placeholder="Enter your company name"
+              placeholder="Enter company name"
             />
+          </div>
+          <div>
+            <label class="">First Name</label>
+            <input
+              v-model="customer.first_name"
+              type="text"
+              class=""
+              placeholder="Enter first name"
+            />
+          </div>
+          <div>
+            <label class="">Last Name</label>
+            <input
+              v-model="customer.last_name"
+              type="text"
+              class=""
+              placeholder="Enter last name"
+            />
+          </div>
+          <div>
+            <label class="">Email</label>
+            <input v-model="customer.email" type="email" class="" placeholder="example@email.com" />
+          </div>
+          <div>
+            <label class="">Phone</label>
+            <input v-model="customer.phone" type="tel" class="" placeholder="+49 30 12345678" />
           </div>
         </div>
       </div>
+
+      <!-- Address Information -->
+      <div class="">
+        <h3 class="">Address Information</h3>
+        <div class="">
+          <div class="md:col-span-2">
+            <label class="">Address</label>
+            <input v-model="customer.address" type="text" class="" placeholder="Hauptstraße 123" />
+          </div>
+          <div>
+            <label class="">Postal Code</label>
+            <input v-model="customer.postal_code" type="text" class="" placeholder="10115" />
+          </div>
+          <div>
+            <label class="">City</label>
+            <input v-model="customer.city" type="text" class="" placeholder="Berlin" />
+          </div>
+          <div>
+            <label class="">Country</label>
+            <input v-model="customer.country" type="text" class="" placeholder="Deutschland" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tax Information -->
+      <div class="">
+        <h3 class="">Tax Information</h3>
+        <div class="">
+          <div>
+            <label class="">Tax Number</label>
+            <input v-model="customer.tax_number" type="text" class="" placeholder="123/456/78901" />
+          </div>
+          <div>
+            <label class="">VAT ID</label>
+            <input v-model="customer.vat_id" type="text" class="" placeholder="DE123456789" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Information -->
+      <div class="">
+        <h3 class="">Status Information</h3>
+        <div class="">
+          <div>
+            <label class="">Status</label>
+            <select v-model="customer.is_active" class="">
+              <option value="">Select status</option>
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+          <div>
+            <label class="">Created At</label>
+            <input v-model="customer.created_at" type="datetime-local" class="" />
+          </div>
+        </div>
+      </div>
+
       <!-- Submit Button -->
       <div class="flex justify-center pt-6">
         <button type="submit" :disabled="isSubmitting" class="form-btn">
@@ -41,7 +123,7 @@
 
     <!-- Success Message -->
     <div v-if="showSuccess" class="">
-      <p class="font-medium">✅ User successfully saved!</p>
+      <p class="font-medium">✅ Customer successfully saved!</p>
     </div>
 
     <!-- Error Message -->
@@ -60,33 +142,43 @@ export default {
       showSuccess: false,
       errorMessage: '',
       customer: {
-        customer_type: null,
-        company_name: null,
-        first_name: null,
-        last_name: null,
-        address: null,
-        postal_code: null,
-        city: null,
-        country: null,
-        email: null,
-        phone: null,
-        tax_number: null,
-        vat_id: null,
-        is_active: null,
-        created_at: null
+        customer_type: '',
+        company_name: '',
+        first_name: '',
+        last_name: '',
+        address: '',
+        postal_code: '',
+        city: '',
+        country: '',
+        email: '',
+        phone: '',
+        tax_number: '',
+        vat_id: '',
+        is_active: '',
+        created_at: ''
       }
     }
   },
   methods: {
     async saveCustomer() {
+      this.isSubmitting = true
+      this.showSuccess = false
+      this.errorMessage = ''
+
       try {
         console.log('Saving customer:', this.customer)
+
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+
         this.showSuccess = true
         this.errorMessage = ''
       } catch (err) {
         console.error('Failed to save customer:', err)
         this.showSuccess = false
         this.errorMessage = 'Failed to save customer'
+      } finally {
+        this.isSubmitting = false
       }
     }
   }
@@ -94,6 +186,7 @@ export default {
 </script>
 
 <style scoped>
+/* Register formundaki CSS'yi birebir kopyaladım */
 form {
   width: 100%;
   max-width: 900px;
@@ -119,6 +212,7 @@ h3 {
   border-bottom: 2px solid #eee;
   padding-bottom: 0.3rem;
 }
+
 form > div > div {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -138,6 +232,7 @@ label {
 }
 
 input,
+select,
 textarea {
   width: 100%;
   padding: 0.75rem;
@@ -148,13 +243,13 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
 }
 
-/* Tek kolon alanları */
 .md\:col-span-2 {
   grid-column: span 2;
 }
@@ -164,7 +259,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Success & Error */
 [v-cloak] {
   display: none;
 }
@@ -193,10 +287,19 @@ div[v-if='errorMessage'] {
   border-radius: 5px;
   object-fit: cover;
 }
+
 .form-btn {
   margin-top: 2rem;
+  color: white;
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
-/* Responsive */
+
 @media (max-width: 768px) {
   form > div > div {
     grid-template-columns: 1fr;
