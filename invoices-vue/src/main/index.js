@@ -218,3 +218,37 @@ ipcMain.handle('customer-details', async (event, id) => {
     return { success: false, message: err.message }
   }
 })
+
+ipcMain.handle('add-customer', async (event, data) => {
+  console.log(data)
+  // try {
+  //   const row = db
+  //     .prepare('INSERT INTO customers (first_name, last_name, email, phone) VALUES (?,?,?,?)')
+  //     .run(data.first_name, data.last_name, data.email, data.phone)
+  //   return { success: true, customer: row }
+  // } catch (err) {
+  //   console.error('DB error:', err.message)
+  //   return { success: false, message: err.message }
+  // }
+})
+ipcMain.handle('update-customer', async (event, data) => {
+  const { id, customer } = data
+  console.log(id, customer)
+  // try {
+  //   const row = db.prepare('UPDATE customers SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?').run(data.first_name, data.last_name, data.email, data.phone, data.id)
+  //   return { success: true, customer: row }
+  // } catch (err) {
+  //   console.error('DB error:', err.message)
+  //   return { success: false, message: err.message }
+  // }
+})
+ipcMain.handle('delete-customer', async (event, id) => {
+  console.log(id)
+  // try {
+  //   const row = db.prepare('DELETE FROM customers WHERE id = ?').run(id)
+  //   return { success: true, customer: row }
+  // } catch (err) {
+  //   console.error('DB error:', err.message)
+  //   return { success: false, message: err.message }
+  // }
+})

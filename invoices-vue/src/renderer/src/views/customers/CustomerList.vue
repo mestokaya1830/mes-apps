@@ -12,6 +12,7 @@
         <div class="customer-list-item">{{ item.last_name ? item.last_name : '' }}</div>
         <div class="customer-list-item">{{ item.is_active ? item.is_active : '' }}</div>
         <router-link :to="'/customer-details/' + item.id" class="details-btn">Details</router-link>
+        <button class="delete-btn" @click="deleteCustomer(item.id)">Delete</button>
       </div>
     </template>
   </div>
@@ -33,6 +34,14 @@ export default {
       try {
         const result = await window.api.getCustomers()
         this.customers = result.customers
+        console.log(result)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async deleteCustomer(id) {
+      try {
+        const result = await window.api.deleteCustomer(id)
         console.log(result)
       } catch (error) {
         console.error(error)
@@ -77,15 +86,21 @@ export default {
   align-items: center;
   width: 100%;
 }
-.details-btn {
+.details-btn,
+.delete-btn {
   padding: 10px 20px;
   border-radius: 5px;
   text-decoration: none;
   color: white;
   background-color: cornflowerblue;
   cursor: pointer;
+  margin: 0 10px;
 }
-.details:hover {
+.delete-btn {
+  background-color: red;
+  border: none;
+}
+.details:hover, .delete-btn:hover {
   filter: brightness(0.9);
 }
 @media (max-width: 600px) {

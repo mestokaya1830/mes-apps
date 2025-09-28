@@ -4,11 +4,11 @@
     <form class="customer-card" @submit.prevent="updateCustomer()">
       <div class="customer-card-item">
         <label>Company Type</label>
-        <input v-model="customer.first_name" type="text" />
+        <input v-model="customer.customer_type" type="text" />
       </div>
       <div class="customer-card-item">
         <label>Company Name</label>
-        <input v-model="customer.compnay_name" type="text" />
+        <input v-model="customer.company_name" type="text" />
       </div>
       <div class="customer-card-item">
         <label>First Name</label>
@@ -58,7 +58,7 @@
         <label>Created Time</label>
         <input v-model="customer.created_at" type="text" />
       </div>
-      <button type="submit">Update</button>
+      <button type="submit" class="form-btn">Update</button>
     </form>
   </div>
 </template>
@@ -68,7 +68,22 @@ export default {
   data() {
     return {
       title: 'Customer List',
-      customer: {}
+      customer: {
+        customer_type: '',
+        company_name: '',
+        first_name: '',
+        last_name: '',
+        address: '',
+        postal_code: '',
+        city: '',
+        country: '',
+        email: '',
+        phone: '',
+        tax_number: '',
+        vat_id: '',
+        is_active: '',
+        created_at: ''
+      }
     }
   },
   mounted() {
@@ -86,7 +101,10 @@ export default {
     },
     async updateCustomer() {
       try {
-        const data = { id: this.$route.params.id, ...this.customer }
+        const data = {
+          id: this.$route.params.id,
+          customer: JSON.parse(JSON.stringify(this.customer))
+        }
         const result = await window.api.updateCustomer(data)
         console.log(result)
       } catch (error) {
@@ -151,11 +169,8 @@ input:focus {
 }
 
 .form-btn {
-  display: flex;
-  justify-content: flex-end;
+  width: 100%;
   margin-top: 20px;
-  width: fit-content;
-  align-self: flex-end;
 }
 .link {
   text-decoration: none;

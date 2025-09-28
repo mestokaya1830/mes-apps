@@ -142,19 +142,19 @@ export default {
       showSuccess: false,
       errorMessage: '',
       customer: {
-        customer_type: '',
+        customer_type: 'individual',
         company_name: '',
-        first_name: '',
-        last_name: '',
-        address: '',
-        postal_code: '',
-        city: '',
-        country: '',
-        email: '',
-        phone: '',
-        tax_number: '',
+        first_name: 'Maximilian',
+        last_name: 'Weber',
+        address: 'Friedrichstraße 158',
+        postal_code: '10117',
+        city: 'Berlin',
+        country: 'Deutschland',
+        email: 'max.weber@web.de',
+        phone: '+49 30 7854321',
+        tax_number: '11/456/78901',
         vat_id: '',
-        is_active: '',
+        is_active: true,
         created_at: ''
       }
     }
@@ -166,17 +166,16 @@ export default {
       this.errorMessage = ''
 
       try {
+        const data = JSON.parse(JSON.stringify(this.customer))
+        const result = await window.api.addCustomer(data)
+        // Save the customer to the server
+        if (result.error) {
+          throw new Error(result.error)
+        }
         console.log('Saving customer:', this.customer)
-
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
         this.showSuccess = true
-        this.errorMessage = ''
-      } catch (err) {
-        console.error('Failed to save customer:', err)
-        this.showSuccess = false
-        this.errorMessage = 'Failed to save customer'
+      } catch (error) {
+        this.errorMessage = error.message
       } finally {
         this.isSubmitting = false
       }

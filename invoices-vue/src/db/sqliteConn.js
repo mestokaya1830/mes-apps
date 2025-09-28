@@ -139,95 +139,65 @@ export default db
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
-// db.exec(`INSERT INTO customers (
-//     customer_type,
-//     company_name,
-//     first_name,
-//     last_name,
-//     address,
-//     postal_code,
-//     city,
-//     country,
-//     email,
-//     phone,
-//     tax_number,
-//     vat_id,
-//     is_active
-// ) VALUES (
-//     'individual',
-//     NULL,
-//     'Anna',
-//     'Schmidt',
-//     'Berliner Straße 45',
-//     '80331',
-//     'München',
-//     'Deutschland',
-//     'anna.schmidt@email.de',
-//     '+49 89 1234567',
-//     '987/654/32109',
-//     NULL,
-//     1
-// );`)
 
-// db.exec(`INSERT INTO customers (
-//     customer_type,
-//     company_name,
-//     first_name,
-//     last_name,
-//     address,
-//     postal_code,
-//     city,
-//     country,
-//     email,
-//     phone,
-//     tax_number,
-//     vat_id,
-//     is_active
-// ) VALUES (
-//     'company',
-//     'TechSolutions GmbH',
-//     NULL,
-//     NULL,
-//     'Hauptstraße 123',
-//     '10115',
-//     'Berlin',
-//     'Deutschland',
-//     'hans.mueller@techsolutions.de',    -- Firma adı (şirketler için)
-//     '+49 30 12345678',
-//     '123/456/78901',
-//     'DE123456789',
-//     1
-// );`)
+// db.exec(`
+//     INSERT INTO customers (
+//         customer_type, company_name, first_name, last_name, address, 
+//         postal_code, city, country, email, phone, tax_number, vat_id, is_active
+//     ) VALUES (
+//         'individual', 
+//         NULL,
+//         'Hans', 
+//         'Müller', 
+//         'Hamburger Straße 123', 
+//         '20095', 
+//         'Hamburg', 
+//         'Deutschland', 
+//         'hans.mueller@email.de', 
+//         '+49 40 123456789', 
+//         '12/345/67890',
+//         NULL,
+//         1
+//     );
 
-// db.exec(`INSERT INTO customers (
-//     customer_type,
-//     company_name,
-//     first_name,
-//     last_name,
-//     address,
-//     postal_code,
-//     city,
-//     country,
-//     email,
-//     phone,
-//     tax_number,
-//     vat_id,
-//     is_active
-// ) VALUES (
-//     'individual',
-//     NULL,
-//     'Hans',
-//     'Mueller',
-//     'Hauptstraße 123',
-//     '10115',
-//     'Berlin',
-//     'Deutschland',
-//     'hans.mueller@techsolutions.de',    -- Firma adı (şirketler için)
-//     '+49 30 12345678',
-//     '123/456/78901',                    -- Steuernummer
-//     'DE123456789',                      -- USt-IdNr
-//     1
-// )`)
+//     INSERT INTO customers (
+//         customer_type, company_name, first_name, last_name, address, 
+//         postal_code, city, country, email, phone, tax_number, vat_id, is_active
+//     ) VALUES (
+//         'company', 
+//         'TechSolutions GmbH',
+//         NULL,
+//         NULL,
+//         'Maximilianstraße 45', 
+//         '80539', 
+//         'München', 
+//         'Deutschland', 
+//         'info@techsolutions.de', 
+//         '+49 89 987654321', 
+//         '143/567/89012',
+//         'DE123456789',
+//         1
+//     );
+//     INSERT INTO customers (
+//         customer_type, company_name, first_name, last_name, address, 
+//         postal_code, city, country, email, phone, tax_number, vat_id, is_active
+//     ) VALUES (
+//         'individual', 
+//         NULL,
+//         'Anna', 
+//         'Schmidt', 
+//         'Unter den Linden 78', 
+//         '10117', 
+//         'Berlin', 
+//         'Deutschland', 
+//         'anna.schmidt@gmail.com', 
+//         '+49 30 456789123', 
+//         '11/987/65432',
+//         NULL,
+//         1
+//     );
+// `)
+
 
 //invoices
 // db.exec(`CREATE TABLE IF NOT EXISTS invoices (
@@ -285,7 +255,6 @@ export default db
 //   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // )`)
 
-
 //queries---------------------------------------------------------
 try {
   const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all()
@@ -331,3 +300,8 @@ try {
 //   console.error(err.message)
 // }
 
+// try {
+//   db.prepare('DROP TABLE customers').run()
+// } catch (err) {
+//   console.error(err.message)
+// }
