@@ -6,6 +6,7 @@
         <div class="profile-label">{{ key }}:</div>
         {{ value }}
       </div>
+      <img v-if="key === 'logo'" :src="`file://${value}`" alt="Logo" class="logo-img" />
     </template>
     <router-link to="/settings">Settings</router-link>
   </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <h2 class="">User Registration Form</h2>
-    <form @submit.prevent="saveUser">
+    <form @submit.prevent="register">
       <!-- Personal Information -->
       <div class="">
         <h3 class="">Personal Information</h3>
@@ -103,7 +103,7 @@
           </div>
           <div>
             <label class="">Preview Logo</label>
-            <img :src="user.logo" class="logo-preview"/>
+            <img :src="base64" class="logo-preview" />
           </div>
         </div>
       </div>
@@ -221,56 +221,55 @@ export default {
       showSuccess: false,
       errorMessage: '',
       user: {
-        first_name: '',
-        last_name: '',
-        password: '',
-        email: '',
-        phone: '',
-        address: '',
-        postal_code: '',
-        city: '',
-        country: '',
-        website: '',
-        firm_name: '',
-        legal_form: '',
-        managing_director: '',
-        tax_number: '',
-        tax_office: '',
-        vat_id: '',
-        court_registration: '',
-        court_location: '',
-        logo: '',
-        company_signature: '',
-        bank_name: '',
-        bic: '',
-        iban: '',
-        bank_account_holder: ''
+        first_name: 'Max',
+        last_name: 'Mustermann',
+        password: '121212',
+        email: 'user@user.de',
+        phone: '+49 30 12345678',
+        address: 'Musterstraße 12',
+        postal_code: '10115',
+        city: 'Berlin',
+        country: 'Germany',
+        website: 'https://www.example.de',
+        firm_name: 'Musterfirma GmbH',
+        legal_form: 'GmbH', // Almanya’daki limited şirket
+        managing_director: 'Max Mustermann',
+        tax_number: '12/345/67890',
+        tax_office: 'Finanzamt Berlin-Mitte',
+        vat_id: 'DE123456789',
+        court_registration: 'Amtsgericht Berlin',
+        court_location: 'Berlin',
+        company_signature: 'https://www.example.de/signature.png',
+        bank_name: 'Deutsche Bank',
+        bic: 'DEUTDEBBXXX',
+        iban: 'DE89370400440532013000',
+        bank_account_holder: 'Max Mustermann',
+        logo: ''
       },
-      currentBase64: null
+      base64: null
     }
   },
   methods: {
     async setLogo(event) {
       const file = event.target.files[0]
+      console.log(file.name.split('.').pop())
       if (!file) return
       const reader = new FileReader()
       reader.onload = () => {
-        this.currentBase64 = reader.result
-        this.user.logo = this.currentBase64
+        this.base64 = reader.result
       }
       reader.readAsDataURL(file)
     },
-    async saveImage() {
-      if (!this.currentBase64) return alert('No image selected!')
-      const savedPath = await window.api.saveImage(this.currentBase64, 'saved.png')
-      if (savedPath) alert(`Image saved: ${savedPath}`)
-      else alert('Image could not be saved!')
-    },
     // Submit form
-    async saveUser() {
-      // this.isSubmitting = true
-      // this.showSuccess = false
-      // this.errorMessage = ''
+    async register() {
+      if (this.user) {
+        if (!this.base64) return (this.errorMessage = 'Logo is required')
+        const result = await window.api.register(this.base64, JSON.parse(JSON.stringify(this.user)))
+        if (result.success) {
+          this.errorMessage = ''
+          this.$router.push('/login')
+        }
+      }
       console.log('Saving user:', this.user)
     }
   }

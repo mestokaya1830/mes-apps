@@ -82,9 +82,6 @@ export default db
 //     vat_id,
 //     court_registration,
 //     court_location,
-//     invoice_categories,
-//     invoice_counters,
-//     logo,
 //     company_signature,
 //     bank_name,
 //     bic,
@@ -110,9 +107,6 @@ export default db
 //     'DE123456789',
 //     'HRB 12345 B',
 //     'Amtsgericht Berlin',
-//     '{"FAT": "Rechnung (Allgemein)", "PRO": "Proforma Rechnung", "SRV": "Service Rechnung", "BIL": "IT/Software"}',
-//     '{"FAT": 1, "PRO": 1, "SRV": 1, "BIL": 1}',
-//     '/assets/logo.png',
 //     'Mit freundlichen Grüßen\nTechSolutions GmbH\nHans Mueller\nGeschäftsführer',
 //     'Deutsche Bank AG',
 //     'DEUTDEBBXXX',
@@ -139,65 +133,63 @@ export default db
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
-
 // db.exec(`
 //     INSERT INTO customers (
-//         customer_type, company_name, first_name, last_name, address, 
+//         customer_type, company_name, first_name, last_name, address,
 //         postal_code, city, country, email, phone, tax_number, vat_id, is_active
 //     ) VALUES (
-//         'individual', 
+//         'individual',
 //         NULL,
-//         'Hans', 
-//         'Müller', 
-//         'Hamburger Straße 123', 
-//         '20095', 
-//         'Hamburg', 
-//         'Deutschland', 
-//         'hans.mueller@email.de', 
-//         '+49 40 123456789', 
+//         'Hans',
+//         'Müller',
+//         'Hamburger Straße 123',
+//         '20095',
+//         'Hamburg',
+//         'Deutschland',
+//         'hans.mueller@email.de',
+//         '+49 40 123456789',
 //         '12/345/67890',
 //         NULL,
 //         1
 //     );
 
 //     INSERT INTO customers (
-//         customer_type, company_name, first_name, last_name, address, 
+//         customer_type, company_name, first_name, last_name, address,
 //         postal_code, city, country, email, phone, tax_number, vat_id, is_active
 //     ) VALUES (
-//         'company', 
+//         'company',
 //         'TechSolutions GmbH',
 //         NULL,
 //         NULL,
-//         'Maximilianstraße 45', 
-//         '80539', 
-//         'München', 
-//         'Deutschland', 
-//         'info@techsolutions.de', 
-//         '+49 89 987654321', 
+//         'Maximilianstraße 45',
+//         '80539',
+//         'München',
+//         'Deutschland',
+//         'info@techsolutions.de',
+//         '+49 89 987654321',
 //         '143/567/89012',
 //         'DE123456789',
 //         1
 //     );
 //     INSERT INTO customers (
-//         customer_type, company_name, first_name, last_name, address, 
+//         customer_type, company_name, first_name, last_name, address,
 //         postal_code, city, country, email, phone, tax_number, vat_id, is_active
 //     ) VALUES (
-//         'individual', 
+//         'individual',
 //         NULL,
-//         'Anna', 
-//         'Schmidt', 
-//         'Unter den Linden 78', 
-//         '10117', 
-//         'Berlin', 
-//         'Deutschland', 
-//         'anna.schmidt@gmail.com', 
-//         '+49 30 456789123', 
+//         'Anna',
+//         'Schmidt',
+//         'Unter den Linden 78',
+//         '10117',
+//         'Berlin',
+//         'Deutschland',
+//         'anna.schmidt@gmail.com',
+//         '+49 30 456789123',
 //         '11/987/65432',
 //         NULL,
 //         1
 //     );
 // `)
-
 
 //invoices
 // db.exec(`CREATE TABLE IF NOT EXISTS invoices (
@@ -272,12 +264,12 @@ try {
 //   console.error(err.message)
 // }
 
-// try {
-//   const users = db.prepare('SELECT * FROM customers').all()
-//   console.log('Users:', users)
-// } catch (err) {
-//   console.error(err.message)
-// }
+try {
+  const users = db.prepare('SELECT * FROM users').all()
+  console.log('Users:', users)
+} catch (err) {
+  console.error(err.message)
+}
 
 // try {
 //   const user = db.prepare('SELECT * FROM users WHERE email = ?').get('mesto@outlook.com')
@@ -302,6 +294,19 @@ try {
 
 // try {
 //   db.prepare('DROP TABLE customers').run()
+// } catch (err) {
+//   console.error(err.message)
+// // }
+
+try {
+  db.prepare('DELETE FROM users').run() // veya DROP TABLE users için: 'DROP TABLE users'
+} catch (err) {
+  console.error(err.message)
+}
+
+// try {
+//   db.exec('ALTER TABLE users DROP COLUMN invoice_categories')
+//   db.close()
 // } catch (err) {
 //   console.error(err.message)
 // }

@@ -1,5 +1,6 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import path from 'path'
+import fs from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
@@ -16,7 +17,7 @@ function createWindow() {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
-      preload: join(__dirname, '../preload/preload.js'),
+      preload: path.resolve(__dirname, '../preload/preload.js'),
       sandbox: true,
       contextIsolation: true,
       enableRemoteModule: false,
@@ -39,7 +40,7 @@ function createWindow() {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     win.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    win.loadFile(join(__dirname, '../renderer/index.html'))
+    win.loadFile(path.resolve(__dirname, '../renderer/index.html'))
   }
 }
 
@@ -74,6 +75,84 @@ ipcMain.handle('control-window', (event, data) => {
     case 'close':
       win.close()
       break
+  }
+})
+
+ipcMain.handle('register', async (event, base64, data) => {
+  try {
+    if (data) {
+      const user = db
+        .prepare(
+          `INSERT INTO users (
+            first_name,
+            last_name,
+            password,
+            email,
+            phone,
+            address,
+            postal_code,
+            city,
+            country,
+            website,
+            firm_name,
+            legal_form,
+            managing_director,
+            tax_number,
+            tax_office,
+            tax_prefix,
+            vat_id,
+            court_registration,
+            court_location,
+            company_signature,
+            bank_name,
+            bic,
+            iban,
+            bank_account_holder
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        )
+        .run(
+          data.first_name,
+          data.last_name,
+          data.password,
+          data.email,
+          data.phone,
+          data.address,
+          data.postal_code,
+          data.city,
+          data.country,
+          data.website,
+          data.firm_name,
+          data.legal_form,
+          data.managing_director,
+          data.tax_number,
+          data.tax_office,
+          data.tax_prefix,
+          data.vat_id,
+          data.court_registration,
+          data.court_location,
+          data.company_signature,
+          data.bank_name,
+          data.bic,
+          data.iban,
+          data.bank_account_holder
+        )
+
+      const buffer = Buffer.from(base64.split(',')[1], 'base64')
+      const savePath = path.join(
+        app.getAppPath(),
+        'src',
+        'renderer',
+        'src',
+        'assets',
+        data.firm_name.replace(/[^a-z0-9_-]/gi, '_') + '.png'
+      )
+      await fs.promises.writeFile(savePath, buffer)
+      return { success: true, user: user }
+    } else {
+      return { success: false, message: 'Invalid email or password' }
+    }
+  } catch (error) {
+    console.log(error)
   }
 })
 
