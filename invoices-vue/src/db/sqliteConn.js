@@ -327,10 +327,10 @@ try {
 // }
 
 // try {
-//   db.prepare('DROP TABLE customers').run()
+//   db.prepare('DROP TABLE users').run()
 // } catch (err) {
 //   console.error(err.message)
-// // }
+// }
 
 // try {
 //   db.prepare('DELETE FROM users').run() // veya DROP TABLE users için: 'DROP TABLE users'
