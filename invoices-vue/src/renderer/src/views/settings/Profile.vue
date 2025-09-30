@@ -6,6 +6,12 @@
         <div class="profile-label">{{ key }}:</div>
         {{ value }}
       </div>
+      <img
+        v-if="key === 'logo'"
+        class="profile-logo"
+        src="@renderer/assets/Musterfirma_GmbH.png"
+        alt=""
+      />
     </template>
     <router-link to="/settings">Settings</router-link>
   </div>
@@ -26,5 +32,5 @@ export default {
 </script>
 
 <style>
-/* Stil tanımlamaları buraya eklenebilir */
+
 </style>

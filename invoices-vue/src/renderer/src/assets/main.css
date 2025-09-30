@@ -157,7 +157,10 @@ input.error {
 .signup-link a:hover {
   text-decoration: underline;
 }
-
+.profile-logo {
+  width: 120px;
+  height: 100px;
+}
 /* Responsive */
 @media (max-width: 480px) {
   .form-card {

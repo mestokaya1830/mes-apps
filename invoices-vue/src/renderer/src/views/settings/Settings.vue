@@ -20,12 +20,17 @@
       </div>
       <div>
         <label for="logo">Logo</label>
-        <img src="" alt="" />
-        <input id="logo" type="file" @change="settings.logo" />
+        <img
+          ref="logo"
+          class="profile-logo"
+          src="@renderer/assets/Musterfirma_GmbH.png"
+          alt=""
+          @click="triggerFile"
+        />
+        <input id="logo" ref="logoInput" type="file" @change="setLogo" />
       </div>
     </form>
-    {{ settings }}
-    <button @click="saveSettings()">Save</button>
+    <button class="form-btn" @click="saveSettings()">Save</button>
   </div>
 </template>
 
@@ -42,18 +47,38 @@ export default {
       bank_name: this.$store.state.auth.bank_name,
       iban: this.$store.state.auth.iban,
       bank_account_holder: this.$store.state.auth.bank_account_holder,
-      bic: this.$store.state.auth.bic,
-      logo: this.$store.state.auth.logo
+      bic: this.$store.state.auth.bic
     }
   },
   methods: {
     async saveSettings() {
       console.log(this.settings)
+    },
+    triggerFile() {
+      this.$refs.logoInput.click()
+    },
+    setLogo(event) {
+      const file = event.target.files[0]
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          this.$refs.logo.src = e.target.result
+        }
+        reader.readAsDataURL(file)
+      }
     }
   }
 }
 </script>
 
 <style>
-/* Stil tanımlamaları buraya eklenebilir */
+.form-btn {
+  margin-top: 2rem;
+}
+#logo {
+  display: none;
+}
+.logo {
+  cursor: pointer;
+}
 </style>
