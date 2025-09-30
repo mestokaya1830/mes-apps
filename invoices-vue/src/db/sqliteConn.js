@@ -14,6 +14,55 @@ try {
   console.error('Connection error:', err.message)
 }
 process.on('exit', () => db.close())
+//Almnaya---------------------
+// 1️⃣ Tüzel kişiler (Kapitalgesellschaften – Limited/Anonim şirketler)
+// GmbH – Gesellschaft mit beschränkter Haftung (Limited şirket)
+// AG – Aktiengesellschaft (Anonim şirket)
+// KGaA – Kommanditgesellschaft auf Aktien (Hisse senetli komandit şirket)
+// SE – Societas Europaea (Avrupa anonim şirketi)
+// Ortaklıklar / şahıs şirketleri (Personengesellschaften)
+// OG – Offene Gesellschaft (Açık ticaret ortaklığı)
+// KG – Kommanditgesellschaft (Komandit şirket)
+// Einzelfirma (Tek kişilik işletme / şahıs şirketi)
+// GesbR – Gesellschaft bürgerlichen Rechts (Basit ortaklık)
+// Serbest meslek ve diğer
+// Freiberufler (Serbest meslek sahibi: doktor, avukat, danışman vb.)
+// Genossenschaft (Kooperatif / eG)
+// Verein (Dernek – kar amacı gütmeyen)
+
+
+//Avusturya---------------------
+// 1️⃣ Avusturya – Tüzel kişiler (Kapitalgesellschaften – Limited/Anonim şirketler)
+// GmbH – Gesellschaft mit beschränkter Haftung (Limited şirket)
+// AG – Aktiengesellschaft (Anonim şirket)
+// KGaA – Kommanditgesellschaft auf Aktien (Hisse senetli komandit şirket)
+// SE – Societas Europaea (Avrupa anonim şirketi)
+// Ortaklıklar / şahıs şirketleri (Personengesellschaften)
+// OG – Offene Gesellschaft (Açık ticaret ortaklığı)
+// KG – Kommanditgesellschaft (Komandit şirket)
+// Einzelfirma (Tek kişilik işletme / şahıs şirketi)
+// GesbR – Gesellschaft bürgerlichen Rechts (Basit ortaklık)
+// Serbest meslek ve diğer
+// Freiberufler (Serbest meslek sahibi: doktor, avukat, danışman vb.)
+// Genossenschaft (Kooperatif / eG)
+// Verein (Dernek – kar amacı gütmeyen)
+
+//Isvicre---------------------
+// 1️⃣ Isvicre – Tüzel kişiler (Kapitalgesellschaften – Limited/Anonim şirketler)
+// GmbH – Gesellschaft mit beschränkter Haftung (Limited şirket)
+// AG – Aktiengesellschaft (Anonim şirket)
+// KGaA – Kommanditgesellschaft auf Aktien (Hisse senetli komandit şirket)
+// SE – Societas Europaea (Avrupa anonim şirketi)
+// Ortaklıklar / şahıs şirketleri (Personengesellschaften)
+// OG – Offene Gesellschaft (Açık ticaret ortaklığı)
+// KG – Kommanditgesellschaft (Komandit şirket)
+// Einzelfirma (Tek kişilik işletme / şahıs şirketi)
+// GesbR – Gesellschaft bürgerlichen Rechts (Basit ortaklık)
+// Serbest meslek ve diğer
+// Freiberufler (Serbest meslek sahibi: doktor, avukat, danışman vb.)
+// Genossenschaft (Kooperatif / eG)
+// Verein (Dernek – kar amacı gütmeyen)
+
 export default db
 
 // db.exec(`CREATE TABLE IF NOT EXISTS users (
@@ -31,12 +80,12 @@ export default db
 //     firm_name TEXT NOT NULL,
 //     legal_form TEXT NOT NULL,                    -- GmbH, AG, OHG vs.
 //     managing_director TEXT,                      -- Geschäftsführer
-//     tax_number TEXT NOT NULL,
-//     tax_office TEXT NOT NULL,
-//     tax_prefix TEXT NOT NULL,                    -- JSON string olarak
-//     vat_id TEXT NOT NULL,                        -- USt-IdNr
-//     court_registration TEXT NOT NULL,            -- HRB 12345 B
-//     court_location TEXT NOT NULL,                -- Amtsgericht Berlin
+//     tax_number TEXT NOT NULL,                    -- Steuernummer
+//     tax_office TEXT,                             -- Opsiyonel (Steueramt)
+//     tax_prefix TEXT,                             -- Opsiyonel (VAT ID prefix, örn: DE)
+//     vat_id TEXT,                                 -- USt-IdNr
+//     court_registration TEXT,                     -- Opsiyonel (Handelsregisternummer)
+//     court_location TEXT,                         -- Amtsgericht Berlin
 //     logo TEXT NOT NULL,
 //     company_signature TEXT NOT NULL,
 //     bank_name TEXT NOT NULL,
