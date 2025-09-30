@@ -21,43 +21,28 @@ export default db
 //     first_name TEXT NOT NULL,
 //     last_name TEXT NOT NULL,
 //     password TEXT NOT NULL,
-//     email TEXT,
-//     phone TEXT,
-
-//     -- Adres Bilgileri
-//     address TEXT,
-//     postal_code TEXT,
-//     city TEXT,
+//     email TEXT UNIQUE NOT NULL,
+//     phone TEXT NOT NULL,
+//     address TEXT NOT NULL,
+//     postal_code TEXT NOT NULL,
+//     city TEXT NOT NULL,
 //     country TEXT DEFAULT 'Deutschland',
 //     website TEXT,
-
-//     -- Firma Bilgileri
-//     firm_name TEXT,
-//     legal_form TEXT,                    -- GmbH, AG, OHG vs.
-//     managing_director TEXT,             -- Geschäftsführer
-
-//     -- Vergi Bilgileri
-//     tax_number TEXT,
-//     tax_office TEXT,
-//     tax_prefix TEXT,                    -- JSON string olarak
-//     vat_id TEXT,                        -- USt-IdNr
-//     court_registration TEXT,            -- HRB 12345 B
-//     court_location TEXT,                -- Amtsgericht Berlin
-
-//     -- Fatura Ayarları
-//     invoice_categories TEXT,            -- JSON string
-//     invoice_counters TEXT,              -- JSON string
-
-//     -- Logo/İmza
-//     logo TEXT,
-//     company_signature TEXT,
-
-//     -- Banka Bilgileri
-//     bank_name TEXT,
-//     bic TEXT,
-//     iban TEXT,
-//     bank_account_holder TEXT,
-
+//     firm_name TEXT NOT NULL,
+//     legal_form TEXT NOT NULL,                    -- GmbH, AG, OHG vs.
+//     managing_director TEXT,                      -- Geschäftsführer
+//     tax_number TEXT NOT NULL,
+//     tax_office TEXT NOT NULL,
+//     tax_prefix TEXT NOT NULL,                    -- JSON string olarak
+//     vat_id TEXT NOT NULL,                        -- USt-IdNr
+//     court_registration TEXT NOT NULL,            -- HRB 12345 B
+//     court_location TEXT NOT NULL,                -- Amtsgericht Berlin
+//     logo TEXT NOT NULL,
+//     company_signature TEXT NOT NULL,
+//     bank_name TEXT NOT NULL,
+//     bic TEXT NOT NULL,
+//     iban TEXT NOT NULL,
+//     bank_account_holder TEXT NOT NULL,
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
