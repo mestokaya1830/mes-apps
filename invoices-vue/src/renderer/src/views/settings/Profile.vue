@@ -1,17 +1,12 @@
 <template>
   <div>
     <h1>{{ title }}</h1>
-    <template v-for="(value, key) in profile" :key="key">
+    <template v-for="(value, key) in user" :key="key">
       <div class="profile-container">
-        <div class="profile-label">{{ key }}:</div>
-        {{ value }}
+        <span class="profile-label">{{ key }}:</span>
+        <span v-if="key !== 'logo'">{{ value }}</span>
+        <img v-if="key === 'logo'" :src="`data:image/png;base64,${value}`" alt="" />
       </div>
-      <img
-        v-if="key === 'logo'"
-        class="profile-logo"
-        src="@renderer/assets/Musterfirma_GmbH.png"
-        alt=""
-      />
     </template>
     <router-link to="/settings">Settings</router-link>
   </div>
@@ -22,15 +17,22 @@ export default {
   data() {
     return {
       title: 'Profile',
-      profile: {}
+      user: {}
     }
   },
   mounted() {
-    this.profile = this.$store.state.auth
+    this.getUser()
+  },
+  methods: {
+    async getUser() {
+      try {
+        const response = await window.api.getUser()
+        this.user = response.user
+        console.log(this.user)
+      } catch (error) {
+        console.error(error)
+      }
+    }
   }
 }
 </script>
-
-<style>
-
-</style>

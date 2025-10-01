@@ -66,7 +66,7 @@ process.on('exit', () => db.close())
 export default db
 
 // db.exec(`CREATE TABLE IF NOT EXISTS users (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     id INTEGER PRIMARY KEY CHECK(id = 1),
 //     first_name TEXT NOT NULL,
 //     last_name TEXT NOT NULL,
 //     password TEXT NOT NULL,
@@ -86,7 +86,7 @@ export default db
 //     vat_id TEXT,                                 -- USt-IdNr
 //     court_registration TEXT,                     -- Opsiyonel (Handelsregisternummer)
 //     court_location TEXT,                         -- Amtsgericht Berlin
-//     logo TEXT NOT NULL,
+//     logo BLOB NOT NULL,
 //     company_signature TEXT NOT NULL,
 //     bank_name TEXT NOT NULL,
 //     bic TEXT NOT NULL,

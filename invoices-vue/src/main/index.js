@@ -7,6 +7,7 @@ import db from '../db/sqliteConn.js'
 import nodeMailer from 'nodemailer'
 
 let win = null
+
 function createWindow() {
   win = new BrowserWindow({
     // fullscreen: true,
@@ -78,7 +79,7 @@ ipcMain.handle('control-window', (event, data) => {
   }
 })
 
-ipcMain.handle('register', async (event, base64, data) => {
+ipcMain.handle('register', async (event, image, data) => {
   try {
     if (data) {
       const user = db
@@ -103,12 +104,13 @@ ipcMain.handle('register', async (event, base64, data) => {
             vat_id,
             court_registration,
             court_location,
+            logo,
             company_signature,
             bank_name,
             bic,
             iban,
             bank_account_holder
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         )
         .run(
           data.first_name,
@@ -130,6 +132,7 @@ ipcMain.handle('register', async (event, base64, data) => {
           data.vat_id,
           data.court_registration,
           data.court_location,
+          Buffer.from(image),
           data.company_signature,
           data.bank_name,
           data.bic,
@@ -137,22 +140,38 @@ ipcMain.handle('register', async (event, base64, data) => {
           data.bank_account_holder
         )
 
-      const buffer = Buffer.from(base64.split(',')[1], 'base64')
-      const savePath = path.join(
-        app.getAppPath(),
-        'src',
-        'renderer',
-        'src',
-        'assets',
-        data.firm_name.replace(/[^a-z0-9_-]/gi, '_') + '.png'
-      )
-      await fs.promises.writeFile(savePath, buffer)
+      //for to disk storage
+      // const buffer = Buffer.from(image.split(',')[1], 'base64')
+      // const savePath = path.join(
+      //   app.getAppPath(),
+      //   'src',
+      //   'renderer',
+      //   'src',
+      //   'assets',
+      //   data.firm_name.toLowerCase().replace(/[^a-z0-9_-]/gi, '_') + '.' + data.logo.split('.')[1]
+      // )
+      // await fs.promises.writeFile(savePath, buffer)
+
       return { success: true, user: user }
     } else {
       return { success: false, message: 'Invalid email or password' }
     }
   } catch (error) {
     console.log(error)
+  }
+})
+
+ipcMain.handle('check-register', async () => {
+  try {
+    const row = db.prepare('SELECT * FROM users').all()
+    if (row.length > 0) {
+      return { success: true }
+    } else {
+      return { success: false }
+    }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
   }
 })
 
@@ -278,6 +297,21 @@ ipcMain.handle('reset-password', async (event, data) => {
   }
 })
 
+ipcMain.handle('get-user', async () => {
+  try {
+    const row = db.prepare('SELECT * FROM users WHERE id = 1').get()
+    if (row && row.logo) {
+      // Buffer → Base64 string
+      row.logo = row.logo.toString('base64')
+    }
+    return { success: true, user: row }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+
 ipcMain.handle('get-customers', async () => {
   try {
     const rows = db.prepare('SELECT * FROM customers').all()
@@ -310,6 +344,7 @@ ipcMain.handle('add-customer', async (event, data) => {
   //   return { success: false, message: err.message }
   // }
 })
+
 ipcMain.handle('update-customer', async (event, data) => {
   const { id, customer } = data
   console.log(id, customer)
@@ -321,6 +356,7 @@ ipcMain.handle('update-customer', async (event, data) => {
   //   return { success: false, message: err.message }
   // }
 })
+
 ipcMain.handle('delete-customer', async (event, id) => {
   console.log(id)
   // try {

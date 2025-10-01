@@ -33,7 +33,7 @@
       </router-link>
     </nav>
 
-    <div class="sidebar-footer">
+    <div v-if="$store.state.auth" class="sidebar-footer">
       <button class="logout-btn" @click="logout()">
         <span class="nav-icon material-icons">logout</span>
         <span class="nav-text logout">Logout</span>

@@ -1,6 +1,12 @@
 <template>
   <div class="form-container">
-    <div class="form-card">
+    <div v-if="!register" class="form-card">
+      <div class="form-header">
+        <h2>Welcome To Mes App Setup</h2>
+        <router-link to="register" class="forgot-password"> Next </router-link>
+      </div>
+    </div>
+    <div v-else class="form-card">
       <div class="form-header">
         <h2>Welcome Back</h2>
         <p>Please sign in to your account</p>
@@ -36,10 +42,7 @@
         </div>
 
         <div class="form-options">
-          <router-link v-if="!checkRegister" to="register" class="forgot-password">
-            Setup
-          </router-link>
-          <div v-else class="registered">Reistered</div>
+          <div class="registered"></div>
           <router-link to="email-verfication" class="forgot-password">
             Forgot password?
           </router-link>
@@ -65,10 +68,18 @@ export default {
         password: '',
         credential: ''
       },
-      checkRegister: false
+      register: false
     }
   },
+  mounted() {
+    this.checkRegister()
+    console.log(this.$store.state.auth)
+  },
   methods: {
+    async checkRegister() {
+      const res = await window.api.checkRegister()
+      this.register = res.success
+    },
     async loginUser() {
       this.error = {}
       if (this.user.email == '') {
@@ -78,7 +89,6 @@ export default {
       } else {
         const data = { email: this.user.email, password: this.user.password }
         const res = await window.api.login(data)
-        console.log(res)
         if (!res.success) {
           this.error.credential = res.message
         } else {

@@ -57,19 +57,19 @@ const routes = [
     path: '/customer-list',
     name: 'Customers',
     component: () => import('../views/customers/CustomerList.vue'),
-    meta: { title: 'Customers' }
+    meta: { title: 'Customers', auth: true }
   },
   {
     path: '/customer-new',
     name: 'CustomerNew',
     component: () => import('../views/customers/CustomerNew.vue'),
-    meta: { title: 'Add New Customer' }
+    meta: { title: 'Add New Customer', auth: true }
   },
   {
     path: '/customer-details/:id',
     name: 'CustomerDetails',
     component: () => import('../views/customers/CustomerDetails.vue'),
-    meta: { title: 'Customer Details' }
+    meta: { title: 'Customer Details', auth: true }
   },
   {
     path: '/about',
@@ -88,7 +88,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
-
+  // next()
   if (to.meta.auth && !store.state.auth) {
     next('/login')
   } else {

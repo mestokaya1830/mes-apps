@@ -103,7 +103,7 @@
           </div>
           <div>
             <label class="">Preview Logo</label>
-            <img :src="base64" class="logo-preview" />
+            <img :src="selectedImage" class="logo-preview" />
           </div>
         </div>
       </div>
@@ -246,25 +246,37 @@ export default {
         bank_account_holder: 'Max Mustermann',
         logo: ''
       },
-      base64: null
+      binaryImage: null,
+      selectedImage: null
     }
   },
   methods: {
     async setLogo(event) {
       const file = event.target.files[0]
-      console.log(file.name.split('.').pop())
+      this.user.logo = `@renderer/assets/${this.user.firm_name.toLowerCase().replace(/[^a-z0-9_-]/gi, '_')}.${file.name.split('.')[1]}`
       if (!file) return
-      const reader = new FileReader()
-      reader.onload = () => {
-        this.base64 = reader.result
+      const previewReader = new FileReader()
+      previewReader.onload = () => {
+        this.selectedImage = previewReader.result // Base64 string, <img> için
       }
-      reader.readAsDataURL(file)
+      previewReader.readAsDataURL(file)
+
+      // DB  binary
+      const binaryReader = new FileReader()
+      binaryReader.onload = () => {
+        this.binaryImage = new Uint8Array(binaryReader.result) // ArrayBuffer → Uint8Array
+      }
+      binaryReader.readAsArrayBuffer(file)
     },
     // Submit form
     async register() {
       if (this.user) {
-        if (!this.base64) return (this.errorMessage = 'Logo is required')
-        const result = await window.api.register(this.base64, JSON.parse(JSON.stringify(this.user)))
+        if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
+        const result = await window.api.register(
+          Array.from(this.binaryImage),
+          JSON.parse(JSON.stringify(this.user))
+        )
+        // const result = await window.api.register(this.base64, JSON.parse(JSON.stringify(this.user)))
         if (result.success) {
           this.errorMessage = ''
           this.$router.push('/login')
