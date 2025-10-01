@@ -86,7 +86,7 @@ export default db
 //     vat_id TEXT,                                 -- USt-IdNr
 //     court_registration TEXT,                     -- Opsiyonel (Handelsregisternummer)
 //     court_location TEXT,                         -- Amtsgericht Berlin
-//     logo BLOB NOT NULL,
+//     logo TEXT NOT NULL,
 //     company_signature TEXT NOT NULL,
 //     bank_name TEXT NOT NULL,
 //     bic TEXT NOT NULL,

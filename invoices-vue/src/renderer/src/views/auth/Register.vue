@@ -243,8 +243,7 @@ export default {
         bank_name: 'Deutsche Bank',
         bic: 'DEUTDEBBXXX',
         iban: 'DE89370400440532013000',
-        bank_account_holder: 'Max Mustermann',
-        logo: ''
+        bank_account_holder: 'Max Mustermann'
       },
       binaryImage: null,
       selectedImage: null
@@ -253,7 +252,6 @@ export default {
   methods: {
     async setLogo(event) {
       const file = event.target.files[0]
-      this.user.logo = `@renderer/assets/${this.user.firm_name.toLowerCase().replace(/[^a-z0-9_-]/gi, '_')}.${file.name.split('.')[1]}`
       if (!file) return
       const previewReader = new FileReader()
       previewReader.onload = () => {
