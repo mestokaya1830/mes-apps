@@ -243,7 +243,8 @@ export default {
         bank_name: 'Deutsche Bank',
         bic: 'DEUTDEBBXXX',
         iban: 'DE89370400440532013000',
-        bank_account_holder: 'Max Mustermann'
+        bank_account_holder: 'Max Mustermann',
+        image_type: ''
       },
       binaryImage: null,
       selectedImage: null
@@ -252,6 +253,7 @@ export default {
   methods: {
     async setLogo(event) {
       const file = event.target.files[0]
+      this.user.image_type = file.type
       if (!file) return
       const previewReader = new FileReader()
       previewReader.onload = () => {
@@ -269,7 +271,7 @@ export default {
     // Submit form
     async register() {
       if (this.user) {
-        if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
+        if (!this.binaryImage) return (this.errorMessage = 'Logo is required') 
         const result = await window.api.register(
           Array.from(this.binaryImage),
           JSON.parse(JSON.stringify(this.user))
@@ -280,7 +282,6 @@ export default {
           this.$router.push('/login')
         }
       }
-      console.log('Saving user:', this.user)
     }
   }
 }

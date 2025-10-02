@@ -82,6 +82,7 @@ ipcMain.handle('control-window', (event, data) => {
 ipcMain.handle('register', async (event, image, data) => {
   try {
     if (data) {
+      console.log(data)
       const user = db
         .prepare(
           `INSERT INTO users (
@@ -105,12 +106,13 @@ ipcMain.handle('register', async (event, image, data) => {
             court_registration,
             court_location,
             logo,
+            image_type,
             company_signature,
             bank_name,
             bic,
             iban,
             bank_account_holder
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         )
         .run(
           data.first_name,
@@ -133,6 +135,7 @@ ipcMain.handle('register', async (event, image, data) => {
           data.court_registration,
           data.court_location,
           Buffer.from(image),
+          data.image_type,
           data.company_signature,
           data.bank_name,
           data.bic,
@@ -188,16 +191,6 @@ ipcMain.handle('login', async (event, data) => {
     } else {
       return { success: false, message: 'Invalid email or password' }
     }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('getUsers', async () => {
-  try {
-    const rows = db.prepare('SELECT * FROM users').all()
-    return { success: true, users: rows }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -310,7 +303,6 @@ ipcMain.handle('get-user', async () => {
     return { success: false, message: err.message }
   }
 })
-
 
 ipcMain.handle('get-customers', async () => {
   try {

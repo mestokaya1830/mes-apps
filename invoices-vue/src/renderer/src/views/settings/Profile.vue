@@ -8,7 +8,7 @@
         <img v-if="key === 'logo'" :src="`data:image/png;base64,${value}`" alt="" />
       </div>
     </template>
-    <router-link to="/settings">Settings</router-link>
+    <router-link to="/edit-profile">Edit Profile</router-link>
   </div>
 </template>
 
@@ -28,7 +28,6 @@ export default {
       try {
         const response = await window.api.getUser()
         this.user = response.user
-        console.log(this.user)
       } catch (error) {
         console.error(error)
       }

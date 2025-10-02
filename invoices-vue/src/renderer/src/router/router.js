@@ -42,10 +42,10 @@ const routes = [
     meta: { title: 'Profile', auth: true }
   },
   {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('../views/settings/Settings.vue'),
-    meta: { title: 'Settings' }
+    path: '/edit-profile',
+    name: 'edit-profile',
+    component: () => import('../views/settings/EditProfile.vue'),
+    meta: { title: 'Edit Profile', auth: true }
   },
   {
     path: '/invoices',
