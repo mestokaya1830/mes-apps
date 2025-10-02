@@ -164,6 +164,27 @@ ipcMain.handle('register', async (event, image, data) => {
   }
 })
 
+ipcMain.handle('update-user', async (event, image, data) => {
+  try {
+    const row = db
+      .prepare(
+        'UPDATE users SET bank_name = ?, bic = ?, iban = ?, bank_account_holder = ?,image_type = ?, logo = ? WHERE id = ?'
+      )
+      .run(
+        data.bank_name,
+        data.bic,
+        data.iban,
+        data.bank_account_holder,
+        data.image_type,
+        Buffer.from(image),
+        1
+      )
+    return { success: true, customer: row }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
 ipcMain.handle('check-register', async () => {
   try {
     const row = db.prepare('SELECT * FROM users').all()

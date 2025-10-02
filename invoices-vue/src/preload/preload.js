@@ -7,7 +7,7 @@ contextBridge.exposeInMainWorld('api', {
   login: async (data) => ipcRenderer.invoke('login', data),
   emailVerfication: async (data) => ipcRenderer.invoke('email-verfication', data),
   resetPassword: async (data) => ipcRenderer.invoke('reset-password', data),
-  updateProfile: async (data) => ipcRenderer.invoke('update-profile', data),
+  updateUser: async (image, data) => ipcRenderer.invoke('update-user', image, data),
   getUser: async (data) => ipcRenderer.invoke('get-user', data),
   getCustomers: async (data) => ipcRenderer.invoke('get-customers', data),
   customerDetails: async (id) => ipcRenderer.invoke('customer-details', id),

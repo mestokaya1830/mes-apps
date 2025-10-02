@@ -5,10 +5,15 @@
       <div class="profile-container">
         <span class="profile-label">{{ key }}:</span>
         <span v-if="key !== 'logo'">{{ value }}</span>
-        <img v-if="key === 'logo'" :src="`data:image/png;base64,${value}`" alt="" />
+        <img
+          v-if="key === 'logo'"
+          :src="`data:image/png;base64,${value}`"
+          alt=""
+          class="profile-logo"
+        />
       </div>
     </template>
-    <router-link to="/edit-profile">Edit Profile</router-link>
+    <router-link to="/edit-user">Edit User</router-link>
   </div>
 </template>
 
@@ -35,3 +40,21 @@ export default {
   }
 }
 </script>
+
+<style>
+.profile-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.profile-label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+.profile-logo {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+</style>
