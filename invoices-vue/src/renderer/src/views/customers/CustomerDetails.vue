@@ -52,7 +52,10 @@
       </div>
       <div class="customer-card-item">
         <label>Status</label>
-        <input v-model="customer.is_active" type="text" />
+        <select v-model="customer.is_active">
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
       </div>
       <div class="customer-card-item">
         <label>Created Time</label>
@@ -106,6 +109,9 @@ export default {
           customer: JSON.parse(JSON.stringify(this.customer))
         }
         const result = await window.api.updateCustomer(data)
+        if (result.success) {
+          this.$router.push('/customer-list')
+        }
         console.log(result)
       } catch (error) {
         console.error(error)
@@ -154,7 +160,7 @@ label {
   color: #555;
 }
 
-input {
+input, select {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;

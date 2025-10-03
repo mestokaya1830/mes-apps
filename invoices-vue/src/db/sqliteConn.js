@@ -164,7 +164,7 @@ export default db
 //     phone TEXT,
 //     tax_number TEXT,                    -- Steuernummer
 //     vat_id TEXT,                       -- USt-IdNr
-//     is_active BOOLEAN DEFAULT 1,
+//     is_active TEXT DEFAULT 'Active',
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
@@ -185,7 +185,7 @@ export default db
 //         '+49 40 123456789',
 //         '12/345/67890',
 //         NULL,
-//         1
+//         'Active'
 //     );
 
 //     INSERT INTO customers (
@@ -204,7 +204,7 @@ export default db
 //         '+49 89 987654321',
 //         '143/567/89012',
 //         'DE123456789',
-//         1
+//         'Active'
 //     );
 //     INSERT INTO customers (
 //         customer_type, company_name, first_name, last_name, address,
@@ -222,7 +222,7 @@ export default db
 //         '+49 30 456789123',
 //         '11/987/65432',
 //         NULL,
-//         1
+//         'Active'
 //     );
 // `)
 

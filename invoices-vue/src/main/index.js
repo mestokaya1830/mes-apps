@@ -360,14 +360,37 @@ ipcMain.handle('add-customer', async (event, data) => {
 
 ipcMain.handle('update-customer', async (event, data) => {
   const { id, customer } = data
-  console.log(id, customer)
-  // try {
-  //   const row = db.prepare('UPDATE customers SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?').run(data.first_name, data.last_name, data.email, data.phone, data.id)
-  //   return { success: true, customer: row }
-  // } catch (err) {
-  //   console.error('DB error:', err.message)
-  //   return { success: false, message: err.message }
-  // }
+  // console.log('Customer:', customer)
+  // console.log('Is object?', typeof customer === 'object')
+  // console.log('Values:', Object.values(customer))
+
+  try {
+    const row = db
+      .prepare(
+        'UPDATE customers SET customer_type = ?, company_name = ?, first_name = ?, last_name = ?, address = ?, postal_code = ?, city = ?, country = ?, email = ?, phone = ?, tax_number = ?, vat_id = ?, is_active = ?  WHERE id = ?'
+      )
+      .run(
+        customer.customer_type,
+        customer.company_name,
+        customer.first_name,
+        customer.last_name,
+        customer.address,
+        customer.postal_code,
+        customer.city,
+        customer.country,
+        customer.email,
+        customer.phone,
+        customer.tax_number,
+        customer.vat_id,
+        customer.is_active,
+        id
+    )
+    console.log(row)
+    return { success: true, customer: row }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })
 
 ipcMain.handle('delete-customer', async (event, id) => {
