@@ -2,7 +2,7 @@
   <div class="container">
     <h1>{{ title }}</h1>
     <span class="form-btn">
-      <router-link to="/customer-new" class="link">Add New Customer</router-link>
+      <router-link to="/customers/create" class="link">Add New Customer</router-link>
     </span>
 
     <template v-for="item in customers" :key="item.id">
@@ -11,7 +11,7 @@
         <div class="customer-list-item">{{ item.first_name ? item.first_name : '' }}</div>
         <div class="customer-list-item">{{ item.last_name ? item.last_name : '' }}</div>
         <div class="customer-list-item">{{ item.is_active ? item.is_active : '' }}</div>
-        <router-link :to="'/customer-details/' + item.id" class="details-btn">Details</router-link>
+        <router-link :to="'/customers/details/' + item.id" class="details-btn">Details</router-link>
         <button class="delete-btn" @click="deleteCustomer(item.id)">Delete</button>
       </div>
     </template>
@@ -22,7 +22,7 @@
 export default {
   data() {
     return {
-      title: 'Customer List',
+      title: 'Customers',
       customers: []
     }
   },

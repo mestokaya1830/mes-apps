@@ -16,8 +16,16 @@
         <span class="nav-icon material-icons">description</span>
         <span class="nav-text">Invoices</span>
       </router-link>
+      <router-link to="/offers" exact-active-class="active" class="nav-item">
+        <span class="nav-icon material-icons">description</span>
+        <span class="nav-text">Offers</span>
+      </router-link>
+      <router-link to="/orders" exact-active-class="active" class="nav-item">
+        <span class="nav-icon material-icons">description</span>
+        <span class="nav-text">Orders</span>
+      </router-link>
 
-      <router-link to="/customer-list" exact-active-class="active" class="nav-item">
+      <router-link to="/customers" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">people</span>
         <span class="nav-text">Customers</span>
       </router-link>

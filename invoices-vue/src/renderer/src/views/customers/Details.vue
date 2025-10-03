@@ -110,7 +110,7 @@ export default {
         }
         const result = await window.api.updateCustomer(data)
         if (result.success) {
-          this.$router.push('/customer-list')
+          this.$router.push('/customers/index')
         }
         console.log(result)
       } catch (error) {
