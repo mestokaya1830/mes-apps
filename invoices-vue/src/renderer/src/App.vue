@@ -53,7 +53,7 @@ export default {
   flex-direction: column;
   align-items: center;
   height: 100%;
-  padding: 50px;
+  padding: 30px 20px;
   overflow-y: auto; /* İçerik taşarsa scroll */
 }
 #titlebar {

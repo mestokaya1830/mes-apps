@@ -2,51 +2,51 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <div class="logo">
-        <h2>Mes invoice App</h2>
+        <h2>Mes Rechnungs-App</h2>
       </div>
     </div>
 
     <nav class="sidebar-nav">
       <router-link to="/" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">home</span>
-        <span class="nav-text">Home</span>
+        <span class="nav-text">Startseite</span>
       </router-link>
 
       <router-link to="/invoices" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">description</span>
-        <span class="nav-text">Invoices</span>
+        <span class="nav-text">Rechnungen</span>
       </router-link>
 
       <router-link to="/offers" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">description</span>
-        <span class="nav-text">Offers</span>
+        <span class="nav-text">Angebote</span>
       </router-link>
 
       <router-link to="/customers" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">people</span>
-        <span class="nav-text">Customers</span>
+        <span class="nav-text">Kunden</span>
       </router-link>
 
       <router-link to="/orders" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">description</span>
-        <span class="nav-text">Orders</span>
+        <span class="nav-text">Auftrag</span>
       </router-link>
 
       <router-link to="/profile" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">admin_panel_settings</span>
-        <span class="nav-text">Profile</span>
+        <span class="nav-text">Profil</span>
       </router-link>
 
       <router-link to="/about" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">info</span>
-        <span class="nav-text">About</span>
+        <span class="nav-text">Über</span>
       </router-link>
     </nav>
 
     <div v-if="$store.state.auth" class="sidebar-footer">
       <button class="logout-btn" @click="logout()">
         <span class="nav-icon material-icons">logout</span>
-        <span class="nav-text logout">Logout</span>
+        <span class="nav-text logout">Abmelden</span>
       </button>
     </div>
   </div>
@@ -64,7 +64,7 @@ export default {
         await this.$store.commit('setAuth', null)
         this.$router.push('/login')
       } catch (error) {
-        console.error('Logout error:', error)
+        console.error('Abmeldefehler:', error)
       }
     }
   }
@@ -134,16 +134,6 @@ export default {
   border-bottom-right-radius: 50px;
 }
 
-/* .nav-item.active::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  background: #3b82f6;
-} */
-
 .nav-icon {
   margin-right: 0.75rem;
   display: flex;
@@ -187,7 +177,6 @@ export default {
   margin-right: 1.2rem;
 }
 
-/* Scrollbar styling */
 .sidebar-nav::-webkit-scrollbar {
   width: 4px;
 }
@@ -205,7 +194,6 @@ export default {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
