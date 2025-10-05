@@ -1,9 +1,6 @@
 <template lang="">
   <div>
     <h1>{{ title }}</h1>
-    <!-- Watermark -->
-    <div class="watermark">ENTWURF</div>
-
     <div class="page" style="position: relative">
       <!-- HEADER -->
       <div class="header">
@@ -847,18 +844,5 @@ export default {
   right: 40px;
   font-size: 9px;
   color: #999;
-}
-
-/* WATERMARK für Entwurf */
-.watermark {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(-45deg);
-  font-size: 120px;
-  color: rgba(0, 0, 0, 0.03);
-  font-weight: bold;
-  pointer-events: none;
-  z-index: 0;
 }
 </style>
