@@ -7,11 +7,23 @@ const vuexLocalStorage = new VuexPersist({
 
 export default createStore({
   state: {
-    auth: ''
+    auth: '',
+    invoicePreview: '',
+    offerPreview: '',
+    orderPreview: ''
   },
   mutations: {
     setAuth(state, payload) {
       state.auth = payload
+    },
+    setInvoicePreview(state, payload) {
+      state.invoicePreview = payload
+    },
+    setOfferPreview(state, payload) {
+      state.offerPreview = payload
+    },
+    setOrderPreview(state, payload) {
+      state.orderPreview = payload
     }
   },
   actions: {},

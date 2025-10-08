@@ -21,10 +21,10 @@
         <div class="recipient">
           <div class="sender-line">Ihre Firma GmbH • Musterstraße 123 • 10115 Berlin</div>
           <div class="recipient-address">
-            <div class="recipient-name">${customerName}</div>
-            <div>${customerCompany}</div>
-            <div>${customerAddress}</div>
-            <div>${customerZip} ${customerCity}</div>
+            <div class="recipient-name">{{ previewData.customerName }}</div>
+            <div>{{ previewData.customerCompany }}</div>
+            <div>{{ previewData.customerAddress }}</div>
+            <div>{{ previewData.customerZip }} {{ previewData.customerCity }}</div>
           </div>
         </div>
 
@@ -42,19 +42,19 @@
           <div>
             <div class="meta-row">
               <span class="meta-label">Rechnungsnr.:</span>
-              <span class="meta-value">${invoiceNumber}</span>
+              <span class="meta-value">{{ previewData.invoiceNumber }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">${formattedDate}</span>
+              <span class="meta-value">{{ previewData.formattedDate }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kundennr.:</span>
-              <span class="meta-value">${customerNumber}</span>
+              <span class="meta-value">{{ previewData.customerNumber }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Leistung:</span>
-              <span class="meta-value">${servicePeriod}</span>
+              <span class="meta-value">{{ previewData.servicePeriod }}</span>
             </div>
           </div>
         </div>
@@ -82,30 +82,43 @@
             </tr>
           </thead>
           <tbody>
-            ${positionsHTML}
+            <tr v-for="(item, index) in previewData.positions" :key="index">
+              <td>{{ index + 1 }}</td>
+              <td>
+                <div class="position-title">{{ item.title }}</div>
+                <div v-if="item.description" class="position-description">
+                  {{ item.description }}
+                </div>
+              </td>
+              <td class="center">{{ item.quantity }}</td>
+              <td class="center">{{ item.unit }}</td>
+              <td class="right">{{ item.price }}</td>
+              <td class="right">{{ item.vat }}%</td>
+              <td class="right">{{ item.unitTotal }}</td>
+            </tr>
           </tbody>
         </table>
 
         <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">${formatCurrency(totals.subtotal)}</span>
+            <span class="total-value">{{ $store.state.invoicePreview.subtotal }}</span>
           </div>
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">${formatCurrency(totals.vatAmount)}</span>
+            <span class="total-value">{{ $store.state.invoicePreview.vatAmount }}</span>
           </div>
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">${formatCurrency(totals.grandTotal)}</span>
+            <span class="total-value">{{ $store.state.invoicePreview.grandTotal }}</span>
           </div>
           <div class="total-row paid">
             <span class="total-label">✓ Bereits bezahlt:</span>
-            <span class="total-value">- ${formatCurrency(totals.paidAmount)}</span>
+            <span class="total-value">- {{ $store.state.invoicePreview.paidAmount }}</span>
           </div>
           <div class="total-row final outstanding">
             <span class="total-label">⚠️ Offener Betrag:</span>
-            <span class="total-value">${formatCurrency(totals.outstanding)}</span>
+            <span class="total-value">{{ $store.state.invoicePreview.outstanding }}</span>
           </div>
         </div>
 
@@ -113,13 +126,13 @@
           <div class="bank-title">🏦 Bankverbindung</div>
           <div class="bank-info">
             <span class="bank-label">Bank:</span>
-            <span class="bank-value">Berliner Sparkasse</span>
+            <span class="bank-value">{{ previewData.bank }}</span>
             <span class="bank-label">IBAN:</span>
-            <span class="bank-value">DE89 1005 0000 0123 4567 89</span>
+            <span class="bank-value">{{ previewData.iban }}</span>
             <span class="bank-label">BIC:</span>
-            <span class="bank-value">BELADEBEXXX</span>
+            <span class="bank-value">{{ previewData.bic }}</span>
             <span class="bank-label">Verwendung:</span>
-            <span class="bank-value">${invoiceNumber}</span>
+            <span class="bank-value">{{ invoiceNumber }}</span>
           </div>
         </div>
 
@@ -139,6 +152,25 @@
   </div>
 </template>
 
+<script>
+export default {
+  data() {
+    return {
+      title: 'Rechnungsvorschau',
+      previewData: ''
+    }
+  },
+  mounted() {
+    this.getPreview()
+  },
+  methods: {
+    async getPreview() {
+      this.previewData = await this.$store.state.invoicePreview
+    }
+  }
+}
+</script>
+
 <style>
 /* PREVIEW PANEL */
 .preview-panel {
@@ -147,8 +179,6 @@
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-height: calc(100vh - 40px);
-  overflow-y: auto;
-  position: sticky;
   padding: 20px;
   top: 20px;
 }
