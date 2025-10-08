@@ -4,6 +4,9 @@
     <div class="preview-panel">
       <div class="preview-header">
         <div class="preview-title">📄 Live-Vorschau</div>
+        <router-link to="/invoices/create" class="text-sm text-blue-600 hover:underline"
+          >← Zurück zur Rechnungserstellung</router-link
+        >
       </div>
 
       <div>

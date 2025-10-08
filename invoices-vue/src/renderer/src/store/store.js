@@ -9,6 +9,7 @@ export default createStore({
   state: {
     auth: '',
     invoicePreview: '',
+    invoicePositions: [],
     offerPreview: '',
     orderPreview: ''
   },
@@ -24,6 +25,9 @@ export default createStore({
     },
     setOrderPreview(state, payload) {
       state.orderPreview = payload
+    },
+    setInvoicePositions(state, payload) {
+      state.invoicePositions = payload
     }
   },
   actions: {},

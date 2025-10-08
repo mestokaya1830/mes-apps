@@ -133,6 +133,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -169,7 +170,8 @@ export default {
     }
   },
   mounted() {
-    console.log(this.positions.length)
+    this.positions = this.$store.state.invoicePositions || []
+    console.log(this.positions)
   },
   methods: {
     addPosition() {
@@ -182,12 +184,14 @@ export default {
         vat: 19,
         unitTotal: this.price * this.quantity
       })
+      this.$store.commit('setInvoicePositions', this.positions)
     },
     deletePosition(index) {
-      if (this.positions.length > 1) {
+      if (this.positions.length > 0) {
         this.positions.splice(index, 1)
+        this.$store.commit('setInvoicePositions', this.positions)
       } else {
-        alert('Mindestens eine Position muss vorhanden sein!')
+        alert('Keine Positionen vorhanden!')
       }
     },
     formatCurrency(amount) {
