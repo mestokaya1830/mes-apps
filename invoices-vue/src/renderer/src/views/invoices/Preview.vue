@@ -4,21 +4,18 @@
     <div class="preview-panel">
       <div class="preview-header">
         <div class="preview-title">📄 Live-Vorschau</div>
-        <router-link to="/invoices/create" class="text-sm text-blue-600 hover:underline"
-          >← Zurück zur Rechnungserstellung</router-link
-        >
       </div>
 
       <div>
         <div class="header">
           <div>
-            <div class="company-name">Ihre Firma GmbH</div>
+            <div class="company-name">{{ $store.state.auth.firm_name }}</div>
             <div class="company-details">
-              Musterstraße 123 • 10115 Berlin<br />
-              Tel: +49 30 1234567 • info@ihre-firma.de
+              {{ $store.state.auth.firm_address }}<br />
+              Tel: {{ $store.state.auth.phone }} • {{ $store.state.auth.email }}
             </div>
           </div>
-          <div class="logo-placeholder">LOGO</div>
+          <img :src="logoSrc" alt="" class="preview-logo" />
         </div>
 
         <div class="recipient">
@@ -49,7 +46,7 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ previewData.formattedDate }}</span>
+              <span class="meta-value">{{ previewData.invoiceDate }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kundennr.:</span>
@@ -135,7 +132,7 @@
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ previewData.bic }}</span>
             <span class="bank-label">Verwendung:</span>
-            <span class="bank-value">{{ invoiceNumber }}</span>
+            <span class="bank-value">{{ previewData.invoiceNumber }}</span>
           </div>
         </div>
 
@@ -149,6 +146,9 @@
           <div class="footer-row">
             <strong>Steuernr.:</strong> 12/345/67890 • <strong>USt-IdNr.:</strong> DE123456789
           </div>
+          <router-link to="/invoices/create" class="back-link"
+            >← Zurück zur Rechnungserstellung</router-link
+          >
         </div>
       </div>
     </div>
@@ -163,12 +163,38 @@ export default {
       previewData: ''
     }
   },
+  computed: {
+    logoSrc() {
+      const logo = this.$store.state.auth.logo
+      if (!logo) return null
+      if (typeof logo === 'string') {
+        if (logo.startsWith('data:image')) {
+          return logo
+        }
+        return `data:image/png;base64,${logo}`
+      }
+      try {
+        let binary = ''
+        const bytes = new Uint8Array(Object.values(logo))
+        const len = bytes.byteLength
+        for (let i = 0; i < len; i++) {
+          binary += String.fromCharCode(bytes[i])
+        }
+        const base64 = window.btoa(binary)
+        return `data:image/png;base64,${base64}`
+      } catch (error) {
+        console.error(error)
+        return null
+      }
+    }
+  },
   mounted() {
     this.getPreview()
   },
   methods: {
     async getPreview() {
       this.previewData = await this.$store.state.invoicePreview
+
     }
   }
 }
@@ -210,10 +236,13 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
-  padding-bottom: 15px;
+  align-items: center;
   border-bottom: 3px solid #10b981;
 }
-
+.logo-container {
+  flex-shrink: 0;
+  margin-left: 20px;
+}
 .company-name {
   font-size: 18px;
   font-weight: bold;
@@ -227,19 +256,11 @@ export default {
   line-height: 1.6;
 }
 
-.logo-placeholder {
-  width: 80px;
-  height: 60px;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  border-radius: 6px;
-  font-size: 10px;
+.preview-logo {
+  width: 160px;
+  height: 100px;
+  object-fit: contain;
 }
-
 /* RECIPIENT */
 .recipient {
   margin-bottom: 20px;
@@ -462,5 +483,19 @@ export default {
 
 .footer strong {
   color: #333;
+}
+.back-link {
+  display: inline-block;
+  cursor: pointer;
+  margin: 40px 0;
+  font-size: 18px;
+  color: #3b82f6;
+  text-decoration: none;
+  border: 1px solid #3b82f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.back-link:hover {
+  text-decoration: underline;
 }
 </style>

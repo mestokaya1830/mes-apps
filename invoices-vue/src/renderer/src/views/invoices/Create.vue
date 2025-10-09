@@ -3,7 +3,6 @@
     <!-- EDITOR PANEL -->
     <div class="editor-panel">
       <div class="editor-header">
-        <button class="back-btn" @click="storePreview()">Preview</button>
         <div class="editor-title">📝 Rechnung bearbeiten</div>
         <div class="editor-subtitle">
           Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live
@@ -41,7 +40,12 @@
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
           <label class="form-label">Kundenname</label>
-          <input v-model="customerName" type="text" class="form-input" />
+          <select v-model="selectedCustomer" class="form-input">
+            <option value="Wähle Kunden" selected disabled>Wähle Kunden</option>
+            <option v-for="item in customers" :key="item.id" :value="item.id">
+              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
+            </option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">Firma</label>
@@ -128,6 +132,7 @@
           </div>
         </div>
       </div>
+      <button class="back-btn" @click="storePreview()">Preview</button>
     </div>
   </div>
 </template>
@@ -137,6 +142,8 @@
 export default {
   data() {
     return {
+      selectedCustomer: 'Wähle Kunden',
+      customers: [],
       invoiceNumber: 'RE-2024-001',
       invoiceDate: '2024-12-15',
       customerNumber: 'KU-2024-042',
@@ -171,9 +178,21 @@ export default {
   },
   mounted() {
     this.positions = this.$store.state.invoicePositions || []
-    console.log(this.positions)
+    this.getCustomers()
   },
   methods: {
+    async getCustomers() {
+      try {
+        const response = await window.api.getCustomers()
+        if (response.success) {
+          this.customers = response.customers
+        } else {
+          console.error('Error fetching customers:', response.message)
+        }
+      } catch (error) {
+        console.error('Error fetching customers:', error)
+      }
+    },
     addPosition() {
       this.positions.push({
         title: 'Neue Position',
@@ -239,7 +258,6 @@ export default {
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-height: calc(100vh - 40px);
 }
 
 .editor-header {

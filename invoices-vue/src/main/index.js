@@ -335,6 +335,16 @@ ipcMain.handle('get-customers', async () => {
   }
 })
 
+ipcMain.handle('get-customer-by-id', async (event, id) => {
+  try {
+    const row = db.prepare('SELECT * FROM customers WHERE id = ?').get(id)
+    return { success: true, customer: row }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 ipcMain.handle('customer-details', async (event, id) => {
   try {
     const row = db.prepare('SELECT * FROM customers WHERE id = ?').get(id)
