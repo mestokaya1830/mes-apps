@@ -12,19 +12,20 @@
             <div class="company-name">{{ $store.state.auth.firm_name }}</div>
             <div class="company-details">
               {{ $store.state.auth.firm_address }}<br />
-              Tel: {{ $store.state.auth.phone }} • {{ $store.state.auth.email }}
+              Tel: {{ $store.state.auth.phone }} <br />{{ $store.state.auth.email }}
             </div>
           </div>
           <img :src="logoSrc" alt="" class="preview-logo" />
         </div>
 
         <div class="recipient">
-          <div class="sender-line">Ihre Firma GmbH • Musterstraße 123 • 10115 Berlin</div>
           <div class="recipient-address">
-            <div class="recipient-name">{{ previewData.customerName }}</div>
-            <div>{{ previewData.customerCompany }}</div>
-            <div>{{ previewData.customerAddress }}</div>
-            <div>{{ previewData.customerZip }} {{ previewData.customerCity }}</div>
+            <div>{{ previewData.customer_company_name }}</div>
+            <div>{{ previewData.customer_address }}</div>
+            <div>
+              {{ previewData.customer_postal_code }} <br />{{ previewData.customer_city }} <br />
+              {{ previewData.customer_country }}
+            </div>
           </div>
         </div>
 
@@ -42,19 +43,19 @@
           <div>
             <div class="meta-row">
               <span class="meta-label">Rechnungsnr.:</span>
-              <span class="meta-value">{{ previewData.invoiceNumber }}</span>
+              <span class="meta-value">{{ previewData.invoice_number }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ previewData.invoiceDate }}</span>
+              <span class="meta-value">{{ previewData.invoice_date }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kundennr.:</span>
-              <span class="meta-value">{{ previewData.customerNumber }}</span>
+              <span class="meta-value">{{ previewData.customer_number }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Leistung:</span>
-              <span class="meta-value">{{ previewData.servicePeriod }}</span>
+              <span class="meta-value">{{ previewData.service_period }}</span>
             </div>
           </div>
         </div>
@@ -133,19 +134,12 @@
             <span class="bank-value">{{ previewData.bic }}</span>
             <span class="bank-label">Verwendung:</span>
             <span class="bank-value">{{ previewData.invoiceNumber }}</span>
+            <span class="bank-label">Steuernummer:</span>
+            <span class="bank-value">{{ previewData.tax_number }}</span>
           </div>
         </div>
 
         <div class="footer">
-          <div class="footer-row">
-            <strong>Ihre Firma GmbH</strong> • Geschäftsführer: Max Mustermann • HRB 12345 B
-          </div>
-          <div class="footer-row">
-            <strong>Bank:</strong> Berliner Sparkasse • IBAN: DE89 1005 0000 0123 4567 89
-          </div>
-          <div class="footer-row">
-            <strong>Steuernr.:</strong> 12/345/67890 • <strong>USt-IdNr.:</strong> DE123456789
-          </div>
           <router-link to="/invoices/create" class="back-link"
             >← Zurück zur Rechnungserstellung</router-link
           >
@@ -194,7 +188,7 @@ export default {
   methods: {
     async getPreview() {
       this.previewData = await this.$store.state.invoicePreview
-
+      console.log(this.previewData)
     }
   }
 }
@@ -244,14 +238,14 @@ export default {
   margin-left: 20px;
 }
 .company-name {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: bold;
   color: #10b981;
   margin-bottom: 4px;
 }
 
 .company-details {
-  font-size: 9px;
+  font-size: 14px;
   color: #666;
   line-height: 1.6;
 }
@@ -267,7 +261,7 @@ export default {
 }
 
 .sender-line {
-  font-size: 7px;
+  font-size: 12px;
   color: #999;
   border-bottom: 1px solid #ddd;
   padding-bottom: 2px;
@@ -352,7 +346,7 @@ export default {
   font-weight: 600;
   border-bottom: 2px solid #dee2e6;
   color: #495057;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .positions-table th.right,
@@ -427,6 +421,7 @@ export default {
 
 .total-label {
   color: #555;
+  font-size: 12px;
 }
 
 .total-value {
@@ -447,7 +442,7 @@ export default {
   font-weight: 600;
   margin-bottom: 8px;
   color: #333;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .bank-info {
@@ -471,7 +466,7 @@ export default {
   margin-top: 40px;
   padding-top: 16px;
   border-top: 2px solid #10b981;
-  font-size: 7px;
+  font-size: 12px;
   color: #666;
   text-align: center;
   line-height: 1.8;

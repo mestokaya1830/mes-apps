@@ -26,7 +26,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Kundennummer</label>
-            <input v-model="customerNumber" type="text" class="form-input" />
+            <input v-model="selectedCustomer.tax_number" type="text" class="form-input" />
           </div>
           <div class="form-group">
             <label class="form-label">Leistungszeitraum</label>
@@ -40,7 +40,7 @@
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
           <label class="form-label">Kundenname</label>
-          <select v-model="selectedCustomer" class="form-input">
+          <select v-model="customerList" @change="getCustomerById()" class="form-input">
             <option value="Wähle Kunden" selected disabled>Wähle Kunden</option>
             <option v-for="item in customers" :key="item.id" :value="item.id">
               {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
@@ -49,20 +49,20 @@
         </div>
         <div class="form-group">
           <label class="form-label">Firma</label>
-          <input v-model="customerCompany" type="text" class="form-input" />
+          <input v-model="setCompany" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="customerAddress" type="text" class="form-input" />
+          <input v-model="selectedCustomer.customer_address" type="text" class="form-input" />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ</label>
-            <input v-model="customerZip" type="text" class="form-input" />
+            <input v-model="selectedCustomer.customer_postal_code" type="text" class="form-input" />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt</label>
-            <input v-model="customerCity" type="text" class="form-input" />
+            <input v-model="selectedCustomer.customer_city" type="text" class="form-input" />
           </div>
         </div>
       </div>
@@ -138,21 +138,15 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
-      selectedCustomer: 'Wähle Kunden',
       customers: [],
+      customerList: 'Wähle Kunden',
+      selectedCustomer: {},
       invoiceNumber: 'RE-2024-001',
       invoiceDate: '2024-12-15',
-      customerNumber: 'KU-2024-042',
       servicePeriod: 'Okt - Dez 2024',
-      customerName: 'Herrn Maximilian Weber',
-      customerCompany: 'Weber Consulting GmbH',
-      customerAddress: 'Friedrichstraße 158',
-      customerZip: '10117',
-      customerCity: 'Berlin',
       paidAmount: 0,
       paymentTerms: 14,
       positions: []
@@ -174,13 +168,37 @@ export default {
     formattedDate() {
       const date = new Date(this.invoiceDate)
       return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
+    },
+    setCompany() {
+      return (
+        this.selectedCustomer.customer_company_name ||
+        this.selectedCustomer.customer_first_name + ' ' + this.selectedCustomer.customer_last_name
+      )
     }
   },
   mounted() {
     this.positions = this.$store.state.invoicePositions || []
+    if (this.$store.state.invoicePreview !== '') {
+      this.selectedCustomer = {
+        tax_number: this.$store.state.invoicePreview.customer_tax_number,
+        customer_company_name: this.$store.state.invoicePreview.customer_company_name,
+        customer_address: this.$store.state.invoicePreview.customer_address,
+        customer_postal_code: this.$store.state.invoicePreview.customer_postal_code,
+        customer_city: this.$store.state.invoicePreview.customer_city,
+        customer_country: this.$store.state.invoicePreview.customer_country
+      }
+      console.log(this.$store.state.invoicePreview.customer_address)
+    }
     this.getCustomers()
   },
   methods: {
+    /*************  ✨ Windsurf Command ⭐  *************/
+    /**
+     * Fetches all customers from the server
+     * @returns {Promise<void>} - promise which resolves when the customers are fetched
+     */
+
+    /*******  295c00da-b814-4b9d-a6c1-d1d6c9b5480c  *******/
     async getCustomers() {
       try {
         const response = await window.api.getCustomers()
@@ -191,6 +209,21 @@ export default {
         }
       } catch (error) {
         console.error('Error fetching customers:', error)
+      }
+    },
+    getCustomerById() {
+      const customer = this.customers.find((item) => item.id === this.customerList)
+      if (customer) {
+        this.selectedCustomer = {
+          customer_tax_number: customer.tax_number,
+          customer_company_name: customer.company_name,
+          customer_first_name: customer.first_name,
+          customer_last_name: customer.last_name,
+          customer_address: customer.address,
+          customer_postal_code: customer.postal_code,
+          customer_city: customer.city,
+          customer_country: customer.country
+        }
       }
     },
     addPosition() {
@@ -223,15 +256,15 @@ export default {
           unitTotal: (pos.quantity * pos.price).toFixed(2)
         }))
         await this.$store.commit('setInvoicePreview', {
-          invoiceNumber: this.invoiceNumber,
-          invoiceDate: this.invoiceDate,
-          customerNumber: this.customerNumber,
-          servicePeriod: this.servicePeriod,
-          customerName: this.customerName,
-          customerCompany: this.customerCompany,
-          customerAddress: this.customerAddress,
-          customerZip: this.customerZip,
-          customerCity: this.customerCity,
+          invoice_number: this.invoiceNumber,
+          invoice_date: this.invoiceDate,
+          service_period: this.servicePeriod,
+          customer_tax_number: this.selectedCustomer.customer_tax_number,
+          customer_company_name: this.setCompany,
+          customer_address: this.selectedCustomer.customer_address,
+          customer_postal_code: this.selectedCustomer.customer_postal_code,
+          customer_city: this.selectedCustomer.customer_city,
+          customer_country: this.selectedCustomer.customer_country,
           paidAmount: this.paidAmount,
           paymentTerms: this.paymentTerms,
           positions: this.positions,
