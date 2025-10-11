@@ -19,12 +19,30 @@
         </div>
 
         <div class="recipient">
-          <div class="recipient-address">
-            <div>{{ previewData.customer_company_name }}</div>
-            <div>{{ previewData.customer_address }}</div>
+          <div v-if="previewData && previewData.customer" class="recipient-address">
+            <div>{{ previewData.customer.company_name }}</div>
+            <div>{{ previewData.customer.address }}</div>
             <div>
-              {{ previewData.customer_postal_code }} <br />{{ previewData.customer_city }} <br />
-              {{ previewData.customer_country }}
+              {{ previewData.customer.postal_code }} <br />{{ previewData.customer.city }} <br />
+              {{ previewData.customer.country }}
+            </div>
+          </div>
+          <div v-if="previewData && previewData.customer">
+            <div class="meta-row">
+              <span class="meta-label">Rechnungsnr.:</span>
+              <span class="meta-value">{{ previewData.invoice_number }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Datum:</span>
+              <span class="meta-value">{{ previewData.invoice_date }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Kundennr.:</span>
+              <span class="meta-value">{{ previewData.customer.tax_number }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Leistung:</span>
+              <span class="meta-value">{{ previewData.service_period }}</span>
             </div>
           </div>
         </div>
@@ -38,24 +56,6 @@
             <div class="meta-row">
               <span class="meta-label">Telefon:</span>
               <span class="meta-value">+49 30 1234-567</span>
-            </div>
-          </div>
-          <div>
-            <div class="meta-row">
-              <span class="meta-label">Rechnungsnr.:</span>
-              <span class="meta-value">{{ previewData.invoice_number }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ previewData.invoice_date }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Kundennr.:</span>
-              <span class="meta-value">{{ previewData.customer_number }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Leistung:</span>
-              <span class="meta-value">{{ previewData.service_period }}</span>
             </div>
           </div>
         </div>
@@ -154,7 +154,7 @@ export default {
   data() {
     return {
       title: 'Rechnungsvorschau',
-      previewData: ''
+      previewData: {}
     }
   },
   computed: {
@@ -188,7 +188,7 @@ export default {
   methods: {
     async getPreview() {
       this.previewData = await this.$store.state.invoicePreview
-      console.log(this.previewData)
+      console.log('Available keys:', Object.keys(this.previewData))
     }
   }
 }
@@ -257,6 +257,8 @@ export default {
 }
 /* RECIPIENT */
 .recipient {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 
@@ -266,16 +268,6 @@ export default {
   border-bottom: 1px solid #ddd;
   padding-bottom: 2px;
   margin-bottom: 10px;
-}
-
-.recipient-address {
-  font-size: 10px;
-  line-height: 1.6;
-}
-
-.recipient-name {
-  font-weight: bold;
-  font-size: 11px;
 }
 
 /* META INFO */
@@ -293,13 +285,16 @@ export default {
   margin-bottom: 4px;
 }
 
-.meta-label {
+.meta-label,
+.recipient-address {
   font-weight: 600;
   color: #555;
+  font-size: 12px;
 }
 
 .meta-value {
   color: #333;
+  font-size: 12px;
 }
 
 /* TITEL */

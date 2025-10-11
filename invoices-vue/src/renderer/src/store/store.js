@@ -9,7 +9,6 @@ export default createStore({
   state: {
     auth: '',
     invoicePreview: '',
-    invoicePositions: [],
     offerPreview: '',
     orderPreview: ''
   },

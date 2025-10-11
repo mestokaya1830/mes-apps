@@ -53,16 +53,16 @@
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="selectedCustomer.customer_address" type="text" class="form-input" />
+          <input v-model="selectedCustomer.address" type="text" class="form-input" />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ</label>
-            <input v-model="selectedCustomer.customer_postal_code" type="text" class="form-input" />
+            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt</label>
-            <input v-model="selectedCustomer.customer_city" type="text" class="form-input" />
+            <input v-model="selectedCustomer.city" type="text" class="form-input" />
           </div>
         </div>
       </div>
@@ -171,34 +171,27 @@ export default {
     },
     setCompany() {
       return (
-        this.selectedCustomer.customer_company_name ||
-        this.selectedCustomer.customer_first_name + ' ' + this.selectedCustomer.customer_last_name
+        this.selectedCustomer.company_name ||
+        this.selectedCustomer.first_name + ' ' + this.selectedCustomer.last_name
       )
     }
   },
   mounted() {
-    this.positions = this.$store.state.invoicePositions || []
+    this.positions = this.$store.state.invoicePreview.positions || []
     if (this.$store.state.invoicePreview !== '') {
       this.selectedCustomer = {
-        tax_number: this.$store.state.invoicePreview.customer_tax_number,
-        customer_company_name: this.$store.state.invoicePreview.customer_company_name,
-        customer_address: this.$store.state.invoicePreview.customer_address,
-        customer_postal_code: this.$store.state.invoicePreview.customer_postal_code,
-        customer_city: this.$store.state.invoicePreview.customer_city,
-        customer_country: this.$store.state.invoicePreview.customer_country
+        tax_number: this.$store.state.invoicePreview.customer.tax_number,
+        company_name: this.$store.state.invoicePreview.customer.company_name,
+        address: this.$store.state.invoicePreview.customer.address,
+        postal_code: this.$store.state.invoicePreview.customer.postal_code,
+        city: this.$store.state.invoicePreview.customer.city,
+        country: this.$store.state.invoicePreview.customer.country
       }
-      console.log(this.$store.state.invoicePreview.customer_address)
+      console.log(this.$store.state.invoicePreview)
     }
     this.getCustomers()
   },
   methods: {
-    /*************  ✨ Windsurf Command ⭐  *************/
-    /**
-     * Fetches all customers from the server
-     * @returns {Promise<void>} - promise which resolves when the customers are fetched
-     */
-
-    /*******  295c00da-b814-4b9d-a6c1-d1d6c9b5480c  *******/
     async getCustomers() {
       try {
         const response = await window.api.getCustomers()
@@ -215,14 +208,14 @@ export default {
       const customer = this.customers.find((item) => item.id === this.customerList)
       if (customer) {
         this.selectedCustomer = {
-          customer_tax_number: customer.tax_number,
-          customer_company_name: customer.company_name,
-          customer_first_name: customer.first_name,
-          customer_last_name: customer.last_name,
-          customer_address: customer.address,
-          customer_postal_code: customer.postal_code,
-          customer_city: customer.city,
-          customer_country: customer.country
+          tax_number: customer.tax_number,
+          company_name: customer.company_name,
+          first_name: customer.first_name,
+          last_name: customer.last_name,
+          address: customer.address,
+          postal_code: customer.postal_code,
+          city: customer.city,
+          country: customer.country
         }
       }
     },
@@ -259,12 +252,14 @@ export default {
           invoice_number: this.invoiceNumber,
           invoice_date: this.invoiceDate,
           service_period: this.servicePeriod,
-          customer_tax_number: this.selectedCustomer.customer_tax_number,
-          customer_company_name: this.setCompany,
-          customer_address: this.selectedCustomer.customer_address,
-          customer_postal_code: this.selectedCustomer.customer_postal_code,
-          customer_city: this.selectedCustomer.customer_city,
-          customer_country: this.selectedCustomer.customer_country,
+          customer: {
+            tax_number: this.selectedCustomer.tax_number,
+            company_name: this.setCompany,
+            address: this.selectedCustomer.address,
+            postal_code: this.selectedCustomer.postal_code,
+            city: this.selectedCustomer.city,
+            country: this.selectedCustomer.country
+          },
           paidAmount: this.paidAmount,
           paymentTerms: this.paymentTerms,
           positions: this.positions,
