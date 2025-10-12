@@ -1,11 +1,8 @@
 <template>
   <div>
+    <h1>{{ title }}</h1>
     <!-- PREVIEW PANEL -->
     <div class="preview-panel">
-      <div class="preview-header">
-        <div class="preview-title">📄 Live-Vorschau</div>
-      </div>
-
       <div>
         <div class="header">
           <div>
@@ -167,7 +164,7 @@
 export default {
   data() {
     return {
-      title: 'Rechnungsvorschau',
+      title: 'Rechnung',
       previewData: {}
     }
   },

@@ -2,7 +2,7 @@
   <div>
     <h1>{{ title }}</h1>
     <span class="form-btn">
-      <router-link to="/invoices/create" class="link">Add New Invoice</router-link>
+      <router-link to="/invoices/create" class="link">Neue Rechnung hinzufügen</router-link>
     </span>
   </div>
 </template>
@@ -11,7 +11,7 @@
 export default {
   data() {
     return {
-      title: 'Invoices Page'
+      title: 'Rechnungen List'
     }
   },
   mounted() {},

@@ -119,6 +119,12 @@ const routes = [
     component: () => import('../views/offers/Details.vue'),
     meta: { title: 'Offer Details', auth: true }
   },
+  {
+    path: '/offers-preview',
+    name: 'offers-preview',
+    component: () => import('../views/offers/Preview.vue'),
+    meta: { title: 'Offers Preview', auth: true }
+  },
 
   //delivery
 

@@ -1,848 +1,425 @@
-<template lang="">
+<template>
   <div>
-    <h1>{{ title }}</h1>
-    <div class="page" style="position: relative">
-      <!-- HEADER -->
-      <div class="header">
-        <div class="company-info">
-          <div class="company-name">Ihre Firma GmbH</div>
-          <div class="company-details">
-            Musterstraße 123 • 10115 Berlin<br />
-            Tel: +49 30 1234567 • Fax: +49 30 1234568<br />
-            E-Mail: info@ihre-firma.de • www.ihre-firma.de
-          </div>
-        </div>
-        <div class="logo-placeholder">LOGO</div>
-      </div>
-
-      <!-- EMPFÄNGER -->
-      <div class="recipient">
-        <div class="sender-line">Ihre Firma GmbH • Musterstraße 123 • 10115 Berlin</div>
-        <div class="recipient-address">
-          <div class="recipient-name">Herrn Maximilian Weber</div>
-          <div>Weber Consulting GmbH</div>
-          <div>Friedrichstraße 158</div>
-          <div>10117 Berlin</div>
+    <!-- EDITOR PANEL -->
+    <div class="editor-panel">
+      <div class="editor-header">
+        <div class="editor-title">📝 Rechnung bearbeiten</div>
+        <div class="editor-subtitle">
+          Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live
         </div>
       </div>
 
-      <!-- META INFORMATIONEN -->
-      <div class="meta-info">
-        <div class="meta-left">
-          <div class="meta-row">
-            <span class="meta-label">Ihre Ansprechpartnerin:</span>
-            <span class="meta-value">Frau Müller</span>
+      <!-- GRUND DATEN -->
+      <div class="form-section">
+        <div class="form-section-title">📌 Grunddaten</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Rechnungsnummer</label>
+            <input v-model="invoiceGrund.invoiceNumber" type="text" class="form-input" />
           </div>
-          <div class="meta-row">
-            <span class="meta-label">Telefon Durchwahl:</span>
-            <span class="meta-value">+49 30 1234-567</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">E-Mail:</span>
-            <span class="meta-value">mueller@ihre-firma.de</span>
+          <div class="form-group">
+            <label class="form-label">Rechnungsdatum</label>
+            <input v-model="invoiceGrund.invoiceDate" type="date" class="form-input" />
           </div>
         </div>
-        <div class="meta-right">
-          <div class="meta-row">
-            <span class="meta-label">Angebotsnummer:</span>
-            <span class="meta-value">ANG-2024-001</span>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Kundennummer</label>
+            <input v-model="selectedCustomer.tax_number" type="text" class="form-input" />
           </div>
-          <div class="meta-row">
-            <span class="meta-label">Angebotsdatum:</span>
-            <span class="meta-value">04. Oktober 2024</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Kundennummer:</span>
-            <span class="meta-value">KU-2024-042</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Gültig bis:</span>
-            <span class="meta-value">03. November 2024</span>
+          <div class="form-group">
+            <label class="form-label">Leistungszeitraum</label>
+            <input v-model="invoiceGrund.servicePeriod" type="text" class="form-input" />
           </div>
         </div>
       </div>
 
-      <!-- TITEL -->
-      <div class="document-title">
-        Angebot - Webdesign & SEO Services
-        <span class="validity-badge">Gültig 30 Tage</span>
-      </div>
-
-      <!-- REFERENZ BOX (PREMIUM FEATURE) -->
-      <div class="reference-box">
-        <div class="reference-label">📌 Bezug:</div>
-        <div class="reference-text">
-          Ihr Telefonat mit Frau Müller vom 01. Oktober 2024 • Projekt-ID: WEB-2024-042
+      <!-- KUNDE -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Kunde</div>
+        <div class="form-group">
+          <label class="form-label">Kundenname</label>
+          <select v-model="customerList" class="form-input" @change="getCustomerById">
+            <option disabled value="">Wähle Kunden</option>
+            <option
+              v-for="item in customers"
+              :key="item.id"
+              :value="item.id"
+            >
+              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Firma</label>
+          <input :value="companyName" type="text" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Adresse</label>
+          <input v-model="selectedCustomer.address" type="text" class="form-input" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">PLZ</label>
+            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stadt</label>
+            <input v-model="selectedCustomer.city" type="text" class="form-input" />
+          </div>
         </div>
       </div>
 
-      <!-- EINLEITUNGSTEXT -->
-      <div class="intro-text">
-        Sehr geehrter Herr Weber,<br /><br />
-        vielen Dank für Ihre Anfrage vom 01. Oktober 2024. Gerne unterbreiten wir Ihnen folgendes
-        Angebot für die Erstellung Ihrer neuen Unternehmenswebsite sowie SEO-Optimierung:
-      </div>
-
-      <!-- POSITIONEN TABELLE -->
-      <table class="positions-table">
-        <thead>
-          <tr>
-            <th style="width: 5%">Pos.</th>
-            <th style="width: 38%">Bezeichnung</th>
-            <th class="center" style="width: 8%">Menge</th>
-            <th class="center" style="width: 9%">Einheit</th>
-            <th class="right" style="width: 13%">Einzelpreis</th>
-            <th class="right" style="width: 9%">MwSt.</th>
-            <th class="right" style="width: 13%">Gesamtpreis</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>
-              <div class="position-title">Responsive Webdesign</div>
-              <div class="artikel-nr">
-                Art.-Nr.: WEB-001 <span class="premium-badge">⭐ NEU</span>
-              </div>
-              <div class="position-description">
-                Professionelles, modernes Webdesign mit responsivem Layout für Desktop, Tablet und
-                Mobile. Inklusive 5 Unterseiten (Home, Über uns, Leistungen, Referenzen, Kontakt),
-                Kontaktformular und Google Maps Integration.
-              </div>
-            </td>
-            <td class="center">1</td>
-            <td class="center">Pauschal</td>
-            <td class="right">2.500,00 €</td>
-            <td class="right">19%</td>
-            <td class="right">2.500,00 €</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>
-              <div class="position-title">Content Management System (CMS)</div>
-              <div class="artikel-nr">Art.-Nr.: CMS-002</div>
-              <div class="position-description">
-                Integration eines benutzerfreundlichen CMS (WordPress) zur einfachen Verwaltung
-                Ihrer Inhalte. Inklusive Schulung (2 Stunden) für Ihr Team.
-              </div>
-            </td>
-            <td class="center">1</td>
-            <td class="center">Pauschal</td>
-            <td class="right">800,00 €</td>
-            <td class="right">19%</td>
-            <td class="right">800,00 €</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>
-              <div class="position-title">SEO-Optimierung (OnPage)</div>
-              <div class="artikel-nr">Art.-Nr.: SEO-003</div>
-              <div class="position-description">
-                Suchmaschinenoptimierung für 10 Keywords Ihrer Wahl. Meta-Tags, Alt-Texte,
-                URL-Struktur, Ladezeit-Optimierung, XML-Sitemap und robots.txt Konfiguration.
-              </div>
-            </td>
-            <td class="center">10</td>
-            <td class="center">Std</td>
-            <td class="right">80,00 €</td>
-            <td class="right">19%</td>
-            <td class="right">800,00 €</td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>
-              <div class="position-title">Analytics & Tracking Einrichtung</div>
-              <div class="artikel-nr">
-                Art.-Nr.: ANA-004 <span class="premium-badge">⭐ NEU</span>
-              </div>
-              <div class="position-description">
-                Professionelle Einrichtung von Google Analytics 4 und Google Search Console für
-                umfassendes Tracking und Monitoring Ihrer Website-Performance.
-              </div>
-            </td>
-            <td class="center">1</td>
-            <td class="center">Pauschal</td>
-            <td class="right">200,00 €</td>
-            <td class="right">19%</td>
-            <td class="right">200,00 €</td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td>
-              <div class="position-title">DSGVO-konforme Cookie-Banner</div>
-              <div class="artikel-nr">Art.-Nr.: DSG-005</div>
-              <div class="position-description">
-                Integration eines rechtssicheren Cookie-Consent-Banners gemäß DSGVO inkl.
-                Datenschutzerklärung und Impressum nach deutschem Recht.
-              </div>
-            </td>
-            <td class="center">1</td>
-            <td class="center">Pauschal</td>
-            <td class="right">150,00 €</td>
-            <td class="right">19%</td>
-            <td class="right">150,00 €</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- RABATT INFO (PREMIUM FEATURE) -->
-      <div class="rabatt-info">
-        <span class="rabatt-icon">🎉</span>
-        <strong>Sonderrabatt für Neukunden: 10% auf die Gesamtsumme</strong>
-      </div>
-
-      <!-- SUMMEN -->
-      <div class="totals">
-        <div class="total-row">
-          <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">4.450,00 €</span>
-        </div>
-        <div class="total-row rabatt">
-          <span class="total-label">Rabatt 10%:</span>
-          <span class="total-value">- 445,00 €</span>
-        </div>
-        <div class="total-row subtotal">
-          <span class="total-label">Summe nach Rabatt:</span>
-          <span class="total-value">4.005,00 €</span>
-        </div>
-        <div class="total-row">
-          <span class="total-label">MwSt. 19%:</span>
-          <span class="total-value">760,95 €</span>
-        </div>
-        <div class="total-row final">
-          <span class="total-label">Gesamtbetrag (brutto):</span>
-          <span class="total-value">4.765,95 €</span>
-        </div>
-      </div>
-
-      <!-- LIEFERZEIT BOX (PREMIUM FEATURE) -->
-      <div class="delivery-box">
-        <div class="delivery-title">
-          <span>⏱️</span>
-          Voraussichtliche Projektlaufzeit
-        </div>
-        <div>
-          Die Fertigstellung erfolgt voraussichtlich 6-8 Wochen nach Auftragserteilung und Erhalt
-          aller benötigten Inhalte (Texte, Bilder, Logos). Projektstart ist für den 15. Oktober 2024
-          geplant.
-        </div>
-      </div>
-
-      <!-- BEDINGUNGEN -->
-      <div class="conditions">
-        <div class="condition-grid">
-          <div class="condition-section">
-            <div class="condition-title">
-              <span class="condition-icon">💳</span>
-              Zahlungsbedingungen
+      <!-- POSITIONEN -->
+      <div class="form-section">
+        <div class="form-section-title">📦 Positionen</div>
+        <div v-if="invoiceGrund.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-else class="positions-editor">
+          <div
+            v-for="(pos, index) in invoiceGrund.positions"
+            :key="index"
+            class="position-item"
+          >
+            <div class="position-header">
+              <span class="position-number">Position {{ index + 1 }}</span>
+              <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
             </div>
-            <div class="condition-text">
-              • 50% Anzahlung bei Auftragserteilung<br />
-              • 50% nach Abnahme und Freigabe<br />
-              • Zahlbar innerhalb von 14 Tagen netto
+            <div class="form-group">
+              <label class="form-label">Bezeichnung</label>
+              <input v-model="pos.title" type="text" class="form-input" />
             </div>
-          </div>
-
-          <div class="condition-section">
-            <div class="condition-title">
-              <span class="condition-icon">📦</span>
-              Leistungsumfang
+            <div class="form-group">
+              <label class="form-label">Beschreibung</label>
+              <input v-model="pos.description" type="text" class="form-input" />
             </div>
-            <div class="condition-text">
-              Die Website wird auf unserem Server gehostet<br />
-              Erstes Jahr inklusive<br />
-              Danach 15 €/Monat (optional)
+            <div class="position-inputs">
+              <div class="form-group">
+                <label class="form-label">Einheit</label>
+                <select v-model="pos.unit" class="form-input">
+                  <option>Stk</option>
+                  <option>Std</option>
+                  <option>Tag</option>
+                  <option>Pauschal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Menge</label>
+                <input v-model.number="pos.quantity" type="number" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Preis (€)</label>
+                <input v-model.number="pos.price" type="number" class="form-input" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">MwSt. (%)</label>
+                <select v-model.number="pos.vat" class="form-input">
+                  <option :value="0">0</option>
+                  <option :value="7">7</option>
+                  <option :value="19">19</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="condition-section">
-          <div class="condition-title">
-            <span class="condition-icon">📋</span>
-            Gültigkeit des Angebots
+        <button class="add-position-btn" @click="addPosition">➕ Position hinzufügen</button>
+      </div>
+
+      <!-- ZAHLUNGSINFORMATIONEN -->
+      <div class="form-section">
+        <div class="form-section-title">💳 Zahlungsinformationen</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Anzahlung (bereits bezahlt)</label>
+            <input
+              v-model.number="invoiceGrund.paidAmount"
+              type="number"
+              class="form-input"
+              step="0.01"
+            />
           </div>
-          <div class="condition-text">
-            Dieses Angebot ist gültig bis zum 03. November 2024. Preise verstehen sich in Euro
-            inklusive der gesetzlichen Mehrwertsteuer. Es gelten unsere allgemeinen
-            Geschäftsbedingungen (AGB), die diesem Angebot beiliegen.
-          </div>
-        </div>
-
-        <!-- BANKVERBINDUNG -->
-        <div class="bank-box">
-          <div class="bank-title">🏦 Bankverbindung für Überweisung</div>
-          <div class="bank-info">
-            <span class="bank-label">Bank:</span>
-            <span class="bank-value">Berliner Sparkasse</span>
-
-            <span class="bank-label">IBAN:</span>
-            <span class="bank-value">DE89 1005 0000 0123 4567 89</span>
-
-            <span class="bank-label">BIC:</span>
-            <span class="bank-value">BELADEBEXXX</span>
-
-            <span class="bank-label">Verwendungszweck:</span>
-            <span class="bank-value">ANG-2024-001</span>
+          <div class="form-group">
+            <label class="form-label">Zahlungsziel (Tage)</label>
+            <input v-model.number="invoiceGrund.paymentTerms" type="number" class="form-input" />
           </div>
         </div>
       </div>
 
-      <!-- SCHLUSSTEXT -->
-      <div class="closing">
-        Wir freuen uns auf Ihre Auftragserteilung und stehen Ihnen für Rückfragen jederzeit gerne
-        zur Verfügung. Für weitere Details oder eine persönliche Besprechung können Sie sich gerne
-        direkt an Frau Müller wenden.<br /><br />
-        Mit freundlichen Grüßen
-      </div>
-
-      <!-- KONTAKT BOX (PREMIUM FEATURE) -->
-      <div class="contact-box">
-        <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
-        <div class="contact-person">
-          <div class="contact-avatar">SM</div>
-          <div class="contact-details">
-            <div class="contact-name">Sandra Müller</div>
-            <div class="contact-info">
-              Projektmanagement & Kundenbetreuung<br />
-              📞 +49 30 1234-567 • 📧 mueller@ihre-firma.de
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- UNTERSCHRIFT -->
-      <div class="signature">
-        <div class="signature-block">
-          <div class="signature-line">Berlin, 04. Oktober 2024</div>
-        </div>
-        <div class="signature-block">
-          <div class="signature-line">Unterschrift / Firmenstempel</div>
-        </div>
-      </div>
-
-      <!-- QR CODE (PREMIUM FEATURE) -->
-      <div class="qr-section">
-        <div class="qr-code">
-          QR CODE<br />
-          📱
-        </div>
-        <div class="qr-label">Angebot online ansehen</div>
-      </div>
-
-      <!-- PAGE NUMBER -->
-      <div class="page-number">Seite 1 von 1</div>
-
-      <!-- FOOTER -->
-      <div class="footer">
-        <div class="footer-row">
-          <strong>Ihre Firma GmbH</strong> • Geschäftsführer: Max Mustermann • Amtsgericht
-          Berlin-Charlottenburg HRB 12345 B
-        </div>
-        <div class="footer-row">
-          <strong>Bankverbindung:</strong> Berliner Sparkasse • <strong>IBAN:</strong> DE89 1005
-          0000 0123 4567 89 • <strong>BIC:</strong> BELADEBEXXX
-        </div>
-      </div>
+      <button class="back-btn" @click="storePreview">Preview</button>
     </div>
   </div>
 </template>
+
 <script>
 export default {
   data() {
     return {
-      title: 'New Offer'
+      customers: [],
+      customerList: null,
+      selectedCustomer: {},
+      invoiceGrund: {
+        invoiceNumber: 'RE-2024-001',
+        invoiceDate: '2024-12-15',
+        servicePeriod: 'Okt - Dez 2024',
+        verwendung: 'Nicht angegeben',
+        paidAmount: 0,
+        paymentTerms: 14,
+        positions: []
+      },
+    }
+  },
+  computed: {
+    subtotal() {
+      return this.invoiceGrund.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+    },
+    vatAmount() {
+      return this.invoiceGrund.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
+    },
+    grandTotal() {
+      return this.subtotal + this.vatAmount
+    },
+    outstanding() {
+      return this.grandTotal - this.invoiceGrund.paidAmount
+    },
+    formattedDate() {
+      const date = new Date(this.invoiceGrund.invoiceDate)
+      return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
+    },
+    companyName() {
+      return (
+        this.selectedCustomer.company_name ||
+        [this.selectedCustomer.first_name, this.selectedCustomer.last_name].filter(Boolean).join(' ')
+      )
+    }
+  },
+  mounted() {
+    if (this.$store?.state?.invoicePreview) {
+      const preview = this.$store.state.invoicePreview
+      if (preview.positions) this.invoiceGrund.positions = preview.positions
+      if (preview.customer) this.selectedCustomer = { ...preview.customer }
+    }
+    this.getCustomers()
+  },
+  methods: {
+    async getCustomers() {
+      try {
+        const response = await window.api.getCustomers()
+        if (response.success) {
+          this.customers = response.customers
+        } else {
+          console.error('Error fetching customers:', response.message)
+        }
+      } catch (error) {
+        console.error('Error fetching customers:', error)
+      }
+    },
+    getCustomerById() {
+      const customer = this.customers.find((item) => item.id === this.customerList)
+      if (customer) this.selectedCustomer = { ...customer }
+    },
+    addPosition() {
+      this.invoiceGrund.positions.push({
+        title: 'Neue Position',
+        description: 'Beschreibung',
+        quantity: 1,
+        unit: 'Stk',
+        price: 0,
+        vat: 19
+      })
+      this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
+    },
+    deletePosition(index) {
+      if (this.invoiceGrund.positions.length > 0) {
+        this.invoiceGrund.positions.splice(index, 1)
+        this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
+      } else {
+        alert('Keine Positionen vorhanden!')
+      }
+    },
+    async storePreview() {
+      try {
+        this.invoiceGrund.positions = this.invoiceGrund.positions.map((pos) => ({
+          ...pos,
+          unitTotal: (pos.quantity * pos.price).toFixed(2)
+        }))
+
+        await this.$store.commit('setInvoicePreview', {
+          customer: { ...this.selectedCustomer, company_name: this.companyName },
+          invoice_grund: {
+            invoice_number: this.invoiceGrund.invoiceNumber,
+            invoice_date: this.invoiceGrund.invoiceDate,
+            service_period: this.invoiceGrund.servicePeriod,
+            paidAmount: this.invoiceGrund.paidAmount,
+            paymentTerms: this.invoiceGrund.paymentTerms,
+            verwendung: this.invoiceGrund.verwendung,
+            positions: this.invoiceGrund.positions,
+            subtotal: this.subtotal.toFixed(2),
+            vatAmount: this.vatAmount.toFixed(2),
+            grandTotal: this.grandTotal.toFixed(2),
+            outstanding: this.outstanding.toFixed(2)
+          }
+        })
+
+        this.$router.push('/offers-preview')
+      } catch (error) {
+        console.error('Error storing invoice preview:', error)
+      }
     }
   }
 }
 </script>
-
 <style>
-/* HEADER mit Logo */
-.header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  padding-bottom: 20px;
-  border-bottom: 3px solid #667eea;
+/* EDITOR PANEL */
+.editor-panel {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.company-info {
-  flex: 1;
+.editor-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
 }
 
-.company-name {
-  font-size: 24px;
-  font-weight: bold;
-  color: #667eea;
-  margin-bottom: 5px;
-}
-
-.company-details {
-  font-size: 11px;
-  color: #666;
-  line-height: 1.6;
-}
-
-.logo-placeholder {
-  width: 120px;
-  height: 80px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-}
-
-/* EMPFÄNGER Adresse */
-.recipient {
-  margin-bottom: 30px;
-}
-
-.sender-line {
-  font-size: 8px;
-  color: #999;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 3px;
-  margin-bottom: 15px;
-}
-
-.recipient-address {
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.recipient-name {
-  font-weight: bold;
-  font-size: 13px;
-}
-
-/* META INFORMATIONEN */
-.meta-info {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  font-size: 11px;
-}
-
-.meta-left,
-.meta-right {
-  flex: 1;
-}
-
-.meta-right {
-  text-align: right;
-}
-
-.meta-row {
-  display: flex;
-  margin-bottom: 5px;
-}
-
-.meta-right .meta-row {
-  justify-content: flex-end;
-}
-
-.meta-label {
-  font-weight: 600;
-  width: 140px;
-  color: #555;
-}
-
-.meta-value {
-  color: #333;
-}
-
-/* PREMIUM BADGE */
-.premium-badge {
-  display: inline-block;
-  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 9px;
-  font-weight: 700;
-  margin-left: 8px;
-  vertical-align: middle;
-}
-
-/* TITEL */
-.document-title {
+.editor-title {
   font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 30px;
-  color: #333;
-}
-
-.validity-badge {
-  display: inline-block;
-  background: #fff3cd;
-  color: #856404;
-  padding: 4px 12px;
-  border-radius: 4px;
-  font-size: 10px;
   font-weight: 600;
-  margin-left: 10px;
-}
-
-/* EINLEITUNGSTEXT */
-.intro-text {
-  margin-bottom: 25px;
-  line-height: 1.6;
-  font-size: 12px;
-}
-
-/* REFERENZ BOX (PREMIUM) */
-.reference-box {
-  background: #f0f9ff;
-  border-left: 4px solid #667eea;
-  padding: 12px 16px;
-  margin-bottom: 25px;
-  font-size: 11px;
-}
-
-.reference-label {
-  font-weight: 600;
-  color: #667eea;
+  color: #1f2937;
   margin-bottom: 4px;
 }
 
-.reference-text {
-  color: #555;
+.editor-subtitle {
+  font-size: 13px;
+  color: #6b7280;
 }
 
-/* POSITIONEN TABELLE */
-.positions-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  font-size: 11px;
+/* FORM GROUPS */
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
-.positions-table thead {
-  background: #f8f9fa;
-}
-
-.positions-table th {
-  padding: 10px 8px;
-  text-align: left;
+.form-section-title {
+  font-size: 14px;
   font-weight: 600;
-  border-bottom: 2px solid #dee2e6;
-  color: #495057;
-}
-
-.positions-table th.right,
-.positions-table td.right {
-  text-align: right;
-}
-
-.positions-table th.center,
-.positions-table td.center {
-  text-align: center;
-}
-
-.positions-table tbody tr {
-  border-bottom: 1px solid #e9ecef;
-}
-
-.positions-table td {
-  padding: 12px 8px;
-  vertical-align: top;
-}
-
-.position-title {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 3px;
-}
-
-.position-description {
-  color: #666;
-  font-size: 10px;
-  line-height: 1.4;
-}
-
-/* ARTIKEL NUMMER (PREMIUM) */
-.artikel-nr {
-  font-size: 9px;
-  color: #999;
-  font-family: 'Courier New', monospace;
-}
-
-/* RABATT INFO (PREMIUM) */
-.rabatt-info {
-  background: #dcfce7;
-  padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  font-size: 11px;
-  color: #166534;
+  color: #374151;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.rabatt-icon {
-  font-size: 16px;
-}
-
-/* SUMMEN */
-.totals {
-  margin-left: auto;
-  width: 350px;
-  margin-top: 10px;
-  margin-bottom: 30px;
-}
-
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 12px;
-}
-
-.total-row.subtotal {
-  border-top: 1px solid #dee2e6;
-  padding-top: 12px;
-}
-
-.total-row.rabatt {
-  color: #10b981;
-}
-
-.total-row.final {
-  border-top: 2px solid #333;
-  font-weight: bold;
-  font-size: 14px;
-  padding-top: 12px;
-  margin-top: 8px;
-  color: #667eea;
-}
-
-.total-label {
-  color: #555;
-}
-
-.total-value {
-  font-weight: 600;
-  color: #333;
-}
-
-/* BEDINGUNGEN */
-.conditions {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid #dee2e6;
-}
-
-.condition-grid {
+.form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-.condition-section {
-  margin-bottom: 20px;
+.form-group {
+  margin-bottom: 12px;
 }
 
-.condition-title {
-  font-weight: 600;
+.form-label {
+  display: block;
   font-size: 12px;
-  margin-bottom: 8px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.condition-icon {
-  font-size: 14px;
-}
-
-.condition-text {
-  font-size: 11px;
-  line-height: 1.6;
-  color: #555;
-}
-
-/* LIEFERZEIT BOX (PREMIUM) */
-.delivery-box {
-  background: #fef3c7;
-  border-left: 4px solid #f59e0b;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  font-size: 11px;
-}
-
-.delivery-title {
-  font-weight: 600;
-  color: #92400e;
+  font-weight: 500;
+  color: #4b5563;
   margin-bottom: 4px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
-/* BANKVERBINDUNG BOX */
-.bank-box {
-  background: #f1f5f9;
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* POSITIONS EDITOR */
+.positions-editor {
+  margin-top: 24px;
+}
+
+.position-item {
+  background: white;
   padding: 16px;
   border-radius: 8px;
-  font-size: 11px;
-  margin-top: 20px;
+  margin-bottom: 12px;
+  border: 2px solid #e5e7eb;
+  position: relative;
 }
 
-.bank-title {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #333;
+.position-item:hover {
+  border-color: #10b981;
 }
 
-.bank-info {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 6px;
-  line-height: 1.6;
-}
-
-.bank-label {
-  color: #666;
-}
-
-.bank-value {
-  font-weight: 600;
-  color: #333;
-}
-
-/* SCHLUSSTEXT */
-.closing {
-  margin-top: 30px;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-/* KONTAKT BOX (PREMIUM) */
-.contact-box {
-  background: #f0f9ff;
-  padding: 16px;
-  border-radius: 8px;
-  margin-top: 20px;
-  font-size: 11px;
-}
-
-.contact-title {
-  font-weight: 600;
-  color: #0369a1;
-  margin-bottom: 8px;
-}
-
-.contact-person {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.contact-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.contact-details {
-  flex: 1;
-}
-
-.contact-name {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 2px;
-}
-
-.contact-info {
-  color: #666;
-  line-height: 1.5;
-}
-
-/* UNTERSCHRIFT */
-.signature {
-  margin-top: 60px;
+.position-header {
   display: flex;
   justify-content: space-between;
-}
-
-.signature-block {
-  width: 45%;
-}
-
-.signature-line {
-  border-top: 1px solid #333;
-  padding-top: 5px;
-  font-size: 10px;
-  color: #666;
-  margin-top: 50px;
-}
-
-/* FOOTER */
-.footer {
-  margin-top: 60px;
-  padding-top: 20px;
-  border-top: 2px solid #667eea;
-  font-size: 9px;
-  color: #666;
-  text-align: center;
-  line-height: 1.8;
-}
-
-.footer-row {
-  margin-bottom: 5px;
-}
-
-.footer strong {
-  color: #333;
-}
-
-/* QR CODE (PREMIUM) */
-.qr-section {
-  position: absolute;
-  right: 40px;
-  bottom: 100px;
-  text-align: center;
-}
-
-.qr-code {
-  width: 80px;
-  height: 80px;
-  background: #f3f4f6;
-  border: 2px solid #e5e7eb;
-  border-radius: 8px;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  color: #999;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 
-.qr-label {
-  font-size: 8px;
-  color: #666;
+.position-number {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 12px;
 }
 
-/* PAGE NUMBER */
-.page-number {
-  position: absolute;
-  bottom: 30px;
-  right: 40px;
-  font-size: 9px;
-  color: #999;
+.delete-btn {
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+.position-inputs {
+  display: grid;
+  grid-template-columns: 2fr 80px 100px 120px;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.add-position-btn {
+  width: 100%;
+  padding: 12px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-position-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
 }
 </style>
