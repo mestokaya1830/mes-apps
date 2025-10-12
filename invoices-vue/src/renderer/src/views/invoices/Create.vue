@@ -15,11 +15,11 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Rechnungsnummer</label>
-            <input v-model="invoiceNumber" type="text" class="form-input" />
+            <input v-model="invoiceGrund.invoiceNumber" type="text" class="form-input" />
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum</label>
-            <input v-model="invoiceDate" type="date" class="form-input" />
+            <input v-model="invoiceGrund.invoiceDate" type="date" class="form-input" />
           </div>
         </div>
 
@@ -30,7 +30,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Leistungszeitraum</label>
-            <input v-model="servicePeriod" type="text" class="form-input" />
+            <input v-model="invoiceGrund.servicePeriod" type="text" class="form-input" />
           </div>
         </div>
       </div>
@@ -40,16 +40,20 @@
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
           <label class="form-label">Kundenname</label>
-          <select v-model="customerList" @change="getCustomerById()" class="form-input">
-            <option value="Wähle Kunden" selected disabled>Wähle Kunden</option>
-            <option v-for="item in customers" :key="item.id" :value="item.id">
+          <select v-model="customerList" class="form-input" @change="getCustomerById">
+            <option disabled value="">Wähle Kunden</option>
+            <option
+              v-for="item in customers"
+              :key="item.id"
+              :value="item.id"
+            >
               {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
             </option>
           </select>
         </div>
         <div class="form-group">
           <label class="form-label">Firma</label>
-          <input v-model="setCompany" type="text" class="form-input" />
+          <input :value="companyName" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
@@ -70,9 +74,13 @@
       <!-- POSITIONEN -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="invoiceGrund.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in positions" :key="index" class="position-item">
+          <div
+            v-for="(pos, index) in invoiceGrund.positions"
+            :key="index"
+            class="position-item"
+          >
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -124,15 +132,21 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input v-model.number="paidAmount" type="number" class="form-input" step="0.01" />
+            <input
+              v-model.number="invoiceGrund.paidAmount"
+              type="number"
+              class="form-input"
+              step="0.01"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="paymentTerms" type="number" class="form-input" />
+            <input v-model.number="invoiceGrund.paymentTerms" type="number" class="form-input" />
           </div>
         </div>
       </div>
-      <button class="back-btn" @click="storePreview()">Preview</button>
+
+      <button class="back-btn" @click="storePreview">Preview</button>
     </div>
   </div>
 </template>
@@ -142,52 +156,51 @@ export default {
   data() {
     return {
       customers: [],
-      customerList: 'Wähle Kunden',
+      customerList: null,
       selectedCustomer: {},
-      invoiceNumber: 'RE-2024-001',
-      invoiceDate: '2024-12-15',
-      servicePeriod: 'Okt - Dez 2024',
-      paidAmount: 0,
-      paymentTerms: 14,
-      positions: []
+      invoiceGrund: {
+        invoiceNumber: 'RE-2024-001',
+        invoiceDate: '2024-12-15',
+        servicePeriod: 'Okt - Dez 2024',
+        verwendung: 'Nicht angegeben',
+        paidAmount: 0,
+        paymentTerms: 14,
+        positions: []
+      },
     }
   },
   computed: {
     subtotal() {
-      return this.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.invoiceGrund.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
+      return this.invoiceGrund.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
     },
     grandTotal() {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.paidAmount
+      return this.grandTotal - this.invoiceGrund.paidAmount
     },
     formattedDate() {
-      const date = new Date(this.invoiceDate)
+      const date = new Date(this.invoiceGrund.invoiceDate)
       return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     },
-    setCompany() {
+    companyName() {
       return (
         this.selectedCustomer.company_name ||
-        this.selectedCustomer.first_name + ' ' + this.selectedCustomer.last_name
+        [this.selectedCustomer.first_name, this.selectedCustomer.last_name].filter(Boolean).join(' ')
       )
     }
   },
   mounted() {
-    this.positions = this.$store.state.invoicePreview.positions || []
-    if (this.$store.state.invoicePreview !== '') {
-      this.selectedCustomer = {
-        tax_number: this.$store.state.invoicePreview.customer.tax_number,
-        company_name: this.$store.state.invoicePreview.customer.company_name,
-        address: this.$store.state.invoicePreview.customer.address,
-        postal_code: this.$store.state.invoicePreview.customer.postal_code,
-        city: this.$store.state.invoicePreview.customer.city,
-        country: this.$store.state.invoicePreview.customer.country
-      }
-      console.log(this.$store.state.invoicePreview)
+    if (this.$store?.state?.invoicePreview) {
+      const preview = this.$store.state.invoicePreview
+      if (preview.positions) this.invoiceGrund.positions = preview.positions
+      if (preview.customer) this.selectedCustomer = { ...preview.customer }
     }
     this.getCustomers()
   },
@@ -206,71 +219,51 @@ export default {
     },
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) {
-        this.selectedCustomer = {
-          tax_number: customer.tax_number,
-          company_name: customer.company_name,
-          first_name: customer.first_name,
-          last_name: customer.last_name,
-          address: customer.address,
-          postal_code: customer.postal_code,
-          city: customer.city,
-          country: customer.country
-        }
-      }
+      if (customer) this.selectedCustomer = { ...customer }
     },
     addPosition() {
-      this.positions.push({
+      this.invoiceGrund.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
         quantity: 1,
         unit: 'Stk',
         price: 0,
-        vat: 19,
-        unitTotal: this.price * this.quantity
+        vat: 19
       })
-      this.$store.commit('setInvoicePositions', this.positions)
+      this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
     },
     deletePosition(index) {
-      if (this.positions.length > 0) {
-        this.positions.splice(index, 1)
-        this.$store.commit('setInvoicePositions', this.positions)
+      if (this.invoiceGrund.positions.length > 0) {
+        this.invoiceGrund.positions.splice(index, 1)
+        this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
-    formatCurrency(amount) {
-      return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(amount)
-    },
     async storePreview() {
       try {
-        this.positions = this.positions.map((pos) => ({
+        this.invoiceGrund.positions = this.invoiceGrund.positions.map((pos) => ({
           ...pos,
           unitTotal: (pos.quantity * pos.price).toFixed(2)
         }))
+
         await this.$store.commit('setInvoicePreview', {
-          invoice_number: this.invoiceNumber,
-          invoice_date: this.invoiceDate,
-          service_period: this.servicePeriod,
-          customer: {
-            tax_number: this.selectedCustomer.tax_number,
-            company_name: this.setCompany,
-            address: this.selectedCustomer.address,
-            postal_code: this.selectedCustomer.postal_code,
-            city: this.selectedCustomer.city,
-            country: this.selectedCustomer.country
-          },
-          paidAmount: this.paidAmount,
-          paymentTerms: this.paymentTerms,
-          positions: this.positions,
-          subtotal: this.subtotal.toFixed(2),
-          vatAmount: this.vatAmount.toFixed(2),
-          grandTotal: this.grandTotal.toFixed(2),
-          outstanding: this.outstanding.toFixed(2),
-          bank: 'Berliner Sparkasse',
-          iban: 'DE89 1005 0000 0123 4567 89',
-          bic: 'BELADEBEXXX'
+          customer: { ...this.selectedCustomer, company_name: this.companyName },
+          invoice_grund: {
+            invoice_number: this.invoiceGrund.invoiceNumber,
+            invoice_date: this.invoiceGrund.invoiceDate,
+            service_period: this.invoiceGrund.servicePeriod,
+            paidAmount: this.invoiceGrund.paidAmount,
+            paymentTerms: this.invoiceGrund.paymentTerms,
+            verwendung: this.invoiceGrund.verwendung,
+            positions: this.invoiceGrund.positions,
+            subtotal: this.subtotal.toFixed(2),
+            vatAmount: this.vatAmount.toFixed(2),
+            grandTotal: this.grandTotal.toFixed(2),
+            outstanding: this.outstanding.toFixed(2)
+          }
         })
+
         this.$router.push('/invoices-preview')
       } catch (error) {
         console.error('Error storing invoice preview:', error)

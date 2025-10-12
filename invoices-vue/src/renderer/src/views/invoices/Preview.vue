@@ -30,19 +30,23 @@
           <div v-if="previewData && previewData.customer">
             <div class="meta-row">
               <span class="meta-label">Rechnungsnr.:</span>
-              <span class="meta-value">{{ previewData.invoice_number }}</span>
+              <span class="meta-value">{{ previewData.invoice_grund.invoice_number }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ previewData.invoice_date }}</span>
+              <span class="meta-value">{{ previewData.invoice_grund.invoice_date }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kundennr.:</span>
               <span class="meta-value">{{ previewData.customer.tax_number }}</span>
             </div>
             <div class="meta-row">
+              <span class="meta-label">USt-IdNr:</span>
+              <span class="meta-value">{{ previewData.customer.vat_id }}</span>
+            </div>
+            <div class="meta-row">
               <span class="meta-label">Leistung:</span>
-              <span class="meta-value">{{ previewData.service_period }}</span>
+              <span class="meta-value">{{ previewData.invoice_grund.service_period }}</span>
             </div>
           </div>
         </div>
@@ -82,8 +86,10 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="(item, index) in previewData.positions" :key="index">
+          <tbody
+            v-if="previewData && previewData.invoice_grund && previewData.invoice_grund.positions"
+          >
+            <tr v-for="(item, index) in previewData.invoice_grund.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -103,39 +109,47 @@
         <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{ $store.state.invoicePreview.subtotal }}</span>
+            <span class="total-value">{{ $store.state.invoicePreview.invoice_grundsubtotal }}</span>
           </div>
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{ $store.state.invoicePreview.vatAmount }}</span>
+            <span class="total-value">{{
+              $store.state.invoicePreview.invoice_grund.vatAmount
+            }}</span>
           </div>
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{ $store.state.invoicePreview.grandTotal }}</span>
+            <span class="total-value">{{
+              $store.state.invoicePreview.invoice_grund.grandTotal
+            }}</span>
           </div>
           <div class="total-row paid">
             <span class="total-label">✓ Bereits bezahlt:</span>
-            <span class="total-value">- {{ $store.state.invoicePreview.paidAmount }}</span>
+            <span class="total-value"
+              >- {{ $store.state.invoicePreview.invoice_grund.paidAmount }}</span
+            >
           </div>
           <div class="total-row final outstanding">
             <span class="total-label">⚠️ Offener Betrag:</span>
-            <span class="total-value">{{ $store.state.invoicePreview.outstanding }}</span>
+            <span class="total-value">{{
+              $store.state.invoicePreview.invoice_grund.outstanding
+            }}</span>
           </div>
         </div>
 
         <div class="bank-box">
           <div class="bank-title">🏦 Bankverbindung</div>
-          <div class="bank-info">
+          <div v-if="previewData && previewData.invoice_grund" class="bank-info">
             <span class="bank-label">Bank:</span>
-            <span class="bank-value">{{ previewData.bank }}</span>
+            <span class="bank-value">{{ $store.state.auth.bank }}</span>
             <span class="bank-label">IBAN:</span>
-            <span class="bank-value">{{ previewData.iban }}</span>
+            <span class="bank-value">{{ $store.state.auth.iban }}</span>
             <span class="bank-label">BIC:</span>
-            <span class="bank-value">{{ previewData.bic }}</span>
-            <span class="bank-label">Verwendung:</span>
-            <span class="bank-value">{{ previewData.invoiceNumber }}</span>
+            <span class="bank-value">{{ $store.state.auth.bic }}</span>
             <span class="bank-label">Steuernummer:</span>
-            <span class="bank-value">{{ previewData.tax_number }}</span>
+            <span class="bank-value">{{ $store.state.auth.tax_number }}</span>
+            <span class="bank-label">Verwendung:</span>
+            <span class="bank-value">{{ previewData.invoice_grund.verwendung }}</span>
           </div>
         </div>
 
@@ -188,7 +202,7 @@ export default {
   methods: {
     async getPreview() {
       this.previewData = await this.$store.state.invoicePreview
-      console.log('Available keys:', Object.keys(this.previewData))
+      console.log(this.previewData)
     }
   }
 }
