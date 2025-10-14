@@ -3,35 +3,35 @@
     <!-- EDITOR PANEL -->
     <div class="editor-panel">
       <div class="editor-header">
-        <div class="editor-title">📝 Rechnung bearbeiten</div>
+        <div class="editor-title">📝 Angebot bearbeiten</div>
         <div class="editor-subtitle">
-          Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live
+          Bearbeiten Sie die Angebotsdetails und sehen Sie die Vorschau live
         </div>
       </div>
 
       <!-- GRUND DATEN -->
       <div class="form-section">
+        <div class="form-section-title">📌 Abgebot Title</div>
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input v-model="offerGrund.offerTitle" type="text" class="form-input" />
+        </div>
+      </div>
+      <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Rechnungsnummer</label>
-            <input v-model="invoiceGrund.invoiceNumber" type="text" class="form-input" />
+            <label class="form-label">Angebotsnummer</label>
+            <input v-model="offerGrund.offerNumber" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Rechnungsdatum</label>
-            <input v-model="invoiceGrund.invoiceDate" type="date" class="form-input" />
+            <label class="form-label">Angebotsdatum</label>
+            <input v-model="offerGrund.offerDate" type="date" class="form-input" />
           </div>
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Kundennummer</label>
-            <input v-model="selectedCustomer.tax_number" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Leistungszeitraum</label>
-            <input v-model="invoiceGrund.servicePeriod" type="text" class="form-input" />
-          </div>
+        <div class="form-group">
+          <label class="form-label">Leistungszeitraum</label>
+          <input v-model="offerGrund.servicePeriod" type="text" class="form-input" />
         </div>
       </div>
 
@@ -41,46 +41,59 @@
         <div class="form-group">
           <label class="form-label">Kundenname</label>
           <select v-model="customerList" class="form-input" @change="getCustomerById">
-            <option disabled value="">Wähle Kunden</option>
-            <option
-              v-for="item in customers"
-              :key="item.id"
-              :value="item.id"
-            >
+            <option selected disabled>Wähle Kunden</option>
+            <option v-for="item in customers" :key="item.id" :value="item.id">
               {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
             </option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Firma</label>
+          <label class="form-label">Kundennummer</label>
+          <input v-model="selectedCustomer.tax_number" type="text" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kundenname</label>
           <input :value="companyName" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="selectedCustomer.address" type="text" class="form-input" />
+          <input v-model="selectedCustomer.address" type="text" class="form-input" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ</label>
-            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" />
+            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt</label>
-            <input v-model="selectedCustomer.city" type="text" class="form-input" />
+            <input v-model="selectedCustomer.city" type="text" class="form-input" readonly />
           </div>
+        </div>
+      </div>
+      <!-- Sprachpartner -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Sprachpartner</div>
+
+        <div class="form-group">
+          <label class="form-label">Sprachpartner Vollname</label>
+          <input v-model="sprachpartner.fullname" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input v-model="sprachpartner.email" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tel</label>
+          <input v-model="sprachpartner.phone" type="text" class="form-input" />
         </div>
       </div>
 
       <!-- POSITIONEN -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="invoiceGrund.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="offerGrund.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div
-            v-for="(pos, index) in invoiceGrund.positions"
-            :key="index"
-            class="position-item"
-          >
+          <div v-for="(pos, index) in offerGrund.positions" :key="index" class="position-item">
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -133,7 +146,7 @@
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
             <input
-              v-model.number="invoiceGrund.paidAmount"
+              v-model.number="offerGrund.paidAmount"
               type="number"
               class="form-input"
               step="0.01"
@@ -141,7 +154,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="invoiceGrund.paymentTerms" type="number" class="form-input" />
+            <input v-model.number="offerGrund.paymentTerms" type="number" class="form-input" />
           </div>
         </div>
       </div>
@@ -156,25 +169,30 @@ export default {
   data() {
     return {
       customers: [],
-      customerList: null,
+      customerList: 'Wähle Kunden',
       selectedCustomer: {},
-      invoiceGrund: {
-        invoiceNumber: 'RE-2024-001',
-        invoiceDate: '2024-12-15',
+      sprachpartner: {
+        fullname: '',
+        email: '',
+        phone: ''
+      },
+      offerGrund: {
+        offerTitle: 'Mein erstes Angebot',
+        offerNumber: 'ANG-2024-001',
+        offerDate: '2024-12-15',
         servicePeriod: 'Okt - Dez 2024',
-        verwendung: 'Nicht angegeben',
         paidAmount: 0,
         paymentTerms: 14,
         positions: []
-      },
+      }
     }
   },
   computed: {
     subtotal() {
-      return this.invoiceGrund.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.offerGrund.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.invoiceGrund.positions.reduce(
+      return this.offerGrund.positions.reduce(
         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
         0
       )
@@ -183,28 +201,30 @@ export default {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.invoiceGrund.paidAmount
+      return this.grandTotal - this.offerGrund.paidAmount
     },
     formattedDate() {
-      const date = new Date(this.invoiceGrund.invoiceDate)
+      const date = new Date(this.offerGrund.offerDate)
       return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     },
     companyName() {
       return (
         this.selectedCustomer.company_name ||
-        [this.selectedCustomer.first_name, this.selectedCustomer.last_name].filter(Boolean).join(' ')
+        [this.selectedCustomer.first_name, this.selectedCustomer.last_name]
+          .filter(Boolean)
+          .join(' ')
       )
     }
   },
   mounted() {
-    if (this.$store?.state?.invoicePreview) {
-      const preview = this.$store.state.invoicePreview
-      if (preview.positions) this.invoiceGrund.positions = preview.positions
+    if (this.$store?.state?.offerPreview) {
+      const preview = this.$store.state.offerPreview
+      if (preview.positions) this.offerGrund.positions = preview.positions
       if (preview.customer) this.selectedCustomer = { ...preview.customer }
     }
     this.getCustomers()
   },
-  methods: {
+  methods: {  
     async getCustomers() {
       try {
         const response = await window.api.getCustomers()
@@ -222,204 +242,54 @@ export default {
       if (customer) this.selectedCustomer = { ...customer }
     },
     addPosition() {
-      this.invoiceGrund.positions.push({
-        title: 'Neue Position',
+      this.offerGrund.positions.push({
         description: 'Beschreibung',
         quantity: 1,
         unit: 'Stk',
         price: 0,
         vat: 19
       })
-      this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
+      this.$store.commit('setOfferPositions', this.offerGrund.positions)
     },
     deletePosition(index) {
-      if (this.invoiceGrund.positions.length > 0) {
-        this.invoiceGrund.positions.splice(index, 1)
-        this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
+      if (this.offerGrund.positions.length > 0) {
+        this.offerGrund.positions.splice(index, 1)
+        this.$store.commit('setOfferPositions', this.offerGrund.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
     async storePreview() {
       try {
-        this.invoiceGrund.positions = this.invoiceGrund.positions.map((pos) => ({
+        this.offerGrund.positions = this.offerGrund.positions.map((pos) => ({
           ...pos,
           unitTotal: (pos.quantity * pos.price).toFixed(2)
         }))
 
-        await this.$store.commit('setInvoicePreview', {
+        await this.$store.commit('setOfferPreview', {
           customer: { ...this.selectedCustomer, company_name: this.companyName },
-          invoice_grund: {
-            invoice_number: this.invoiceGrund.invoiceNumber,
-            invoice_date: this.invoiceGrund.invoiceDate,
-            service_period: this.invoiceGrund.servicePeriod,
-            paidAmount: this.invoiceGrund.paidAmount,
-            paymentTerms: this.invoiceGrund.paymentTerms,
-            verwendung: this.invoiceGrund.verwendung,
-            positions: this.invoiceGrund.positions,
+          offer_grund: {
+            offer_title: this.offerGrund.offerTitle,
+            offer_number: this.offerGrund.offerNumber,
+            offer_date: this.offerGrund.offerDate,
+            service_period: this.offerGrund.servicePeriod,
+            paidAmount: this.offerGrund.paidAmount,
+            paymentTerms: this.offerGrund.paymentTerms,
+            verwendung: this.offerGrund.verwendung,
+            positions: this.offerGrund.positions,
             subtotal: this.subtotal.toFixed(2),
             vatAmount: this.vatAmount.toFixed(2),
             grandTotal: this.grandTotal.toFixed(2),
             outstanding: this.outstanding.toFixed(2)
-          }
+          },
+          sprachpartner: { ...this.sprachpartner }
         })
 
         this.$router.push('/offers-preview')
       } catch (error) {
-        console.error('Error storing invoice preview:', error)
+        console.error('Error storing offer preview:', error)
       }
     }
   }
 }
 </script>
-<style>
-/* EDITOR PANEL */
-.editor-panel {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.editor-header {
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.editor-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 4px;
-}
-
-.editor-subtitle {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-/* FORM GROUPS */
-.form-section {
-  margin-bottom: 24px;
-  padding: 20px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.form-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: #4b5563;
-  margin-bottom: 4px;
-}
-
-.form-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-/* POSITIONS EDITOR */
-.positions-editor {
-  margin-top: 24px;
-}
-
-.position-item {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  border: 2px solid #e5e7eb;
-  position: relative;
-}
-
-.position-item:hover {
-  border-color: #10b981;
-}
-
-.position-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.position-number {
-  font-weight: 600;
-  color: #6b7280;
-  font-size: 12px;
-}
-
-.delete-btn {
-  background: #fee2e2;
-  color: #dc2626;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.delete-btn:hover {
-  background: #fecaca;
-}
-
-.position-inputs {
-  display: grid;
-  grid-template-columns: 2fr 80px 100px 120px;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.add-position-btn {
-  width: 100%;
-  padding: 12px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.add-position-btn:hover {
-  background: #059669;
-  transform: translateY(-1px);
-}
-</style>

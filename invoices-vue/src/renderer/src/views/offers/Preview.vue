@@ -5,19 +5,22 @@
       <!-- HEADER -->
       <div class="header">
         <div class="company-info">
-          <div class="company-name">Ihre Firma GmbH</div>
+          <div class="company-name">{{ $store.state.auth.firm_name }}</div>
           <div class="company-details">
-            Musterstraße 123 • 10115 Berlin<br />
-            Tel: +49 30 1234567 • Fax: +49 30 1234568<br />
-            E-Mail: info@ihre-firma.de • www.ihre-firma.de
+            {{ $store.state.auth.firm_address }}<br />
+            Tel: {{ $store.state.auth.firm_phone }} • Fax: {{ $store.state.auth.firm_fax }}<br />
+            E-Mail: {{ $store.state.auth.firm_email }} • {{ $store.state.auth.firm_website }}
           </div>
         </div>
-       <img :src="logoSrc" alt="" class="preview-logo" />
+        <img :src="logoSrc" alt="" class="preview-logo" />
       </div>
 
       <!-- EMPFÄNGER -->
       <div class="recipient">
-        <div class="sender-line">Ihre Firma GmbH • Musterstraße 123 • 10115 Berlin</div>
+        <div class="sender-line">
+          {{ $store.state.auth.firm_name }} • {{ $store.state.auth.firm_address }} •
+          {{ $store.state.auth.firm_postal_code }} {{ $store.state.auth.firm_city }}
+        </div>
         <div class="recipient-address">
           <div class="recipient-name">Herrn Maximilian Weber</div>
           <div>Weber Consulting GmbH</div>
@@ -63,8 +66,8 @@
       </div>
 
       <!-- TITEL -->
-      <div class="document-title">
-        Angebot - Webdesign & SEO Services
+      <div v-if="$store.state.offerPreview" class="document-title">
+        {{ $store.state.offerPreview.offer_grund.offer_title || 'Angebot' }}
         <span class="validity-badge">Gültig 30 Tage</span>
       </div>
 
@@ -212,15 +215,16 @@
       </div>
 
       <!-- KONTAKT BOX (PREMIUM FEATURE) -->
-      <div class="contact-box">
+      <div v-if="$store.state.offerPreview.sprachpartner.fullname" class="contact-box">
         <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
         <div class="contact-person">
           <div class="contact-avatar">SM</div>
           <div class="contact-details">
-            <div class="contact-name">Sandra Müller</div>
+            <div class="contact-name">{{ $store.state.offerPreview.sprachpartner.fullname }}</div>
             <div class="contact-info">
               Projektmanagement & Kundenbetreuung<br />
-              📞 +49 30 1234-567 • 📧 mueller@ihre-firma.de
+              📞 +{{ $store.state.offerPreview.sprachpartner.phone }} • 📧
+              {{ $store.state.offerPreview.sprachpartner.email }}
             </div>
           </div>
         </div>
@@ -250,8 +254,13 @@
 
       <!-- FOOTER -->
       <div class="footer">
-        <h2>Ihre Firma GmbH</h2>
-        <p>© 2024 Mes Rechnungs-App. Alle Rechte vorbehalten.</p>
+        <h2>{{ $store.state.auth.firm_name }}</h2>
+        <p>© 2024 {{ $store.state.auth.firm_name }}. Alle Rechte vorbehalten.</p>
+      </div>
+      <div class="footer">
+        <router-link to="/offers/create" class="back-link"
+          >← Zurück zur Angebotserstellung</router-link
+        >
       </div>
     </div>
   </div>
@@ -287,7 +296,7 @@ export default {
         return null
       }
     }
-  },
+  }
 }
 </script>
 
@@ -297,7 +306,7 @@ export default {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-height: calc(100vh - 40px);
+  height: auto;
   padding: 40px;
   top: 20px;
 }
@@ -637,7 +646,6 @@ export default {
   margin-top: 20px;
   font-size: 11px;
 }
-
 .contact-title {
   font-weight: 600;
   color: #0369a1;

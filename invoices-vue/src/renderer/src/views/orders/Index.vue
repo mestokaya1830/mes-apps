@@ -2,7 +2,7 @@
   <div>
     <h1>{{ title }}</h1>
     <span class="form-btn">
-      <router-link to="/orders/create" class="link">Add New Order</router-link>
+      <router-link to="/orders/create" class="link">Neuen Auftrag erstellen</router-link>
     </span>
   </div>
 </template>
@@ -10,7 +10,7 @@
 export default {
   data() {
     return {
-      title: 'Orders'
+      title: 'Aufträge'
     }
   }
 }

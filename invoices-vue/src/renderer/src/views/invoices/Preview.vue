@@ -217,25 +217,6 @@ export default {
   top: 20px;
 }
 
-.preview-header {
-  padding: 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-  border-radius: 12px 12px 0 0;
-}
-
-.preview-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.page {
-  padding: 40px;
-  background: white;
-  font-size: 11px;
-}
-
 /* HEADER */
 .header {
   display: flex;

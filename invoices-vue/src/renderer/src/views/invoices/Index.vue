@@ -2,7 +2,7 @@
   <div>
     <h1>{{ title }}</h1>
     <span class="form-btn">
-      <router-link to="/invoices/create" class="link">Neue Rechnung hinzufügen</router-link>
+      <router-link to="/invoices/create" class="link">Neue Rechnung erstellen</router-link>
     </span>
   </div>
 </template>

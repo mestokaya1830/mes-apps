@@ -12,6 +12,11 @@
         <span class="nav-text">Startseite</span>
       </router-link>
 
+      <router-link to="/customers" exact-active-class="active" class="nav-item">
+        <span class="nav-icon material-icons">people</span>
+        <span class="nav-text">Kunden</span>
+      </router-link>
+
       <router-link to="/invoices" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">description</span>
         <span class="nav-text">Rechnungen</span>
@@ -22,14 +27,9 @@
         <span class="nav-text">Angebote</span>
       </router-link>
 
-      <router-link to="/customers" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">people</span>
-        <span class="nav-text">Kunden</span>
-      </router-link>
-
       <router-link to="/orders" exact-active-class="active" class="nav-item">
         <span class="nav-icon material-icons">description</span>
-        <span class="nav-text">Auftrag</span>
+        <span class="nav-text">Aufträge</span>
       </router-link>
 
       <router-link to="/profile" exact-active-class="active" class="nav-item">

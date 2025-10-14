@@ -98,6 +98,12 @@ const routes = [
     component: () => import('../views/orders/Details.vue'),
     meta: { title: 'Order Details', auth: true }
   },
+  {
+    path: '/orders-preview',
+    name: 'orders-preview',
+    component: () => import('../views/orders/Preview.vue'),
+    meta: { title: 'Aufträge Vorschau', auth: true }
+  },
 
   //offers
 

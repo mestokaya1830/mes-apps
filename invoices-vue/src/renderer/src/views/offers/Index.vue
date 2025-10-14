@@ -2,7 +2,7 @@
   <div>
     <h1>{{ title }}</h1>
     <span class="form-btn">
-      <router-link to="/offers/create" class="link">Neues Angebot hinzufügen</router-link>
+      <router-link to="/offers/create" class="link">Neues Angebot erstellen</router-link>
     </span>
   </div>
 </template>

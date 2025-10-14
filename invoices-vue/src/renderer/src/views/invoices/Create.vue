@@ -15,7 +15,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Rechnungsnummer</label>
-            <input v-model="invoiceGrund.invoiceNumber" type="text" class="form-input" />
+            <input v-model="invoiceGrund.invoiceNumber" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum</label>
@@ -23,15 +23,9 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Kundennummer</label>
-            <input v-model="selectedCustomer.tax_number" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Leistungszeitraum</label>
-            <input v-model="invoiceGrund.servicePeriod" type="text" class="form-input" />
-          </div>
+        <div class="form-group">
+          <label class="form-label">Leistungszeitraum</label>
+          <input v-model="invoiceGrund.servicePeriod" type="text" class="form-input" />
         </div>
       </div>
 
@@ -41,32 +35,32 @@
         <div class="form-group">
           <label class="form-label">Kundenname</label>
           <select v-model="customerList" class="form-input" @change="getCustomerById">
-            <option disabled value="">Wähle Kunden</option>
-            <option
-              v-for="item in customers"
-              :key="item.id"
-              :value="item.id"
-            >
+            <option selected disabled>Wähle Kunden</option>
+            <option v-for="item in customers" :key="item.id" :value="item.id">
               {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
             </option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Firma</label>
+          <label class="form-label">Kundennummer</label>
+          <input v-model="selectedCustomer.tax_number" type="text" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kundenname</label>
           <input :value="companyName" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="selectedCustomer.address" type="text" class="form-input" />
+          <input v-model="selectedCustomer.address" type="text" class="form-input" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ</label>
-            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" />
+            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt</label>
-            <input v-model="selectedCustomer.city" type="text" class="form-input" />
+            <input v-model="selectedCustomer.city" type="text" class="form-input" readonly />
           </div>
         </div>
       </div>
@@ -76,11 +70,7 @@
         <div class="form-section-title">📦 Positionen</div>
         <div v-if="invoiceGrund.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div
-            v-for="(pos, index) in invoiceGrund.positions"
-            :key="index"
-            class="position-item"
-          >
+          <div v-for="(pos, index) in invoiceGrund.positions" :key="index" class="position-item">
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -156,7 +146,7 @@ export default {
   data() {
     return {
       customers: [],
-      customerList: null,
+      customerList: 'Wähle Kunden',
       selectedCustomer: {},
       invoiceGrund: {
         invoiceNumber: 'RE-2024-001',
@@ -166,7 +156,7 @@ export default {
         paidAmount: 0,
         paymentTerms: 14,
         positions: []
-      },
+      }
     }
   },
   computed: {
@@ -192,7 +182,9 @@ export default {
     companyName() {
       return (
         this.selectedCustomer.company_name ||
-        [this.selectedCustomer.first_name, this.selectedCustomer.last_name].filter(Boolean).join(' ')
+        [this.selectedCustomer.first_name, this.selectedCustomer.last_name]
+          .filter(Boolean)
+          .join(' ')
       )
     }
   },
@@ -272,154 +264,3 @@ export default {
   }
 }
 </script>
-<style>
-/* EDITOR PANEL */
-.editor-panel {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.editor-header {
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.editor-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 4px;
-}
-
-.editor-subtitle {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-/* FORM GROUPS */
-.form-section {
-  margin-bottom: 24px;
-  padding: 20px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.form-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: #4b5563;
-  margin-bottom: 4px;
-}
-
-.form-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-/* POSITIONS EDITOR */
-.positions-editor {
-  margin-top: 24px;
-}
-
-.position-item {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  border: 2px solid #e5e7eb;
-  position: relative;
-}
-
-.position-item:hover {
-  border-color: #10b981;
-}
-
-.position-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.position-number {
-  font-weight: 600;
-  color: #6b7280;
-  font-size: 12px;
-}
-
-.delete-btn {
-  background: #fee2e2;
-  color: #dc2626;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.delete-btn:hover {
-  background: #fecaca;
-}
-
-.position-inputs {
-  display: grid;
-  grid-template-columns: 2fr 80px 100px 120px;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.add-position-btn {
-  width: 100%;
-  padding: 12px;
-  background: #10b981;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.add-position-btn:hover {
-  background: #059669;
-  transform: translateY(-1px);
-}
-</style>
