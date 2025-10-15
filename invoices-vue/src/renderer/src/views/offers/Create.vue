@@ -39,7 +39,7 @@
       <div class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
-          <label class="form-label">Kundenname</label>
+          <label class="form-label">Kundendaten</label>
           <select v-model="customerList" class="form-input" @change="getCustomerById">
             <option selected disabled>Wähle Kunden</option>
             <option v-for="item in customers" :key="item.id" :value="item.id">

@@ -1,26 +1,184 @@
-<template lang="">
+<template>
   <div>
-    <h1>{{ title }}</h1>
+    <!-- EDITOR PANEL -->
+    <div class="editor-panel">
+      <div class="editor-header">
+        <div class="editor-title">📝 Auftragserteilung bearbeiten</div>
+        <div class="editor-subtitle">
+          Bearbeiten Sie die Auftragsdetails und sehen Sie die Vorschau live
+        </div>
+      </div>
 
-    <button class="back-btn" @click="storePreview">Preview</button>
+      <!-- GRUND DATEN -->
+      <div class="form-section">
+        <div class="form-section-title">📌 Auftrag Title</div>
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input v-model="orderGrund.orderTitle" type="text" class="form-input" />
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">📌 Grunddaten</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Auftragsnummer</label>
+            <input v-model="orderGrund.orderNumber" type="text" class="form-input" readonly />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Auftragsdatum</label>
+            <input v-model="orderGrund.orderDate" type="date" class="form-input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Leistungszeitraum</label>
+          <input v-model="orderGrund.servicePeriod" type="text" class="form-input" />
+        </div>
+      </div>
+
+      <!-- KUNDE -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Kunde</div>
+        <div class="form-group">
+          <label class="form-label">Kundendaten</label>
+          <select v-model="customerList" class="form-input" @change="getCustomerById">
+            <option selected disabled>Wähle Kunden</option>
+            <option v-for="item in customers" :key="item.id" :value="item.id">
+              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
+            </option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kundennummer</label>
+          <input v-model="selectedCustomer.tax_number" type="text" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kundenname</label>
+          <input :value="companyName" type="text" class="form-input" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Adresse</label>
+          <input v-model="selectedCustomer.address" type="text" class="form-input" readonly />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">PLZ</label>
+            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" readonly />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Stadt</label>
+            <input v-model="selectedCustomer.city" type="text" class="form-input" readonly />
+          </div>
+        </div>
+      </div>
+      <!-- Sprachpartner -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Sprachpartner (Optional)</div>
+
+        <div class="form-group">
+          <label class="form-label">Sprachpartner Vollname</label>
+          <input v-model="sprachPartner.fullname" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input v-model="sprachPartner.email" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tel</label>
+          <input v-model="sprachPartner.phone" type="text" class="form-input" />
+        </div>
+      </div>
+
+      <!-- POSITIONEN -->
+      <div class="form-section">
+        <div class="form-section-title">📦 Positionen</div>
+        <div v-if="orderGrund.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-else class="positions-editor">
+          <div v-for="(pos, index) in orderGrund.positions" :key="index" class="position-item">
+            <div class="position-header">
+              <span class="position-number">Position {{ index + 1 }}</span>
+              <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bezeichnung</label>
+              <input v-model="pos.title" type="text" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Beschreibung</label>
+              <input v-model="pos.description" type="text" class="form-input" />
+            </div>
+            <div class="position-inputs">
+              <div class="form-group">
+                <label class="form-label">Einheit</label>
+                <select v-model="pos.unit" class="form-input">
+                  <option>Stk</option>
+                  <option>Std</option>
+                  <option>Tag</option>
+                  <option>Pauschal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Menge</label>
+                <input v-model.number="pos.quantity" type="number" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Preis (€)</label>
+                <input v-model.number="pos.price" type="number" class="form-input" step="0.01" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">MwSt. (%)</label>
+                <select v-model.number="pos.vat" class="form-input">
+                  <option :value="0">0</option>
+                  <option :value="7">7</option>
+                  <option :value="19">19</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="add-position-btn" @click="addPosition">➕ Position hinzufügen</button>
+      </div>
+
+      <!-- ZAHLUNGSINFORMATIONEN -->
+      <div class="form-section">
+        <div class="form-section-title">💳 Zahlungsinformationen</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Anzahlung (bereits bezahlt)</label>
+            <input
+              v-model.number="orderGrund.paidAmount"
+              type="number"
+              class="form-input"
+              step="0.01"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zahlungsziel (Tage)</label>
+            <input v-model.number="orderGrund.paymentTerms" type="number" class="form-input" />
+          </div>
+        </div>
+      </div>
+
+      <button class="back-btn" @click="storePreview">Preview</button>
+    </div>
   </div>
 </template>
+
 <script>
 export default {
   data() {
     return {
-      title: 'Neues Auftrag erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
       selectedCustomer: {},
-      sprachpartner: {
+      sprachPartner: {
         fullname: '',
         email: '',
         phone: ''
       },
       orderGrund: {
-        orderTitle: 'Mein erstes Auftrag',
-        orderNumber: 'AUF-2024-001',
+        orderTitle: 'Mein erstes Angebot',
+        orderNumber: 'ANG-2024-001',
         orderDate: '2024-12-15',
         servicePeriod: 'Okt - Dez 2024',
         paidAmount: 0,
@@ -61,7 +219,7 @@ export default {
   mounted() {
     if (this.$store?.state?.orderPreview) {
       const preview = this.$store.state.orderPreview
-      if (preview.positions) this.orderGrund.positions = preview.positions
+      if (preview.order_grund?.positions) this.orderGrund.positions = preview.order_grund.positions
       if (preview.customer) this.selectedCustomer = { ...preview.customer }
     }
     this.getCustomers()
@@ -91,12 +249,12 @@ export default {
         price: 0,
         vat: 19
       })
-      this.$store.commit('setorderPositions', this.orderGrund.positions)
+      this.$store.commit('setOrderPreview', this.orderGrund.positions)
     },
     deletePosition(index) {
       if (this.orderGrund.positions.length > 0) {
         this.orderGrund.positions.splice(index, 1)
-        this.$store.commit('setorderPositions', this.orderGrund.positions)
+        this.$store.commit('setOrderPreview', this.orderGrund.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
@@ -124,7 +282,7 @@ export default {
             grandTotal: this.grandTotal.toFixed(2),
             outstanding: this.outstanding.toFixed(2)
           },
-          sprachpartner: { ...this.sprachpartner }
+          sprach_partner: { ...this.sprachPartner }
         })
 
         this.$router.push('/orders-preview')
