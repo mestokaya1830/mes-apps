@@ -209,7 +209,7 @@ export default {
           .join(' ')
       )
     },
-    
+
     logoSrc() {
       const logo = this.$store.state.auth.logo
       if (!logo) return null
@@ -260,6 +260,7 @@ export default {
         alert('Keine Positionen vorhanden!')
       }
     },
+   
     async storePreview() {
       try {
         this.orderGrund.positions = this.orderGrund.positions.map((pos) => ({
