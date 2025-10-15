@@ -72,19 +72,19 @@
       </div>
       <!-- Sprachpartner -->
       <div class="form-section">
-        <div class="form-section-title">👤 Sprachpartner</div>
+        <div class="form-section-title">👤 Sprachpartner (Optional)</div>
 
         <div class="form-group">
           <label class="form-label">Sprachpartner Vollname</label>
-          <input v-model="sprachpartner.fullname" type="text" class="form-input" />
+          <input v-model="sprachPartner.fullname" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input v-model="sprachpartner.email" type="text" class="form-input" />
+          <input v-model="sprachPartner.email" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Tel</label>
-          <input v-model="sprachpartner.phone" type="text" class="form-input" />
+          <input v-model="sprachPartner.phone" type="text" class="form-input" />
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export default {
       customers: [],
       customerList: 'Wähle Kunden',
       selectedCustomer: {},
-      sprachpartner: {
+      sprachPartner: {
         fullname: '',
         email: '',
         phone: ''
@@ -219,12 +219,12 @@ export default {
   mounted() {
     if (this.$store?.state?.offerPreview) {
       const preview = this.$store.state.offerPreview
-      if (preview.positions) this.offerGrund.positions = preview.positions
+      if (preview.offer_grund?.positions) this.offerGrund.positions = preview.offer_grund.positions
       if (preview.customer) this.selectedCustomer = { ...preview.customer }
     }
     this.getCustomers()
   },
-  methods: {  
+  methods: {
     async getCustomers() {
       try {
         const response = await window.api.getCustomers()
@@ -249,12 +249,12 @@ export default {
         price: 0,
         vat: 19
       })
-      this.$store.commit('setOfferPositions', this.offerGrund.positions)
+      this.$store.commit('setOfferPreview', this.offerGrund.positions)
     },
     deletePosition(index) {
       if (this.offerGrund.positions.length > 0) {
         this.offerGrund.positions.splice(index, 1)
-        this.$store.commit('setOfferPositions', this.offerGrund.positions)
+        this.$store.commit('setOfferPreview', this.offerGrund.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
@@ -282,7 +282,7 @@ export default {
             grandTotal: this.grandTotal.toFixed(2),
             outstanding: this.outstanding.toFixed(2)
           },
-          sprachpartner: { ...this.sprachpartner }
+          sprach_partner: { ...this.sprachPartner }
         })
 
         this.$router.push('/offers-preview')

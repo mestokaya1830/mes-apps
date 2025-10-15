@@ -64,7 +64,23 @@
           </div>
         </div>
       </div>
+      <!-- Sprachpartner -->
+      <div class="form-section">
+        <div class="form-section-title">👤 Sprachpartner (Optional)</div>
 
+        <div class="form-group">
+          <label class="form-label">Sprachpartner Vollname</label>
+          <input v-model="sprachPartner.fullname" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input v-model="sprachPartner.email" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tel</label>
+          <input v-model="sprachPartner.phone" type="text" class="form-input" />
+        </div>
+      </div>
       <!-- POSITIONEN -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
@@ -156,6 +172,11 @@ export default {
         paidAmount: 0,
         paymentTerms: 14,
         positions: []
+      },
+      sprachPartner: {
+        fullname: '',
+        email: '',
+        phone: ''
       }
     }
   },
@@ -191,7 +212,8 @@ export default {
   mounted() {
     if (this.$store?.state?.invoicePreview) {
       const preview = this.$store.state.invoicePreview
-      if (preview.positions) this.invoiceGrund.positions = preview.positions
+      if (preview.invoice_grund?.positions)
+        this.invoiceGrund.positions = preview.invoice_grund.positions
       if (preview.customer) this.selectedCustomer = { ...preview.customer }
     }
     this.getCustomers()
@@ -222,12 +244,12 @@ export default {
         price: 0,
         vat: 19
       })
-      this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
+      this.$store.commit('setInvoicePreview', this.invoiceGrund.positions)
     },
     deletePosition(index) {
       if (this.invoiceGrund.positions.length > 0) {
         this.invoiceGrund.positions.splice(index, 1)
-        this.$store.commit('setInvoicePositions', this.invoiceGrund.positions)
+        this.$store.commit('setInvoicePreview', this.invoiceGrund.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
@@ -253,7 +275,8 @@ export default {
             vatAmount: this.vatAmount.toFixed(2),
             grandTotal: this.grandTotal.toFixed(2),
             outstanding: this.outstanding.toFixed(2)
-          }
+          },
+          sprach_partner: { ...this.sprachPartner }
         })
 
         this.$router.push('/invoices-preview')

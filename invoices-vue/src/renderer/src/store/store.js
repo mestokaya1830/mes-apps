@@ -24,9 +24,6 @@ export default createStore({
     },
     setOrderPreview(state, payload) {
       state.orderPreview = payload
-    },
-    setInvoicePositions(state, payload) {
-      state.invoicePositions = payload
     }
   },
   actions: {},
