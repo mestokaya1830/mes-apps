@@ -83,11 +83,11 @@
         <h3 class="">Tax Information</h3>
         <div class="">
           <div>
-            <label class="">Tax Number</label>
+            <label class="">Steuernummer</label>
             <input v-model="customer.tax_number" type="text" class="" placeholder="123/456/78901" />
           </div>
           <div>
-            <label class="">VAT ID</label>
+            <label class="">USt-IdNr.</label>
             <input v-model="customer.vat_id" type="text" class="" placeholder="DE123456789" />
           </div>
         </div>

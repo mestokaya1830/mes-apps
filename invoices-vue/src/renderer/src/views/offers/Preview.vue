@@ -28,12 +28,24 @@
         <!-- META INFORMATIONEN -->
         <div v-if="previewData && previewData.customer">
           <div class="meta-row">
-            <span class="meta-label">Angebotsnummer.:</span>
+            <span class="meta-label">AngebotNr.:</span>
             <span class="meta-value">ANG-2024-001</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label">Angebotsdatum:</span>
+            <span class="meta-label">Datum:</span>
             <span class="meta-value">{{ previewData.offer_grund.offer_date }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">KundenNr:</span>
+            <span class="meta-value">{{ formattedCustomerNumber(previewData.customer.id) }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">SteuerNr.:</span>
+            <span class="meta-value">{{ previewData.customer.tax_number }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">USt-IdNr.:</span>
+            <span class="meta-value">{{ previewData.customer.vat_id }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Gültig bis:</span>
@@ -226,6 +238,8 @@
 </template>
 <script>
 export default {
+  name: 'OfferPreview',
+  inject: ['formattedCustomerNumber'],
   data() {
     return {
       title: 'Angebot',

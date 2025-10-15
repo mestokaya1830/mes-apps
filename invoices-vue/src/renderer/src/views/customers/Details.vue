@@ -43,11 +43,11 @@
         <input v-model="customer.phone" type="text" />
       </div>
       <div class="customer-card-item">
-        <label>Tax Number</label>
+        <label>Steuernummer</label>
         <input v-model="customer.tax_number" type="text" />
       </div>
       <div class="customer-card-item">
-        <label>Vat Id</label>
+        <label>USt-IdNr.</label>
         <input v-model="customer.vat_id" type="text" />
       </div>
       <div class="customer-card-item">

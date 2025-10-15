@@ -3,7 +3,7 @@
     <!-- EDITOR PANEL -->
     <div class="editor-panel">
       <div class="editor-header">
-        <div class="editor-title">📝 Angebot bearbeiten</div>
+        <div class="editor-title">📝{{ title }}</div>
         <div class="editor-subtitle">
           Bearbeiten Sie die Angebotsdetails und sehen Sie die Vorschau live
         </div>
@@ -48,11 +48,11 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Kundennummer</label>
-          <input v-model="selectedCustomer.tax_number" type="text" class="form-input" readonly />
+          <label class="form-label">KundeNr.</label>
+          <input v-model="selectedCustomer.id" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
-          <label class="form-label">Kundenname</label>
+          <label class="form-label">Name</label>
           <input :value="companyName" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
@@ -166,8 +166,10 @@
 
 <script>
 export default {
+  name: 'CreateOffer',
   data() {
     return {
+      title: 'Angebot erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
       selectedCustomer: {},

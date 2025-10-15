@@ -21,6 +21,14 @@ export default {
   components: {
     SideBar
   },
+  provide() {
+    return {
+      formattedCustomerNumber(value) {
+        if (!value) return ''
+        return `KU-${String(value).padStart(5, '0')}`
+      }
+    }
+  },
   data() {
     return {}
   },

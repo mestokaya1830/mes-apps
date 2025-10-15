@@ -3,7 +3,7 @@
     <!-- EDITOR PANEL -->
     <div class="editor-panel">
       <div class="editor-header">
-        <div class="editor-title">📝 Rechnung bearbeiten</div>
+        <div class="editor-title">📝{{ title }}</div>
         <div class="editor-subtitle">
           Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live
         </div>
@@ -43,10 +43,10 @@
         </div>
         <div class="form-group">
           <label class="form-label">Kundennummer</label>
-          <input v-model="selectedCustomer.tax_number" type="text" class="form-input" readonly />
+          <input v-model="selectedCustomer.id" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
-          <label class="form-label">Kundenname</label>
+          <label class="form-label">Name</label>
           <input :value="companyName" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
@@ -161,6 +161,7 @@
 export default {
   data() {
     return {
+      title: 'Rechnung erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
       selectedCustomer: {},

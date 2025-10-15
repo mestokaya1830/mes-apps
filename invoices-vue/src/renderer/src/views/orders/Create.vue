@@ -3,32 +3,26 @@
     <!-- EDITOR PANEL -->
     <div class="editor-panel">
       <div class="editor-header">
-        <div class="editor-title">📝 Auftragserteilung bearbeiten</div>
+        <div class="editor-title">📝{{ title }}</div>
         <div class="editor-subtitle">
-          Bearbeiten Sie die Auftragsdetails und sehen Sie die Vorschau live
+          Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live
         </div>
       </div>
 
       <!-- GRUND DATEN -->
       <div class="form-section">
-        <div class="form-section-title">📌 Auftrag Title</div>
-        <div class="form-group">
-          <label class="form-label">Title</label>
-          <input v-model="orderGrund.orderTitle" type="text" class="form-input" />
-        </div>
-      </div>
-      <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Auftragsnummer</label>
+            <label class="form-label">Rechnungsnummer</label>
             <input v-model="orderGrund.orderNumber" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Auftragsdatum</label>
+            <label class="form-label">Rechnungsdatum</label>
             <input v-model="orderGrund.orderDate" type="date" class="form-input" />
           </div>
         </div>
+
         <div class="form-group">
           <label class="form-label">Leistungszeitraum</label>
           <input v-model="orderGrund.servicePeriod" type="text" class="form-input" />
@@ -48,11 +42,11 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Kundennummer</label>
-          <input v-model="selectedCustomer.tax_number" type="text" class="form-input" readonly />
+          <label class="form-label">KundeNr</label>
+          <input v-model="selectedCustomer.id" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
-          <label class="form-label">Kundenname</label>
+          <label class="form-label">Name</label>
           <input :value="companyName" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
@@ -87,7 +81,6 @@
           <input v-model="sprachPartner.phone" type="text" class="form-input" />
         </div>
       </div>
-
       <!-- POSITIONEN -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
@@ -168,22 +161,23 @@
 export default {
   data() {
     return {
+      title: 'Auftrag erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
       selectedCustomer: {},
+      orderGrund: {
+        orderNumber: 'RE-2024-001',
+        orderDate: '2024-12-15',
+        servicePeriod: 'Okt - Dez 2024',
+        verwendung: 'Nicht angegeben',
+        paidAmount: 0,
+        paymentTerms: 14,
+        positions: []
+      },
       sprachPartner: {
         fullname: '',
         email: '',
         phone: ''
-      },
-      orderGrund: {
-        orderTitle: 'Mein erstes Angebot',
-        orderNumber: 'ANG-2024-001',
-        orderDate: '2024-12-15',
-        servicePeriod: 'Okt - Dez 2024',
-        paidAmount: 0,
-        paymentTerms: 14,
-        positions: []
       }
     }
   },
@@ -214,6 +208,12 @@ export default {
           .filter(Boolean)
           .join(' ')
       )
+    },
+    
+    logoSrc() {
+      const logo = this.$store.state.auth.logo
+      if (!logo) return null
+      return `data:image/png;base64,${logo}`
     }
   },
   mounted() {
@@ -243,6 +243,7 @@ export default {
     },
     addPosition() {
       this.orderGrund.positions.push({
+        title: 'Neue Position',
         description: 'Beschreibung',
         quantity: 1,
         unit: 'Stk',
@@ -269,7 +270,6 @@ export default {
         await this.$store.commit('setOrderPreview', {
           customer: { ...this.selectedCustomer, company_name: this.companyName },
           order_grund: {
-            order_title: this.orderGrund.orderTitle,
             order_number: this.orderGrund.orderNumber,
             order_date: this.orderGrund.orderDate,
             service_period: this.orderGrund.servicePeriod,

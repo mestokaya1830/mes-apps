@@ -28,7 +28,7 @@
         </div>
         <div v-if="previewData && previewData.customer">
           <div class="meta-row">
-            <span class="meta-label">Rechnungsnr.:</span>
+            <span class="meta-label">RechnungNr.:</span>
             <span class="meta-value">{{ previewData.invoice_grund.invoice_number }}</span>
           </div>
           <div class="meta-row">
@@ -36,7 +36,11 @@
             <span class="meta-value">{{ previewData.invoice_grund.invoice_date }}</span>
           </div>
           <div class="meta-row">
-            <span class="meta-label">Kundennr.:</span>
+            <span class="meta-label">KundeNr.:</span>
+            <span class="meta-value">{{ formattedCustomerNumber(previewData.customer.id) }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">SteuerNr.:</span>
             <span class="meta-value">{{ previewData.customer.tax_number }}</span>
           </div>
           <div class="meta-row">
@@ -169,6 +173,8 @@
 
 <script>
 export default {
+  name: 'InvoicePreview',
+  inject: ['formattedCustomerNumber'],
   data() {
     return {
       title: 'Rechnung',
