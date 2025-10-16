@@ -33,7 +33,7 @@
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(previewData.order_grund.date) }} </span>
+            <span class="meta-value">{{ formatDate(previewData.base.date) }} </span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Kunden-Nr.:</span>
@@ -42,7 +42,7 @@
 
           <div class="meta-row">
             <span class="meta-label">Leistung:</span>
-            <span class="meta-value">{{ previewData.order_grund.service_period }}</span>
+            <span class="meta-value">{{ previewData.base.service_period }}</span>
           </div>
         </div>
       </div>
@@ -66,8 +66,8 @@
             <th class="right" style="width: 15%">Gesamtpreis</th>
           </tr>
         </thead>
-        <tbody v-if="previewData?.order_grund?.positions?.length">
-          <tr v-for="(item, index) in previewData.order_grund.positions" :key="index">
+        <tbody v-if="previewData?.base?.positions?.length">
+          <tr v-for="(item, index) in previewData.base.positions" :key="index">
             <td>{{ index + 1 }}</td>
 
             <td>
@@ -89,7 +89,7 @@
             </td>
 
             <td class="right">
-              {{ formatCurrency(item.unitTotal) }}
+              {{ formatCurrency(item.unit_total) }}
             </td>
           </tr>
         </tbody>
@@ -106,19 +106,19 @@
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
           <span class="total-value">{{
-            formatCurrency($store.state.orderPreview.order_grund.subtotal)
+            formatCurrency($store.state.orderPreview.base.subtotal)
           }}</span>
         </div>
         <div class="total-row">
           <span class="total-label">MwSt.:</span>
           <span class="total-value">{{
-            formatCurrency($store.state.orderPreview.order_grund.vatAmount)
+            formatCurrency($store.state.orderPreview.base.vat_amount)
           }}</span>
         </div>
         <div class="total-row subtotal">
           <span class="total-label">Auftragsbetrag (brutto):</span>
           <span class="total-value">{{
-            formatCurrency($store.state.orderPreview.order_grund.grandTotal)
+            formatCurrency($store.state.orderPreview.base.total)
           }}</span>
         </div>
       </div>
@@ -142,7 +142,7 @@
       </div>
       <div class="bank-box">
         <div class="bank-title">🏦 Bankverbindung</div>
-        <div v-if="previewData && previewData.order_grund" class="bank-info">
+        <div v-if="previewData && previewData.base" class="bank-info">
           <span class="bank-label">Bank:</span>
           <span class="bank-value">{{ $store.state.auth.bank_name }}</span>
           <span class="bank-label">IBAN:</span>

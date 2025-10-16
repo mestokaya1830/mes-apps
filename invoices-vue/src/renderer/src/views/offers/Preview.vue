@@ -104,7 +104,7 @@
             <td class="center">{{ item.unit }}</td>
             <td class="right">{{ formatCurrency(item.price) }}</td>
             <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
-            <td class="right">{{ formatCurrency(item.unitTotal) }}</td>
+            <td class="right">{{ formatCurrency(item.unit_total) }}</td>
           </tr>
         </tbody>
       </table>

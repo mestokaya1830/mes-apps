@@ -39,12 +39,11 @@ export default {
         try {
           const d = new Date(value)
           if (isNaN(d)) return ''
-          return d.toLocaleDateString('de-DE')
-          // return d.toLocaleDateString('de-DE', {
-          //   day: '2-digit',
-          //   month: 'long',
-          //   year: 'numeric'
-          // })
+          return d.toLocaleDateString('de-DE', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          })
         } catch (error) {
           return error.message || ''
         }

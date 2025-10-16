@@ -15,17 +15,17 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Rechnungsnummer</label>
-            <input v-model="orderGrund.orderNumber" type="text" class="form-input" readonly />
+            <input v-model="base.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum</label>
-            <input v-model="orderGrund.orderDate" type="date" class="form-input" />
+            <input v-model="base.date" type="date" class="form-input" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Leistungszeitraum</label>
-          <input v-model="orderGrund.servicePeriod" type="text" class="form-input" />
+          <input v-model="base.servicePeriod" type="text" class="form-input" />
         </div>
       </div>
 
@@ -84,9 +84,9 @@
       <!-- POSITIONEN -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="orderGrund.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="base.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in orderGrund.positions" :key="index" class="position-item">
+          <div v-for="(pos, index) in base.positions" :key="index" class="position-item">
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -138,16 +138,11 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input
-              v-model.number="orderGrund.paidAmount"
-              type="number"
-              class="form-input"
-              step="0.01"
-            />
+            <input v-model.number="base.paidAmount" type="number" class="form-input" step="0.01" />
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="orderGrund.paymentTerms" type="number" class="form-input" />
+            <input v-model.number="base.paymentTerms" type="number" class="form-input" />
           </div>
         </div>
       </div>
@@ -165,9 +160,9 @@ export default {
       customers: [],
       customerList: 'Wähle Kunden',
       selectedCustomer: {},
-      orderGrund: {
-        orderNumber: 'RE-2024-001',
-        orderDate: '2024-12-15',
+      base: {
+        id: 'RE-2024-001',
+        date: '',
         servicePeriod: 'Okt - Dez 2024',
         verwendung: 'Nicht angegeben',
         paidAmount: 0,
@@ -183,22 +178,19 @@ export default {
   },
   computed: {
     subtotal() {
-      return this.orderGrund.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.base.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.orderGrund.positions.reduce(
-        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-        0
-      )
+      return this.base.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
     },
-    grandTotal() {
+    total() {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.orderGrund.paidAmount
+      return this.total - this.base.paidAmount
     },
     formattedDate() {
-      const date = new Date(this.orderGrund.orderDate)
+      const date = new Date(this.base.orderDate)
       return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     },
     companyName() {
@@ -219,8 +211,9 @@ export default {
   mounted() {
     if (this.$store?.state?.orderPreview) {
       const preview = this.$store.state.orderPreview
-      if (preview.order_grund?.positions) this.orderGrund.positions = preview.order_grund.positions
+      if (preview.base?.positions) this.base.positions = preview.base.positions
       if (preview.customer) this.selectedCustomer = { ...preview.customer }
+      if (preview.sprach_partner) this.sprachPartner = { ...preview.sprach_partner }
     }
     this.getCustomers()
   },
@@ -242,7 +235,7 @@ export default {
       if (customer) this.selectedCustomer = { ...customer }
     },
     addPosition() {
-      this.orderGrund.positions.push({
+      this.base.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
         quantity: 1,
@@ -250,40 +243,40 @@ export default {
         price: 0,
         vat: 19
       })
-      this.$store.commit('setOrderPreview', this.orderGrund.positions)
+      this.$store.commit('setOrderPreview', this.base.positions)
     },
     deletePosition(index) {
-      if (this.orderGrund.positions.length > 0) {
-        this.orderGrund.positions.splice(index, 1)
-        this.$store.commit('setOrderPreview', this.orderGrund.positions)
+      if (this.base.positions.length > 0) {
+        this.base.positions.splice(index, 1)
+        this.$store.commit('setOrderPreview', this.base.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
-   
+
     async storePreview() {
       try {
-        this.orderGrund.positions = this.orderGrund.positions.map((pos) => ({
+        this.base.positions = this.base.positions.map((pos) => ({
           ...pos,
-          unitTotal: (pos.quantity * pos.price).toFixed(2)
+          unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
         }))
 
         await this.$store.commit('setOrderPreview', {
           customer: { ...this.selectedCustomer, company_name: this.companyName },
-          order_grund: {
-            order_number: this.orderGrund.orderNumber,
-            order_date: this.orderGrund.orderDate,
-            service_period: this.orderGrund.servicePeriod,
-            paidAmount: this.orderGrund.paidAmount,
-            paymentTerms: this.orderGrund.paymentTerms,
-            verwendung: this.orderGrund.verwendung,
-            positions: this.orderGrund.positions,
+          base: {
+            id: this.base.id,
+            date: this.base.date,
+            service_period: this.base.servicePeriod,
+            paid_amount: this.base.paidAmount,
+            payment_terms: this.base.paymentTerms,
+            verwendung: this.base.verwendung,
+            positions: this.base.positions,
             subtotal: this.subtotal.toFixed(2),
-            vatAmount: this.vatAmount.toFixed(2),
-            grandTotal: this.grandTotal.toFixed(2),
+            vat_amount: this.vatAmount.toFixed(2),
+            total: this.total.toFixed(2),
             outstanding: this.outstanding.toFixed(2)
           },
-          sprach_partner: { ...this.sprachPartner }
+          sprach_partner: this.sprachPartner
         })
 
         this.$router.push('/orders-preview')

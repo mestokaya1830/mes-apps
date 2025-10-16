@@ -213,7 +213,7 @@ export default {
   mounted() {
     if (this.$store?.state?.offerPreview) {
       const preview = this.$store.state.offerPreview
-      if (preview.offer_grund?.positions) this.base.positions = preview.offer_grund.positions
+      if (preview.base?.positions) this.base.positions = preview.base.positions
       if (preview.customer) this.selectedCustomer = { ...preview.customer }
     }
     this.getCustomers()
@@ -257,7 +257,7 @@ export default {
       try {
         this.base.positions = this.base.positions.map((pos) => ({
           ...pos,
-          unitTotal: (pos.quantity * pos.price).toFixed(2)
+          unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
         }))
 
         await this.$store.commit('setOfferPreview', {
