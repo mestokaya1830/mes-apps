@@ -33,7 +33,7 @@
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ previewData.offer_grund.offer_date }}</span>
+            <span class="meta-value">{{ formatDate(previewData.base.date) }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">KundenNr:</span>
@@ -49,14 +49,16 @@
           </div>
           <div class="meta-row">
             <span class="meta-label">Gültig bis:</span>
-            <span class="meta-value">03. November 2024</span>
+            <!-- <span class="meta-value">{{ formatDate(previewData.base.valid_until) }}</span> -->
           </div>
         </div>
       </div>
       <!-- TITEL -->
       <div v-if="$store.state.offerPreview" class="document-title">
-        {{ $store.state.offerPreview.offer_grund.offer_title || 'Angebot' }}
-        <span class="validity-badge">Gültig 30 Tage</span>
+        {{ $store.state.offerPreview.base.title || 'Angebot' }}
+        <span class="validity-badge"
+          >Gültig {{ $store.state.offerPreview.base.valid_days }} Tage</span
+        >
       </div>
 
       <!-- REFERENZ BOX (PREMIUM FEATURE) -->
@@ -68,10 +70,12 @@
       </div>
 
       <!-- EINLEITUNGSTEXT -->
-      <div class="intro-text">
+      <div v-if="previewData.base" class="intro-text intro-text-pro">
         Sehr geehrter Herr Weber,<br /><br />
-        vielen Dank für Ihre Anfrage vom 01. Oktober 2024. Gerne unterbreiten wir Ihnen folgendes
-        Angebot für die Erstellung Ihrer neuen Unternehmenswebsite sowie SEO-Optimierung:
+        Wir freuen uns, Ihnen nachfolgend ein verbindliches Angebot auf Grundlage Ihrer Anfrage vom
+        {{ formatDate(previewData.base.date) }}
+        unterbreiten zu dürfen. Dieses Angebot umfasst die nachfolgend beschriebenen
+        Leistungen/Produkte.
       </div>
 
       <!-- POSITIONEN TABELLE -->
@@ -87,8 +91,8 @@
             <th class="right" style="width: 15%">Gesamtpreis</th>
           </tr>
         </thead>
-        <tbody v-if="previewData && previewData.offer_grund && previewData.offer_grund.positions">
-          <tr v-for="(item, index) in previewData.offer_grund.positions" :key="index">
+        <tbody v-if="previewData && previewData.base && previewData.base.positions">
+          <tr v-for="(item, index) in previewData.base.positions" :key="index">
             <td>{{ index + 1 }}</td>
             <td>
               <div class="position-title">{{ item.title }}</div>
@@ -98,9 +102,9 @@
             </td>
             <td class="center">{{ item.quantity }}</td>
             <td class="center">{{ item.unit }}</td>
-            <td class="right">{{ item.price }}</td>
-            <td class="right">{{ item.vat }}%</td>
-            <td class="right">{{ item.unitTotal }}</td>
+            <td class="right">{{ formatCurrency(item.price) }}</td>
+            <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
+            <td class="right">{{ formatCurrency(item.unitTotal) }}</td>
           </tr>
         </tbody>
       </table>
@@ -111,26 +115,28 @@
       </div>
 
       <!-- SUMMEN -->
-      <div class="totals">
+      <div v-if="previewData?.base" class="totals">
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">4.450,00 €</span>
+          <span class="total-value">{{ formatCurrency(previewData.base.subtotal) }}</span>
         </div>
         <div class="total-row rabatt">
           <span class="total-label">Rabatt 10%:</span>
-          <span class="total-value">- 445,00 €</span>
+          <span class="total-value">- {{ formatCurrency(previewData.base.discount) }}</span>
         </div>
         <div class="total-row subtotal">
           <span class="total-label">Summe nach Rabatt:</span>
-          <span class="total-value">4.005,00 €</span>
+          <span class="total-value">{{
+            formatCurrency(previewData.base.subtotal - previewData.base.discount)
+          }}</span>
         </div>
         <div class="total-row">
           <span class="total-label">MwSt. 19%:</span>
-          <span class="total-value">760,95 €</span>
+          <span class="total-value">{{ formatCurrency(previewData.base.vat_amount) }}</span>
         </div>
         <div class="total-row final">
           <span class="total-label">Gesamtbetrag (brutto):</span>
-          <span class="total-value">4.765,95 €</span>
+          <span class="total-value">{{ formatCurrency(previewData.base.total) }}</span>
         </div>
       </div>
 
@@ -141,7 +147,7 @@
           Voraussichtliche Projektlaufzeit
         </div>
         <div>
-          Die Fertigstellung erfolgt voraussichtlich 6-8 Wochen nach Auftragserteilung und Erhalt
+          Die Fertigstellung erfolgt voraussichtlich 6-8 Wochen nach Angebotsannahme und Erhalt
           aller benötigten Inhalte (Texte, Bilder, Logos). Projektstart ist für den 15. Oktober 2024
           geplant.
         </div>
@@ -156,9 +162,9 @@
               Zahlungsbedingungen
             </div>
             <div class="condition-text">
-              • 50% Anzahlung bei Auftragserteilung<br />
-              • 50% nach Abnahme und Freigabe<br />
-              • Zahlbar innerhalb von 14 Tagen netto
+              • 50 % Anzahlung bei Auftragserteilung (sofern vereinbart).<br />
+              • Restzahlung 50 % nach Abnahme.<br />
+              • Zahlbar innerhalb von 14 Tagen nach Rechnungsdatum, netto ohne Abzug.
             </div>
           </div>
 
@@ -168,9 +174,8 @@
               Leistungsumfang
             </div>
             <div class="condition-text">
-              Die Website wird auf unserem Server gehostet<br />
-              Erstes Jahr inklusive<br />
-              Danach 15 €/Monat (optional)
+              Die vereinbarten Leistungen/Produkte sind in diesem Angebot beschrieben. Hosting:
+              Erstes Jahr inklusive, danach optional 15 €/Monat (sofern zutreffend).
             </div>
           </div>
         </div>
@@ -180,22 +185,20 @@
             <span class="condition-icon">📋</span>
             Gültigkeit des Angebots
           </div>
-          <div class="condition-text">
-            Dieses Angebot ist gültig bis zum 03. November 2024. Preise verstehen sich in Euro
-            inklusive der gesetzlichen Mehrwertsteuer. Es gelten unsere allgemeinen
-            Geschäftsbedingungen (AGB), die diesem Angebot beiliegen.
+          <div class="condition-text legal-note-pro">
+            Dieses Angebot ist bis einschließlich {{ validityDate }} gültig. Sämtliche Preise
+            verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten unsere
+            Allgemeinen Geschäftsbedingungen (AGB).
           </div>
         </div>
       </div>
 
       <!-- SCHLUSSTEXT -->
-      <div class="closing">
-        Wir freuen uns auf Ihre Auftragserteilung und stehen Ihnen für Rückfragen jederzeit gerne
-        zur Verfügung. Für weitere Details oder eine persönliche Besprechung können Sie sich gerne
-        direkt an Frau Müller wenden.<br /><br />
+      <div class="closing closing-pro">
+        Für Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung. Wir freuen uns auf Ihre
+        Auftragserteilung.<br /><br />
         Mit freundlichen Grüßen
       </div>
-
       <!-- KONTAKT BOX (PREMIUM FEATURE) -->
       <div v-if="$store.state.offerPreview.sprach_partner" class="contact-box">
         <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
@@ -213,25 +216,17 @@
         </div>
       </div>
 
-      <!-- UNTERSCHRIFT -->
-      <div class="signature">
-        <div class="signature-block">
-          <div class="signature-line">Berlin, 04. Oktober 2024</div>
-        </div>
-        <div class="signature-block">
-          <div class="signature-line">Unterschrift / Firmenstempel</div>
-        </div>
-      </div>
-
       <!-- FOOTER -->
       <div class="footer">
-        <h2>{{ $store.state.auth.firm_name }}</h2>
-        <p>© 2024 {{ $store.state.auth.firm_name }}. Alle Rechte vorbehalten.</p>
-      </div>
-      <div class="footer">
-        <router-link to="/offers/create" class="back-link"
-          >← Zurück zur Angebotserstellung</router-link
-        >
+        <div>
+          <strong>{{ $store.state.auth.firm_name }}</strong> • Geschäftsführer:
+          {{ $store.state.auth.ceo }} • Amtsgericht {{ $store.state.auth.register_court }} HRB
+          {{ $store.state.auth.register_number }}<br />
+          USt-IdNr.: {{ $store.state.auth.vat_id }} • Steuer-Nr.: {{ $store.state.auth.tax_number }}
+        </div>
+        <router-link to="/offers/create" class="back-link">
+          ← Zurück zur Angebotserstellung
+        </router-link>
       </div>
     </div>
   </div>
@@ -239,7 +234,7 @@
 <script>
 export default {
   name: 'OfferPreview',
-  inject: ['formattedCustomerNumber'],
+  inject: ['formattedCustomerNumber', 'formatCurrency', 'formatDate', 'validityDate'],
   data() {
     return {
       title: 'Angebot',
@@ -275,8 +270,9 @@ export default {
     this.getPreview()
   },
   methods: {
-    async getPreview() {
-      this.previewData = await this.$store.state.offerPreview
+    getPreview() {
+      this.previewData = this.$store.state.offerPreview
+      console.log('Preview Data:', this.previewData)
     }
   }
 }

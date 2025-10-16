@@ -26,6 +26,38 @@ export default {
       formattedCustomerNumber(value) {
         if (!value) return ''
         return `KU-${String(value).padStart(5, '0')}`
+      },
+      formatCurrency(value) {
+        const num = parseFloat(value) || 0
+        return new Intl.NumberFormat('de-DE', {
+          style: 'currency',
+          currency: 'EUR'
+        }).format(num)
+      },
+      formatDate(value) {
+        if (!value) return ''
+        try {
+          const d = new Date(value)
+          if (isNaN(d)) return ''
+          return d.toLocaleDateString('de-DE')
+          // return d.toLocaleDateString('de-DE', {
+          //   day: '2-digit',
+          //   month: 'long',
+          //   year: 'numeric'
+          // })
+        } catch (error) {
+          return error.message || ''
+        }
+      },
+      validityDate(value) {
+        const og = value || {}
+        if (og.offer_valid_to) {
+          return this.formatDate(og.offer_valid_to)
+        }
+        const d = og.offer_date ? new Date(og.offer_date) : new Date()
+        const validUntil = new Date(d.getTime())
+        validUntil.setDate(validUntil.getDate() + (og.validity_days || 30))
+        return this.formatDate(validUntil)
       }
     }
   },

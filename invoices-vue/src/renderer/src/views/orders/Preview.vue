@@ -33,13 +33,7 @@
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
-            <span class="meta-value"
-              >{{
-                previewData.order_grund.order_date
-                  ? new Date(previewData.order_grund.order_date).toLocaleDateString('de-DE')
-                  : ''
-              }}
-            </span>
+            <span class="meta-value">{{ formatDate(previewData.order_grund.date) }} </span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Kunden-Nr.:</span>
@@ -86,7 +80,6 @@
             <td class="center">{{ item.quantity ?? 0 }}</td>
             <td class="center">{{ item.unit || '' }}</td>
 
-            <!-- Fiyat formatı Almanya'ya göre -->
             <td class="right">
               {{ formatCurrency(item.price) }}
             </td>
@@ -112,15 +105,21 @@
       <div class="totals">
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">{{ $store.state.orderPreview.order_grund.subtotal }}</span>
+          <span class="total-value">{{
+            formatCurrency($store.state.orderPreview.order_grund.subtotal)
+          }}</span>
         </div>
         <div class="total-row">
           <span class="total-label">MwSt.:</span>
-          <span class="total-value">{{ $store.state.orderPreview.order_grund.vatAmount }}</span>
+          <span class="total-value">{{
+            formatCurrency($store.state.orderPreview.order_grund.vatAmount)
+          }}</span>
         </div>
         <div class="total-row subtotal">
           <span class="total-label">Auftragsbetrag (brutto):</span>
-          <span class="total-value">{{ $store.state.orderPreview.order_grund.grandTotal }}</span>
+          <span class="total-value">{{
+            formatCurrency($store.state.orderPreview.order_grund.grandTotal)
+          }}</span>
         </div>
       </div>
       <!-- KONTAKT BOX (PREMIUM FEATURE) -->
@@ -175,7 +174,7 @@
 <script>
 export default {
   name: 'OrderPreview',
-  inject: ['formattedCustomerNumber'],
+  inject: ['formattedCustomerNumber', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Auftrag',
@@ -213,13 +212,6 @@ export default {
   methods: {
     getPreview() {
       this.previewData = this.$store.state.orderPreview
-    },
-    formatCurrency(value) {
-      const num = parseFloat(value) || 0
-      return new Intl.NumberFormat('de-DE', {
-        style: 'currency',
-        currency: 'EUR'
-      }).format(num)
     }
   }
 }

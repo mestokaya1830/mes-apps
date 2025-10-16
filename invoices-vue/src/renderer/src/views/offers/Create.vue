@@ -14,7 +14,7 @@
         <div class="form-section-title">📌 Abgebot Title</div>
         <div class="form-group">
           <label class="form-label">Title</label>
-          <input v-model="offerGrund.offerTitle" type="text" class="form-input" />
+          <input v-model="base.offerTitle" type="text" class="form-input" />
         </div>
       </div>
       <div class="form-section">
@@ -22,16 +22,16 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Angebotsnummer</label>
-            <input v-model="offerGrund.offerNumber" type="text" class="form-input" readonly />
+            <input v-model="base.offerNumber" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Angebotsdatum</label>
-            <input v-model="offerGrund.offerDate" type="date" class="form-input" />
+            <input v-model="base.offerDate" type="date" class="form-input" />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Leistungszeitraum</label>
-          <input v-model="offerGrund.servicePeriod" type="text" class="form-input" />
+          <input v-model="base.servicePeriod" type="text" class="form-input" />
         </div>
       </div>
 
@@ -91,9 +91,9 @@
       <!-- POSITIONEN -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="offerGrund.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="base.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in offerGrund.positions" :key="index" class="position-item">
+          <div v-for="(pos, index) in base.positions" :key="index" class="position-item">
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -145,16 +145,11 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input
-              v-model.number="offerGrund.paidAmount"
-              type="number"
-              class="form-input"
-              step="0.01"
-            />
+            <input v-model.number="base.paidAmount" type="number" class="form-input" step="0.01" />
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="offerGrund.paymentTerms" type="number" class="form-input" />
+            <input v-model.number="base.paymentTerms" type="number" class="form-input" />
           </div>
         </div>
       </div>
@@ -178,10 +173,10 @@ export default {
         email: '',
         phone: ''
       },
-      offerGrund: {
-        offerTitle: 'Mein erstes Angebot',
-        offerNumber: 'ANG-2024-001',
-        offerDate: '2024-12-15',
+      base: {
+        title: 'Mein erstes Angebot',
+        number: 'ANG-2024-001',
+        date: '2024-12-15',
         servicePeriod: 'Okt - Dez 2024',
         paidAmount: 0,
         paymentTerms: 14,
@@ -191,22 +186,19 @@ export default {
   },
   computed: {
     subtotal() {
-      return this.offerGrund.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.base.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.offerGrund.positions.reduce(
-        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-        0
-      )
+      return this.base.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
     },
     grandTotal() {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.offerGrund.paidAmount
+      return this.grandTotal - this.base.paidAmount
     },
     formattedDate() {
-      const date = new Date(this.offerGrund.offerDate)
+      const date = new Date(this.base.offerDate)
       return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     },
     companyName() {
@@ -221,7 +213,7 @@ export default {
   mounted() {
     if (this.$store?.state?.offerPreview) {
       const preview = this.$store.state.offerPreview
-      if (preview.offer_grund?.positions) this.offerGrund.positions = preview.offer_grund.positions
+      if (preview.offer_grund?.positions) this.base.positions = preview.offer_grund.positions
       if (preview.customer) this.selectedCustomer = { ...preview.customer }
     }
     this.getCustomers()
@@ -244,44 +236,45 @@ export default {
       if (customer) this.selectedCustomer = { ...customer }
     },
     addPosition() {
-      this.offerGrund.positions.push({
+      this.base.positions.push({
         description: 'Beschreibung',
         quantity: 1,
         unit: 'Stk',
         price: 0,
         vat: 19
       })
-      this.$store.commit('setOfferPreview', this.offerGrund.positions)
+      this.$store.commit('setOfferPreview', this.base.positions)
     },
     deletePosition(index) {
-      if (this.offerGrund.positions.length > 0) {
-        this.offerGrund.positions.splice(index, 1)
-        this.$store.commit('setOfferPreview', this.offerGrund.positions)
+      if (this.base.positions.length > 0) {
+        this.base.positions.splice(index, 1)
+        this.$store.commit('setOfferPreview', this.base.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
     async storePreview() {
       try {
-        this.offerGrund.positions = this.offerGrund.positions.map((pos) => ({
+        this.base.positions = this.base.positions.map((pos) => ({
           ...pos,
           unitTotal: (pos.quantity * pos.price).toFixed(2)
         }))
 
         await this.$store.commit('setOfferPreview', {
           customer: { ...this.selectedCustomer, company_name: this.companyName },
-          offer_grund: {
-            offer_title: this.offerGrund.offerTitle,
-            offer_number: this.offerGrund.offerNumber,
-            offer_date: this.offerGrund.offerDate,
-            service_period: this.offerGrund.servicePeriod,
-            paidAmount: this.offerGrund.paidAmount,
-            paymentTerms: this.offerGrund.paymentTerms,
-            verwendung: this.offerGrund.verwendung,
-            positions: this.offerGrund.positions,
+          base: {
+            title: this.base.title,
+            number: this.base.number,
+            date: this.base.date,
+            valid_days: 20,
+            service_period: this.base.servicePeriod,
+            paid_amount: this.base.paidAmount,
+            payment_terms: this.base.paymentTerms,
+            verwendung: this.base.verwendung,
+            positions: this.base.positions,
             subtotal: this.subtotal.toFixed(2),
-            vatAmount: this.vatAmount.toFixed(2),
-            grandTotal: this.grandTotal.toFixed(2),
+            vat_amount: this.vatAmount.toFixed(2),
+            total: this.grandTotal.toFixed(2),
             outstanding: this.outstanding.toFixed(2)
           },
           sprach_partner: { ...this.sprachPartner }
