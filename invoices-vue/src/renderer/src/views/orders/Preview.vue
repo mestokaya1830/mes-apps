@@ -1,14 +1,13 @@
 <template>
   <div>
     <h1>{{ title }}</h1>
-    <!-- PREVIEW PANEL -->
     <div class="preview-panel">
       <div class="header">
         <div>
           <div class="company-name">{{ $store.state.auth.firm_name }}</div>
           <div class="company-details">
-            {{ $store.state.auth.address }} {{ $store.state.auth.postal_code }},
-            {{ $store.state.auth.city }}<br />
+            {{ $store.state.auth.address }} <br /> 
+            {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
             Tel: {{ $store.state.auth.phone }} <br />{{ $store.state.auth.email }} <br />{{
               $store.state.auth.website
             }}
@@ -17,19 +16,20 @@
         <img :src="logoSrc" alt="" class="preview-logo" />
       </div>
 
+
       <div class="recipient">
         <div v-if="previewData && previewData.customer" class="recipient-address">
           <div>{{ previewData.customer.company_name }}</div>
           <div>{{ previewData.customer.address }}</div>
           <div>
-            {{ previewData.customer.postal_code }} <br />{{ previewData.customer.city }} <br />
+            {{ previewData.customer.postal_code }} {{ previewData.customer.city }} <br />
             {{ previewData.customer.country }}
           </div>
         </div>
         <div v-if="previewData && previewData.customer">
           <div class="meta-row">
             <span class="meta-label">Auftrags-Nr.:</span>
-            <span class="meta-value">Auf-2025-00001</span>
+            <span class="meta-value">{{ formatAuftragId }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
@@ -37,7 +37,7 @@
           </div>
           <div class="meta-row">
             <span class="meta-label">Kunden-Nr.:</span>
-            <span class="meta-value">{{ formattedCustomerNumber(previewData.customer.id) }}</span>
+            <span class="meta-value">{{ formatCustomerId(previewData.customer.id) }}</span>
           </div>
 
           <div class="meta-row">
@@ -93,8 +93,6 @@
             </td>
           </tr>
         </tbody>
-
-        <!-- Eğer hiç pozisyon yoksa -->
         <tbody v-else>
           <tr>
             <td colspan="7" class="center text-gray-500">Keine Positionen vorhanden</td>
@@ -174,11 +172,14 @@
 <script>
 export default {
   name: 'OrderPreview',
-  inject: ['formattedCustomerNumber', 'formatCurrency', 'formatDate'],
+  inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Auftrag',
-      previewData: {}
+      previewData: {
+        base: {},
+        customer: {}
+      }
     }
   },
   computed: {
@@ -204,6 +205,12 @@ export default {
         console.error(error)
         return null
       }
+    },
+    formatAuftragId() {
+      if (!this.previewData.base.id) return ''
+      const d = new Date()
+      const year = d.getFullYear()
+      return `AUF-${year}-${String(this.previewData.base.id).padStart(5, '0')}`
     }
   },
   mounted() {

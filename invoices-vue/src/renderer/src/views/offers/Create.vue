@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- EDITOR PANEL -->
     <div class="editor-panel">
       <div class="editor-header">
         <div class="editor-title">📝{{ title }}</div>
@@ -9,7 +8,6 @@
         </div>
       </div>
 
-      <!-- GRUND DATEN -->
       <div class="form-section">
         <div class="form-section-title">📌 Abgebot Title</div>
         <div class="form-group">
@@ -22,11 +20,11 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Angebotsnummer</label>
-            <input v-model="base.offerNumber" type="text" class="form-input" readonly />
+            <input v-model="base.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Angebotsdatum</label>
-            <input v-model="base.offerDate" type="date" class="form-input" />
+            <input v-model="base.date" type="date" class="form-input" />
           </div>
         </div>
         <div class="form-group">
@@ -35,7 +33,6 @@
         </div>
       </div>
 
-      <!-- KUNDE -->
       <div class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
@@ -70,7 +67,7 @@
           </div>
         </div>
       </div>
-      <!-- Sprachpartner -->
+
       <div class="form-section">
         <div class="form-section-title">👤 Sprachpartner (Optional)</div>
 
@@ -88,7 +85,6 @@
         </div>
       </div>
 
-      <!-- POSITIONEN -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
         <div v-if="base.positions.length === 0">Keine Positionen vorhanden</div>
@@ -139,7 +135,6 @@
         <button class="add-position-btn" @click="addPosition">➕ Position hinzufügen</button>
       </div>
 
-      <!-- ZAHLUNGSINFORMATIONEN -->
       <div class="form-section">
         <div class="form-section-title">💳 Zahlungsinformationen</div>
         <div class="form-row">
@@ -175,7 +170,7 @@ export default {
       },
       base: {
         title: 'Mein erstes Angebot',
-        number: 'ANG-2024-001',
+        id: '1',
         date: '2024-12-15',
         servicePeriod: 'Okt - Dez 2024',
         paidAmount: 0,
@@ -196,10 +191,6 @@ export default {
     },
     outstanding() {
       return this.grandTotal - this.base.paidAmount
-    },
-    formattedDate() {
-      const date = new Date(this.base.offerDate)
-      return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     },
     companyName() {
       return (
@@ -264,7 +255,7 @@ export default {
           customer: { ...this.selectedCustomer, company_name: this.companyName },
           base: {
             title: this.base.title,
-            number: this.base.number,
+            id: this.base.id,
             date: this.base.date,
             valid_days: 20,
             service_period: this.base.servicePeriod,

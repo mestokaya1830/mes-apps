@@ -2,34 +2,31 @@
   <div>
     <h1>{{ title }}</h1>
     <div class="preview-panel">
-      <!-- HEADER -->
       <div class="header">
-        <div class="company-info">
+        <div>
           <div class="company-name">{{ $store.state.auth.firm_name }}</div>
           <div class="company-details">
-            {{ $store.state.auth.address }} {{ $store.state.auth.postal_code }}
-            {{ $store.state.auth.city }}<br />
-            Tel: {{ $store.state.auth.phone }} <br />
-            E-Mail: {{ $store.state.auth.email }} <br />
-            {{ $store.state.auth.website }}
+            {{ $store.state.auth.address }} <br />
+            {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
+            Tel: {{ $store.state.auth.phone }} <br />{{ $store.state.auth.email }} <br />{{
+              $store.state.auth.website
+            }}
           </div>
         </div>
         <img :src="logoSrc" alt="" class="preview-logo" />
       </div>
 
-      <!-- EMPFÄNGER -->
       <div class="recipient">
         <div class="recipient-address">
-          <div class="recipient-name">Herrn Maximilian Weber</div>
-          <div>Weber Consulting GmbH</div>
-          <div>Friedrichstraße 158</div>
-          <div>10117 Berlin</div>
+          <div class="recipient-name">{{ previewData.customer.company_name }}</div>
+          <div>{{ previewData.customer.address }}</div>
+          <div>{{ previewData.customer.postal_code }} {{ previewData.customer.city }}</div>
         </div>
-        <!-- META INFORMATIONEN -->
+
         <div v-if="previewData && previewData.customer">
           <div class="meta-row">
             <span class="meta-label">AngebotNr.:</span>
-            <span class="meta-value">ANG-2024-001</span>
+            <span class="meta-value">{{ formatAngebotId }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
@@ -37,7 +34,7 @@
           </div>
           <div class="meta-row">
             <span class="meta-label">KundenNr:</span>
-            <span class="meta-value">{{ formattedCustomerNumber(previewData.customer.id) }}</span>
+            <span class="meta-value">{{ formatCustomerId(previewData.customer.id) }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">SteuerNr.:</span>
@@ -49,11 +46,20 @@
           </div>
           <div class="meta-row">
             <span class="meta-label">Gültig bis:</span>
-            <!-- <span class="meta-value">{{ formatDate(previewData.base.valid_until) }}</span> -->
+            <span class="meta-value">
+              {{ validityDate(previewData.base.date, previewData.base.valid_days) }}
+            </span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Rechtsgültigkeit:</span>
+            <span class="meta-value">
+              <span v-if="previewData.base.isBinding">Verbindlich</span>
+              <span v-else>Freibleibend</span>
+            </span>
           </div>
         </div>
       </div>
-      <!-- TITEL -->
+
       <div v-if="$store.state.offerPreview" class="document-title">
         {{ $store.state.offerPreview.base.title || 'Angebot' }}
         <span class="validity-badge"
@@ -61,7 +67,6 @@
         >
       </div>
 
-      <!-- REFERENZ BOX (PREMIUM FEATURE) -->
       <div class="reference-box">
         <div class="reference-label">📌 Bezug:</div>
         <div class="reference-text">
@@ -69,7 +74,6 @@
         </div>
       </div>
 
-      <!-- EINLEITUNGSTEXT -->
       <div v-if="previewData.base" class="intro-text intro-text-pro">
         Sehr geehrter Herr Weber,<br /><br />
         Wir freuen uns, Ihnen nachfolgend ein verbindliches Angebot auf Grundlage Ihrer Anfrage vom
@@ -78,7 +82,6 @@
         Leistungen/Produkte.
       </div>
 
-      <!-- POSITIONEN TABELLE -->
       <table class="positions-table">
         <thead>
           <tr>
@@ -108,13 +111,12 @@
           </tr>
         </tbody>
       </table>
-      <!-- RABATT INFO (PREMIUM FEATURE) -->
+
       <div class="rabatt-info">
         <span class="rabatt-icon">🎉</span>
         <strong>Sonderrabatt für Neukunden: 10% auf die Gesamtsumme</strong>
       </div>
 
-      <!-- SUMMEN -->
       <div v-if="previewData?.base" class="totals">
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
@@ -140,7 +142,6 @@
         </div>
       </div>
 
-      <!-- LIEFERZEIT BOX (PREMIUM FEATURE) -->
       <div class="delivery-box">
         <div class="delivery-title">
           <span>⏱️</span>
@@ -153,7 +154,6 @@
         </div>
       </div>
 
-      <!-- BEDINGUNGEN -->
       <div class="conditions">
         <div class="condition-grid">
           <div class="condition-section">
@@ -186,20 +186,20 @@
             Gültigkeit des Angebots
           </div>
           <div class="condition-text legal-note-pro">
-            Dieses Angebot ist bis einschließlich {{ validityDate }} gültig. Sämtliche Preise
-            verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten unsere
-            Allgemeinen Geschäftsbedingungen (AGB).
+            Dieses Angebot ist bis einschließlich
+            {{ validityDate(previewData.base.date, previewData.base.valid_days) }} gültig. Sämtliche
+            Preise verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten
+            unsere Allgemeinen Geschäftsbedingungen (AGB).
           </div>
         </div>
       </div>
 
-      <!-- SCHLUSSTEXT -->
       <div class="closing closing-pro">
         Für Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung. Wir freuen uns auf Ihre
         Auftragserteilung.<br /><br />
         Mit freundlichen Grüßen
       </div>
-      <!-- KONTAKT BOX (PREMIUM FEATURE) -->
+
       <div v-if="$store.state.offerPreview.sprach_partner" class="contact-box">
         <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
         <div class="contact-person">
@@ -216,7 +216,6 @@
         </div>
       </div>
 
-      <!-- FOOTER -->
       <div class="footer">
         <div>
           <strong>{{ $store.state.auth.firm_name }}</strong> • Geschäftsführer:
@@ -234,11 +233,15 @@
 <script>
 export default {
   name: 'OfferPreview',
-  inject: ['formattedCustomerNumber', 'formatCurrency', 'formatDate', 'validityDate'],
+  inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'validityDate'],
   data() {
     return {
       title: 'Angebot',
-      previewData: {}
+      previewData: {
+        base: {},
+        customer: {},
+        isBinding: true
+      }
     }
   },
   computed: {
@@ -264,6 +267,12 @@ export default {
         console.error(error)
         return null
       }
+    },
+    formatAngebotId() {
+      if (!this.previewData.base.id) return ''
+      const d = new Date()
+      const year = d.getFullYear()
+      return `ANG-${year}-${String(this.previewData.base.id).padStart(5, '0')}`
     }
   },
   mounted() {

@@ -23,7 +23,7 @@ export default {
   },
   provide() {
     return {
-      formattedCustomerNumber(value) {
+      formatCustomerId(value) {
         if (!value) return ''
         return `KU-${String(value).padStart(5, '0')}`
       },
@@ -48,15 +48,15 @@ export default {
           return error.message || ''
         }
       },
-      validityDate(value) {
-        const og = value || {}
-        if (og.offer_valid_to) {
-          return this.formatDate(og.offer_valid_to)
-        }
-        const d = og.offer_date ? new Date(og.offer_date) : new Date()
-        const validUntil = new Date(d.getTime())
-        validUntil.setDate(validUntil.getDate() + (og.validity_days || 30))
-        return this.formatDate(validUntil)
+      validityDate: (baseDate, validDays) => {
+        if (!baseDate || !validDays) return ''
+        const d = new Date(baseDate)
+        d.setDate(d.getDate() + Number(validDays))
+        return d.toLocaleDateString('de-DE', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        })
       }
     }
   },

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- EDITOR PANEL -->
     <div class="editor-panel">
       <div class="editor-header">
         <div class="editor-title">📝{{ title }}</div>
@@ -9,7 +8,6 @@
         </div>
       </div>
 
-      <!-- GRUND DATEN -->
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-row">
@@ -29,7 +27,6 @@
         </div>
       </div>
 
-      <!-- KUNDE -->
       <div class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
@@ -64,7 +61,7 @@
           </div>
         </div>
       </div>
-      <!-- Sprachpartner -->
+
       <div class="form-section">
         <div class="form-section-title">👤 Sprachpartner (Optional)</div>
 
@@ -81,7 +78,7 @@
           <input v-model="sprachPartner.phone" type="text" class="form-input" />
         </div>
       </div>
-      <!-- POSITIONEN -->
+
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
         <div v-if="base.positions.length === 0">Keine Positionen vorhanden</div>
@@ -132,7 +129,6 @@
         <button class="add-position-btn" @click="addPosition">➕ Position hinzufügen</button>
       </div>
 
-      <!-- ZAHLUNGSINFORMATIONEN -->
       <div class="form-section">
         <div class="form-section-title">💳 Zahlungsinformationen</div>
         <div class="form-row">
@@ -161,7 +157,7 @@ export default {
       customerList: 'Wähle Kunden',
       selectedCustomer: {},
       base: {
-        id: 'RE-2024-001',
+        id: '1',
         date: '',
         servicePeriod: 'Okt - Dez 2024',
         verwendung: 'Nicht angegeben',
