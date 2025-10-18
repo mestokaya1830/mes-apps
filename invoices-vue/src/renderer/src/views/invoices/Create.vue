@@ -13,21 +13,21 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Rechnungs-Nr.</label>
-            <input v-model="base.id" type="text" class="form-input" readonly />
+            <input v-model="invoice.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Datum</label>
-            <input v-model="base.date" type="date" class="form-input" />
+            <input v-model="invoice.date" type="date" class="form-input" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Leistungszeitraum</label>
-          <input v-model="base.servicePeriod" type="text" class="form-input" />
+          <input v-model="invoice.service_period" type="text" class="form-input" />
         </div>
       </div>
 
-      <div class="form-section">
+      <div v-if="customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
           <label class="form-label">Kundendaten</label>
@@ -40,7 +40,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Kunden-Nr.</label>
-          <input v-model="selectedCustomer.id" type="text" class="form-input" readonly />
+          <input v-model="invoice.selected_customer.id" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Name</label>
@@ -48,16 +48,31 @@
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="selectedCustomer.address" type="text" class="form-input" readonly />
+          <input
+            v-model="invoice.selected_customer.address"
+            type="text"
+            class="form-input"
+            readonly
+          />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ</label>
-            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" readonly />
+            <input
+              v-model="invoice.selected_customer.postal_code"
+              type="text"
+              class="form-input"
+              readonly
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt</label>
-            <input v-model="selectedCustomer.city" type="text" class="form-input" readonly />
+            <input
+              v-model="invoice.selected_customer.city"
+              type="text"
+              class="form-input"
+              readonly
+            />
           </div>
         </div>
       </div>
@@ -67,23 +82,37 @@
 
         <div class="form-group">
           <label class="form-label">Sprachpartner Vollname</label>
-          <input v-model="sprachPartner.fullname" type="text" class="form-input" />
+          <input v-model="invoice.contact_person.full_name" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input v-model="sprachPartner.email" type="text" class="form-input" />
+          <input v-model="invoice.contact_person.email" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Tel</label>
-          <input v-model="sprachPartner.phone" type="text" class="form-input" />
+          <input v-model="invoice.contact_person.phone" type="text" class="form-input" />
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">
+          <span>👤 Kleinunternehmer</span>
+          <label for="kleinunternehmer-checkbox" class="switch">
+            <input
+              id="kleinunternehmer-checkbox"
+              v-model="invoice.is_small_company"
+              type="checkbox"
+              class="switch-checkbox"
+            />
+            <span class="slider round"></span>
+          </label>
         </div>
       </div>
 
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="base.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="invoice.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in base.positions" :key="index" class="position-item">
+          <div v-for="(pos, index) in invoice.positions" :key="index" class="position-item">
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -134,11 +163,16 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input v-model.number="base.paidAmount" type="number" class="form-input" step="0.01" />
+            <input
+              v-model.number="invoice.paid_amount"
+              type="number"
+              class="form-input"
+              step="0.01"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="base.paymentTerms" type="number" class="form-input" />
+            <input v-model.number="invoice.payment_terms" type="number" class="form-input" />
           </div>
         </div>
       </div>
@@ -155,50 +189,67 @@ export default {
       title: 'Rechnung erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
-      selectedCustomer: {},
-      base: {
+      invoice: {
         id: 1,
         date: '',
-        servicePeriod: 'Okt - Dez 2024',
+        service_period: 'Okt - Dez 2024',
         verwendung: 'Nicht angegeben',
-        paidAmount: 0,
-        paymentTerms: 14,
-        positions: []
-      },
-      sprachPartner: {
-        fullname: '',
-        email: '',
-        phone: ''
+        paid_amount: 0,
+        payment_terms: 14,
+        is_small_company: false,
+        positions: [],
+        selected_customer: {
+          id: '',
+          company_name: '',
+          first_name: '',
+          last_name: '',
+          address: '',
+          postal_code: '',
+          city: '',
+          country: '',
+          email: '',
+          phone: '',
+          tax_number: '',
+          vat_id: ''
+        },
+        contact_person: {
+          full_name: '',
+          email: '',
+          phone: ''
+        }
       }
     }
   },
   computed: {
     subtotal() {
-      return this.base.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.invoice.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.base.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
+      return this.invoice.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
     },
     grandTotal() {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.base.paidAmount
+      return this.grandTotal - this.invoice.paid_amount
     },
     companyName() {
       return (
-        this.selectedCustomer.company_name ||
-        [this.selectedCustomer.first_name, this.selectedCustomer.last_name]
+        this.invoice.selected_customer.company_name ||
+        [this.invoice.selected_customer.first_name, this.invoice.selected_customer.last_name]
           .filter(Boolean)
           .join(' ')
       )
     }
   },
+
   mounted() {
     if (this.$store?.state?.invoicePreview) {
       const preview = this.$store.state.invoicePreview
-      if (preview.base?.positions) this.base.positions = preview.base.positions
-      if (preview.customer) this.selectedCustomer = { ...preview.customer }
+      if (preview) this.invoice = { ...preview }
     }
     this.getCustomers()
   },
@@ -217,10 +268,10 @@ export default {
     },
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.selectedCustomer = { ...customer }
+      if (customer) this.invoice.selected_customer = { ...customer }
     },
     addPosition() {
-      this.base.positions.push({
+      this.invoice.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
         quantity: 1,
@@ -228,41 +279,39 @@ export default {
         price: 0,
         vat: 19
       })
-      this.$store.commit('setInvoicePreview', this.base.positions)
+      this.$store.commit('setInvoicePreview', this.invoice.positions)
     },
     deletePosition(index) {
-      if (this.base.positions.length > 0) {
-        this.base.positions.splice(index, 1)
-        this.$store.commit('setInvoicePreview', this.base.positions)
+      if (this.invoice.positions.length > 0) {
+        this.invoice.positions.splice(index, 1)
+        this.$store.commit('setInvoicePreview', this.invoice.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
     async storePreview() {
       try {
-        this.base.positions = this.base.positions.map((pos) => ({
+        this.invoice.positions = this.invoice.positions.map((pos) => ({
           ...pos,
           unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
         }))
 
         await this.$store.commit('setInvoicePreview', {
-          customer: { ...this.selectedCustomer, company_name: this.companyName },
-          base: {
-            id: this.base.id,
-            date: this.base.date,
-            service_period: this.base.servicePeriod,
-            paid_amount: this.base.paidAmount,
-            payment_terms: this.base.paymentTerms,
-            verwendung: this.base.verwendung,
-            positions: this.base.positions,
-            subtotal: this.subtotal.toFixed(2),
-            vat_amount: this.vatAmount.toFixed(2),
-            total: this.grandTotal.toFixed(2),
-            outstanding: this.outstanding.toFixed(2)
-          },
-          sprach_partner: this.sprachPartner
+          id: this.invoice.id,
+          date: this.invoice.date,
+          service_period: this.invoice.service_period,
+          paid_amount: this.invoice.paid_amount,
+          payment_terms: this.invoice.payment_terms,
+          verwendung: this.invoice.verwendung,
+          is_small_company: this.invoice.is_small_company,
+          positions: this.invoice.positions,
+          subtotal: this.subtotal.toFixed(2),
+          vat_amount: this.vatAmount.toFixed(2),
+          total: this.grandTotal.toFixed(2),
+          outstanding: this.outstanding.toFixed(2),
+          selected_customer: { ...this.invoice.selected_customer, company_name: this.companyName },
+          contact_person: { ...this.invoice.contact_person }
         })
-
         this.$router.push('/invoices-preview')
       } catch (error) {
         console.error('Error storing invoice preview:', error)

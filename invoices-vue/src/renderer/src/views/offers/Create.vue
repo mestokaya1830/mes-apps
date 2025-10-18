@@ -12,7 +12,7 @@
         <div class="form-section-title">📌 Abgebot Title</div>
         <div class="form-group">
           <label class="form-label">Title</label>
-          <input v-model="base.offerTitle" type="text" class="form-input" />
+          <input v-model="offer.title" type="text" class="form-input" />
         </div>
       </div>
       <div class="form-section">
@@ -20,20 +20,20 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Angebotsnummer</label>
-            <input v-model="base.id" type="text" class="form-input" readonly />
+            <input v-model="offer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Angebotsdatum</label>
-            <input v-model="base.date" type="date" class="form-input" />
+            <input v-model="offer.date" type="date" class="form-input" />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Leistungszeitraum</label>
-          <input v-model="base.servicePeriod" type="text" class="form-input" />
+          <input v-model="offer.service_period" type="text" class="form-input" />
         </div>
       </div>
 
-      <div class="form-section">
+      <div v-if="offer.selected_customer || offer.customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
           <label class="form-label">Kundendaten</label>
@@ -46,7 +46,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">KundeNr.</label>
-          <input v-model="selectedCustomer.id" type="text" class="form-input" readonly />
+          <input v-model="offer.selected_customer.id" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Name</label>
@@ -54,42 +54,65 @@
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="selectedCustomer.address" type="text" class="form-input" readonly />
+          <input
+            v-model="offer.selected_customer.address"
+            type="text"
+            class="form-input"
+            readonly
+          />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ</label>
-            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" readonly />
+            <input
+              v-model="offer.selected_customer.postal_code"
+              type="text"
+              class="form-input"
+              readonly
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt</label>
-            <input v-model="selectedCustomer.city" type="text" class="form-input" readonly />
+            <input v-model="offer.selected_customer.city" type="text" class="form-input" readonly />
           </div>
         </div>
       </div>
 
-      <div class="form-section">
+      <div v-if="offer.contact_person" class="form-section">
         <div class="form-section-title">👤 Sprachpartner (Optional)</div>
 
         <div class="form-group">
           <label class="form-label">Sprachpartner Vollname</label>
-          <input v-model="sprachPartner.fullname" type="text" class="form-input" />
+          <input v-model="offer.contact_person.full_name" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input v-model="sprachPartner.email" type="text" class="form-input" />
+          <input v-model="offer.contact_person.email" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Tel</label>
-          <input v-model="sprachPartner.phone" type="text" class="form-input" />
+          <input v-model="offer.contact_person.phone" type="text" class="form-input" />
         </div>
       </div>
-
+      <div class="form-section">
+        <div class="form-section-title">
+          <span>👤 Rechtsgültigkeit</span>
+          <label for="rechtsgültigkeit-checkbox" class="switch">
+            <input
+              id="rechtsgültigkeit-checkbox"
+              v-model="offer.is_legal_validity"
+              type="checkbox"
+              class="switch-checkbox"
+            />
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="base.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="offer.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in base.positions" :key="index" class="position-item">
+          <div v-for="(pos, index) in offer.positions" :key="index" class="position-item">
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -140,11 +163,16 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input v-model.number="base.paidAmount" type="number" class="form-input" step="0.01" />
+            <input
+              v-model.number="offer.paid_amount"
+              type="number"
+              class="form-input"
+              step="0.01"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="base.paymentTerms" type="number" class="form-input" />
+            <input v-model.number="offer.payment_terms" type="number" class="form-input" />
           </div>
         </div>
       </div>
@@ -162,40 +190,54 @@ export default {
       title: 'Angebot erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
-      selectedCustomer: {},
-      sprachPartner: {
-        fullname: '',
-        email: '',
-        phone: ''
-      },
-      base: {
+      offer: {
         title: 'Mein erstes Angebot',
         id: '1',
         date: '2024-12-15',
-        servicePeriod: 'Okt - Dez 2024',
-        paidAmount: 0,
-        paymentTerms: 14,
-        positions: []
+        service_period: 'Okt - Dez 2024',
+        paid_amount: 0,
+        payment_terms: 14,
+        is_legal_validity: false,
+        positions: [],
+        selected_customer: {
+          id: '',
+          company_name: '',
+          first_name: '',
+          last_name: '',
+          address: '',
+          postal_code: '',
+          city: '',
+          country: '',
+          email: '',
+          phone: '',
+          tax_number: '',
+          vat_id: ''
+        },
+        contact_person: {
+          full_name: '',
+          email: '',
+          phone: ''
+        }
       }
     }
   },
   computed: {
     subtotal() {
-      return this.base.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.offer.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.base.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
+      return this.offer.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
     },
     grandTotal() {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.base.paidAmount
+      return this.grandTotal - this.offer.paid_amount
     },
     companyName() {
       return (
-        this.selectedCustomer.company_name ||
-        [this.selectedCustomer.first_name, this.selectedCustomer.last_name]
+        this.offer.selected_customer.company_name ||
+        [this.offer.selected_customer.first_name, this.offer.selected_customer.last_name]
           .filter(Boolean)
           .join(' ')
       )
@@ -204,8 +246,7 @@ export default {
   mounted() {
     if (this.$store?.state?.offerPreview) {
       const preview = this.$store.state.offerPreview
-      if (preview.base?.positions) this.base.positions = preview.base.positions
-      if (preview.customer) this.selectedCustomer = { ...preview.customer }
+      if (preview) this.offer = { ...preview }
     }
     this.getCustomers()
   },
@@ -224,51 +265,50 @@ export default {
     },
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.selectedCustomer = { ...customer }
+      if (customer) this.offer.selected_customer = { ...customer }
     },
     addPosition() {
-      this.base.positions.push({
+      this.offer.positions.push({
         description: 'Beschreibung',
         quantity: 1,
         unit: 'Stk',
         price: 0,
         vat: 19
       })
-      this.$store.commit('setOfferPreview', this.base.positions)
+      this.$store.commit('setOfferPreview', this.offer.positions)
     },
     deletePosition(index) {
-      if (this.base.positions.length > 0) {
-        this.base.positions.splice(index, 1)
-        this.$store.commit('setOfferPreview', this.base.positions)
+      if (this.offer.positions.length > 0) {
+        this.offer.positions.splice(index, 1)
+        this.$store.commit('setOfferPreview', this.offer.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
     async storePreview() {
       try {
-        this.base.positions = this.base.positions.map((pos) => ({
+        this.offer.positions = this.offer.positions.map((pos) => ({
           ...pos,
           unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
         }))
 
         await this.$store.commit('setOfferPreview', {
-          customer: { ...this.selectedCustomer, company_name: this.companyName },
-          base: {
-            title: this.base.title,
-            id: this.base.id,
-            date: this.base.date,
-            valid_days: 20,
-            service_period: this.base.servicePeriod,
-            paid_amount: this.base.paidAmount,
-            payment_terms: this.base.paymentTerms,
-            verwendung: this.base.verwendung,
-            positions: this.base.positions,
-            subtotal: this.subtotal.toFixed(2),
-            vat_amount: this.vatAmount.toFixed(2),
-            total: this.grandTotal.toFixed(2),
-            outstanding: this.outstanding.toFixed(2)
-          },
-          sprach_partner: { ...this.sprachPartner }
+          title: this.offer.title,
+          id: this.offer.id,
+          date: this.offer.date,
+          valid_days: 20,
+          service_period: this.offer.service_period,
+          paid_amount: this.offer.paid_amount,
+          payment_terms: this.offer.payment_terms,
+          is_legal_validity: this.offer.is_legal_validity,
+          verwendung: this.offer.verwendung,
+          positions: this.offer.positions,
+          subtotal: this.subtotal.toFixed(2),
+          vat_amount: this.vatAmount.toFixed(2),
+          total: this.grandTotal.toFixed(2),
+          outstanding: this.outstanding.toFixed(2),
+          contact_person: { ...this.offer.contact_person },
+          selected_customer: { ...this.offer.selected_customer, company_name: this.companyName }
         })
 
         this.$router.push('/offers-preview')

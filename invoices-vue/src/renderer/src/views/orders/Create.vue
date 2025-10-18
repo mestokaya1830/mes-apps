@@ -13,21 +13,21 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Rechnungsnummer</label>
-            <input v-model="base.id" type="text" class="form-input" readonly />
+            <input v-model="order.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum</label>
-            <input v-model="base.date" type="date" class="form-input" />
+            <input v-model="order.date" type="date" class="form-input" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Leistungszeitraum</label>
-          <input v-model="base.servicePeriod" type="text" class="form-input" />
+          <input v-model="order.service_period" type="text" class="form-input" />
         </div>
       </div>
 
-      <div class="form-section">
+      <div v-if="(order && order.selected_customer) || order.customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
           <label class="form-label">Kundendaten</label>
@@ -39,8 +39,8 @@
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">KundeNr</label>
-          <input v-model="selectedCustomer.id" type="text" class="form-input" readonly />
+          <label class="form-label">Kunden-Nr.</label>
+          <input v-model="order.selected_customer.id" type="text" class="form-input" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Name</label>
@@ -48,42 +48,50 @@
         </div>
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="selectedCustomer.address" type="text" class="form-input" readonly />
+          <input
+            v-model="order.selected_customer.address"
+            type="text"
+            class="form-input"
+            readonly
+          />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ</label>
-            <input v-model="selectedCustomer.postal_code" type="text" class="form-input" readonly />
+            <input
+              v-model="order.selected_customer.postal_code"
+              type="text"
+              class="form-input"
+              readonly
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt</label>
-            <input v-model="selectedCustomer.city" type="text" class="form-input" readonly />
+            <input v-model="order.selected_customer.city" type="text" class="form-input" readonly />
           </div>
         </div>
       </div>
 
-      <div class="form-section">
+      <div v-if="order.contact_person" class="form-section">
         <div class="form-section-title">👤 Sprachpartner (Optional)</div>
-
         <div class="form-group">
           <label class="form-label">Sprachpartner Vollname</label>
-          <input v-model="sprachPartner.fullname" type="text" class="form-input" />
+          <input v-model="order.contact_person.fullname" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Email</label>
-          <input v-model="sprachPartner.email" type="text" class="form-input" />
+          <input v-model="order.contact_person.email" type="text" class="form-input" />
         </div>
         <div class="form-group">
           <label class="form-label">Tel</label>
-          <input v-model="sprachPartner.phone" type="text" class="form-input" />
+          <input v-model="order.contact_person.phone" type="text" class="form-input" />
         </div>
       </div>
-
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="base.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="order.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in base.positions" :key="index" class="position-item">
+          <div v-for="(pos, index) in order.positions" :key="index" class="position-item">
             <div class="position-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -134,11 +142,16 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input v-model.number="base.paidAmount" type="number" class="form-input" step="0.01" />
+            <input
+              v-model.number="order.paid_amount"
+              type="number"
+              class="form-input"
+              step="0.01"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="base.paymentTerms" type="number" class="form-input" />
+            <input v-model.number="order.payment_terms" type="number" class="form-input" />
           </div>
         </div>
       </div>
@@ -155,44 +168,57 @@ export default {
       title: 'Auftrag erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
-      selectedCustomer: {},
-      base: {
+      order: {
         id: '1',
         date: '',
-        servicePeriod: 'Okt - Dez 2024',
+        service_period: 'Okt - Dez 2024',
         verwendung: 'Nicht angegeben',
-        paidAmount: 0,
-        paymentTerms: 14,
-        positions: []
-      },
-      sprachPartner: {
-        fullname: '',
-        email: '',
-        phone: ''
+        paid_amount: 0,
+        payment_terms: 14,
+        positions: [],
+        selected_customer: {
+          id: '',
+          company_name: '',
+          first_name: '',
+          last_name: '',
+          address: '',
+          postal_code: '',
+          city: '',
+          country: '',
+          email: '',
+          phone: '',
+          tax_number: '',
+          vat_id: ''
+        },
+        contact_person: {
+          full_name: '',
+          email: '',
+          phone: ''
+        }
       }
     }
   },
   computed: {
     subtotal() {
-      return this.base.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.order.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.base.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
+      return this.order.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
     },
     total() {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.total - this.base.paidAmount
+      return this.total - this.order.paid_amount
     },
     formattedDate() {
-      const date = new Date(this.base.orderDate)
+      const date = new Date(this.order.date)
       return date.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })
     },
     companyName() {
       return (
-        this.selectedCustomer.company_name ||
-        [this.selectedCustomer.first_name, this.selectedCustomer.last_name]
+        this.order.selected_customer.company_name ||
+        [this.order.selected_customer.first_name, this.order.selected_customer.last_name]
           .filter(Boolean)
           .join(' ')
       )
@@ -207,9 +233,7 @@ export default {
   mounted() {
     if (this.$store?.state?.orderPreview) {
       const preview = this.$store.state.orderPreview
-      if (preview.base?.positions) this.base.positions = preview.base.positions
-      if (preview.customer) this.selectedCustomer = { ...preview.customer }
-      if (preview.sprach_partner) this.sprachPartner = { ...preview.sprach_partner }
+      if (preview) this.order = { ...preview }
     }
     this.getCustomers()
   },
@@ -228,10 +252,10 @@ export default {
     },
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.selectedCustomer = { ...customer }
+      if (customer) this.order.selected_customer = { ...customer }
     },
     addPosition() {
-      this.base.positions.push({
+      this.order.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
         quantity: 1,
@@ -239,12 +263,12 @@ export default {
         price: 0,
         vat: 19
       })
-      this.$store.commit('setOrderPreview', this.base.positions)
+      this.$store.commit('setOrderPreview', this.order.positions)
     },
     deletePosition(index) {
-      if (this.base.positions.length > 0) {
-        this.base.positions.splice(index, 1)
-        this.$store.commit('setOrderPreview', this.base.positions)
+      if (this.order.positions.length > 0) {
+        this.order.positions.splice(index, 1)
+        this.$store.commit('setOrderPreview', this.order.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
@@ -252,27 +276,25 @@ export default {
 
     async storePreview() {
       try {
-        this.base.positions = this.base.positions.map((pos) => ({
+        this.order.positions = this.order.positions.map((pos) => ({
           ...pos,
           unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
         }))
 
         await this.$store.commit('setOrderPreview', {
-          customer: { ...this.selectedCustomer, company_name: this.companyName },
-          base: {
-            id: this.base.id,
-            date: this.base.date,
-            service_period: this.base.servicePeriod,
-            paid_amount: this.base.paidAmount,
-            payment_terms: this.base.paymentTerms,
-            verwendung: this.base.verwendung,
-            positions: this.base.positions,
-            subtotal: this.subtotal.toFixed(2),
-            vat_amount: this.vatAmount.toFixed(2),
-            total: this.total.toFixed(2),
-            outstanding: this.outstanding.toFixed(2)
-          },
-          sprach_partner: this.sprachPartner
+          id: this.order.id,
+          date: this.order.date,
+          service_period: this.order.service_period,
+          paid_amount: this.order.paid_amount,
+          payment_terms: this.order.payment_terms,
+          verwendung: this.order.verwendung,
+          positions: this.order.positions,
+          subtotal: this.subtotal.toFixed(2),
+          vat_amount: this.vatAmount.toFixed(2),
+          total: this.total.toFixed(2),
+          outstanding: this.outstanding.toFixed(2),
+          contact_person: { ...this.order.contact_person },
+          selected_customer: { ...this.order.selected_customer, company_name: this.companyName }
         })
 
         this.$router.push('/orders-preview')

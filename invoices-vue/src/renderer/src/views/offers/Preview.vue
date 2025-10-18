@@ -16,44 +16,49 @@
         <img :src="logoSrc" alt="" class="preview-logo" />
       </div>
 
-      <div class="recipient">
+      <div v-if="offerPreview && offerPreview.selected_customer" class="recipient">
         <div class="recipient-address">
-          <div class="recipient-name">{{ previewData.customer.company_name }}</div>
-          <div>{{ previewData.customer.address }}</div>
-          <div>{{ previewData.customer.postal_code }} {{ previewData.customer.city }}</div>
+          <div class="recipient-name">{{ offerPreview.selected_customer.company_name }}</div>
+          <div>{{ offerPreview.selected_customer.address }}</div>
+          <div>
+            {{ offerPreview.selected_customer.postal_code }}
+            {{ offerPreview.selected_customer.city }}
+          </div>
         </div>
 
-        <div v-if="previewData && previewData.customer">
+        <div v-if="offerPreview && offerPreview.selected_customer">
           <div class="meta-row">
             <span class="meta-label">AngebotNr.:</span>
             <span class="meta-value">{{ formatAngebotId }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(previewData.base.date) }}</span>
+            <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">KundenNr:</span>
-            <span class="meta-value">{{ formatCustomerId(previewData.customer.id) }}</span>
+            <span class="meta-value">{{
+              formatCustomerId(offerPreview.selected_customer.id)
+            }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">SteuerNr.:</span>
-            <span class="meta-value">{{ previewData.customer.tax_number }}</span>
+            <span class="meta-value">{{ offerPreview.selected_customer.tax_number }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">USt-IdNr.:</span>
-            <span class="meta-value">{{ previewData.customer.vat_id }}</span>
+            <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Gültig bis:</span>
             <span class="meta-value">
-              {{ validityDate(previewData.base.date, previewData.base.valid_days) }}
+              {{ validityDate(offerPreview.date, offerPreview.valid_days) }}
             </span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Rechtsgültigkeit:</span>
             <span class="meta-value">
-              <span v-if="previewData.base.isBinding">Verbindlich</span>
+              <span v-if="offerPreview.is_legal_validity">Verbindlich</span>
               <span v-else>Freibleibend</span>
             </span>
           </div>
@@ -61,10 +66,8 @@
       </div>
 
       <div v-if="$store.state.offerPreview" class="document-title">
-        {{ $store.state.offerPreview.base.title || 'Angebot' }}
-        <span class="validity-badge"
-          >Gültig {{ $store.state.offerPreview.base.valid_days }} Tage</span
-        >
+        {{ $store.state.offerPreview.title || 'Angebot' }}
+        <span class="validity-badge">Gültig {{ $store.state.offerPreview.valid_days }} Tage</span>
       </div>
 
       <div class="reference-box">
@@ -74,10 +77,10 @@
         </div>
       </div>
 
-      <div v-if="previewData.base" class="intro-text intro-text-pro">
+      <div v-if="offerPreview" class="intro-text intro-text-pro">
         Sehr geehrter Herr Weber,<br /><br />
         Wir freuen uns, Ihnen nachfolgend ein verbindliches Angebot auf Grundlage Ihrer Anfrage vom
-        {{ formatDate(previewData.base.date) }}
+        {{ formatDate(offerPreview.date) }}
         unterbreiten zu dürfen. Dieses Angebot umfasst die nachfolgend beschriebenen
         Leistungen/Produkte.
       </div>
@@ -94,8 +97,8 @@
             <th class="right" style="width: 15%">Gesamtpreis</th>
           </tr>
         </thead>
-        <tbody v-if="previewData && previewData.base && previewData.base.positions">
-          <tr v-for="(item, index) in previewData.base.positions" :key="index">
+        <tbody v-if="offerPreview && offerPreview && offerPreview.positions">
+          <tr v-for="(item, index) in offerPreview.positions" :key="index">
             <td>{{ index + 1 }}</td>
             <td>
               <div class="position-title">{{ item.title }}</div>
@@ -117,28 +120,28 @@
         <strong>Sonderrabatt für Neukunden: 10% auf die Gesamtsumme</strong>
       </div>
 
-      <div v-if="previewData?.base" class="totals">
+      <div v-if="offerPreview" class="totals">
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">{{ formatCurrency(previewData.base.subtotal) }}</span>
+          <span class="total-value">{{ formatCurrency(offerPreview.subtotal) }}</span>
         </div>
         <div class="total-row rabatt">
           <span class="total-label">Rabatt 10%:</span>
-          <span class="total-value">- {{ formatCurrency(previewData.base.discount) }}</span>
+          <span class="total-value">- {{ formatCurrency(offerPreview.discount) }}</span>
         </div>
         <div class="total-row subtotal">
           <span class="total-label">Summe nach Rabatt:</span>
           <span class="total-value">{{
-            formatCurrency(previewData.base.subtotal - previewData.base.discount)
+            formatCurrency(offerPreview.subtotal - offerPreview.discount)
           }}</span>
         </div>
         <div class="total-row">
           <span class="total-label">MwSt. 19%:</span>
-          <span class="total-value">{{ formatCurrency(previewData.base.vat_amount) }}</span>
+          <span class="total-value">{{ formatCurrency(offerPreview.vat_amount) }}</span>
         </div>
         <div class="total-row final">
           <span class="total-label">Gesamtbetrag (brutto):</span>
-          <span class="total-value">{{ formatCurrency(previewData.base.total) }}</span>
+          <span class="total-value">{{ formatCurrency(offerPreview.total) }}</span>
         </div>
       </div>
 
@@ -187,9 +190,9 @@
           </div>
           <div class="condition-text legal-note-pro">
             Dieses Angebot ist bis einschließlich
-            {{ validityDate(previewData.base.date, previewData.base.valid_days) }} gültig. Sämtliche
-            Preise verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten
-            unsere Allgemeinen Geschäftsbedingungen (AGB).
+            {{ validityDate(offerPreview.date, offerPreview.valid_days) }} gültig. Sämtliche Preise
+            verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten unsere
+            Allgemeinen Geschäftsbedingungen (AGB).
           </div>
         </div>
       </div>
@@ -200,17 +203,17 @@
         Mit freundlichen Grüßen
       </div>
 
-      <div v-if="$store.state.offerPreview.sprach_partner" class="contact-box">
+      <div v-if="offerPreview.contact_person" class="contact-box">
         <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
         <div class="contact-person">
           <div class="contact-avatar">SM</div>
           <div class="contact-details">
-            <div class="contact-name">{{ $store.state.offerPreview.sprach_partner.fullname }}</div>
+            <div class="contact-name">{{ offerPreview.contact_person.full_name }}</div>
             <div class="contact-info">
               Projektmanagement & Kundenbetreuung<br />
-              📞 +{{ $store.state.offerPreview.sprach_partner.phone }} <br />
+              📞 +{{ offerPreview.contact_person.phone }} <br />
               📧
-              {{ $store.state.offerPreview.sprach_partner.email }}
+              {{ offerPreview.contact_person.email }}
             </div>
           </div>
         </div>
@@ -237,11 +240,7 @@ export default {
   data() {
     return {
       title: 'Angebot',
-      previewData: {
-        base: {},
-        customer: {},
-        isBinding: true
-      }
+      offerPreview: {}
     }
   },
   computed: {
@@ -252,7 +251,7 @@ export default {
         if (logo.startsWith('data:image')) {
           return logo
         }
-        return `data:image/png;base64,${logo}`
+        return `data:image/png64,${logo}`
       }
       try {
         let binary = ''
@@ -269,19 +268,18 @@ export default {
       }
     },
     formatAngebotId() {
-      if (!this.previewData.base.id) return ''
+      if (!this.offerPreview.id) return ''
       const d = new Date()
       const year = d.getFullYear()
-      return `ANG-${year}-${String(this.previewData.base.id).padStart(5, '0')}`
+      return `ANG-${year}-${String(this.offerPreview.id).padStart(5, '0')}`
     }
   },
   mounted() {
-    this.getPreview()
+    this.getOfferPreview()
   },
   methods: {
-    getPreview() {
-      this.previewData = this.$store.state.offerPreview
-      console.log('Preview Data:', this.previewData)
+    getOfferPreview() {
+      this.offerPreview = this.$store.state.offerPreview
     }
   }
 }

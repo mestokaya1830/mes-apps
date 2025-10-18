@@ -6,7 +6,7 @@
         <div>
           <div class="company-name">{{ $store.state.auth.firm_name }}</div>
           <div class="company-details">
-            {{ $store.state.auth.address }} <br /> 
+            {{ $store.state.auth.address }} <br />
             {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
             Tel: {{ $store.state.auth.phone }} <br />{{ $store.state.auth.email }} <br />{{
               $store.state.auth.website
@@ -16,40 +16,42 @@
         <img :src="logoSrc" alt="" class="preview-logo" />
       </div>
 
-
       <div class="recipient">
-        <div v-if="previewData && previewData.customer" class="recipient-address">
-          <div>{{ previewData.customer.company_name }}</div>
-          <div>{{ previewData.customer.address }}</div>
+        <div v-if="orderPreview && orderPreview.selected_customer" class="recipient-address">
+          <div>{{ orderPreview.selected_customer.company_name }}</div>
+          <div>{{ orderPreview.selected_customer.address }}</div>
           <div>
-            {{ previewData.customer.postal_code }} {{ previewData.customer.city }} <br />
-            {{ previewData.customer.country }}
+            {{ orderPreview.selected_customer.postal_code }}
+            {{ orderPreview.selected_customer.city }} <br />
+            {{ orderPreview.selected_customer.country }}
           </div>
         </div>
-        <div v-if="previewData && previewData.customer">
+        <div v-if="orderPreview && orderPreview.selected_customer">
           <div class="meta-row">
             <span class="meta-label">Auftrags-Nr.:</span>
             <span class="meta-value">{{ formatAuftragId }}</span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(previewData.base.date) }} </span>
+            <span class="meta-value">{{ formatDate(orderPreview.date) }} </span>
           </div>
           <div class="meta-row">
             <span class="meta-label">Kunden-Nr.:</span>
-            <span class="meta-value">{{ formatCustomerId(previewData.customer.id) }}</span>
+            <span class="meta-value">{{
+              formatCustomerId(orderPreview.selected_customer.id)
+            }}</span>
           </div>
 
           <div class="meta-row">
             <span class="meta-label">Leistung:</span>
-            <span class="meta-value">{{ previewData.base.service_period }}</span>
+            <span class="meta-value">{{ orderPreview.service_period }}</span>
           </div>
         </div>
       </div>
 
-      <div v-if="previewData && previewData.customer" class="intro-text">
-        Sehr geehrte{{ previewData.customer?.gender === 'f' ? ' Frau' : 'r Herr' }}
-        {{ previewData.customer?.last_name }},
+      <div v-if="orderPreview && orderPreview.selected_customer" class="intro-text">
+        Sehr geehrte{{ orderPreview.selected_customer?.gender === 'f' ? ' Frau' : 'r Herr' }}
+        {{ orderPreview.selected_customer?.last_name }},
         <br />
         vielen Dank für Ihre Auftragserteilung. Wir bestätigen Ihnen hiermit folgenden Auftrag:
       </div>
@@ -66,8 +68,8 @@
             <th class="right" style="width: 15%">Gesamtpreis</th>
           </tr>
         </thead>
-        <tbody v-if="previewData?.base?.positions?.length">
-          <tr v-for="(item, index) in previewData.base.positions" :key="index">
+        <tbody v-if="orderPreview.positions?.length">
+          <tr v-for="(item, index) in orderPreview.positions" :key="index">
             <td>{{ index + 1 }}</td>
 
             <td>
@@ -103,44 +105,40 @@
       <div class="totals">
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">{{
-            formatCurrency($store.state.orderPreview.base.subtotal)
-          }}</span>
+          <span class="total-value">{{ formatCurrency($store.state.orderPreview.subtotal) }}</span>
         </div>
         <div class="total-row">
           <span class="total-label">MwSt.:</span>
           <span class="total-value">{{
-            formatCurrency($store.state.orderPreview.base.vat_amount)
+            formatCurrency($store.state.orderPreview.vat_amount)
           }}</span>
         </div>
         <div class="total-row subtotal">
           <span class="total-label">Auftragsbetrag (brutto):</span>
-          <span class="total-value">{{
-            formatCurrency($store.state.orderPreview.base.total)
-          }}</span>
+          <span class="total-value">{{ formatCurrency($store.state.orderPreview.total) }}</span>
         </div>
       </div>
       <!-- KONTAKT BOX (PREMIUM FEATURE) -->
-      <div v-if="$store.state.orderPreview.sprach_partner" class="contact-box">
+      <div v-if="$store.state.orderPreview.contact_person" class="contact-box">
         <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
         <div class="contact-person">
           <div class="contact-avatar">SM</div>
           <div class="contact-details">
             <div class="contact-name">
-              {{ $store.state.orderPreview.sprach_partner.fullname }}
+              {{ $store.state.orderPreview.contact_person.full_name }}
             </div>
             <div class="contact-info">
               Projektmanagement & Kundenbetreuung<br />
-              📞 +{{ $store.state.orderPreview.sprach_partner.phone }} <br />
+              📞 +{{ $store.state.orderPreview.contact_person.phone }} <br />
               📧
-              {{ $store.state.orderPreview.sprach_partner.email }}
+              {{ $store.state.orderPreview.contact_person.email }}
             </div>
           </div>
         </div>
       </div>
       <div class="bank-box">
         <div class="bank-title">🏦 Bankverbindung</div>
-        <div v-if="previewData && previewData.base" class="bank-info">
+        <div v-if="orderPreview" class="bank-info">
           <span class="bank-label">Bank:</span>
           <span class="bank-value">{{ $store.state.auth.bank_name }}</span>
           <span class="bank-label">IBAN:</span>
@@ -176,10 +174,7 @@ export default {
   data() {
     return {
       title: 'Auftrag',
-      previewData: {
-        base: {},
-        customer: {}
-      }
+      orderPreview: {}
     }
   },
   computed: {
@@ -207,18 +202,18 @@ export default {
       }
     },
     formatAuftragId() {
-      if (!this.previewData.base.id) return ''
+      if (!this.orderPreview.id) return ''
       const d = new Date()
       const year = d.getFullYear()
-      return `AUF-${year}-${String(this.previewData.base.id).padStart(5, '0')}`
+      return `AUF-${year}-${String(this.orderPreview.id).padStart(5, '0')}`
     }
   },
   mounted() {
-    this.getPreview()
+    this.getOrderPreview()
   },
   methods: {
-    getPreview() {
-      this.previewData = this.$store.state.orderPreview
+    getOrderPreview() {
+      this.orderPreview = this.$store.state.orderPreview
     }
   }
 }
