@@ -15,5 +15,6 @@ contextBridge.exposeInMainWorld('api', {
   addCustomer: async (id) => ipcRenderer.invoke('add-customer', id),
   updateCustomer: async (data) => ipcRenderer.invoke('update-customer', data),
   deleteCustomer: async (data) => ipcRenderer.invoke('delete-customer', data),
-  getLogoPath: async (data) => ipcRenderer.invoke('get-logo-path', data)
+  getLogoPath: async (data) => ipcRenderer.invoke('get-logo-path', data),
+  printToPDF: (fileName) => ipcRenderer.invoke('print-to-pdf', fileName)
 })

@@ -1,6 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
-import fs from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
@@ -394,7 +393,7 @@ ipcMain.handle('update-customer', async (event, data) => {
         customer.vat_id,
         customer.is_active,
         id
-    )
+      )
     console.log(row)
     return { success: true, customer: row }
   } catch (err) {

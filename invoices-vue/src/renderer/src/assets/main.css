@@ -597,7 +597,7 @@ input:not([readonly]) {
 }
 
 /* FOOTER */
-.footer {
+.footer, .footer-note {
   margin-top: 40px;
   padding-top: 16px;
   border-top: 2px solid #10b981;
@@ -611,7 +611,7 @@ input:not([readonly]) {
   margin-bottom: 4px;
 }
 
-.footer strong {
+.footer-note strong {
   color: #333;
 }
 .back-link {
