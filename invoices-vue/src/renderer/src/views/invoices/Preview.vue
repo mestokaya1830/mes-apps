@@ -176,9 +176,9 @@
       <router-link to="/invoices/create" class="back-link">
         ← Zurück zur Rechnungserstellung
       </router-link>
-      <button class="no-print" @click="exportPDF">📄 Als PDF exportieren</button>
-      <button class="no-print" @click="printInvoice">🖨️ Drucken</button>
     </div>
+    <button class="no-print" @click="exportPDF">📄 Als PDF exportieren</button>
+    <button class="no-print" @click="printInvoice">🖨️ Drucken</button>
   </div>
 </template>
 
@@ -245,23 +245,3 @@ export default {
   }
 }
 </script>
-
-<style>
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .printable,
-  .printable * {
-    visibility: visible;
-    -webkit-print-color-adjust: exact; /* Chrome, Safari */
-    print-color-adjust: exact; /* Firefox */
-  }
-  .printable {
-    position: absolute;
-    left: 0;
-    top: 0;
-    background-color: #fff; /* istediğin arka plan */
-  }
-}
-</style>

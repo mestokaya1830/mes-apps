@@ -805,3 +805,21 @@ input:checked + .slider:before {
     align-items: flex-start;
   }
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable,
+  .printable * {
+    visibility: visible;
+    -webkit-print-color-adjust: exact; /* Chrome, Safari */
+    print-color-adjust: exact; /* Firefox */
+  }
+  .printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #fff; /* istediğin arka plan */
+  }
+}

@@ -2,218 +2,213 @@
   <div>
     <h1>{{ title }}</h1>
     <div class="preview-panel">
-      <div class="header">
-        <div>
-          <div class="company-name">{{ $store.state.auth.firm_name }}</div>
-          <div class="company-details">
-            {{ $store.state.auth.address }} <br />
-            {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
-            Tel: {{ $store.state.auth.phone }} <br />{{ $store.state.auth.email }} <br />{{
-              $store.state.auth.website
-            }}
-          </div>
-        </div>
-        <img :src="logoSrc" alt="" class="preview-logo" />
-      </div>
-
-      <div v-if="offerPreview && offerPreview.selected_customer" class="recipient">
-        <div class="recipient-address">
-          <div class="recipient-name">{{ offerPreview.selected_customer.company_name }}</div>
-          <div>{{ offerPreview.selected_customer.address }}</div>
+      <div class="printable">
+        <div class="header">
           <div>
-            {{ offerPreview.selected_customer.postal_code }}
-            {{ offerPreview.selected_customer.city }}
+            <div class="company-name">{{ $store.state.auth.firm_name }}</div>
+            <div class="company-details">
+              {{ $store.state.auth.address }} <br />
+              {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
+              Tel: {{ $store.state.auth.phone }} <br />{{ $store.state.auth.email }} <br />{{
+                $store.state.auth.website
+              }}
+            </div>
+          </div>
+          <img :src="logoSrc" alt="" class="preview-logo" />
+        </div>
+        <div v-if="offerPreview && offerPreview.selected_customer" class="recipient">
+          <div class="recipient-address">
+            <div class="recipient-name">{{ offerPreview.selected_customer.company_name }}</div>
+            <div>{{ offerPreview.selected_customer.address }}</div>
+            <div>
+              {{ offerPreview.selected_customer.postal_code }}
+              {{ offerPreview.selected_customer.city }}
+            </div>
+          </div>
+
+          <div v-if="offerPreview && offerPreview.selected_customer">
+            <div class="meta-row">
+              <span class="meta-label">AngebotNr.:</span>
+              <span class="meta-value">{{ formatAngebotId }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Datum:</span>
+              <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">KundenNr:</span>
+              <span class="meta-value">{{
+                formatCustomerId(offerPreview.selected_customer.id)
+              }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">SteuerNr.:</span>
+              <span class="meta-value">{{ offerPreview.selected_customer.tax_number }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">USt-IdNr.:</span>
+              <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Gültig bis:</span>
+              <span class="meta-value">
+                {{ validityDate(offerPreview.date, offerPreview.valid_days) }}
+              </span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Rechtsgültigkeit:</span>
+              <span class="meta-value">
+                <span v-if="offerPreview.is_legal_validity">Verbindlich</span>
+                <span v-else>Freibleibend</span>
+              </span>
+            </div>
           </div>
         </div>
-
-        <div v-if="offerPreview && offerPreview.selected_customer">
-          <div class="meta-row">
-            <span class="meta-label">AngebotNr.:</span>
-            <span class="meta-value">{{ formatAngebotId }}</span>
+        <div v-if="$store.state.offerPreview" class="document-title">
+          {{ $store.state.offerPreview.title || 'Angebot' }}
+          <span class="validity-badge">Gültig {{ $store.state.offerPreview.valid_days }} Tage</span>
+        </div>
+        <div class="reference-box">
+          <div class="reference-label">📌 Bezug:</div>
+          <div class="reference-text">
+            Ihr Telefonat mit Frau Müller vom 01. Oktober 2024 • Projekt-ID: WEB-2024-042
           </div>
-          <div class="meta-row">
-            <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
+        </div>
+        <div v-if="offerPreview" class="intro-text intro-text-pro">
+          Sehr geehrter Herr Weber,<br /><br />
+          Wir freuen uns, Ihnen nachfolgend ein verbindliches Angebot auf Grundlage Ihrer Anfrage
+          vom
+          {{ formatDate(offerPreview.date) }}
+          unterbreiten zu dürfen. Dieses Angebot umfasst die nachfolgend beschriebenen
+          Leistungen/Produkte.
+        </div>
+        <table class="positions-table">
+          <thead>
+            <tr>
+              <th style="width: 5%">Pos.</th>
+              <th style="width: 40%">Bezeichnung</th>
+              <th class="center" style="width: 8%">Menge</th>
+              <th class="center" style="width: 10%">Einheit</th>
+              <th class="right" style="width: 12%">Einzelpreis</th>
+              <th class="right" style="width: 10%">MwSt.</th>
+              <th class="right" style="width: 15%">Gesamtpreis</th>
+            </tr>
+          </thead>
+          <tbody v-if="offerPreview && offerPreview && offerPreview.positions">
+            <tr v-for="(item, index) in offerPreview.positions" :key="index">
+              <td>{{ index + 1 }}</td>
+              <td>
+                <div class="position-title">{{ item.title }}</div>
+                <div v-if="item.description" class="position-description">
+                  {{ item.description }}
+                </div>
+              </td>
+              <td class="center">{{ item.quantity }}</td>
+              <td class="center">{{ item.unit }}</td>
+              <td class="right">{{ formatCurrency(item.price) }}</td>
+              <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="rabatt-info">
+          <span class="rabatt-icon">🎉</span>
+          <strong>Sonderrabatt für Neukunden: 10% auf die Gesamtsumme</strong>
+        </div>
+        <div v-if="offerPreview" class="totals">
+          <div class="total-row">
+            <span class="total-label">Zwischensumme (netto):</span>
+            <span class="total-value">{{ formatCurrency(offerPreview.subtotal) }}</span>
           </div>
-          <div class="meta-row">
-            <span class="meta-label">KundenNr:</span>
-            <span class="meta-value">{{
-              formatCustomerId(offerPreview.selected_customer.id)
+          <div class="total-row rabatt">
+            <span class="total-label">Rabatt 10%:</span>
+            <span class="total-value">- {{ formatCurrency(offerPreview.discount) }}</span>
+          </div>
+          <div class="total-row subtotal">
+            <span class="total-label">Summe nach Rabatt:</span>
+            <span class="total-value">{{
+              formatCurrency(offerPreview.subtotal - offerPreview.discount)
             }}</span>
           </div>
-          <div class="meta-row">
-            <span class="meta-label">SteuerNr.:</span>
-            <span class="meta-value">{{ offerPreview.selected_customer.tax_number }}</span>
+          <div class="total-row">
+            <span class="total-label">MwSt. 19%:</span>
+            <span class="total-value">{{ formatCurrency(offerPreview.vat_amount) }}</span>
           </div>
-          <div class="meta-row">
-            <span class="meta-label">USt-IdNr.:</span>
-            <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Gültig bis:</span>
-            <span class="meta-value">
-              {{ validityDate(offerPreview.date, offerPreview.valid_days) }}
-            </span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Rechtsgültigkeit:</span>
-            <span class="meta-value">
-              <span v-if="offerPreview.is_legal_validity">Verbindlich</span>
-              <span v-else>Freibleibend</span>
-            </span>
+          <div class="total-row final">
+            <span class="total-label">Gesamtbetrag (brutto):</span>
+            <span class="total-value">{{ formatCurrency(offerPreview.total) }}</span>
           </div>
         </div>
-      </div>
-
-      <div v-if="$store.state.offerPreview" class="document-title">
-        {{ $store.state.offerPreview.title || 'Angebot' }}
-        <span class="validity-badge">Gültig {{ $store.state.offerPreview.valid_days }} Tage</span>
-      </div>
-
-      <div class="reference-box">
-        <div class="reference-label">📌 Bezug:</div>
-        <div class="reference-text">
-          Ihr Telefonat mit Frau Müller vom 01. Oktober 2024 • Projekt-ID: WEB-2024-042
+        <div class="delivery-box">
+          <div class="delivery-title">
+            <span>⏱️</span>
+            Voraussichtliche Projektlaufzeit
+          </div>
+          <div>
+            Die Fertigstellung erfolgt voraussichtlich 6-8 Wochen nach Angebotsannahme und Erhalt
+            aller benötigten Inhalte (Texte, Bilder, Logos). Projektstart ist für den 15. Oktober
+            2024 geplant.
+          </div>
         </div>
-      </div>
 
-      <div v-if="offerPreview" class="intro-text intro-text-pro">
-        Sehr geehrter Herr Weber,<br /><br />
-        Wir freuen uns, Ihnen nachfolgend ein verbindliches Angebot auf Grundlage Ihrer Anfrage vom
-        {{ formatDate(offerPreview.date) }}
-        unterbreiten zu dürfen. Dieses Angebot umfasst die nachfolgend beschriebenen
-        Leistungen/Produkte.
-      </div>
-
-      <table class="positions-table">
-        <thead>
-          <tr>
-            <th style="width: 5%">Pos.</th>
-            <th style="width: 40%">Bezeichnung</th>
-            <th class="center" style="width: 8%">Menge</th>
-            <th class="center" style="width: 10%">Einheit</th>
-            <th class="right" style="width: 12%">Einzelpreis</th>
-            <th class="right" style="width: 10%">MwSt.</th>
-            <th class="right" style="width: 15%">Gesamtpreis</th>
-          </tr>
-        </thead>
-        <tbody v-if="offerPreview && offerPreview && offerPreview.positions">
-          <tr v-for="(item, index) in offerPreview.positions" :key="index">
-            <td>{{ index + 1 }}</td>
-            <td>
-              <div class="position-title">{{ item.title }}</div>
-              <div v-if="item.description" class="position-description">
-                {{ item.description }}
+        <div class="conditions">
+          <div class="condition-grid">
+            <div class="condition-section">
+              <div class="condition-title">
+                <span class="condition-icon">💳</span>
+                Zahlungsbedingungen
               </div>
-            </td>
-            <td class="center">{{ item.quantity }}</td>
-            <td class="center">{{ item.unit }}</td>
-            <td class="right">{{ formatCurrency(item.price) }}</td>
-            <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
-            <td class="right">{{ formatCurrency(item.unit_total) }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="rabatt-info">
-        <span class="rabatt-icon">🎉</span>
-        <strong>Sonderrabatt für Neukunden: 10% auf die Gesamtsumme</strong>
-      </div>
-
-      <div v-if="offerPreview" class="totals">
-        <div class="total-row">
-          <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">{{ formatCurrency(offerPreview.subtotal) }}</span>
-        </div>
-        <div class="total-row rabatt">
-          <span class="total-label">Rabatt 10%:</span>
-          <span class="total-value">- {{ formatCurrency(offerPreview.discount) }}</span>
-        </div>
-        <div class="total-row subtotal">
-          <span class="total-label">Summe nach Rabatt:</span>
-          <span class="total-value">{{
-            formatCurrency(offerPreview.subtotal - offerPreview.discount)
-          }}</span>
-        </div>
-        <div class="total-row">
-          <span class="total-label">MwSt. 19%:</span>
-          <span class="total-value">{{ formatCurrency(offerPreview.vat_amount) }}</span>
-        </div>
-        <div class="total-row final">
-          <span class="total-label">Gesamtbetrag (brutto):</span>
-          <span class="total-value">{{ formatCurrency(offerPreview.total) }}</span>
-        </div>
-      </div>
-
-      <div class="delivery-box">
-        <div class="delivery-title">
-          <span>⏱️</span>
-          Voraussichtliche Projektlaufzeit
-        </div>
-        <div>
-          Die Fertigstellung erfolgt voraussichtlich 6-8 Wochen nach Angebotsannahme und Erhalt
-          aller benötigten Inhalte (Texte, Bilder, Logos). Projektstart ist für den 15. Oktober 2024
-          geplant.
-        </div>
-      </div>
-
-      <div class="conditions">
-        <div class="condition-grid">
-          <div class="condition-section">
-            <div class="condition-title">
-              <span class="condition-icon">💳</span>
-              Zahlungsbedingungen
+              <div class="condition-text">
+                • 50 % Anzahlung bei Auftragserteilung (sofern vereinbart).<br />
+                • Restzahlung 50 % nach Abnahme.<br />
+                • Zahlbar innerhalb von 14 Tagen nach Rechnungsdatum, netto ohne Abzug.
+              </div>
             </div>
-            <div class="condition-text">
-              • 50 % Anzahlung bei Auftragserteilung (sofern vereinbart).<br />
-              • Restzahlung 50 % nach Abnahme.<br />
-              • Zahlbar innerhalb von 14 Tagen nach Rechnungsdatum, netto ohne Abzug.
+
+            <div class="condition-section">
+              <div class="condition-title">
+                <span class="condition-icon">📦</span>
+                Leistungsumfang
+              </div>
+              <div class="condition-text">
+                Die vereinbarten Leistungen/Produkte sind in diesem Angebot beschrieben. Hosting:
+                Erstes Jahr inklusive, danach optional 15 €/Monat (sofern zutreffend).
+              </div>
             </div>
           </div>
 
           <div class="condition-section">
             <div class="condition-title">
-              <span class="condition-icon">📦</span>
-              Leistungsumfang
+              <span class="condition-icon">📋</span>
+              Gültigkeit des Angebots
             </div>
-            <div class="condition-text">
-              Die vereinbarten Leistungen/Produkte sind in diesem Angebot beschrieben. Hosting:
-              Erstes Jahr inklusive, danach optional 15 €/Monat (sofern zutreffend).
+            <div class="condition-text legal-note-pro">
+              Dieses Angebot ist bis einschließlich
+              {{ validityDate(offerPreview.date, offerPreview.valid_days) }} gültig. Sämtliche
+              Preise verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten
+              unsere Allgemeinen Geschäftsbedingungen (AGB).
             </div>
           </div>
         </div>
 
-        <div class="condition-section">
-          <div class="condition-title">
-            <span class="condition-icon">📋</span>
-            Gültigkeit des Angebots
-          </div>
-          <div class="condition-text legal-note-pro">
-            Dieses Angebot ist bis einschließlich
-            {{ validityDate(offerPreview.date, offerPreview.valid_days) }} gültig. Sämtliche Preise
-            verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten unsere
-            Allgemeinen Geschäftsbedingungen (AGB).
-          </div>
+        <div class="closing closing-pro">
+          Für Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung. Wir freuen uns auf Ihre
+          Auftragserteilung.<br /><br />
+          Mit freundlichen Grüßen
         </div>
-      </div>
 
-      <div class="closing closing-pro">
-        Für Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung. Wir freuen uns auf Ihre
-        Auftragserteilung.<br /><br />
-        Mit freundlichen Grüßen
-      </div>
-
-      <div v-if="offerPreview.contact_person" class="contact-box">
-        <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
-        <div class="contact-person">
-          <div class="contact-avatar">SM</div>
-          <div class="contact-details">
-            <div class="contact-name">{{ offerPreview.contact_person.full_name }}</div>
-            <div class="contact-info">
-              Projektmanagement & Kundenbetreuung<br />
-              📞 +{{ offerPreview.contact_person.phone }} <br />
-              📧
-              {{ offerPreview.contact_person.email }}
+        <div v-if="offerPreview.contact_person" class="contact-box">
+          <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
+          <div class="contact-person">
+            <div class="contact-avatar">SM</div>
+            <div class="contact-details">
+              <div class="contact-name">{{ offerPreview.contact_person.full_name }}</div>
+              <div class="contact-info">
+                Projektmanagement & Kundenbetreuung<br />
+                📞 +{{ offerPreview.contact_person.phone }} <br />
+                📧
+                {{ offerPreview.contact_person.email }}
+              </div>
             </div>
           </div>
         </div>
@@ -230,10 +225,13 @@
           ← Zurück zur Angebotserstellung
         </router-link>
       </div>
+      <button class="no-print" @click="exportPDF">📄 Als PDF exportieren</button>
+      <button class="no-print" @click="printInvoice">🖨️ Drucken</button>
     </div>
   </div>
 </template>
 <script>
+import html2pdf from 'html2pdf.js'
 export default {
   name: 'OfferPreview',
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'validityDate'],
@@ -280,6 +278,23 @@ export default {
   methods: {
     getOfferPreview() {
       this.offerPreview = this.$store.state.offerPreview
+    },
+    exportPDF() {
+      const element = this.$el.querySelector('.printable')
+      if (!element) return
+
+      const options = {
+        margin: 20,
+        filename: `Angebot.pdf`,
+        image: { type: 'png', quality: 0.98 },
+        html2canvas: { scale: 2, logging: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }
+
+      html2pdf().set(options).from(element).save()
+    },
+    printInvoice() {
+      window.print()
     }
   }
 }
