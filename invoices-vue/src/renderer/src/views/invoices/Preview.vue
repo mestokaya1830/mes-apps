@@ -171,21 +171,26 @@
           USt-IdNr.: {{ $store.state.auth.vat_id }} • Steuer-Nr.: {{ $store.state.auth.tax_number }}
         </div>
       </div>
+      <FooterSide></FooterSide>
+      <ActionsButton :email="invoicePreview.selected_customer.email"></ActionsButton>
     </div>
-    <div class="footer">
-      <router-link to="/invoices/create" class="back-link">
-        ← Zurück zur Rechnungserstellung
-      </router-link>
+    <router-link to="/invoices/create" class="back-link">
+      ← Zurück zur Rechnungserstellung
+    </router-link>
+    <!-- <div class="footer">
     </div>
     <button class="no-print" @click="exportPDF">📄 Als PDF exportieren</button>
-    <button class="no-print" @click="printInvoice">🖨️ Drucken</button>
+    <button class="no-print" @click="printInvoice">🖨️ Drucken</button> -->
   </div>
 </template>
 
 <script>
-import html2pdf from 'html2pdf.js'
+import FooterSide from '../../components/FooterSide.vue'
+import ActionsButton from '../../components/ActionsButton.vue'
+
 export default {
   name: 'InvoicePreview',
+  components: { FooterSide, ActionsButton },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
@@ -225,23 +230,6 @@ export default {
     getInvoicePreview() {
       this.invoicePreview = this.$store.state.invoicePreview
       console.log(this.invoicePreview)
-    },
-    exportPDF() {
-      const element = this.$el.querySelector('.printable')
-      if (!element) return
-
-      const options = {
-        margin: 20,
-        filename: `Rechnung.pdf`,
-        image: { type: 'png', quality: 0.98 },
-        html2canvas: { scale: 2, logging: true, letterRendering: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }
-
-      html2pdf().set(options).from(element).save()
-    },
-    printInvoice() {
-      window.print()
     }
   }
 }
