@@ -1,53 +1,63 @@
 <template>
   <div class="sidebar">
     <div class="sidebar-header">
-      <div class="logo">
+      <div class="app-logo">
         <h2>Mes Rechnungs-App</h2>
       </div>
     </div>
 
-    <nav class="sidebar-nav">
-      <router-link to="/" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">home</span>
-        <span class="nav-text">Startseite</span>
-      </router-link>
-
-      <router-link to="/customers" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">people</span>
-        <span class="nav-text">Kunden</span>
-      </router-link>
-
-      <router-link to="/invoices" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">description</span>
-        <span class="nav-text">Rechnungen</span>
-      </router-link>
-
-      <router-link to="/offers" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">description</span>
-        <span class="nav-text">Angebote</span>
-      </router-link>
-
-      <router-link to="/orders" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">description</span>
-        <span class="nav-text">Aufträge</span>
-      </router-link>
-
-      <router-link to="/profile" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">admin_panel_settings</span>
-        <span class="nav-text">Profil</span>
-      </router-link>
-
-      <router-link to="/about" exact-active-class="active" class="nav-item">
-        <span class="nav-icon material-icons">info</span>
-        <span class="nav-text">Über</span>
-      </router-link>
+    <nav>
+      <div class="nav-menu">
+        <li class="nav-item">
+          <router-link to="/" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">🏠</span>
+            <span>Startseite</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/customers" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">👥</span>
+            <span>Kunden</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/invoices" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">📄</span>
+            <span>Rechnungen</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/offers" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">📋</span>
+            <span>Angebote</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/orders" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">📦</span>
+            <span>Aufträge</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/profile" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">👤</span>
+            <span>Profil</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/profile" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">ℹ️</span>
+            <span>Über</span>
+          </router-link>
+        </li>
+      </div>
     </nav>
 
     <div v-if="$store.state.auth" class="sidebar-footer">
-      <button class="logout-btn" @click="logout()">
-        <span class="nav-icon material-icons">logout</span>
-        <span class="nav-text logout">Abmelden</span>
-      </button>
+      <a href="#" class="nav-link logout-link">
+        <span class="nav-icon">🚪</span>
+        <span>Abmelden</span>
+      </a>
     </div>
   </div>
 </template>
@@ -72,126 +82,78 @@ export default {
 </script>
 
 <style scoped>
+/* ===== SIDEBAR ===== */
 .sidebar {
   width: 300px;
-  height: 100%;
-  background: #2f3542;
-  color: #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
-}
-
-.sidebar-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logo h2 {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.025em;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 1rem 0;
-  overflow-y: auto;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  color: #cbd5e1;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  border-left: 3px solid transparent;
-  margin: 0.25rem 0;
+  background: #0f172a;
+  padding: 0;
   position: relative;
 }
 
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  border-left-color: #3b82f6;
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.nav-item.active {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
-  border-left-color: #3b82f6;
+.app-logo {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+.nav-menu {
+  list-style: none;
+  padding: 16px 12px;
+}
+
+.nav-item {
+  margin-bottom: 4px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  color: #94a3b8;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.15s;
+  font-size: 18px;
   font-weight: 500;
-  width: 96%;
-  border: 5px solid transparent;
-  border-top-right-radius: 50px;
-  border-bottom-right-radius: 50px;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+}
+
+.nav-link.active {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22c55e;
 }
 
 .nav-icon {
-  margin-right: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 25px;
-  font-size: 30px;
-}
-
-.nav-text {
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: 0.025em;
+  width: 36px;
+  text-align: center;
+  font-size: 24px;
 }
 
 .sidebar-footer {
-  padding: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.logout-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  background: transparent;
-  border: none;
-  color: #ef4444;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  font-weight: 500;
+.logout-link {
+  color: #f87171;
 }
 
-.logout-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
-  color: #fca5a5;
-}
-
-.logout-btn .nav-icon {
-  margin-right: 1.2rem;
-}
-
-.sidebar-nav::-webkit-scrollbar {
-  width: 4px;
-}
-
-.sidebar-nav::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+.logout-link:hover {
+  background: rgba(248, 113, 113, 0.1);
 }
 
 @media (max-width: 768px) {

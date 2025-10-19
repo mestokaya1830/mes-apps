@@ -1,13 +1,6 @@
 <template lang="">
   <div>
-    <div id="titlebar">
-      <span id="title">My App</span>
-      <div id="window-controls">
-        <button @click="minimize()">–</button>
-        <!-- <button @click="maximize()">☐</button> -->
-        <button @click="close()">×</button>
-      </div>
-    </div>
+    <TitleBar></TitleBar>
     <div class="container">
       <SideBar></SideBar>
       <router-view class="layouts"></router-view>
@@ -16,9 +9,11 @@
 </template>
 
 <script>
+import TitleBar from './components/TitleBar.vue'
 import SideBar from './components/SideBar.vue'
 export default {
   components: {
+    TitleBar,
     SideBar
   },
   provide() {
@@ -62,18 +57,6 @@ export default {
   },
   data() {
     return {}
-  },
-  methods: {
-    async minimize() {
-      console.log('minimize')
-      await window.api.controlWindow('minimize')
-    },
-    // async maximize() {
-    //   await window.api.controlWindow('maximize')
-    // },
-    async close() {
-      await window.api.controlWindow('close')
-    }
   }
 }
 </script>
@@ -93,41 +76,6 @@ export default {
   align-items: center;
   height: 100%;
   padding: 30px 20px;
-  overflow-y: auto; /* İçerik taşarsa scroll */
-}
-#titlebar {
-  height: 60px; /* Burada yüksekliği sen belirlersin */
-  background: #2f3542;
-  color: white;
-  -webkit-app-region: drag; /* sürüklenebilirlik */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 9999;
-}
-
-#window-controls button {
-  -webkit-app-region: no-drag; /* butonlar tıklanabilir olmalı */
-}
-#window-controls button {
-  background-color: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 3px;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 5px;
-  margin: 0 5px;
-  width: 30px;
-  transition: background-color 0.3s ease;
-}
-#window-controls button:hover {
-  background-color: rgba(255, 255, 255, 0);
+  overflow-y: auto;
 }
 </style>

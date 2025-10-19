@@ -162,6 +162,7 @@ input.error {
 
 /* EDITOR PANEL */
 .editor-panel {
+  width: 70%;
   background: white;
   padding: 30px;
   border-radius: 12px;
@@ -309,7 +310,7 @@ input:not([readonly]) {
 
 /* PREVIEW PANEL */
 .preview-panel {
-  width: 80%;
+  width: 60%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

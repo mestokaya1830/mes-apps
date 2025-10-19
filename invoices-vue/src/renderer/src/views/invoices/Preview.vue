@@ -224,6 +224,7 @@ export default {
   methods: {
     getInvoicePreview() {
       this.invoicePreview = this.$store.state.invoicePreview
+      console.log(this.invoicePreview)
     },
     exportPDF() {
       const element = this.$el.querySelector('.printable')

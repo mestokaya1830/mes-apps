@@ -9,6 +9,18 @@
       </div>
 
       <div class="form-section">
+        <div class="form-section-title">📌 Wahle Land</div>
+        <div class="form-group">
+          <label class="form-label">Land</label>
+          <select v-model="invoice.country" class="form-input">
+            <option selected disabled>Wähle Land</option>
+            <option value="DE">Deutschland</option>
+            <option value="CH">Schweiz</option>
+            <option value="AT">Osterreich</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-row">
           <div class="form-group">
@@ -198,6 +210,7 @@ export default {
         payment_terms: 14,
         is_small_company: false,
         positions: [],
+        country: 'Deutschland',
         selected_customer: {
           id: '',
           company_name: '',
@@ -289,6 +302,7 @@ export default {
         alert('Keine Positionen vorhanden!')
       }
     },
+    
     async storePreview() {
       try {
         this.invoice.positions = this.invoice.positions.map((pos) => ({
@@ -309,6 +323,7 @@ export default {
           vat_amount: this.vatAmount.toFixed(2),
           total: this.grandTotal.toFixed(2),
           outstanding: this.outstanding.toFixed(2),
+          country: this.invoice.country,
           selected_customer: { ...this.invoice.selected_customer, company_name: this.companyName },
           contact_person: { ...this.invoice.contact_person }
         })
