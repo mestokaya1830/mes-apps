@@ -2,15 +2,15 @@
   <div>
     <div class="action-buttons">
       <button class="btn btn-secondary" @click="sendEmail">
-        <span>📧</span>
-        <span>E-Mail senden</span>
+        <span class="nav-icon">📧</span>
+        <span>E-Mail</span>
       </button>
       <button class="btn btn-primary" @click="exportPDF">
-        <span>📄</span>
-        <span>PDF erstellen</span>
+        <span class="nav-icon">📄</span>
+        <span>PDF</span>
       </button>
       <button class="btn btn-print" @click="printDocument">
-        <span>🖨</span>
+        <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
     </div>
@@ -55,15 +55,12 @@ export default {
 </script>
 <style scoped>
 .action-buttons {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
   display: flex;
-  gap: 12px;
-  z-index: 100;
+  margin-top: 30px;
 }
 
 .btn {
+  flex: 1;
   padding: 12px 24px;
   border: none;
   border-radius: 10px;
@@ -74,17 +71,12 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
-  gap: 8px;
+  margin:0 10px;
 }
 
 .btn-primary {
   background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   color: white;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
 }
 
 .btn-secondary {
@@ -93,17 +85,17 @@ export default {
   border: 1px solid #e2e8f0;
 }
 
-.btn-secondary:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-}
 .btn-print {
   background: cadetblue;
   color: #fff;
   border: 1px solid #e2e8f0;
 }
+.btn-primary:hover,
+.btn-secondary:hover,
 .btn-print:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  filter: brightness(0.9);
+}
+.nav-icon {
+  margin-right: 8px;
 }
 </style>
