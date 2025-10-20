@@ -302,7 +302,6 @@ export default {
         alert('Keine Positionen vorhanden!')
       }
     },
-    
     async storePreview() {
       try {
         this.invoice.positions = this.invoice.positions.map((pos) => ({

@@ -1,29 +1,16 @@
 <template>
   <div v-if="invoicePreview">
-    <h1>{{ title }}</h1>
-
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <div class="header">
-          <div class="company-info">
-            <div class="company-name">{{ $store.state.auth.firm_name }}</div>
-            <div class="company-details">
-              {{ $store.state.auth.address }}<br />
-              {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
-              Tel: {{ $store.state.auth.phone }}<br />
-              {{ $store.state.auth.email }}<br />
-              {{ $store.state.auth.website }}
-            </div>
-          </div>
-          <img :src="logoSrc" alt="Logo" class="preview-logo" />
-        </div>
-
+        <HeaderSide :title="title" :color="'green'" />
         <!-- Recipient & Invoice Details -->
         <div v-if="invoicePreview.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
-            <div class="company-name-subtitle">{{ invoicePreview.selected_customer.company_name }}</div>
+            <div class="company-name-subtitle">
+              {{ invoicePreview.selected_customer.company_name }}
+            </div>
             <div>{{ invoicePreview.selected_customer.address }}</div>
             <div>
               {{ invoicePreview.selected_customer.postal_code }}
@@ -44,7 +31,9 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(invoicePreview.selected_customer.id) }}</span>
+              <span class="meta-value">{{
+                formatCustomerId(invoicePreview.selected_customer.id)
+              }}</span>
             </div>
             <div v-if="invoicePreview.selected_customer.tax_number" class="meta-row">
               <span class="meta-label">Steuer-Nr.:</span>
@@ -64,7 +53,10 @@
         <!-- Document Title -->
         <div class="document-title">
           Rechnung
-          <span v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0" class="status-badge">
+          <span
+            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
+            class="status-badge"
+          >
             ⏱️ Teilweise bezahlt
           </span>
         </div>
@@ -93,7 +85,9 @@
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
-                <div v-if="item.description" class="position-description">{{ item.description }}</div>
+                <div v-if="item.description" class="position-description">
+                  {{ item.description }}
+                </div>
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
@@ -118,11 +112,14 @@
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{ formatCurrency(invoicePreview.total) }}</span>
           </div>
-          <div v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0" class="total-row paid">
+          <div
+            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
+            class="total-row paid"
+          >
             <span class="total-label">✓ Bereits bezahlt:</span>
             <span class="total-value">- {{ formatCurrency(invoicePreview.paid_amount) }}</span>
           </div>
-          <div class="total-row final outstanding">
+          <div class="total-row outstanding">
             <span class="total-label">⚠️ Offener Betrag:</span>
             <span class="total-value">{{ formatCurrency(invoicePreview.outstanding) }}</span>
           </div>
@@ -167,13 +164,12 @@
             <span class="bank-value">{{ invoicePreview.verwendung }}</span>
           </div>
         </div>
+        <FooterSide />
       </div>
-
-      <!-- Footer and Actions -->
-      <FooterSide />
       <ActionsButton
         v-if="invoicePreview.selected_customer"
         :email="invoicePreview.selected_customer.email"
+        :file-name="title + ' ' + formatRechnungId"
       />
     </div>
 
@@ -184,12 +180,13 @@
 </template>
 
 <script>
+import HeaderSide from '../../components/HeaderSide.vue'
 import FooterSide from '../../components/FooterSide.vue'
 import ActionsButton from '../../components/ActionsButton.vue'
 
 export default {
   name: 'InvoicePreview',
-  components: { FooterSide, ActionsButton },
+  components: { HeaderSide, FooterSide, ActionsButton },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
@@ -198,23 +195,6 @@ export default {
     }
   },
   computed: {
-    logoSrc() {
-      const logo = this.$store.state.auth.logo
-      if (!logo) return null
-      if (typeof logo === 'string') {
-        if (logo.startsWith('data:image')) return logo
-        return `data:image/png;base64,${logo}`
-      }
-      try {
-        let binary = ''
-        const bytes = new Uint8Array(Object.values(logo))
-        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
-        return `data:image/png;base64,${window.btoa(binary)}`
-      } catch (error) {
-        console.error(error)
-        return null
-      }
-    },
     formatRechnungId() {
       if (!this.invoicePreview.id) return ''
       const year = new Date().getFullYear()

@@ -24,6 +24,10 @@ export default {
     email: {
       type: String,
       required: true
+    },
+    fileName: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -31,12 +35,11 @@ export default {
   },
   methods: {
     exportPDF() {
-      const element = this.$el.querySelector('.printable')
+      const element = document.querySelector('.printable')
       if (!element) return
-
       const options = {
         margin: 20,
-        filename: `Rechnung.pdf`,
+        filename: this.fileName + '.pdf',
         image: { type: 'png', quality: 0.98 },
         html2canvas: { scale: 2, logging: true, letterRendering: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }

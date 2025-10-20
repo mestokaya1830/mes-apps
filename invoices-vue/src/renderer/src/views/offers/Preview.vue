@@ -1,23 +1,9 @@
 <template>
   <div>
-    <h1>{{ title }}</h1>
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <div class="header">
-          <div>
-            <div class="company-name">{{ $store.state.auth.firm_name }}</div>
-            <div class="company-details">
-              {{ $store.state.auth.address }}<br />
-              {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
-              Tel: {{ $store.state.auth.phone }}<br />
-              {{ $store.state.auth.email }}<br />
-              {{ $store.state.auth.website }}
-            </div>
-          </div>
-          <img :src="logoSrc" alt="Logo" class="preview-logo" />
-        </div>
-
+        <HeaderSide :title="title" :color="'blue'" />
         <!-- Recipient & Invoice Details -->
         <div v-if="offerPreview?.selected_customer" class="recipient">
           <div class="recipient-address">
@@ -208,13 +194,12 @@
             </div>
           </div>
         </div>
+        <FooterSide />
       </div>
-
-      <!-- Footer and Actions -->
-      <FooterSide />
       <ActionsButton
         v-if="offerPreview.selected_customer"
         :email="offerPreview.selected_customer.email"
+        :file-name="title + ' ' + formatAngebotId"
       />
     </div>
 
@@ -225,12 +210,13 @@
 </template>
 
 <script>
+import HeaderSide from '../../components/HeaderSide.vue';
 import FooterSide from '../../components/FooterSide.vue'
 import ActionsButton from '../../components/ActionsButton.vue'
 
 export default {
   name: 'OfferPreview',
-  components: { FooterSide, ActionsButton },
+  components: { HeaderSide, FooterSide, ActionsButton },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'validityDate'],
   data() {
     return {

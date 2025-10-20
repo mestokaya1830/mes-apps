@@ -1,24 +1,9 @@
 <template>
   <div v-if="orderPreview">
-    <h1>{{ title }}</h1>
-
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <div class="header">
-          <div class="company-info">
-            <div class="company-name">{{ $store.state.auth.firm_name }}</div>
-            <div class="company-details">
-              {{ $store.state.auth.address }} <br />
-              {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
-              Tel: {{ $store.state.auth.phone }} <br />
-              {{ $store.state.auth.email }} <br />
-              {{ $store.state.auth.website }}
-            </div>
-          </div>
-          <img :src="logoSrc" alt="Logo" class="preview-logo" />
-        </div>
-
+        <HeaderSide :title="title" :color="'red'" />
         <!-- Recipient & Order Details -->
         <div v-if="orderPreview.selected_customer" class="recipient">
           <div class="recipient-address">
@@ -146,13 +131,12 @@
             <span class="bank-value">{{ $store.state.auth.vat_id }}</span>
           </div>
         </div>
+        <FooterSide />
       </div>
-
-      <!-- Footer and Actions -->
-      <FooterSide />
       <ActionsButton
         v-if="orderPreview.selected_customer"
         :email="orderPreview.selected_customer.email"
+        :file-name="title + ' ' + formatAuftragId"
       />
     </div>
 
@@ -163,12 +147,13 @@
 </template>
 
 <script>
+import HeaderSide from '../../components/HeaderSide.vue';
 import FooterSide from '../../components/FooterSide.vue'
 import ActionsButton from '../../components/ActionsButton.vue'
 
 export default {
   name: 'OrderPreview',
-  components: { FooterSide, ActionsButton },
+  components: { HeaderSide, FooterSide, ActionsButton },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {

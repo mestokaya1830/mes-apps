@@ -32,18 +32,20 @@ export default {
 <style scoped>
 .footer {
   padding: 28px 40px;
-  background: #0f172a;
-  color: #94a3b8;
+  color: #000;
+  font-weight: 600;
   font-size: 11px;
   line-height: 1.9;
   text-align: center;
+  border-bottom: 1px solid #ddd;
 }
 
 .footer-line {
   margin-bottom: 4px;
+  color: #000;
 }
 
 .footer-line strong {
-  color: #e2e8f0;
+  color: #444;
 }
 </style>
