@@ -36,7 +36,7 @@
                 formatCustomerId(orderPreview.selected_customer.id)
               }}</span>
             </div>
-            <div class="meta-row" v-if="orderPreview.service_period">
+            <div v-if="orderPreview.service_period" class="meta-row">
               <span class="meta-label">Leistungszeitraum:</span>
               <span class="meta-value">{{ orderPreview.service_period }}</span>
             </div>
@@ -89,9 +89,9 @@
               </td>
               <td class="center">{{ item.quantity ?? 0 }}</td>
               <td class="center">{{ item.unit || '' }}</td>
-              <td class="right">{{ formatCurrency(item.price) }}</td>
+              <td class="right">{{ formatCurrency(item.price, orderPreview.currency) }}</td>
               <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
-              <td class="right">{{ formatCurrency(item.unit_total) }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total, orderPreview.currency) }}</td>
             </tr>
           </tbody>
           <tbody v-else>
@@ -105,15 +105,21 @@
         <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{ formatCurrency(orderPreview.subtotal) }}</span>
+            <span class="total-value">{{
+              formatCurrency(orderPreview.subtotal, orderPreview.currency)
+            }}</span>
           </div>
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{ formatCurrency(orderPreview.vat_amount) }}</span>
+            <span class="total-value">{{
+              formatCurrency(orderPreview.vat_amount, orderPreview.currency)
+            }}</span>
           </div>
           <div class="total-row subtotal">
             <span class="total-label">Auftragsbetrag (brutto):</span>
-            <span class="total-value">{{ formatCurrency(orderPreview.total) }}</span>
+            <span class="total-value">{{
+              formatCurrency(orderPreview.total, orderPreview.currency)
+            }}</span>
           </div>
         </div>
 
@@ -130,7 +136,10 @@
 
         <!-- Contact Person -->
 
-        <ContactPerson :data="orderPreview" />
+        <ContactPersonPreview
+          v-if="orderPreview.contact_person"
+          :data="orderPreview.contact_person"
+        />
         <FooterSide />
       </div>
 
@@ -148,14 +157,14 @@
 </template>
 
 <script>
-import HeaderSide from '../../components/HeaderSide.vue'
-import FooterSide from '../../components/FooterSide.vue'
-import ActionsButton from '../../components/ActionsButton.vue'
-import ContactPerson from '../../components/ContactPerson.vue'
+import HeaderSide from '../../components/preview/HeaderSidePreview.vue'
+import FooterSide from '../../components/preview/FooterSidePreview.vue'
+import ActionsButton from '../../components/preview/ActionsButtonPreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
   name: 'OrderPreview',
-  components: { HeaderSide, FooterSide, ActionsButton, ContactPerson },
+  components: { HeaderSide, FooterSide, ActionsButton, ContactPersonPreview },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {

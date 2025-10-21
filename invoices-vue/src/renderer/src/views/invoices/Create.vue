@@ -7,6 +7,8 @@
           Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live
         </div>
       </div>
+
+      <!-- base -->
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-row">
@@ -26,6 +28,7 @@
         </div>
       </div>
 
+      <!-- customer -->
       <div v-if="customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
@@ -42,9 +45,34 @@
             <label class="form-label">Kunden-Nr.</label>
             <input v-model="invoice.selected_customer.id" type="text" class="form-input" readonly />
           </div>
-          <div class="form-group">
-            <label class="form-label">Name</label>
-            <input :value="companyName" type="text" class="form-input" readonly />
+          <div v-if="invoice.selected_customer.company_name" class="form-group">
+            <label class="form-label">Firmname</label>
+            <input
+              v-model="invoice.selected_customer.company_name"
+              type="text"
+              class="form-input"
+              readonly
+            />
+          </div>
+          <div v-if="invoice.selected_customer.first_name" class="form-row">
+            <div class="form-group">
+              <label class="form-label">Vorname</label>
+              <input
+                v-model="invoice.selected_customer.first_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nachname</label>
+              <input
+                v-model="invoice.selected_customer.last_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Adresse</label>
@@ -78,6 +106,7 @@
         </div>
       </div>
 
+      <!-- contact person -->
       <div v-if="invoice.contact_person" class="form-section">
         <div class="form-section-title">👤 Sprachpartner (Optional)</div>
 
@@ -94,6 +123,8 @@
           <input v-model="invoice.contact_person.phone" type="text" class="form-input" />
         </div>
       </div>
+
+      <!-- small company -->
       <div class="form-section">
         <div class="form-section-title">
           <span>👤 Kleinunternehmer</span>
@@ -108,6 +139,8 @@
           </label>
         </div>
       </div>
+
+      <!-- currency -->
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
@@ -126,58 +159,8 @@
           </select>
         </div>
       </div>
-      <div class="form-section">
-        <div class="form-section-title">📦 Positionen</div>
-        <div v-if="invoice.positions && invoice.positions.length === 0">
-          Keine Positionen vorhanden
-        </div>
-        <div v-else class="positions-editor">
-          <div v-for="(pos, index) in invoice.positions" :key="index" class="position-item">
-            <div class="position-header">
-              <span class="position-number">Position {{ index + 1 }}</span>
-              <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Bezeichnung</label>
-              <input v-model="pos.title" type="text" class="form-input" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Beschreibung</label>
-              <input v-model="pos.description" type="text" class="form-input" />
-            </div>
-            <div class="position-inputs">
-              <div class="form-group">
-                <label class="form-label">Einheit</label>
-                <select v-model="pos.unit" class="form-input">
-                  <option>Stk</option>
-                  <option>Std</option>
-                  <option>Tag</option>
-                  <option>Pauschal</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Menge</label>
-                <input v-model.number="pos.quantity" type="number" class="form-input" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Preis (€)</label>
-                <input v-model.number="pos.price" type="number" class="form-input" step="0.01" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">MwSt. (%)</label>
-                <select v-model.number="pos.vat" class="form-input">
-                  <option :value="0">0</option>
-                  <option :value="7">7</option>
-                  <option :value="19">19</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <button class="add-position-btn" @click="addPosition">➕ Position hinzufügen</button>
-      </div>
-
+      <!-- payment terms -->
       <div class="form-section">
         <div class="form-section-title">💳 Zahlungsinformationen</div>
         <div class="form-row">
@@ -196,14 +179,22 @@
           </div>
         </div>
       </div>
-
-      <button class="back-btn" @click="storePreview">Preview</button>
+      <Positions
+        store-name="invoicePreview"
+        store-commit="setInvoicePreview"
+        store-link="invoices"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import Positions from '../../components/Positions.vue'
 export default {
+  name: 'CreateInvoice',
+  components: {
+    Positions
+  },
   data() {
     return {
       title: 'Rechnung erstellen',
@@ -218,7 +209,6 @@ export default {
         payment_terms: 14,
         is_small_company: false,
         positions: [],
-        country: 'Deutschland',
         currency: 'EUR.de-DE',
         selected_customer: {
           id: '',
@@ -242,40 +232,14 @@ export default {
       }
     }
   },
-  computed: {
-    subtotal() {
-      return this.invoice.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
-    },
-    vatAmount() {
-      return this.invoice.positions.reduce(
-        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-        0
-      )
-    },
-    grandTotal() {
-      return this.subtotal + this.vatAmount
-    },
-    outstanding() {
-      return this.grandTotal - this.invoice.paid_amount
-    },
-    companyName() {
-      return (
-        this.invoice.selected_customer.company_name ||
-        [this.invoice.selected_customer.first_name, this.invoice.selected_customer.last_name]
-          .filter(Boolean)
-          .join(' ')
-      )
-    }
-  },
 
   mounted() {
     if (this.$store?.state?.invoicePreview) {
       const preview = this.$store.state.invoicePreview
-      if (preview && preview.positions) this.invoice = preview
+      if (preview) this.invoice = preview
     } else {
       return this.invoice
     }
-    console.log(this.invoice)
     this.getCustomers()
   },
   methods: {
@@ -294,54 +258,6 @@ export default {
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
       if (customer) this.invoice.selected_customer = { ...customer }
-    },
-    addPosition() {
-      this.invoice.positions.push({
-        title: 'Neue Position',
-        description: 'Beschreibung',
-        quantity: 1,
-        unit: 'Stk',
-        price: 0,
-        vat: 19
-      })
-      this.$store.commit('setInvoicePreview', this.invoice.positions)
-    },
-    deletePosition(index) {
-      if (this.invoice.positions.length > 0) {
-        this.invoice.positions.splice(index, 1)
-        this.$store.commit('setInvoicePreview', this.invoice.positions)
-      } else {
-        alert('Keine Positionen vorhanden!')
-      }
-    },
-    async storePreview() {
-      try {
-        this.invoice.positions = this.invoice.positions.map((pos) => ({
-          ...pos,
-          unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
-        }))
-
-        await this.$store.commit('setInvoicePreview', {
-          id: this.invoice.id,
-          date: this.invoice.date,
-          service_period: this.invoice.service_period,
-          paid_amount: this.invoice.paid_amount,
-          payment_terms: this.invoice.payment_terms,
-          verwendung: this.invoice.verwendung,
-          is_small_company: this.invoice.is_small_company,
-          positions: this.invoice.positions,
-          subtotal: this.subtotal.toFixed(2),
-          vat_amount: this.vatAmount.toFixed(2),
-          total: this.grandTotal.toFixed(2),
-          outstanding: this.outstanding.toFixed(2),
-          currency: this.invoice.currency,
-          selected_customer: { ...this.invoice.selected_customer, company_name: this.companyName },
-          contact_person: { ...this.invoice.contact_person }
-        })
-        this.$router.push('/invoices-preview')
-      } catch (error) {
-        console.error('Error storing invoice preview:', error)
-      }
     }
   }
 }

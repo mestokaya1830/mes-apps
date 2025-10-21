@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import TitleBar from './components/TitleBar.vue'
-import SideBar from './components/SideBar.vue'
+import TitleBar from './components/preview/TitleBarPreview.vue'
+import SideBar from './components/preview/SideBarPreview.vue'
 export default {
   components: {
     TitleBar,

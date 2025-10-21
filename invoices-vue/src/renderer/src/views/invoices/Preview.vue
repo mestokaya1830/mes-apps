@@ -20,6 +20,7 @@
             </div>
           </div>
 
+          <!-- invoice details -->
           <div class="invoice-details">
             <div class="section-title">Rechnungsdetails</div>
 
@@ -40,7 +41,7 @@
               }}</span>
             </div>
 
-            <!-- Vergi numarası seçimi -->
+            
             <div
               v-if="
                 invoicePreview.selected_customer.country === 'Germany' &&
@@ -188,7 +189,10 @@
         </div>
 
         <!-- Contact Person -->
-        <ContactPerson :data="invoicePreview" />
+        <ContactPersonPreview
+          v-if="invoicePreview.contact_person"
+          :data="invoicePreview.contact_person"
+        />
         <!-- Bank Info -->
         <div class="bank-box">
           <div class="bank-title">🏦 Bankverbindung</div>
@@ -221,14 +225,14 @@
 </template>
 
 <script>
-import HeaderSide from '../../components/HeaderSide.vue'
-import FooterSide from '../../components/FooterSide.vue'
-import ActionsButton from '../../components/ActionsButton.vue'
-import ContactPerson from '../../components/ContactPerson.vue'
+import HeaderSide from '../../components/preview/HeaderSidePreview.vue'
+import FooterSide from '../../components/preview/FooterSidePreview.vue'
+import ActionsButton from '../../components/preview/ActionsButtonPreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
   name: 'InvoicePreview',
-  components: { HeaderSide, FooterSide, ActionsButton, ContactPerson },
+  components: { HeaderSide, FooterSide, ActionsButton, ContactPersonPreview },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
@@ -249,7 +253,6 @@ export default {
   methods: {
     getInvoicePreview() {
       this.invoicePreview = this.$store.state.invoicePreview
-
       // Reverse charge durumu hesapla
       if (
         this.invoicePreview.selected_customer &&

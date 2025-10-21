@@ -150,81 +150,41 @@ export default db
 // );`)
 
 //customers---------------------------------------------------------
-// db.exec(`CREATE TABLE customers (
+// db.exec(`CREATE TABLE IF NOT EXISTS customers (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     customer_type TEXT NOT NULL,        -- 'individual' | 'company'
-//     company_name TEXT,                  -- Firma adı (şirketler için)
-//     first_name TEXT,                    -- Ad (bireysel müşteri için)
-//     last_name TEXT,                     -- Soyad (bireysel müşteri için)
+//     first_name TEXT NOT NULL,
+//     last_name TEXT NOT NULL,
+//     email TEXT NOT NULL,
+//     phone TEXT NOT NULL,
 //     address TEXT NOT NULL,
 //     postal_code TEXT NOT NULL,
 //     city TEXT NOT NULL,
-//     country TEXT DEFAULT 'Deutschland',
-//     email TEXT,
-//     phone TEXT,
-//     tax_number TEXT,                    -- Steuernummer
-//     vat_id TEXT,                       -- USt-IdNr
-//     is_active TEXT DEFAULT 'Active',
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+//     country TEXT NOT NULL,
+//     company_name TEXT NOT NULL,
+//     customer_type TEXT NOT NULL,
+//     tax_number TEXT NOT NULL,
+//     vat_id TEXT NOT NULL,
+//     is_active TEXT NOT NULL,
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)
 
 // db.exec(`
-//     INSERT INTO customers (
-//         customer_type, company_name, first_name, last_name, address,
-//         postal_code, city, country, email, phone, tax_number, vat_id, is_active
-//     ) VALUES (
-//         'individual',
-//         NULL,
-//         'Hans',
-//         'Müller',
-//         'Hamburger Straße 123',
-//         '20095',
-//         'Hamburg',
-//         'Deutschland',
-//         'hans.mueller@email.de',
-//         '+49 40 123456789',
-//         '12/345/67890',
-//         NULL,
-//         'Active'
-//     );
-
-//     INSERT INTO customers (
-//         customer_type, company_name, first_name, last_name, address,
-//         postal_code, city, country, email, phone, tax_number, vat_id, is_active
-//     ) VALUES (
-//         'company',
-//         'TechSolutions GmbH',
-//         NULL,
-//         NULL,
-//         'Maximilianstraße 45',
-//         '80539',
-//         'München',
-//         'Deutschland',
-//         'info@techsolutions.de',
-//         '+49 89 987654321',
-//         '143/567/89012',
-//         'DE123456789',
-//         'Active'
-//     );
-//     INSERT INTO customers (
-//         customer_type, company_name, first_name, last_name, address,
-//         postal_code, city, country, email, phone, tax_number, vat_id, is_active
-//     ) VALUES (
-//         'individual',
-//         NULL,
-//         'Anna',
-//         'Schmidt',
-//         'Unter den Linden 78',
-//         '10117',
-//         'Berlin',
-//         'Deutschland',
-//         'anna.schmidt@gmail.com',
-//         '+49 30 456789123',
-//         '11/987/65432',
-//         NULL,
-//         'Active'
-//     );
+// INSERT INTO customers (customer_type, company_name, first_name, last_name, address, postal_code, city, country, email, phone, tax_number, vat_id, is_active, created_at) VALUES
+// ('individual', 'Ahmet Yılmaz Einzelunternehmen', 'Ahmet', 'Yılmaz', 'Musterstr. 12', '10115', 'Berlin', 'Deutschland', 'ahmet.yilmaz@example.com', '+49 170 1234567', 'DE123456789', 'DE987654321', 'Active', CURRENT_TIMESTAMP),
+// ('company', 'TechNova GmbH', 'Lena', 'Schmidt', 'Industriestr. 5', '80331', 'München', 'Deutschland', 'lena.schmidt@technova.de', '+49 89 99887766', 'DE1122334455', 'DE5566778899', 'Active', CURRENT_TIMESTAMP),
+// ('individual', 'Elif Demir Beratung', 'Elif', 'Demir', 'Schillerstr. 8', '50667', 'Köln', 'Deutschland', 'elif.demir@example.com', '+49 171 2223344', 'DE998877665', 'DE665544332', 'Active', CURRENT_TIMESTAMP),
+// ('company', 'GreenBuild AG', 'Thomas', 'Becker', 'Bauweg 22', '20095', 'Hamburg', 'Deutschland', 'thomas.becker@greenbuild.de', '+49 40 88776655', 'DE2233445566', 'DE6677889900', 'Active', CURRENT_TIMESTAMP),
+// ('individual', 'Mert Kaya Consulting', 'Mert', 'Kaya', 'Goethestr. 9', '60313', 'Frankfurt', 'Deutschland', 'mert.kaya@example.com', '+49 162 3344556', 'DE445566778', 'DE778899001', 'Inactive', CURRENT_TIMESTAMP),
+// ('company', 'AutoPro GmbH', 'Julia', 'Neumann', 'Werkstr. 77', '70173', 'Stuttgart', 'Deutschland', 'julia.neumann@autopro.de', '+49 711 33445566', 'DE5566778899', 'DE9988776655', 'Active', CURRENT_TIMESTAMP),
+// ('individual', 'Selin Aydin Trading', 'Selin', 'Aydın', 'Parkallee 3', '28195', 'Bremen', 'Deutschland', 'selin.aydin@example.com', '+49 176 5566778', 'DE887766554', 'DE554433221', 'Active', CURRENT_TIMESTAMP),
+// ('company', 'DataSoft AG', 'Markus', 'Keller', 'IT-Str. 1', '44135', 'Dortmund', 'Deutschland', 'markus.keller@datasoft.de', '+49 231 99887711', 'DE6677889900', 'DE4455667788', 'Active', CURRENT_TIMESTAMP),
+// ('individual', 'Burak Öztürk Handel', 'Burak', 'Öztürk', 'Blumenweg 10', '90402', 'Nürnberg', 'Deutschland', 'burak.ozturk@example.com', '+49 172 4455667', 'DE334455667', 'DE778899002', 'Inactive', CURRENT_TIMESTAMP),
+// ('company', 'EuroTrade GmbH', 'Sabine', 'Fischer', 'Handelsstr. 9', '01067', 'Dresden', 'Deutschland', 'sabine.fischer@eurotrade.de', '+49 351 88776655', 'DE7788990011', 'DE9900112233', 'Active', CURRENT_TIMESTAMP),
+// ('individual', 'Zeynep Koç Services', 'Zeynep', 'Koç', 'Hauptstr. 25', '86150', 'Augsburg', 'Deutschland', 'zeynep.koc@example.com', '+49 173 7788990', 'DE123123123', 'DE321321321', 'Active', CURRENT_TIMESTAMP),
+// ('company', 'MedicaPlus GmbH', 'Andreas', 'Vogel', 'Gesundheitsweg 4', '97070', 'Würzburg', 'Deutschland', 'andreas.vogel@medicaplus.de', '+49 931 44556677', 'DE9090909090', 'DE8080808080', 'Active', CURRENT_TIMESTAMP);
 // `)
+
 
 //invoices
 // db.exec(`CREATE TABLE IF NOT EXISTS invoices (
@@ -283,15 +243,15 @@ export default db
 // )`)
 
 //queries---------------------------------------------------------
-try {
-  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all()
-  console.log(
-    'Tablolar:',
-    tables.map((r) => r.name)
-  )
-} catch (err) {
-  console.error(err.message)
-}
+// try {
+//   const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all()
+//   console.log(
+//     'Tablolar:',
+//     tables.map((r) => r.name)
+//   )
+// } catch (err) {
+//   console.error(err.message)
+// }
 
 // try {
 //   db.prepare('INSERT INTO users (email, password) VALUES (?, ?)').run('mesto@outlook.com', '909090')
@@ -299,12 +259,12 @@ try {
 //   console.error(err.message)
 // }
 
-try {
-  const users = db.prepare('SELECT * FROM users').all()
-  console.log('Users:', users)
-} catch (err) {
-  console.error(err.message)
-}
+// try {
+//   const users = db.prepare('SELECT * FROM users').all()
+//   console.log('Users:', users)
+// } catch (err) {
+//   console.error(err.message)
+// }
 
 // try {
 //   const user = db.prepare('SELECT * FROM users WHERE email = ?').get('mesto@outlook.com')
