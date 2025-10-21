@@ -32,7 +32,9 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(orderPreview.selected_customer.id) }}</span>
+              <span class="meta-value">{{
+                formatCustomerId(orderPreview.selected_customer.id)
+              }}</span>
             </div>
 
             <!-- Optional tax fields -->
@@ -80,13 +82,15 @@
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
-                <div v-if="item.description" class="position-description">{{ item.description }}</div>
+                <div v-if="item.description" class="position-description">
+                  {{ item.description }}
+                </div>
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price) }}</td>
+              <td class="right">{{ formatCurrency(item.price, item.currency) }}</td>
               <td class="right">{{ item.vat ? item.vat + ' %' : '0 %' }}</td>
-              <td class="right">{{ formatCurrency(item.unit_total) }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total, item.currency) }}</td>
             </tr>
           </tbody>
         </table>
@@ -95,15 +99,21 @@
         <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{ formatCurrency(orderPreview.subtotal) }}</span>
+            <span class="total-value">{{
+              formatCurrency(orderPreview.subtotal, orderPreview.currency)
+            }}</span>
           </div>
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{ formatCurrency(orderPreview.vat_amount) }}</span>
+            <span class="total-value">{{
+              formatCurrency(orderPreview.vat_amount, orderPreview.currency)
+            }}</span>
           </div>
           <div class="total-row subtotal">
             <span class="total-label">Gesamtbetrag (brutto):</span>
-            <span class="total-value">{{ formatCurrency(orderPreview.total) }}</span>
+            <span class="total-value">{{
+              formatCurrency(orderPreview.total, orderPreview.currency)
+            }}</span>
           </div>
         </div>
 
@@ -121,14 +131,16 @@
           <div class="condition-section">
             <div class="condition-title">💳 Zahlungsbedingungen</div>
             <div class="condition-text">
-              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss des Projekts. Zahlbar innerhalb von 14 Tagen netto ohne Abzug.
+              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss des Projekts. Zahlbar
+              innerhalb von 14 Tagen netto ohne Abzug.
             </div>
           </div>
 
           <div class="condition-section">
             <div class="condition-title">⚙️ Leistungsumfang</div>
             <div class="condition-text">
-              Der Leistungsumfang entspricht dem Angebot Nr. {{ orderPreview.offer_ref }} und den besprochenen Anforderungen.
+              Der Leistungsumfang entspricht dem Angebot Nr. {{ orderPreview.offer_ref }} und den
+              besprochenen Anforderungen.
             </div>
           </div>
         </div>
@@ -140,20 +152,7 @@
         </div>
 
         <!-- Contact Person -->
-        <div v-if="orderPreview.contact_person" class="contact-box">
-          <div class="contact-title">👤 Ihr Ansprechpartner</div>
-          <div class="contact-person">
-            <div class="contact-avatar">SM</div>
-            <div class="contact-details">
-              <div class="contact-name">{{ orderPreview.contact_person.full_name }}</div>
-              <div class="contact-info">
-                📞 +{{ orderPreview.contact_person.phone }}<br />
-                📧 {{ orderPreview.contact_person.email }}
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <ContactPerson :data="orderPreview" />
         <FooterSide />
       </div>
 
@@ -174,10 +173,11 @@
 import HeaderSide from '../../components/HeaderSide.vue'
 import FooterSide from '../../components/FooterSide.vue'
 import ActionsButton from '../../components/ActionsButton.vue'
+import ContactPerson from '../../components/ContactPerson.vue'
 
 export default {
   name: 'OrderPreview',
-  components: { HeaderSide, FooterSide, ActionsButton },
+  components: { HeaderSide, FooterSide, ActionsButton, ContactPerson },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
@@ -198,6 +198,7 @@ export default {
   methods: {
     getOrderPreview() {
       this.orderPreview = this.$store.state.orderPreview
+      console.log(this.orderPreview)
     }
   }
 }

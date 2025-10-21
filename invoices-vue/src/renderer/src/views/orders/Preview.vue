@@ -32,7 +32,9 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(orderPreview.selected_customer.id) }}</span>
+              <span class="meta-value">{{
+                formatCustomerId(orderPreview.selected_customer.id)
+              }}</span>
             </div>
             <div class="meta-row" v-if="orderPreview.service_period">
               <span class="meta-label">Leistungszeitraum:</span>
@@ -120,27 +122,15 @@
           <div class="condition-section">
             <div class="condition-title">💳 Zahlungsbedingungen</div>
             <div class="condition-text">
-              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Projektabschluss. Zahlbar innerhalb von 14 Tagen netto ohne Abzug.
+              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Projektabschluss. Zahlbar
+              innerhalb von 14 Tagen netto ohne Abzug.
             </div>
           </div>
         </div>
 
         <!-- Contact Person -->
-        <div v-if="orderPreview.contact_person" class="contact-box">
-          <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
-          <div class="contact-person">
-            <div class="contact-avatar">SM</div>
-            <div class="contact-details">
-              <div class="contact-name">{{ orderPreview.contact_person.full_name }}</div>
-              <div class="contact-info">
-                Projektmanagement & Kundenbetreuung<br />
-                📞 +{{ orderPreview.contact_person.phone }} <br />
-                📧 {{ orderPreview.contact_person.email }}
-              </div>
-            </div>
-          </div>
-        </div>
 
+        <ContactPerson :data="orderPreview" />
         <FooterSide />
       </div>
 
@@ -158,13 +148,14 @@
 </template>
 
 <script>
-import HeaderSide from '../../components/HeaderSide.vue';
-import FooterSide from '../../components/FooterSide.vue';
-import ActionsButton from '../../components/ActionsButton.vue';
+import HeaderSide from '../../components/HeaderSide.vue'
+import FooterSide from '../../components/FooterSide.vue'
+import ActionsButton from '../../components/ActionsButton.vue'
+import ContactPerson from '../../components/ContactPerson.vue'
 
 export default {
   name: 'OrderPreview',
-  components: { HeaderSide, FooterSide, ActionsButton },
+  components: { HeaderSide, FooterSide, ActionsButton, ContactPerson },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {

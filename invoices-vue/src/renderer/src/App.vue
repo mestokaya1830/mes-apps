@@ -22,12 +22,14 @@ export default {
         if (!value) return ''
         return `KU-${String(value).padStart(5, '0')}`
       },
-      formatCurrency(value) {
-        const num = parseFloat(value) || 0
-        return new Intl.NumberFormat('de-DE', {
-          style: 'currency',
-          currency: 'EUR'
-        }).format(num)
+      formatCurrency(value, currency) {
+        if (currency) {
+          const num = parseFloat(value) || 0
+          return new Intl.NumberFormat(currency.substr(4), {
+            style: 'currency',
+            currency: currency.substr(0, 3)
+          }).format(num)
+        }
       },
       formatDate(value) {
         if (!value) return ''

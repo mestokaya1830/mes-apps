@@ -35,12 +35,17 @@
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(invoicePreview.selected_customer.id) }}</span>
+              <span class="meta-value">{{
+                formatCustomerId(invoicePreview.selected_customer.id)
+              }}</span>
             </div>
 
             <!-- Vergi numarası seçimi -->
             <div
-              v-if="invoicePreview.selected_customer.country === 'Germany' && invoicePreview.selected_customer.tax_number"
+              v-if="
+                invoicePreview.selected_customer.country === 'Germany' &&
+                invoicePreview.selected_customer.tax_number
+              "
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
@@ -48,7 +53,9 @@
             </div>
 
             <div
-              v-else-if="invoicePreview.selected_customer.is_in_eu && invoicePreview.selected_customer.vat_id"
+              v-else-if="
+                invoicePreview.selected_customer.is_in_eu && invoicePreview.selected_customer.vat_id
+              "
               class="meta-row"
             >
               <span class="meta-label">USt-IdNr.:</span>
@@ -56,7 +63,10 @@
             </div>
 
             <div
-              v-else-if="!invoicePreview.selected_customer.is_in_eu && invoicePreview.selected_customer.vat_id"
+              v-else-if="
+                !invoicePreview.selected_customer.is_in_eu &&
+                invoicePreview.selected_customer.vat_id
+              "
               class="meta-row"
             >
               <span class="meta-label">VAT ID:</span>
@@ -73,7 +83,10 @@
         <!-- Document Title -->
         <div class="document-title">
           Rechnung
-          <span v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0" class="status-badge">
+          <span
+            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
+            class="status-badge"
+          >
             ⏱️ Teilweise bezahlt
           </span>
         </div>
@@ -102,13 +115,15 @@
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
-                <div v-if="item.description" class="position-description">{{ item.description }}</div>
+                <div v-if="item.description" class="position-description">
+                  {{ item.description }}
+                </div>
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price) }}</td>
+              <td class="right">{{ formatCurrency(item.price, invoicePreview.currency) }}</td>
               <td class="right">{{ invoicePreview.reverse_charge ? '0%' : item.vat + '%' }}</td>
-              <td class="right">{{ formatCurrency(item.unit_total) }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total, invoicePreview.currency) }}</td>
             </tr>
           </tbody>
         </table>
@@ -117,7 +132,9 @@
         <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{ formatCurrency(invoicePreview.subtotal) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoicePreview.subtotal, invoicePreview.currency)
+            }}</span>
           </div>
 
           <!-- KDV sadece reverse charge değilse göster -->
@@ -126,22 +143,33 @@
             class="total-row"
           >
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{ formatCurrency(invoicePreview.vat_amount) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoicePreview.vat_amount, invoicePreview.currency)
+            }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{ formatCurrency(invoicePreview.total) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoicePreview.total, invoicePreview.currency)
+            }}</span>
           </div>
 
-          <div v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0" class="total-row paid">
+          <div
+            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
+            class="total-row paid"
+          >
             <span class="total-label">✓ Bereits bezahlt:</span>
-            <span class="total-value">- {{ formatCurrency(invoicePreview.paid_amount) }}</span>
+            <span class="total-value"
+              >- {{ formatCurrency(invoicePreview.paid_amount, invoicePreview.currency) }}</span
+            >
           </div>
 
           <div class="total-row outstanding">
             <span class="total-label">⚠️ Offener Betrag:</span>
-            <span class="total-value">{{ formatCurrency(invoicePreview.outstanding) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoicePreview.outstanding, invoicePreview.currency)
+            }}</span>
           </div>
 
           <!-- Küçük işletme veya Reverse-Charge notları -->
@@ -160,21 +188,7 @@
         </div>
 
         <!-- Contact Person -->
-        <div v-if="invoicePreview.contact_person" class="contact-box">
-          <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
-          <div class="contact-person">
-            <div class="contact-avatar">SM</div>
-            <div class="contact-details">
-              <div class="contact-name">{{ invoicePreview.contact_person.full_name }}</div>
-              <div class="contact-info">
-                Projektmanagement & Kundenbetreuung<br />
-                📞 +{{ invoicePreview.contact_person.phone }}<br />
-                📧 {{ invoicePreview.contact_person.email }}
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <ContactPerson :data="invoicePreview" />
         <!-- Bank Info -->
         <div class="bank-box">
           <div class="bank-title">🏦 Bankverbindung</div>
@@ -210,10 +224,11 @@
 import HeaderSide from '../../components/HeaderSide.vue'
 import FooterSide from '../../components/FooterSide.vue'
 import ActionsButton from '../../components/ActionsButton.vue'
+import ContactPerson from '../../components/ContactPerson.vue'
 
 export default {
   name: 'InvoicePreview',
-  components: { HeaderSide, FooterSide, ActionsButton },
+  components: { HeaderSide, FooterSide, ActionsButton, ContactPerson },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {

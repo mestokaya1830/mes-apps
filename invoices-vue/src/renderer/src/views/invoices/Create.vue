@@ -37,46 +37,48 @@
             </option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label">Kunden-Nr.</label>
-          <input v-model="invoice.selected_customer.id" type="text" class="form-input" readonly />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Name</label>
-          <input :value="companyName" type="text" class="form-input" readonly />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Adresse</label>
-          <input
-            v-model="invoice.selected_customer.address"
-            type="text"
-            class="form-input"
-            readonly
-          />
-        </div>
-        <div class="form-row">
+        <div v-if="invoice.selected_customer && invoice.selected_customer.id">
           <div class="form-group">
-            <label class="form-label">PLZ</label>
+            <label class="form-label">Kunden-Nr.</label>
+            <input v-model="invoice.selected_customer.id" type="text" class="form-input" readonly />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input :value="companyName" type="text" class="form-input" readonly />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Adresse</label>
             <input
-              v-model="invoice.selected_customer.postal_code"
+              v-model="invoice.selected_customer.address"
               type="text"
               class="form-input"
               readonly
             />
           </div>
-          <div class="form-group">
-            <label class="form-label">Stadt</label>
-            <input
-              v-model="invoice.selected_customer.city"
-              type="text"
-              class="form-input"
-              readonly
-            />
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">PLZ</label>
+              <input
+                v-model="invoice.selected_customer.postal_code"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Stadt</label>
+              <input
+                v-model="invoice.selected_customer.city"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="form-section">
+      <div v-if="invoice.contact_person" class="form-section">
         <div class="form-section-title">👤 Sprachpartner (Optional)</div>
 
         <div class="form-group">
@@ -106,10 +108,29 @@
           </label>
         </div>
       </div>
-
+      <div class="form-section">
+        <div class="form-section-title">💰 Währung</div>
+        <div class="form-group">
+          <label class="form-label">Waehrung</label>
+          <select v-model="invoice.currency" class="form-input">
+            <option value="EUR.de-DE" selected>EUR</option>
+            <option value="USD.en-US">USD</option>
+            <option value="GBP.en-GB">GBP</option>
+            <option value="CHF.ch-CH">CHF</option>
+            <option value="JPY.ja-JP">JPY</option>
+            <option value="AUD.en-AU">AUD</option>
+            <option value="CAD.en-CA">CAD</option>
+            <option value="CNY.zh-CN">CNY</option>
+            <option value="SEK.sv-SE">SEK</option>
+            <option value="NZD.en-NZ">NZD</option>
+          </select>
+        </div>
+      </div>
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="invoice.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="invoice.positions && invoice.positions.length === 0">
+          Keine Positionen vorhanden
+        </div>
         <div v-else class="positions-editor">
           <div v-for="(pos, index) in invoice.positions" :key="index" class="position-item">
             <div class="position-header">
@@ -198,6 +219,7 @@ export default {
         is_small_company: false,
         positions: [],
         country: 'Deutschland',
+        currency: 'EUR.de-DE',
         selected_customer: {
           id: '',
           company_name: '',
@@ -249,8 +271,11 @@ export default {
   mounted() {
     if (this.$store?.state?.invoicePreview) {
       const preview = this.$store.state.invoicePreview
-      if (preview) this.invoice = { ...preview }
+      if (preview && preview.positions) this.invoice = preview
+    } else {
+      return this.invoice
     }
+    console.log(this.invoice)
     this.getCustomers()
   },
   methods: {
@@ -309,10 +334,10 @@ export default {
           vat_amount: this.vatAmount.toFixed(2),
           total: this.grandTotal.toFixed(2),
           outstanding: this.outstanding.toFixed(2),
+          currency: this.invoice.currency,
           selected_customer: { ...this.invoice.selected_customer, company_name: this.companyName },
           contact_person: { ...this.invoice.contact_person }
         })
-        console.log(this.invoice)
         this.$router.push('/invoices-preview')
       } catch (error) {
         console.error('Error storing invoice preview:', error)
