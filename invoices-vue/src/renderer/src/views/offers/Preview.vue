@@ -3,78 +3,63 @@
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <HeaderSide :title="title" :color="'blue'" />
-        <!-- Recipient & Invoice Details -->
-        <div v-if="offerPreview?.selected_customer" class="recipient">
+        <HeaderSide :title="title" :color="'orange'" />
+
+        <!-- Recipient & Order Details -->
+        <div v-if="orderPreview?.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ offerPreview.selected_customer.company_name }}
+              {{ orderPreview.selected_customer.company_name }}
             </div>
-            <div>{{ offerPreview.selected_customer.address }}</div>
+            <div>{{ orderPreview.selected_customer.address }}</div>
             <div>
-              {{ offerPreview.selected_customer.postal_code }}
-              {{ offerPreview.selected_customer.city }}
-              {{ offerPreview.selected_customer.country }}
+              {{ orderPreview.selected_customer.postal_code }}
+              {{ orderPreview.selected_customer.city }}
+              {{ orderPreview.selected_customer.country }}
             </div>
           </div>
 
           <div class="invoice-details">
-            <div class="section-title">Rechnungsdetails</div>
+            <div class="section-title">Auftragsdetails</div>
             <div class="meta-row">
-              <span class="meta-label">AngebotNr.:</span>
-              <span class="meta-value">{{ formatAngebotId }}</span>
+              <span class="meta-label">Auftrag-Nr.:</span>
+              <span class="meta-value">{{ formatAuftragId }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(orderPreview.date) }}</span>
             </div>
             <div class="meta-row">
-              <span class="meta-label">KundenNr:</span>
-              <span class="meta-value">{{ formatCustomerId(offerPreview.selected_customer.id) }}</span>
+              <span class="meta-label">Kunden-Nr.:</span>
+              <span class="meta-value">{{ formatCustomerId(orderPreview.selected_customer.id) }}</span>
             </div>
-            <div class="meta-row">
-              <span class="meta-label">SteuerNr.:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.tax_number }}</span>
+
+            <!-- Optional tax fields -->
+            <div v-if="orderPreview.selected_customer.tax_number" class="meta-row">
+              <span class="meta-label">Steuer-Nr.:</span>
+              <span class="meta-value">{{ orderPreview.selected_customer.tax_number }}</span>
             </div>
-            <div class="meta-row">
+            <div v-if="orderPreview.selected_customer.vat_id" class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Gültig bis:</span>
-              <span class="meta-value">{{ validityDate(offerPreview.date, offerPreview.valid_days) }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Rechtsgültigkeit:</span>
-              <span class="meta-value">
-                <span v-if="offerPreview.is_legal_validity">Verbindlich</span>
-                <span v-else>Freibleibend</span>
-              </span>
+              <span class="meta-value">{{ orderPreview.selected_customer.vat_id }}</span>
             </div>
           </div>
         </div>
 
         <!-- Document Title -->
-        <div v-if="$store.state.offerPreview" class="document-title">
-          {{ $store.state.offerPreview.title || 'Angebot' }}
-          <span class="validity-badge">Gültig {{ $store.state.offerPreview.valid_days }} Tage</span>
-        </div>
-
-        <!-- Reference Box -->
-        <div class="reference-box">
-          <div class="reference-label">📌 Bezug:</div>
-          <div class="reference-text">
-            Ihr Telefonat mit Frau Müller vom 01. Oktober 2024 • Projekt-ID: WEB-2024-042
-          </div>
+        <div class="document-title">
+          Auftragsbestätigung
+          <span v-if="orderPreview.project_ref" class="project-badge">
+            Projekt: {{ orderPreview.project_ref }}
+          </span>
         </div>
 
         <!-- Intro Text -->
-        <div v-if="offerPreview" class="intro-text intro-text-pro">
+        <div class="intro-text">
           Sehr geehrter Herr Weber,<br /><br />
-          Wir freuen uns, Ihnen nachfolgend ein verbindliches Angebot auf Grundlage Ihrer Anfrage
-          vom {{ formatDate(offerPreview.date) }} unterbreiten zu dürfen. Dieses Angebot umfasst die
-          nachfolgend beschriebenen Leistungen/Produkte.
+          vielen Dank für Ihre Auftragserteilung. Hiermit bestätigen wir den Eingang Ihres Auftrags
+          auf Grundlage unseres Angebots vom {{ formatDate(orderPreview.offer_date) }}.
         </div>
 
         <!-- Positions Table -->
@@ -90,8 +75,8 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody v-if="offerPreview?.positions">
-            <tr v-for="(item, index) in offerPreview.positions" :key="index">
+          <tbody v-if="orderPreview?.positions">
+            <tr v-for="(item, index) in orderPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -100,161 +85,119 @@
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
               <td class="right">{{ formatCurrency(item.price) }}</td>
-              <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
+              <td class="right">{{ item.vat ? item.vat + ' %' : '0 %' }}</td>
               <td class="right">{{ formatCurrency(item.unit_total) }}</td>
             </tr>
           </tbody>
         </table>
 
-        <!-- Rabatt Info -->
-        <div class="rabatt-info">
-          <span class="rabatt-icon">🎉</span>
-          <strong>Sonderrabatt für Neukunden: 10% auf die Gesamtsumme</strong>
-        </div>
-
         <!-- Totals -->
-        <div v-if="offerPreview" class="totals">
+        <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{ formatCurrency(offerPreview.subtotal) }}</span>
-          </div>
-          <div class="total-row rabatt">
-            <span class="total-label">Rabatt 10%:</span>
-            <span class="total-value">- {{ formatCurrency(offerPreview.discount) }}</span>
-          </div>
-          <div class="total-row subtotal">
-            <span class="total-label">Summe nach Rabatt:</span>
-            <span class="total-value">{{ formatCurrency(offerPreview.subtotal - offerPreview.discount) }}</span>
+            <span class="total-value">{{ formatCurrency(orderPreview.subtotal) }}</span>
           </div>
           <div class="total-row">
-            <span class="total-label">MwSt. 19%:</span>
-            <span class="total-value">{{ formatCurrency(offerPreview.vat_amount) }}</span>
+            <span class="total-label">MwSt.:</span>
+            <span class="total-value">{{ formatCurrency(orderPreview.vat_amount) }}</span>
           </div>
-          <div class="total-row final">
+          <div class="total-row subtotal">
             <span class="total-label">Gesamtbetrag (brutto):</span>
-            <span class="total-value">{{ formatCurrency(offerPreview.total) }}</span>
+            <span class="total-value">{{ formatCurrency(orderPreview.total) }}</span>
           </div>
         </div>
 
-        <!-- Delivery Info -->
+        <!-- Project Info -->
         <div class="delivery-box">
-          <div class="delivery-title">⏱️ Voraussichtliche Projektlaufzeit</div>
+          <div class="delivery-title">📅 Geplanter Projektstart</div>
           <div>
-            Die Fertigstellung erfolgt voraussichtlich 6-8 Wochen nach Angebotsannahme und Erhalt
-            aller benötigten Inhalte (Texte, Bilder, Logos). Projektstart ist für den 15. Oktober 2024 geplant.
+            Projektstart: {{ formatDate(orderPreview.project_start) }}<br />
+            Voraussichtliche Dauer: {{ orderPreview.project_duration }} Wochen
           </div>
         </div>
 
-        <!-- Conditions -->
+        <!-- Payment Terms -->
         <div class="conditions">
-          <div class="condition-grid">
-            <div class="condition-section">
-              <div class="condition-title">💳 Zahlungsbedingungen</div>
-              <div class="condition-text">
-                • 50 % Anzahlung bei Auftragserteilung (sofern vereinbart).<br />
-                • Restzahlung 50 % nach Abnahme.<br />
-                • Zahlbar innerhalb von 14 Tagen nach Rechnungsdatum, netto ohne Abzug.
-              </div>
-            </div>
-
-            <div class="condition-section">
-              <div class="condition-title">📦 Leistungsumfang</div>
-              <div class="condition-text">
-                Die vereinbarten Leistungen/Produkte sind in diesem Angebot beschrieben. Hosting: Erstes Jahr inklusive, danach optional 15 €/Monat (sofern zutreffend).
-              </div>
+          <div class="condition-section">
+            <div class="condition-title">💳 Zahlungsbedingungen</div>
+            <div class="condition-text">
+              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss des Projekts. Zahlbar innerhalb von 14 Tagen netto ohne Abzug.
             </div>
           </div>
 
           <div class="condition-section">
-            <div class="condition-title">📋 Gültigkeit des Angebots</div>
-            <div class="condition-text legal-note-pro">
-              Dieses Angebot ist bis einschließlich {{ validityDate(offerPreview.date, offerPreview.valid_days) }} gültig. Sämtliche Preise verstehen sich in Euro inklusive der gesetzlichen Mehrwertsteuer. Es gelten unsere Allgemeinen Geschäftsbedingungen (AGB).
+            <div class="condition-title">⚙️ Leistungsumfang</div>
+            <div class="condition-text">
+              Der Leistungsumfang entspricht dem Angebot Nr. {{ orderPreview.offer_ref }} und den besprochenen Anforderungen.
             </div>
           </div>
         </div>
 
         <!-- Closing -->
         <div class="closing closing-pro">
-          Für Rückfragen stehen wir Ihnen jederzeit gerne zur Verfügung. Wir freuen uns auf Ihre Auftragserteilung.<br /><br />
+          Wir bedanken uns für Ihr Vertrauen und freuen uns auf eine erfolgreiche Zusammenarbeit.<br /><br />
           Mit freundlichen Grüßen
         </div>
 
         <!-- Contact Person -->
-        <div v-if="offerPreview.contact_person" class="contact-box">
-          <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
+        <div v-if="orderPreview.contact_person" class="contact-box">
+          <div class="contact-title">👤 Ihr Ansprechpartner</div>
           <div class="contact-person">
             <div class="contact-avatar">SM</div>
             <div class="contact-details">
-              <div class="contact-name">{{ offerPreview.contact_person.full_name }}</div>
+              <div class="contact-name">{{ orderPreview.contact_person.full_name }}</div>
               <div class="contact-info">
-                Projektmanagement & Kundenbetreuung<br />
-                📞 +{{ offerPreview.contact_person.phone }} <br />
-                📧 {{ offerPreview.contact_person.email }}
+                📞 +{{ orderPreview.contact_person.phone }}<br />
+                📧 {{ orderPreview.contact_person.email }}
               </div>
             </div>
           </div>
         </div>
+
         <FooterSide />
       </div>
+
       <ActionsButton
-        v-if="offerPreview.selected_customer"
-        :email="offerPreview.selected_customer.email"
-        :file-name="title + ' ' + formatAngebotId"
+        v-if="orderPreview.selected_customer"
+        :email="orderPreview.selected_customer.email"
+        :file-name="title + ' ' + formatAuftragId"
       />
     </div>
 
-    <router-link to="/offers/create" class="back-link">
-      ← Zurück zur Angebotserstellung
+    <router-link to="/orders/create" class="back-link">
+      ← Zurück zur Auftragserstellung
     </router-link>
   </div>
 </template>
 
 <script>
-import HeaderSide from '../../components/HeaderSide.vue';
+import HeaderSide from '../../components/HeaderSide.vue'
 import FooterSide from '../../components/FooterSide.vue'
 import ActionsButton from '../../components/ActionsButton.vue'
 
 export default {
-  name: 'OfferPreview',
+  name: 'OrderPreview',
   components: { HeaderSide, FooterSide, ActionsButton },
-  inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'validityDate'],
+  inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
-      title: 'Angebot',
-      offerPreview: {}
+      title: 'Auftragsbestätigung',
+      orderPreview: {}
     }
   },
   computed: {
-    logoSrc() {
-      const logo = this.$store.state.auth.logo
-      if (!logo) return null
-      if (typeof logo === 'string') {
-        if (logo.startsWith('data:image')) return logo
-        return `data:image/png;base64,${logo}`
-      }
-      try {
-        let binary = ''
-        const bytes = new Uint8Array(Object.values(logo))
-        const len = bytes.byteLength
-        for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i])
-        return `data:image/png;base64,${window.btoa(binary)}`
-      } catch (error) {
-        console.error(error)
-        return null
-      }
-    },
-    formatAngebotId() {
-      if (!this.offerPreview.id) return ''
+    formatAuftragId() {
+      if (!this.orderPreview.id) return ''
       const year = new Date().getFullYear()
-      return `ANG-${year}-${String(this.offerPreview.id).padStart(5, '0')}`
+      return `AUF-${year}-${String(this.orderPreview.id).padStart(5, '0')}`
     }
   },
   mounted() {
-    this.getOfferPreview()
+    this.getOrderPreview()
   },
   methods: {
-    getOfferPreview() {
-      this.offerPreview = this.$store.state.offerPreview
+    getOrderPreview() {
+      this.orderPreview = this.$store.state.orderPreview
     }
   }
 }

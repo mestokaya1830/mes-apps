@@ -4,6 +4,7 @@
       <div class="printable">
         <!-- Header -->
         <HeaderSide :title="title" :color="'green'" />
+
         <!-- Recipient & Invoice Details -->
         <div v-if="invoicePreview.selected_customer" class="recipient">
           <div class="recipient-address">
@@ -21,28 +22,47 @@
 
           <div class="invoice-details">
             <div class="section-title">Rechnungsdetails</div>
+
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
               <span class="meta-value">{{ formatRechnungId }}</span>
             </div>
+
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
               <span class="meta-value">{{ formatDate(invoicePreview.date) }}</span>
             </div>
+
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(invoicePreview.selected_customer.id)
-              }}</span>
+              <span class="meta-value">{{ formatCustomerId(invoicePreview.selected_customer.id) }}</span>
             </div>
-            <div v-if="invoicePreview.selected_customer.tax_number" class="meta-row">
+
+            <!-- Vergi numarası seçimi -->
+            <div
+              v-if="invoicePreview.selected_customer.country === 'Germany' && invoicePreview.selected_customer.tax_number"
+              class="meta-row"
+            >
               <span class="meta-label">Steuer-Nr.:</span>
               <span class="meta-value">{{ invoicePreview.selected_customer.tax_number }}</span>
             </div>
-            <div v-if="invoicePreview.selected_customer.vat_id" class="meta-row">
-              <span class="meta-label">USt-IdNr:</span>
+
+            <div
+              v-else-if="invoicePreview.selected_customer.is_in_eu && invoicePreview.selected_customer.vat_id"
+              class="meta-row"
+            >
+              <span class="meta-label">USt-IdNr.:</span>
               <span class="meta-value">{{ invoicePreview.selected_customer.vat_id }}</span>
             </div>
+
+            <div
+              v-else-if="!invoicePreview.selected_customer.is_in_eu && invoicePreview.selected_customer.vat_id"
+              class="meta-row"
+            >
+              <span class="meta-label">VAT ID:</span>
+              <span class="meta-value">{{ invoicePreview.selected_customer.vat_id }}</span>
+            </div>
+
             <div class="meta-row">
               <span class="meta-label">Leistung:</span>
               <span class="meta-value">{{ invoicePreview.service_period }}</span>
@@ -53,17 +73,14 @@
         <!-- Document Title -->
         <div class="document-title">
           Rechnung
-          <span
-            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
-            class="status-badge"
-          >
+          <span v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0" class="status-badge">
             ⏱️ Teilweise bezahlt
           </span>
         </div>
 
         <!-- Intro Text -->
         <div class="intro-text">
-          Sehr geehrter Herr Weber,<br />
+          Sehr geehrter Kunde,<br />
           für die erbrachten Leistungen erlauben wir uns, Ihnen wie folgt in Rechnung zu stellen:
         </div>
 
@@ -85,14 +102,12 @@
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
-                <div v-if="item.description" class="position-description">
-                  {{ item.description }}
-                </div>
+                <div v-if="item.description" class="position-description">{{ item.description }}</div>
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
               <td class="right">{{ formatCurrency(item.price) }}</td>
-              <td class="right">{{ item.vat }}%</td>
+              <td class="right">{{ invoicePreview.reverse_charge ? '0%' : item.vat + '%' }}</td>
               <td class="right">{{ formatCurrency(item.unit_total) }}</td>
             </tr>
           </tbody>
@@ -104,28 +119,38 @@
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{ formatCurrency(invoicePreview.subtotal) }}</span>
           </div>
-          <div v-if="!invoicePreview.is_small_company" class="total-row">
+
+          <!-- KDV sadece reverse charge değilse göster -->
+          <div
+            v-if="!invoicePreview.is_small_company && !invoicePreview.reverse_charge"
+            class="total-row"
+          >
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{ formatCurrency(invoicePreview.vat_amount) }}</span>
           </div>
+
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{ formatCurrency(invoicePreview.total) }}</span>
           </div>
-          <div
-            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
-            class="total-row paid"
-          >
+
+          <div v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0" class="total-row paid">
             <span class="total-label">✓ Bereits bezahlt:</span>
             <span class="total-value">- {{ formatCurrency(invoicePreview.paid_amount) }}</span>
           </div>
+
           <div class="total-row outstanding">
             <span class="total-label">⚠️ Offener Betrag:</span>
             <span class="total-value">{{ formatCurrency(invoicePreview.outstanding) }}</span>
           </div>
 
+          <!-- Küçük işletme veya Reverse-Charge notları -->
           <div v-if="invoicePreview.is_small_company" class="tax-note">
             ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
+          </div>
+
+          <div v-if="invoicePreview.reverse_charge" class="tax-note">
+            ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
           </div>
         </div>
 
@@ -164,8 +189,10 @@
             <span class="bank-value">{{ invoicePreview.verwendung }}</span>
           </div>
         </div>
+
         <FooterSide />
       </div>
+
       <ActionsButton
         v-if="invoicePreview.selected_customer"
         :email="invoicePreview.selected_customer.email"
@@ -207,6 +234,20 @@ export default {
   methods: {
     getInvoicePreview() {
       this.invoicePreview = this.$store.state.invoicePreview
+
+      // Reverse charge durumu hesapla
+      if (
+        this.invoicePreview.selected_customer &&
+        this.invoicePreview.selected_customer.is_in_eu &&
+        this.invoicePreview.selected_customer.country !== 'Germany' &&
+        this.invoicePreview.selected_customer.vat_id &&
+        this.invoicePreview.company_vat_id
+      ) {
+        this.invoicePreview.reverse_charge = true
+      } else {
+        this.invoicePreview.reverse_charge = false
+      }
+
       console.log(this.invoicePreview)
     }
   }

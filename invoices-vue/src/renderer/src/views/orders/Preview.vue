@@ -4,6 +4,7 @@
       <div class="printable">
         <!-- Header -->
         <HeaderSide :title="title" :color="'red'" />
+
         <!-- Recipient & Order Details -->
         <div v-if="orderPreview.selected_customer" class="recipient">
           <div class="recipient-address">
@@ -18,6 +19,7 @@
               {{ orderPreview.selected_customer.country }}
             </div>
           </div>
+
           <div class="invoice-details">
             <div class="section-title">Auftragsdetails</div>
             <div class="meta-row">
@@ -30,19 +32,33 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(orderPreview.selected_customer.id)
-              }}</span>
+              <span class="meta-value">{{ formatCustomerId(orderPreview.selected_customer.id) }}</span>
             </div>
-            <div class="meta-row">
-              <span class="meta-label">Leistung:</span>
+            <div class="meta-row" v-if="orderPreview.service_period">
+              <span class="meta-label">Leistungszeitraum:</span>
               <span class="meta-value">{{ orderPreview.service_period }}</span>
+            </div>
+
+            <!-- Optional tax fields -->
+            <div v-if="$store.state.auth.tax_number" class="meta-row">
+              <span class="meta-label">Steuernummer:</span>
+              <span class="meta-value">{{ $store.state.auth.tax_number }}</span>
+            </div>
+            <div v-if="$store.state.auth.vat_id" class="meta-row">
+              <span class="meta-label">USt-IdNr.:</span>
+              <span class="meta-value">{{ $store.state.auth.vat_id }}</span>
             </div>
           </div>
         </div>
+
+        <!-- Intro Text -->
         <div class="intro-text">
-          Sehr geehrte{{ orderPreview.selected_customer?.gender === 'f' ? ' Frau' : 'r Herr' }}
-          {{ orderPreview.selected_customer?.last_name }},
+          <template v-if="orderPreview.selected_customer?.gender === 'f'">
+            Sehr geehrte Frau {{ orderPreview.selected_customer?.last_name }},
+          </template>
+          <template v-else>
+            Sehr geehrter Herr {{ orderPreview.selected_customer?.last_name }},
+          </template>
           <br />
           vielen Dank für Ihre Auftragserteilung. Wir bestätigen Ihnen hiermit folgenden Auftrag:
         </div>
@@ -99,6 +115,16 @@
           </div>
         </div>
 
+        <!-- Payment Terms -->
+        <div class="conditions">
+          <div class="condition-section">
+            <div class="condition-title">💳 Zahlungsbedingungen</div>
+            <div class="condition-text">
+              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Projektabschluss. Zahlbar innerhalb von 14 Tagen netto ohne Abzug.
+            </div>
+          </div>
+        </div>
+
         <!-- Contact Person -->
         <div v-if="orderPreview.contact_person" class="contact-box">
           <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
@@ -115,24 +141,9 @@
           </div>
         </div>
 
-        <!-- Bank Info -->
-        <div class="bank-box">
-          <div class="bank-title">🏦 Bankverbindung</div>
-          <div class="bank-info">
-            <span class="bank-label">Bank:</span>
-            <span class="bank-value">{{ $store.state.auth.bank_name }}</span>
-            <span class="bank-label">IBAN:</span>
-            <span class="bank-value">{{ $store.state.auth.iban }}</span>
-            <span class="bank-label">BIC:</span>
-            <span class="bank-value">{{ $store.state.auth.bic }}</span>
-            <span class="bank-label">Steuernummer:</span>
-            <span class="bank-value">{{ $store.state.auth.tax_number }}</span>
-            <span class="bank-label">USt-IdNr.:</span>
-            <span class="bank-value">{{ $store.state.auth.vat_id }}</span>
-          </div>
-        </div>
         <FooterSide />
       </div>
+
       <ActionsButton
         v-if="orderPreview.selected_customer"
         :email="orderPreview.selected_customer.email"
@@ -148,8 +159,8 @@
 
 <script>
 import HeaderSide from '../../components/HeaderSide.vue';
-import FooterSide from '../../components/FooterSide.vue'
-import ActionsButton from '../../components/ActionsButton.vue'
+import FooterSide from '../../components/FooterSide.vue';
+import ActionsButton from '../../components/ActionsButton.vue';
 
 export default {
   name: 'OrderPreview',
@@ -157,27 +168,11 @@ export default {
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
-      title: 'Auftrag',
+      title: 'Auftragsbestätigung',
       orderPreview: {}
     }
   },
   computed: {
-    logoSrc() {
-      const logo = this.$store.state.auth.logo
-      if (!logo) return null
-      if (typeof logo === 'string') {
-        return logo.startsWith('data:image') ? logo : `data:image/png;base64,${logo}`
-      }
-      try {
-        const bytes = new Uint8Array(Object.values(logo))
-        let binary = ''
-        for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
-        return `data:image/png;base64,${window.btoa(binary)}`
-      } catch (error) {
-        console.error(error)
-        return null
-      }
-    },
     formatAuftragId() {
       if (!this.orderPreview.id) return ''
       const year = new Date().getFullYear()
