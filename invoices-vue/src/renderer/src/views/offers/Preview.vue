@@ -6,45 +6,51 @@
         <HeaderSidePreview :title="title" :color="'orange'" />
 
         <!-- Recipient & offer Details -->
-        <div v-if="offerPreview?.selected_customer" class="recipient">
+        <div v-if="offersPreview?.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ offerPreview.selected_customer.company_name }}
+              {{ offersPreview.selected_customer.company_name }}
             </div>
-            <div>{{ offerPreview.selected_customer.address }}</div>
+            <div>{{ offersPreview.selected_customer.address }}</div>
             <div>
-              {{ offerPreview.selected_customer.postal_code }}
-              {{ offerPreview.selected_customer.city }}
-              {{ offerPreview.selected_customer.country }}
+              {{ offersPreview.selected_customer.postal_code }}
+              {{ offersPreview.selected_customer.city }}
+              {{ offersPreview.selected_customer.country }}
             </div>
           </div>
 
           <div class="invoice-details">
-            <div class="section-title">Auftragsdetails</div>
+            <div class="section-title">Angebotdetails</div>
             <div class="meta-row">
-              <span class="meta-label">Auftrag-Nr.:</span>
-              <span class="meta-value">{{ formatAuftragId }}</span>
+              <span class="meta-label">Aangebot-Nr.:</span>
+              <span class="meta-value">{{ formatAngebotId }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(offersPreview.date) }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
-                formatCustomerId(offerPreview.selected_customer.id)
+                formatCustomerId(offersPreview.selected_customer.id)
               }}</span>
             </div>
 
             <!-- Optional tax fields -->
-            <div v-if="offerPreview.selected_customer.tax_number" class="meta-row">
+            <div v-if="offersPreview.selected_customer.tax_number" class="meta-row">
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.tax_number }}</span>
+              <span class="meta-value">{{ offersPreview.selected_customer.tax_number }}</span>
             </div>
-            <div v-if="offerPreview.selected_customer.vat_id" class="meta-row">
+            <div v-if="offersPreview.selected_customer.vat_id" class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ offersPreview.selected_customer.vat_id }}</span>
+            </div>
+            <div v-if="offersPreview.valid_days" class="meta-row">
+              <span class="meta-label">Gültig bis:</span>
+              <span class="meta-value">{{
+                formatValidDays(offersPreview.date, offersPreview.valid_days)
+              }}</span>
             </div>
           </div>
         </div>
@@ -52,8 +58,8 @@
         <!-- Document Title -->
         <div class="document-title">
           Aangebotbestätigung
-          <span v-if="offerPreview.project_ref" class="project-badge">
-            Projekt: {{ offerPreview.project_ref }}
+          <span v-if="offersPreview.project_ref" class="project-badge">
+            Projekt: {{ offersPreview.project_ref }}
           </span>
         </div>
 
@@ -61,7 +67,7 @@
         <div class="intro-text">
           Sehr geehrter Herr Weber,<br /><br />
           vielen Dank für Ihre Auftragserteilung. Hiermit bestätigen wir den Eingang Ihres Auftrags
-          auf Grundlage unseres Angebots vom {{ formatDate(offerPreview.offer_date) }}.
+          auf Grundlage unseres Angebots vom {{ formatDate(offersPreview.offer_date) }}.
         </div>
 
         <!-- Positions Table -->
@@ -77,8 +83,8 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody v-if="offerPreview?.positions">
-            <tr v-for="(item, index) in offerPreview.positions" :key="index">
+          <tbody v-if="offersPreview?.positions">
+            <tr v-for="(item, index) in offersPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -88,9 +94,9 @@
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, offerPreview.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, offersPreview.currency) }}</td>
               <td class="right">{{ item.vat ? item.vat + ' %' : '0 %' }}</td>
-              <td class="right">{{ formatCurrency(item.unit_total, offerPreview.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total, offersPreview.currency) }}</td>
             </tr>
           </tbody>
         </table>
@@ -100,19 +106,19 @@
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(offerPreview.subtotal, offerPreview.currency)
+              formatCurrency(offersPreview.subtotal, offersPreview.currency)
             }}</span>
           </div>
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(offerPreview.vat_amount, offerPreview.currency)
+              formatCurrency(offersPreview.vat_amount, offersPreview.currency)
             }}</span>
           </div>
           <div class="total-row subtotal">
             <span class="total-label">Gesamtbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(offerPreview.total, offerPreview.currency)
+              formatCurrency(offersPreview.total, offersPreview.currency)
             }}</span>
           </div>
         </div>
@@ -121,8 +127,8 @@
         <div class="delivery-box">
           <div class="delivery-title">📅 Geplanter Projektstart</div>
           <div>
-            Projektstart: {{ formatDate(offerPreview.project_start) }}<br />
-            Voraussichtliche Dauer: {{ offerPreview.project_duration }} Wochen
+            Projektstart: {{ formatDate(offersPreview.project_start) }}<br />
+            Voraussichtliche Dauer: {{ offersPreview.project_duration }} Wochen
           </div>
         </div>
 
@@ -139,7 +145,7 @@
           <div class="condition-section">
             <div class="condition-title">⚙️ Leistungsumfang</div>
             <div class="condition-text">
-              Der Leistungsumfang entspricht dem Angebot Nr. {{ offerPreview.offer_ref }} und den
+              Der Leistungsumfang entspricht dem Angebot Nr. {{ offersPreview.offer_ref }} und den
               besprochenen Anforderungen.
             </div>
           </div>
@@ -153,16 +159,16 @@
 
         <!-- Contact Person -->
         <ContactPersonPreview
-          v-if="offerPreview.contact_person"
-          :data="offerPreview.contact_person"
+          v-if="offersPreview.contact_person"
+          :data="offersPreview.contact_person"
         />
         <FooterSidePreview />
       </div>
 
       <ActionsButtonPreview
-        v-if="offerPreview.selected_customer"
-        :email="offerPreview.selected_customer.email"
-        :file-name="title + ' ' + formatAuftragId"
+        v-if="offersPreview.selected_customer"
+        :email="offersPreview.selected_customer.email"
+        :file-name="title + ' ' + formatAngebotId"
       />
     </div>
 
@@ -179,28 +185,28 @@ import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
-  name: 'OfferPreview',
+  name: 'OffersPreview',
   components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
-  inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
+  inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'formatValidDays'],
   data() {
     return {
       title: 'Angebotbestätigung',
-      offerPreview: {}
+      offersPreview: {}
     }
   },
   computed: {
-    formatAuftragId() {
-      if (!this.offerPreview.id) return ''
+    formatAngebotId() {
+      if (!this.offersPreview.id) return ''
       const year = new Date().getFullYear()
-      return `AUF-${year}-${String(this.offerPreview.id).padStart(5, '0')}`
+      return `ANG-${year}-${String(this.offersPreview.id).padStart(5, '0')}`
     }
   },
   mounted() {
-    this.getofferPreview()
+    this.getoffersPreview()
   },
   methods: {
-    getofferPreview() {
-      this.offerPreview = this.$store.state.offerPreview
+    getoffersPreview() {
+      this.offersPreview = this.$store.state.offersPreview
     }
   }
 }

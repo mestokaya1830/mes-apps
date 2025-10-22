@@ -13,141 +13,46 @@
         <div class="form-section-title">📌 Abgebot Title</div>
         <div class="form-group">
           <label class="form-label">Title</label>
-          <input v-model="offer.title" type="text" class="form-input" />
+          <input v-model="offers.title" type="text" class="form-input" />
         </div>
       </div>
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
+        <div class="form-group">
+          <label class="form-label">Angebotsnummer</label>
+          <input v-model="offers.id" type="text" class="form-input" readonly />
+        </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Angebotsnummer</label>
-            <input v-model="offer.id" type="text" class="form-input" readonly />
+            <label class="form-label">Angebotsdatum</label>
+            <input v-model="offers.date" type="date" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">Angebotsdatum</label>
-            <input v-model="offer.date" type="date" class="form-input" />
+            <label class="form-label">Angebot Gültigkeits</label>
+            <input v-model="offers.valid_days" type="text" class="form-input" />
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Leistungszeitraum</label>
-          <input v-model="offer.service_period" type="text" class="form-input" />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Leistungszeitraum Von</label>
+            <input v-model="offers.service_period_start" type="date" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Leistungszeitraum Bis</label>
+            <input v-model="offers.service_period_end" type="date" class="form-input" />
+          </div>
         </div>
       </div>
 
       <!--selected-customer -->
-      <div v-if="customers" class="form-section">
-        <div class="form-section-title">👤 Kunde</div>
-        <div class="form-group">
-          <label class="form-label">Kundendaten</label>
-          <select v-model="customerList" class="form-input" @change="getCustomerById">
-            <option selected disabled>Wähle Kunden</option>
-            <option v-for="item in customers" :key="item.id" :value="item.id">
-              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
-            </option>
-          </select>
-        </div>
-        <div v-if="offer.selected_customer && offer.selected_customer.id">
-          <div class="form-group">
-            <label class="form-label">Kunden-Nr.</label>
-            <input v-model="offer.selected_customer.id" type="text" class="form-input" readonly />
-          </div>
-          <div v-if="offer.selected_customer.company_name" class="form-group">
-            <label class="form-label">Firmname</label>
-            <input
-              v-model="offer.selected_customer.company_name"
-              type="text"
-              class="form-input"
-              readonly
-            />
-          </div>
-          <div v-if="offer.selected_customer.first_name" class="form-row">
-            <div class="form-group">
-              <label class="form-label">Vorname</label>
-              <input
-                v-model="offer.selected_customer.first_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nachname</label>
-              <input
-                v-model="offer.selected_customer.last_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Adresse</label>
-            <input
-              v-model="offer.selected_customer.address"
-              type="text"
-              class="form-input"
-              readonly
-            />
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">PLZ</label>
-              <input
-                v-model="offer.selected_customer.postal_code"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Stadt</label>
-              <input
-                v-model="offer.selected_customer.city"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <SelectedCustomer store-name="offersPreview" @get-selected-customer="getSelectedCustomer" />
 
       <!-- contact person -->
-      <div v-if="offer.contact_person" class="form-section">
-        <div class="form-section-title">👤 Sprachpartner (Optional)</div>
+      <ContactPerson store-name="offersPreview" @get-contact-person="getContactPerson" />
 
-        <div class="form-group">
-          <label class="form-label">Sprachpartner Vollname</label>
-          <input v-model="offer.contact_person.full_name" type="text" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input v-model="offer.contact_person.email" type="text" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tel</label>
-          <input v-model="offer.contact_person.phone" type="text" class="form-input" />
-        </div>
-      </div>
       <!-- currency -->
-      <div class="form-section">
-        <div class="form-section-title">💰 Währung</div>
-        <div class="form-group">
-          <label class="form-label">Waehrung</label>
-          <select v-model="offer.currency" class="form-input">
-            <option value="EUR.de-DE" selected>EUR</option>
-            <option value="USD.en-US">USD</option>
-            <option value="GBP.en-GB">GBP</option>
-            <option value="CHF.ch-CH">CHF</option>
-            <option value="JPY.ja-JP">JPY</option>
-            <option value="AUD.en-AU">AUD</option>
-            <option value="CAD.en-CA">CAD</option>
-            <option value="CNY.zh-CN">CNY</option>
-            <option value="SEK.sv-SE">SEK</option>
-            <option value="NZD.en-NZ">NZD</option>
-          </select>
-        </div>
-      </div>
+      <Currency store-name="offersPreview" @get-currency="getCurrency" />
+
       <!-- legal validity -->
       <div class="form-section">
         <div class="form-section-title">
@@ -155,7 +60,7 @@
           <label for="rechtsgültigkeit-checkbox" class="switch">
             <input
               id="rechtsgültigkeit-checkbox"
-              v-model="offer.is_legal_validity"
+              v-model="offers.is_legal_validity"
               type="checkbox"
               class="switch-checkbox"
             />
@@ -171,7 +76,7 @@
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
             <input
-              v-model.number="offer.paid_amount"
+              v-model.number="offers.paid_amount"
               type="number"
               class="form-input"
               step="0.01"
@@ -179,83 +84,76 @@
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="offer.payment_terms" type="number" class="form-input" />
+            <input v-model.number="offers.payment_terms" type="number" class="form-input" />
           </div>
         </div>
       </div>
+
       <!-- positions -->
-      <Positions store-name="offerPreview" store-commit="setOfferPreview" store-link="offers" />
+      <Positions store-name="offersPreview" @get-positions="getPositions" />
+      <button class="back-btn" @click="storePreview(offers, 'offers', 'setOffersPreview')">
+        Preview
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import SelectedCustomer from '../../components/SelectedCustomer.vue'
+import ContactPerson from '../../components/ContactPerson.vue'
+import Currency from '../../components/Currency.vue'
 import Positions from '../../components/Positions.vue'
 export default {
   name: 'CreateOffer',
   components: {
+    SelectedCustomer,
+    ContactPerson,
+    Currency,
     Positions
   },
+  inject: ['storePreview'],
   data() {
     return {
       title: 'Angebot erstellen',
-      customers: [],
-      customerList: 'Wähle Kunden',
-      offer: {
+      offers: {
         title: 'Mein erstes Angebot',
         id: '1',
         date: '2024-12-15',
-        service_period: 'Okt - Dez 2024',
+        valid_days: '',
+        service_period_start: '',
+        service_period_end: '',
         paid_amount: 0,
         payment_terms: 14,
         is_legal_validity: false,
         positions: [],
-        currency: 'EUR.de-DE',
-        selected_customer: {
-          id: '',
-          company_name: '',
-          first_name: '',
-          last_name: '',
-          address: '',
-          postal_code: '',
-          city: '',
-          country: '',
-          email: '',
-          phone: '',
-          tax_number: '',
-          vat_id: ''
-        },
-        contact_person: {
-          full_name: '',
-          email: '',
-          phone: ''
-        }
+        currency: '',
+        selected_customer: {},
+        contact_person: {}
       }
     }
   },
   mounted() {
-    if (this.$store?.state?.offerPreview) {
-      const preview = this.$store.state.offerPreview
-      if (preview) this.offer = preview
+    if (this.$store?.state?.offersPreview) {
+      const preview = this.$store.state.offersPreview
+      if (preview) this.offers = preview
     }
-    this.getCustomers()
   },
   methods: {
-    async getCustomers() {
-      try {
-        const response = await window.api.getCustomers()
-        if (response.success) {
-          this.customers = response.customers
-        } else {
-          console.error('Error fetching customers:', response.message)
-        }
-      } catch (error) {
-        console.error('Error fetching customers:', error)
-      }
+    getSelectedCustomer(customer) {
+      if (!customer) return
+      this.offers.selected_customer = customer
     },
-    getCustomerById() {
-      const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.offer.selected_customer = { ...customer }
+    getContactPerson(contact_person) {
+      if (!contact_person) return
+      this.offers.contact_person = contact_person
+    },
+    getCurrency(currency) {
+      if (!currency) return
+      this.offers.currency = currency
+    },
+    getPositions(positions) {
+      if (!positions) return
+      // this.offer.positions = positions
     }
   }
 }

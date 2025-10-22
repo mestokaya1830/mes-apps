@@ -45,7 +45,7 @@ export default {
           return error.message || ''
         }
       },
-      validityDate: (baseDate, validDays) => {
+      formatValidDays: (baseDate, validDays) => {
         if (!baseDate || !validDays) return ''
         const d = new Date(baseDate)
         d.setDate(d.getDate() + Number(validDays))
@@ -92,7 +92,9 @@ export default {
         this.$store.commit(storeCommit, {
           id: this.dinamicStore.id,
           date: this.dinamicStore.date,
-          service_period: this.dinamicStore.service_period,
+          valid_days: this.dinamicStore.valid_days,
+          service_period_start: this.dinamicStore.service_period_start,
+          service_period_end: this.dinamicStore.service_period_end,
           paid_amount: this.dinamicStore.paid_amount,
           payment_terms: this.dinamicStore.payment_terms,
           verwendung: this.dinamicStore.verwendung,

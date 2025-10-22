@@ -35,20 +35,7 @@
       <ContactPerson store-name="invoicesPreview" @get-contect-person="getContectPerson" />
 
       <!-- small company -->
-      <div class="form-section">
-        <div class="form-section-title">
-          <span>👤 Kleinunternehmer</span>
-          <label for="kleinunternehmer-checkbox" class="switch">
-            <input
-              id="kleinunternehmer-checkbox"
-              v-model="invoices.is_small_company"
-              type="checkbox"
-              class="switch-checkbox"
-            />
-            <span class="slider round"></span>
-          </label>
-        </div>
-      </div>
+      <SmallCompany store-name="invoicesPreview" @get-small-company="getSmallCompany" />
 
       <!-- currency -->
       <Currency store-name="invoicesPreview" @get-currency="getCurrency" />
@@ -72,6 +59,7 @@
           </div>
         </div>
       </div>
+
       <Positions store-name="invoicesPreview" @get-positions="getPositions" />
       <button class="back-btn" @click="storePreview(invoices, 'invoices', 'setInvoicesPreview')">
         Preview
@@ -84,6 +72,7 @@
 import SelectedCustomer from '../../components/SelectedCustomer.vue'
 import ContactPerson from '../../components/ContactPerson.vue'
 import Currency from '../../components/Currency.vue'
+import SmallCompany from '../../components/SmallCompany.vue'
 import Positions from '../../components/Positions.vue'
 
 export default {
@@ -92,6 +81,7 @@ export default {
     SelectedCustomer,
     ContactPerson,
     Currency,
+    SmallCompany,
     Positions
   },
   inject: ['storePreview'],
@@ -122,19 +112,25 @@ export default {
     }
   },
   methods: {
-    getPositions(value) {
+    getSelectedCustomer(value) {
       if (!value) return
-      this.invoices.positions = value //with emit from child component positions
-    },
-    getCurrency(value) {
-      this.invoices.currency = value //with emit from child component currency
+      this.invoices.selected_customer = value //with emit from child component selected customer
     },
     getContectPerson(value) {
+      if (!value) return
       this.invoices.contact_person = value //with emit from child component contact person
-      console.log(value)
     },
-    getSelectedCustomer(value) {
-      this.invoices.selected_customer = value //with emit from child component selected customer
+    getSmallCompany(value) {
+      if (!value) return
+      this.invoices.is_small_company = value //with emit from child component small company
+    },
+    getCurrency(value) {
+      if (!value) return
+      this.invoices.currency = value //with emit from child component currency
+    },
+    getPositions(value) {
+      if (!value) return
+      // this.invoices.positions = value //with emit from child component positions
     }
   }
 }
