@@ -3,7 +3,7 @@
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <HeaderSide :title="title" :color="'green'" />
+        <HeaderSidePreview :title="title" :color="'green'" />
 
         <!-- Recipient & Invoice Details -->
         <div v-if="invoicePreview.selected_customer" class="recipient">
@@ -41,7 +41,6 @@
               }}</span>
             </div>
 
-            
             <div
               v-if="
                 invoicePreview.selected_customer.country === 'Germany' &&
@@ -208,10 +207,10 @@
           </div>
         </div>
 
-        <FooterSide />
+        <FooterSidePreview />
       </div>
 
-      <ActionsButton
+      <ActionsButtonPreview
         v-if="invoicePreview.selected_customer"
         :email="invoicePreview.selected_customer.email"
         :file-name="title + ' ' + formatRechnungId"
@@ -225,14 +224,14 @@
 </template>
 
 <script>
-import HeaderSide from '../../components/preview/HeaderSidePreview.vue'
-import FooterSide from '../../components/preview/FooterSidePreview.vue'
-import ActionsButton from '../../components/preview/ActionsButtonPreview.vue'
+import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
   name: 'InvoicePreview',
-  components: { HeaderSide, FooterSide, ActionsButton, ContactPersonPreview },
+  components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {

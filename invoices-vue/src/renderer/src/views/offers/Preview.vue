@@ -3,7 +3,7 @@
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <HeaderSide :title="title" :color="'orange'" />
+        <HeaderSidePreview :title="title" :color="'orange'" />
 
         <!-- Recipient & offer Details -->
         <div v-if="offerPreview?.selected_customer" class="recipient">
@@ -152,11 +152,14 @@
         </div>
 
         <!-- Contact Person -->
-        <ContactPerson v-if="offerPreview.contact_person" :data="offerPreview.contact_person" />
-        <FooterSide />
+        <ContactPersonPreview
+          v-if="offerPreview.contact_person"
+          :data="offerPreview.contact_person"
+        />
+        <FooterSidePreview />
       </div>
 
-      <ActionsButton
+      <ActionsButtonPreview
         v-if="offerPreview.selected_customer"
         :email="offerPreview.selected_customer.email"
         :file-name="title + ' ' + formatAuftragId"
@@ -170,14 +173,14 @@
 </template>
 
 <script>
-import HeaderSide from '../../components/preview/HeaderSidePreview.vue'
-import FooterSide from '../../components/preview/FooterSidePreview.vue'
-import ActionsButton from '../../components/preview/ActionsButtonPreview.vue'
-import ContactPerson from '../../components/preview/ContactPersonPreview.vue'
+import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
   name: 'OfferPreview',
-  components: { HeaderSide, FooterSide, ActionsButton, ContactPerson },
+  components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
