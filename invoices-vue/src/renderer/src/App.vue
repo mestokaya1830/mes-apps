@@ -54,11 +54,63 @@ export default {
           month: '2-digit',
           year: 'numeric'
         })
-      }
+      },
+      storePreview: this.storePreview
     }
   },
   data() {
-    return {}
+    return {
+      dinamicStore: {}
+    }
+  },
+  computed: {
+    subtotal() {
+      return this.dinamicStore.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+    },
+    vatAmount() {
+      return this.dinamicStore.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
+    },
+    grandTotal() {
+      return this.subtotal + this.vatAmount
+    },
+    outstanding() {
+      return this.grandTotal - this.dinamicStore.paid_amount
+    }
+  },
+  methods: {
+    storePreview(data, storeLink, storeCommit) {
+      if (data) this.dinamicStore = data
+      try {
+        this.dinamicStore.positions = this.dinamicStore.positions.map((pos) => ({
+          ...pos,
+          unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
+        }))
+        //i used commit because "this" keyword not working in provider
+        this.$store.commit(storeCommit, {
+          id: this.dinamicStore.id,
+          date: this.dinamicStore.date,
+          service_period: this.dinamicStore.service_period,
+          paid_amount: this.dinamicStore.paid_amount,
+          payment_terms: this.dinamicStore.payment_terms,
+          verwendung: this.dinamicStore.verwendung,
+          is_small_company: this.dinamicStore.is_small_company,
+          positions: this.dinamicStore.positions,
+          subtotal: this.subtotal.toFixed(2),
+          vat_amount: this.vatAmount.toFixed(2),
+          total: this.grandTotal.toFixed(2),
+          outstanding: this.outstanding.toFixed(2),
+          currency: this.dinamicStore.currency,
+          selected_customer: { ...this.dinamicStore.selected_customer },
+          contact_person: { ...this.dinamicStore.contact_person }
+        })
+        this.$router.push(`/${storeLink}-preview`)
+      } catch (error) {
+        console.error('Error storing invoice preview:', error)
+      }
+    }
   }
 }
 </script>

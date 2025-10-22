@@ -1,22 +1,22 @@
 <template>
-  <div v-if="invoicePreview">
+  <div v-if="invoicesPreview">
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :color="'green'" />
 
         <!-- Recipient & Invoice Details -->
-        <div v-if="invoicePreview.selected_customer" class="recipient">
+        <div v-if="invoicesPreview.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ invoicePreview.selected_customer.company_name }}
+              {{ invoicesPreview.selected_customer.company_name }}
             </div>
-            <div>{{ invoicePreview.selected_customer.address }}</div>
+            <div>{{ invoicesPreview.selected_customer.address }}</div>
             <div>
-              {{ invoicePreview.selected_customer.postal_code }}
-              {{ invoicePreview.selected_customer.city }}<br />
-              {{ invoicePreview.selected_customer.country }}
+              {{ invoicesPreview.selected_customer.postal_code }}
+              {{ invoicesPreview.selected_customer.city }}<br />
+              {{ invoicesPreview.selected_customer.country }}
             </div>
           </div>
 
@@ -31,51 +31,51 @@
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(invoicePreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(invoicesPreview.date) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
-                formatCustomerId(invoicePreview.selected_customer.id)
+                formatCustomerId(invoicesPreview.selected_customer.id)
               }}</span>
             </div>
 
             <div
               v-if="
-                invoicePreview.selected_customer.country === 'Germany' &&
-                invoicePreview.selected_customer.tax_number
+                invoicesPreview.selected_customer.country === 'Germany' &&
+                invoicesPreview.selected_customer.tax_number
               "
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ invoicePreview.selected_customer.tax_number }}</span>
+              <span class="meta-value">{{ invoicesPreview.selected_customer.tax_number }}</span>
             </div>
 
             <div
               v-else-if="
-                invoicePreview.selected_customer.is_in_eu && invoicePreview.selected_customer.vat_id
+                invoicesPreview.selected_customer.is_in_eu && invoicesPreview.selected_customer.vat_id
               "
               class="meta-row"
             >
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ invoicePreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ invoicesPreview.selected_customer.vat_id }}</span>
             </div>
 
             <div
               v-else-if="
-                !invoicePreview.selected_customer.is_in_eu &&
-                invoicePreview.selected_customer.vat_id
+                !invoicesPreview.selected_customer.is_in_eu &&
+                invoicesPreview.selected_customer.vat_id
               "
               class="meta-row"
             >
               <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ invoicePreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ invoicesPreview.selected_customer.vat_id }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Leistung:</span>
-              <span class="meta-value">{{ invoicePreview.service_period }}</span>
+              <span class="meta-value">{{ invoicesPreview.service_period }}</span>
             </div>
           </div>
         </div>
@@ -84,7 +84,7 @@
         <div class="document-title">
           {{ title }}
           <span
-            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
+            v-if="invoicesPreview.paid_amount && invoicesPreview.paid_amount > 0"
             class="status-badge"
           >
             ⏱️ Teilweise bezahlt
@@ -110,8 +110,8 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody v-if="invoicePreview.positions">
-            <tr v-for="(item, index) in invoicePreview.positions" :key="index">
+          <tbody v-if="invoicesPreview.positions">
+            <tr v-for="(item, index) in invoicesPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -121,9 +121,9 @@
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, invoicePreview.currency) }}</td>
-              <td class="right">{{ invoicePreview.reverse_charge ? '0%' : item.vat + '%' }}</td>
-              <td class="right">{{ formatCurrency(item.unit_total, invoicePreview.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, invoicesPreview.currency) }}</td>
+              <td class="right">{{ invoicesPreview.reverse_charge ? '0%' : item.vat + '%' }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total, invoicesPreview.currency) }}</td>
             </tr>
           </tbody>
         </table>
@@ -133,51 +133,51 @@
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.subtotal, invoicePreview.currency)
+              formatCurrency(invoicesPreview.subtotal, invoicesPreview.currency)
             }}</span>
           </div>
 
           <!-- KDV sadece reverse charge değilse göster -->
           <div
-            v-if="!invoicePreview.is_small_company && !invoicePreview.reverse_charge"
+            v-if="!invoicesPreview.is_small_company && !invoicesPreview.reverse_charge"
             class="total-row"
           >
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.vat_amount, invoicePreview.currency)
+              formatCurrency(invoicesPreview.vat_amount, invoicesPreview.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.total, invoicePreview.currency)
+              formatCurrency(invoicesPreview.total, invoicesPreview.currency)
             }}</span>
           </div>
 
           <div
-            v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
+            v-if="invoicesPreview.paid_amount && invoicesPreview.paid_amount > 0"
             class="total-row paid"
           >
             <span class="total-label">✓ Bereits bezahlt:</span>
             <span class="total-value"
-              >- {{ formatCurrency(invoicePreview.paid_amount, invoicePreview.currency) }}</span
+              >- {{ formatCurrency(invoicesPreview.paid_amount, invoicesPreview.currency) }}</span
             >
           </div>
 
           <div class="total-row outstanding">
             <span class="total-label">⚠️ Offener Betrag:</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.outstanding, invoicePreview.currency)
+              formatCurrency(invoicesPreview.outstanding, invoicesPreview.currency)
             }}</span>
           </div>
 
           <!-- Küçük işletme veya Reverse-Charge notları -->
-          <div v-if="invoicePreview.is_small_company" class="tax-note">
+          <div v-if="invoicesPreview.is_small_company" class="tax-note">
             ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
           </div>
 
-          <div v-if="invoicePreview.reverse_charge" class="tax-note">
+          <div v-if="invoicesPreview.reverse_charge" class="tax-note">
             ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
           </div>
         </div>
@@ -189,8 +189,8 @@
 
         <!-- Contact Person -->
         <ContactPersonPreview
-          v-if="invoicePreview.contact_person"
-          :data="invoicePreview.contact_person"
+          v-if="invoicesPreview.contact_person"
+          :data="invoicesPreview.contact_person"
         />
         <!-- Bank Info -->
         <div class="bank-box">
@@ -203,7 +203,7 @@
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ $store.state.auth.bic }}</span>
             <span class="bank-label">Verwendung:</span>
-            <span class="bank-value">{{ invoicePreview.verwendung }}</span>
+            <span class="bank-value">{{ invoicesPreview.verwendung }}</span>
           </div>
         </div>
 
@@ -211,8 +211,8 @@
       </div>
 
       <ActionsButtonPreview
-        v-if="invoicePreview.selected_customer"
-        :email="invoicePreview.selected_customer.email"
+        v-if="invoicesPreview.selected_customer"
+        :email="invoicesPreview.selected_customer.email"
         :file-name="title + ' ' + formatRechnungId"
       />
     </div>
@@ -230,42 +230,40 @@ import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
-  name: 'InvoicePreview',
+  name: 'InvoicesPreview',
   components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Rechnungbestätigung',
-      invoicePreview: {}
+      invoicesPreview: {}
     }
   },
   computed: {
     formatRechnungId() {
-      if (!this.invoicePreview.id) return ''
+      if (!this.invoicesPreview.id) return ''
       const year = new Date().getFullYear()
-      return `RE-${year}-${String(this.invoicePreview.id).padStart(5, '0')}`
+      return `RE-${year}-${String(this.invoicesPreview.id).padStart(5, '0')}`
     }
   },
   mounted() {
-    this.getInvoicePreview()
+    this.getInvoicesPreview()
   },
   methods: {
-    getInvoicePreview() {
-      this.invoicePreview = this.$store.state.invoicePreview
+    getInvoicesPreview() {
+      this.invoicesPreview = this.$store.state.invoicesPreview
       // Reverse charge durumu hesapla
       if (
-        this.invoicePreview.selected_customer &&
-        this.invoicePreview.selected_customer.is_in_eu &&
-        this.invoicePreview.selected_customer.country !== 'Germany' &&
-        this.invoicePreview.selected_customer.vat_id &&
-        this.invoicePreview.company_vat_id
+        this.invoicesPreview.selected_customer &&
+        this.invoicesPreview.selected_customer.is_in_eu &&
+        this.invoicesPreview.selected_customer.country !== 'Germany' &&
+        this.invoicesPreview.selected_customer.vat_id &&
+        this.invoicesPreview.company_vat_id
       ) {
-        this.invoicePreview.reverse_charge = true
+        this.invoicesPreview.reverse_charge = true
       } else {
-        this.invoicePreview.reverse_charge = false
+        this.invoicesPreview.reverse_charge = false
       }
-
-      console.log(this.invoicePreview)
     }
   }
 }

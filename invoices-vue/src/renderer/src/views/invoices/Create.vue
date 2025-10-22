@@ -14,115 +14,25 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Rechnungs-Nr.</label>
-            <input v-model="invoice.id" type="text" class="form-input" readonly />
+            <input v-model="invoices.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Datum</label>
-            <input v-model="invoice.date" type="date" class="form-input" />
+            <input v-model="invoices.date" type="date" class="form-input" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Leistungszeitraum</label>
-          <input v-model="invoice.service_period" type="text" class="form-input" />
+          <input v-model="invoices.service_period" type="text" class="form-input" />
         </div>
       </div>
 
       <!-- customer -->
-      <div v-if="customers" class="form-section">
-        <div class="form-section-title">👤 Kunde</div>
-        <div class="form-group">
-          <label class="form-label">Kundendaten</label>
-          <select v-model="customerList" class="form-input" @change="getCustomerById">
-            <option selected disabled>Wähle Kunden</option>
-            <option v-for="item in customers" :key="item.id" :value="item.id">
-              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
-            </option>
-          </select>
-        </div>
-        <div v-if="invoice.selected_customer && invoice.selected_customer.id">
-          <div class="form-group">
-            <label class="form-label">Kunden-Nr.</label>
-            <input v-model="invoice.selected_customer.id" type="text" class="form-input" readonly />
-          </div>
-          <div v-if="invoice.selected_customer.company_name" class="form-group">
-            <label class="form-label">Firmname</label>
-            <input
-              v-model="invoice.selected_customer.company_name"
-              type="text"
-              class="form-input"
-              readonly
-            />
-          </div>
-          <div v-if="invoice.selected_customer.first_name" class="form-row">
-            <div class="form-group">
-              <label class="form-label">Vorname</label>
-              <input
-                v-model="invoice.selected_customer.first_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Nachname</label>
-              <input
-                v-model="invoice.selected_customer.last_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Adresse</label>
-            <input
-              v-model="invoice.selected_customer.address"
-              type="text"
-              class="form-input"
-              readonly
-            />
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">PLZ</label>
-              <input
-                v-model="invoice.selected_customer.postal_code"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Stadt</label>
-              <input
-                v-model="invoice.selected_customer.city"
-                type="text"
-                class="form-input"
-                readonly
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <SelectedCustomer store-name="invoicesPreview" @get-selected-customer="getSelectedCustomer" />
 
       <!-- contact person -->
-      <div v-if="invoice.contact_person" class="form-section">
-        <div class="form-section-title">👤 Sprachpartner (Optional)</div>
-
-        <div class="form-group">
-          <label class="form-label">Sprachpartner Vollname</label>
-          <input v-model="invoice.contact_person.full_name" type="text" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input v-model="invoice.contact_person.email" type="text" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tel</label>
-          <input v-model="invoice.contact_person.phone" type="text" class="form-input" />
-        </div>
-      </div>
+      <ContactPerson store-name="invoicesPreview" @get-contect-person="getContectPerson" />
 
       <!-- small company -->
       <div class="form-section">
@@ -131,7 +41,7 @@
           <label for="kleinunternehmer-checkbox" class="switch">
             <input
               id="kleinunternehmer-checkbox"
-              v-model="invoice.is_small_company"
+              v-model="invoices.is_small_company"
               type="checkbox"
               class="switch-checkbox"
             />
@@ -141,24 +51,7 @@
       </div>
 
       <!-- currency -->
-      <div class="form-section">
-        <div class="form-section-title">💰 Währung</div>
-        <div class="form-group">
-          <label class="form-label">Waehrung</label>
-          <select v-model="invoice.currency" class="form-input">
-            <option value="EUR.de-DE" selected>EUR</option>
-            <option value="USD.en-US">USD</option>
-            <option value="GBP.en-GB">GBP</option>
-            <option value="CHF.ch-CH">CHF</option>
-            <option value="JPY.ja-JP">JPY</option>
-            <option value="AUD.en-AU">AUD</option>
-            <option value="CAD.en-CA">CAD</option>
-            <option value="CNY.zh-CN">CNY</option>
-            <option value="SEK.sv-SE">SEK</option>
-            <option value="NZD.en-NZ">NZD</option>
-          </select>
-        </div>
-      </div>
+      <Currency store-name="invoicesPreview" @get-currency="getCurrency" />
 
       <!-- payment terms -->
       <div class="form-section">
@@ -167,7 +60,7 @@
           <div class="form-group">
             <label class="form-label">Anzahlung (bereits bezahlt)</label>
             <input
-              v-model.number="invoice.paid_amount"
+              v-model.number="invoices.paid_amount"
               type="number"
               class="form-input"
               step="0.01"
@@ -175,32 +68,37 @@
           </div>
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="invoice.payment_terms" type="number" class="form-input" />
+            <input v-model.number="invoices.payment_terms" type="number" class="form-input" />
           </div>
         </div>
       </div>
-      <Positions
-        store-name="invoicePreview"
-        store-commit="setInvoicePreview"
-        store-link="invoices"
-      />
+      <Positions store-name="invoicesPreview" @get-positions="getPositions" />
+      <button class="back-btn" @click="storePreview(invoices, 'invoices', 'setInvoicesPreview')">
+        Preview
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import SelectedCustomer from '../../components/SelectedCustomer.vue'
+import ContactPerson from '../../components/ContactPerson.vue'
+import Currency from '../../components/Currency.vue'
 import Positions from '../../components/Positions.vue'
+
 export default {
-  name: 'CreateInvoice',
+  name: 'CreateInvoices',
   components: {
+    SelectedCustomer,
+    ContactPerson,
+    Currency,
     Positions
   },
+  inject: ['storePreview'],
   data() {
     return {
       title: 'Rechnung erstellen',
-      customers: [],
-      customerList: 'Wähle Kunden',
-      invoice: {
+      invoices: {
         id: 1,
         date: '',
         service_period: 'Okt - Dez 2024',
@@ -209,55 +107,34 @@ export default {
         payment_terms: 14,
         is_small_company: false,
         positions: [],
-        currency: 'EUR.de-DE',
-        selected_customer: {
-          id: '',
-          company_name: '',
-          first_name: '',
-          last_name: '',
-          address: '',
-          postal_code: '',
-          city: '',
-          country: '',
-          email: '',
-          phone: '',
-          tax_number: '',
-          vat_id: ''
-        },
-        contact_person: {
-          full_name: '',
-          email: '',
-          phone: ''
-        }
+        currency: '',
+        selected_customer: {},
+        contact_person: {}
       }
     }
   },
-
   mounted() {
-    if (this.$store?.state?.invoicePreview) {
-      const preview = this.$store.state.invoicePreview
-      if (preview) this.invoice = preview
+    if (this.$store?.state?.invoicesPreview) {
+      const preview = this.$store.state.invoicesPreview
+      if (preview) this.invoices = preview
     } else {
-      return this.invoice
+      return this.invoices
     }
-    this.getCustomers()
   },
   methods: {
-    async getCustomers() {
-      try {
-        const response = await window.api.getCustomers()
-        if (response.success) {
-          this.customers = response.customers
-        } else {
-          console.error('Error fetching customers:', response.message)
-        }
-      } catch (error) {
-        console.error('Error fetching customers:', error)
-      }
+    getPositions(value) {
+      if (!value) return
+      this.invoices.positions = value //with emit from child component positions
     },
-    getCustomerById() {
-      const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.invoice.selected_customer = { ...customer }
+    getCurrency(value) {
+      this.invoices.currency = value //with emit from child component currency
+    },
+    getContectPerson(value) {
+      this.invoices.contact_person = value //with emit from child component contact person
+      console.log(value)
+    },
+    getSelectedCustomer(value) {
+      this.invoices.selected_customer = value //with emit from child component selected customer
     }
   }
 }
