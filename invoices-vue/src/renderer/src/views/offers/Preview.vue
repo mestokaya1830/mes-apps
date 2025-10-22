@@ -51,7 +51,7 @@
 
         <!-- Document Title -->
         <div class="document-title">
-          Auftragsbestätigung
+          Aangebotbestätigung
           <span v-if="offerPreview.project_ref" class="project-badge">
             Projekt: {{ offerPreview.project_ref }}
           </span>
@@ -184,7 +184,7 @@ export default {
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
-      title: 'Auftragsbestätigung',
+      title: 'Angebotbestätigung',
       offerPreview: {}
     }
   },

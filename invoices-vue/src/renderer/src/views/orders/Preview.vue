@@ -168,7 +168,7 @@ export default {
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
-      title: 'Auftragsbestätigung',
+      title: 'Auftragbestätigung',
       orderPreview: {}
     }
   },

@@ -11,7 +11,6 @@
             📞 +{{ data.phone }}<br />
             📧 {{ data.email }}
           </div>
-          {{ data }}
         </div>
       </div>
     </div>

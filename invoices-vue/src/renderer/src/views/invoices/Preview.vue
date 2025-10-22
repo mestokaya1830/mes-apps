@@ -82,7 +82,7 @@
 
         <!-- Document Title -->
         <div class="document-title">
-          Rechnung
+          {{ title }}
           <span
             v-if="invoicePreview.paid_amount && invoicePreview.paid_amount > 0"
             class="status-badge"
@@ -235,7 +235,7 @@ export default {
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
-      title: 'Rechnung',
+      title: 'Rechnungbestätigung',
       invoicePreview: {}
     }
   },
