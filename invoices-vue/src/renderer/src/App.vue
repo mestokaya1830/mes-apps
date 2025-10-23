@@ -77,7 +77,7 @@ export default {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.dinamicStore.paid_amount
+      return this.grandTotal - this.dinamicStore.payment.paid_amount
     }
   },
   methods: {
@@ -95,8 +95,7 @@ export default {
           valid_days: this.dinamicStore.valid_days,
           service_period_start: this.dinamicStore.service_period_start,
           service_period_end: this.dinamicStore.service_period_end,
-          paid_amount: this.dinamicStore.paid_amount,
-          payment_terms: this.dinamicStore.payment_terms,
+          payment: this.dinamicStore.payment,
           verwendung: this.dinamicStore.verwendung,
           is_small_company: this.dinamicStore.is_small_company,
           positions: this.dinamicStore.positions,

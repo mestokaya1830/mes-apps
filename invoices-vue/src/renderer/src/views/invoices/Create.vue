@@ -41,25 +41,9 @@
       <Currency store-name="invoicesPreview" @get-currency="getCurrency" />
 
       <!-- payment terms -->
-      <div class="form-section">
-        <div class="form-section-title">💳 Zahlungsinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input
-              v-model.number="invoices.paid_amount"
-              type="number"
-              class="form-input"
-              step="0.01"
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="invoices.payment_terms" type="number" class="form-input" />
-          </div>
-        </div>
-      </div>
+      <PaymenTerms store-name="invoicesPreview" @get-payment-terms="getPaymentTerms" />
 
+      <!-- positions -->
       <Positions store-name="invoicesPreview" @get-positions="getPositions" />
 
       <!-- preview -->
@@ -76,6 +60,7 @@ import ContactPerson from '../../components/form/ContactPerson.vue'
 import Currency from '../../components/form/Currency.vue'
 import SmallCompany from '../../components/form/SmallCompany.vue'
 import Positions from '../../components/form/Positions.vue'
+import PaymenTerms from '../../components/form/PaymenTerms.vue'
 
 export default {
   name: 'CreateInvoices',
@@ -84,7 +69,8 @@ export default {
     ContactPerson,
     Currency,
     SmallCompany,
-    Positions
+    Positions,
+    PaymenTerms
   },
   inject: ['storePreview'],
   data() {
@@ -95,13 +81,12 @@ export default {
         date: '',
         service_period: 'Okt - Dez 2024',
         verwendung: 'Nicht angegeben',
-        paid_amount: 0,
-        payment_terms: 14,
+        selected_customer: {},
+        contact_person: {},
+        currency: '',
         is_small_company: false,
         positions: [],
-        currency: '',
-        selected_customer: {},
-        contact_person: {}
+        payment: {}
       }
     }
   },

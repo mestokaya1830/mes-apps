@@ -68,7 +68,8 @@ input[type='date'] {
 }
 input[type='text']:focus,
 input[type='email']:focus,
-input[type='password']:focus {
+input[type='password']:focus,
+textarea:focus {
   outline: none;
   border: 1px solid #10b981;
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
@@ -91,7 +92,12 @@ input.error {
   align-items: center;
   margin-bottom: 32px;
 }
-
+.payment-terms{
+  min-width: 100%;
+  height: 100px;
+  overflow-y: auto;
+  resize: none;
+}
 .checkbox {
   display: flex;
   align-items: center;
