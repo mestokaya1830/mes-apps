@@ -1,22 +1,22 @@
 <template>
-  <div v-if="orderPreview">
+  <div v-if="ordersPreview">
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :color="'red'" />
 
         <!-- Recipient & Order Details -->
-        <div v-if="orderPreview.selected_customer" class="recipient">
+        <div v-if="ordersPreview.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ orderPreview.selected_customer.company_name }}
+              {{ ordersPreview.selected_customer.company_name }}
             </div>
-            <div>{{ orderPreview.selected_customer.address }}</div>
+            <div>{{ ordersPreview.selected_customer.address }}</div>
             <div>
-              {{ orderPreview.selected_customer.postal_code }}
-              {{ orderPreview.selected_customer.city }}
-              {{ orderPreview.selected_customer.country }}
+              {{ ordersPreview.selected_customer.postal_code }}
+              {{ ordersPreview.selected_customer.city }}
+              {{ ordersPreview.selected_customer.country }}
             </div>
           </div>
 
@@ -28,17 +28,17 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(orderPreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(ordersPreview.date) }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
-                formatCustomerId(orderPreview.selected_customer.id)
+                formatCustomerId(ordersPreview.selected_customer.id)
               }}</span>
             </div>
-            <div v-if="orderPreview.service_period" class="meta-row">
+            <div v-if="ordersPreview.service_period" class="meta-row">
               <span class="meta-label">Leistungszeitraum:</span>
-              <span class="meta-value">{{ orderPreview.service_period }}</span>
+              <span class="meta-value">{{ ordersPreview.service_period }}</span>
             </div>
 
             <!-- Optional tax fields -->
@@ -55,11 +55,11 @@
 
         <!-- Intro Text -->
         <div class="intro-text">
-          <template v-if="orderPreview.selected_customer?.gender === 'f'">
-            Sehr geehrte Frau {{ orderPreview.selected_customer?.last_name }},
+          <template v-if="ordersPreview.selected_customer?.gender === 'f'">
+            Sehr geehrte Frau {{ ordersPreview.selected_customer?.last_name }},
           </template>
           <template v-else>
-            Sehr geehrter Herr {{ orderPreview.selected_customer?.last_name }},
+            Sehr geehrter Herr {{ ordersPreview.selected_customer?.last_name }},
           </template>
           <br />
           vielen Dank für Ihre Auftragserteilung. Wir bestätigen Ihnen hiermit folgenden Auftrag:
@@ -78,8 +78,8 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody v-if="orderPreview.positions?.length">
-            <tr v-for="(item, index) in orderPreview.positions" :key="index">
+          <tbody v-if="ordersPreview.positions?.length">
+            <tr v-for="(item, index) in ordersPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title || '–' }}</div>
@@ -89,9 +89,9 @@
               </td>
               <td class="center">{{ item.quantity ?? 0 }}</td>
               <td class="center">{{ item.unit || '' }}</td>
-              <td class="right">{{ formatCurrency(item.price, orderPreview.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, ordersPreview.currency) }}</td>
               <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
-              <td class="right">{{ formatCurrency(item.unit_total, orderPreview.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total, ordersPreview.currency) }}</td>
             </tr>
           </tbody>
           <tbody v-else>
@@ -106,19 +106,19 @@
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(orderPreview.subtotal, orderPreview.currency)
+              formatCurrency(ordersPreview.subtotal, ordersPreview.currency)
             }}</span>
           </div>
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(orderPreview.vat_amount, orderPreview.currency)
+              formatCurrency(ordersPreview.vat_amount, ordersPreview.currency)
             }}</span>
           </div>
           <div class="total-row subtotal">
             <span class="total-label">Auftragsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(orderPreview.total, orderPreview.currency)
+              formatCurrency(ordersPreview.total, ordersPreview.currency)
             }}</span>
           </div>
         </div>
@@ -137,15 +137,15 @@
         <!-- Contact Person -->
 
         <ContactPersonPreview
-          v-if="orderPreview.contact_person"
-          :data="orderPreview.contact_person"
+          v-if="ordersPreview.contact_person"
+          :data="ordersPreview.contact_person"
         />
         <FooterSidePreview />
       </div>
 
       <ActionsButtonPreview
-        v-if="orderPreview.selected_customer"
-        :email="orderPreview.selected_customer.email"
+        v-if="ordersPreview.selected_customer"
+        :email="ordersPreview.selected_customer.email"
         :file-name="title + ' ' + formatAuftragId"
       />
     </div>
@@ -163,28 +163,28 @@ import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
-  name: 'OrderPreview',
+  name: 'OrdersPreview',
   components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Auftragbestätigung',
-      orderPreview: {}
+      ordersPreview: {}
     }
   },
   computed: {
     formatAuftragId() {
-      if (!this.orderPreview.id) return ''
+      if (!this.ordersPreview.id) return ''
       const year = new Date().getFullYear()
-      return `AUF-${year}-${String(this.orderPreview.id).padStart(5, '0')}`
+      return `AUF-${year}-${String(this.ordersPreview.id).padStart(5, '0')}`
     }
   },
   mounted() {
-    this.getOrderPreview()
+    this.getOrdersPreview()
   },
   methods: {
-    getOrderPreview() {
-      this.orderPreview = this.$store.state.orderPreview
+    getOrdersPreview() {
+      this.ordersPreview = this.$store.state.ordersPreview
     }
   }
 }

@@ -91,6 +91,8 @@
 
       <!-- positions -->
       <Positions store-name="offersPreview" @get-positions="getPositions" />
+
+      <!-- preview -->
       <button class="back-btn" @click="storePreview(offers, 'offers', 'setOffersPreview')">
         Preview
       </button>

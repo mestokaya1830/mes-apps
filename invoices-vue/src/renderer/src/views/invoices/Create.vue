@@ -61,6 +61,8 @@
       </div>
 
       <Positions store-name="invoicesPreview" @get-positions="getPositions" />
+
+      <!-- preview -->
       <button class="back-btn" @click="storePreview(invoices, 'invoices', 'setInvoicesPreview')">
         Preview
       </button>
