@@ -72,10 +72,10 @@
 
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
-import ContactPerson from '../../components/form/SelectedCustomer.vue/ContactPerson.vue'
-import Currency from '../../components/form/SelectedCustomer.vue/Currency.vue'
-import SmallCompany from '../../components/form/SelectedCustomer.vue/SmallCompany.vue'
-import Positions from '../../components/form/SelectedCustomer.vue/Positions.vue'
+import ContactPerson from '../../components/form/SelectedCustomer.vue'
+import Currency from '../../components/form/SelectedCustomer.vue'
+import SmallCompany from '../../components/form/SelectedCustomer.vue'
+import Positions from '../../components/form/SelectedCustomer.vue'
 
 export default {
   name: 'CreateInvoices',
