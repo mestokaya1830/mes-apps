@@ -42,12 +42,18 @@
 <script>
 export default {
   name: 'PaymentTerms',
+  props: {
+    storeName: {
+      type: String,
+      required: true
+    }
+  },
   emits: ['get-payment-terms'],
   data() {
     return {
       payment: {
         paid_amount: 0,
-        payment_terms: 14,
+        payment_terms: 0,
         payment_conditions: ''
       }
     }

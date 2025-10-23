@@ -44,24 +44,7 @@
       <Currency store-name="ordersPreview" @get-currency="getCurrency" />
 
       <!-- payment terms -->
-      <div class="form-section">
-        <div class="form-section-title">💳 Zahlungsinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input
-              v-model.number="orders.paid_amount"
-              type="number"
-              class="form-input"
-              step="0.01"
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="orders.payment_terms" type="number" class="form-input" />
-          </div>
-        </div>
-      </div>
+      <PaymenTerms store-name="ordersPreview" @get-payment-terms="getPaymentTerms" />
 
       <!-- positions -->
       <Positions store-name="ordersPreview" @get-positions="getPositions" />
@@ -79,13 +62,16 @@ import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
 import Currency from '../../components/form/Currency.vue'
 import Positions from '../../components/form/Positions.vue'
+import PaymenTerms from '../../components/form/PaymenTerms.vue'
+
 export default {
   name: 'CreateOrder',
   components: {
     SelectedCustomer,
     ContactPerson,
     Currency,
-    Positions
+    Positions,
+    PaymenTerms
   },
   inject: ['storePreview'],
   data() {
@@ -97,8 +83,7 @@ export default {
         service_period_start: '',
         service_period_end: '',
         verwendung: 'Nicht angegeben',
-        paid_amount: 0,
-        payment_terms: 14,
+        payment: {},
         positions: [],
         currency: '',
         selected_customer: {},
@@ -128,6 +113,10 @@ export default {
     getPositions(value) {
       if (!value) return
       // this.orders.positions = value
+    },
+    getPaymentTerms(value) {
+      if (!value) return
+      this.orders.payment = value
     }
   }
 }

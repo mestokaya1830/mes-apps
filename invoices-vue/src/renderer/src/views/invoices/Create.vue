@@ -118,6 +118,10 @@ export default {
     getPositions(value) {
       if (!value) return
       // this.invoices.positions = value //with emit from child component positions
+    },
+    getPaymentTerms(value) {
+      if (!value) return
+      this.invoices.payment = value //with emit from child component payment terms
     }
   }
 }

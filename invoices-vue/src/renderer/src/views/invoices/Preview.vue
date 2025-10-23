@@ -54,7 +54,8 @@
 
             <div
               v-else-if="
-                invoicesPreview.selected_customer.is_in_eu && invoicesPreview.selected_customer.vat_id
+                invoicesPreview.selected_customer.is_in_eu &&
+                invoicesPreview.selected_customer.vat_id
               "
               class="meta-row"
             >
@@ -183,9 +184,7 @@
         </div>
 
         <!-- Payment Terms -->
-        <div class="payment-terms">
-          <strong>Zahlungsbedingungen:</strong> Zahlbar innerhalb von 14 Tagen ab Rechnungsdatum.
-        </div>
+        <PaymentTermsPreview v-if="invoicesPreview.payment" :data="invoicesPreview.payment" />
 
         <!-- Contact Person -->
         <ContactPersonPreview
@@ -228,10 +227,17 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
+import PaymentTermsPreview from '../../components/preview/PaymentTermsPreview.vue'
 
 export default {
   name: 'InvoicesPreview',
-  components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
+  components: {
+    HeaderSidePreview,
+    FooterSidePreview,
+    ActionsButtonPreview,
+    ContactPersonPreview,
+    PaymentTermsPreview
+  },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {

@@ -133,23 +133,7 @@
         </div>
 
         <!-- Payment Terms -->
-        <div class="conditions">
-          <div class="condition-section">
-            <div class="condition-title">💳 Zahlungsbedingungen</div>
-            <div class="condition-text">
-              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss des Projekts. Zahlbar
-              innerhalb von 14 Tagen netto ohne Abzug.
-            </div>
-          </div>
-
-          <div class="condition-section">
-            <div class="condition-title">⚙️ Leistungsumfang</div>
-            <div class="condition-text">
-              Der Leistungsumfang entspricht dem Angebot Nr. {{ offersPreview.offer_ref }} und den
-              besprochenen Anforderungen.
-            </div>
-          </div>
-        </div>
+        <PaymentTermsPreview v-if="offersPreview.payment" :data="offersPreview.payment" />
 
         <!-- Closing -->
         <div class="closing closing-pro">
@@ -183,10 +167,17 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
+import PaymentTermsPreview from '../../components/preview/PaymentTermsPreview.vue'
 
 export default {
   name: 'OffersPreview',
-  components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
+  components: {
+    HeaderSidePreview,
+    FooterSidePreview,
+    ActionsButtonPreview,
+    ContactPersonPreview,
+    PaymentTermsPreview
+  },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'formatValidDays'],
   data() {
     return {

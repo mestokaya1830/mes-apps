@@ -70,24 +70,7 @@
       </div>
 
       <!-- payment terms -->
-      <div class="form-section">
-        <div class="form-section-title">💳 Zahlungsinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Anzahlung (bereits bezahlt)</label>
-            <input
-              v-model.number="offers.paid_amount"
-              type="number"
-              class="form-input"
-              step="0.01"
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Zahlungsziel (Tage)</label>
-            <input v-model.number="offers.payment_terms" type="number" class="form-input" />
-          </div>
-        </div>
-      </div>
+      <PaymentTerms store-name="offersPreview" @get-payment-terms="getPaymentTerms" />
 
       <!-- positions -->
       <Positions store-name="offersPreview" @get-positions="getPositions" />
@@ -105,13 +88,16 @@ import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
 import Currency from '../../components/form/Currency.vue'
 import Positions from '../../components/form/Positions.vue'
+import PaymentTerms from '../../components/form/PaymenTerms.vue'
+
 export default {
   name: 'CreateOffer',
   components: {
     SelectedCustomer,
     ContactPerson,
     Currency,
-    Positions
+    Positions,
+    PaymentTerms
   },
   inject: ['storePreview'],
   data() {
@@ -124,8 +110,7 @@ export default {
         valid_days: '',
         service_period_start: '',
         service_period_end: '',
-        paid_amount: 0,
-        payment_terms: 14,
+        payment: {},
         is_legal_validity: false,
         positions: [],
         currency: '',
@@ -156,6 +141,10 @@ export default {
     getPositions(value) {
       if (!value) return
       // this.offers.positions = value
+    },
+    getPaymentTerms(value) {
+      if (!value) return
+      this.offers.payment = value
     }
   }
 }

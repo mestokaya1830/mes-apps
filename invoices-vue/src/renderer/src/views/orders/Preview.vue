@@ -124,15 +124,7 @@
         </div>
 
         <!-- Payment Terms -->
-        <div class="conditions">
-          <div class="condition-section">
-            <div class="condition-title">💳 Zahlungsbedingungen</div>
-            <div class="condition-text">
-              50 % Anzahlung bei Auftragserteilung, Restzahlung nach Projektabschluss. Zahlbar
-              innerhalb von 14 Tagen netto ohne Abzug.
-            </div>
-          </div>
-        </div>
+        <PaymentTermsPreview v-if="ordersPreview.payment" :data="ordersPreview.payment" />
 
         <!-- Contact Person -->
 
@@ -161,10 +153,17 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
+import PaymentTermsPreview from '../../components/preview/PaymentTermsPreview.vue'
 
 export default {
   name: 'OrdersPreview',
-  components: { HeaderSidePreview, FooterSidePreview, ActionsButtonPreview, ContactPersonPreview },
+  components: {
+    HeaderSidePreview,
+    FooterSidePreview,
+    ActionsButtonPreview,
+    ContactPersonPreview,
+    PaymentTermsPreview
+  },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
