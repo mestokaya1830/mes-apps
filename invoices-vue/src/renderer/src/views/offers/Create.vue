@@ -94,7 +94,7 @@
 
       <!-- preview -->
       <button class="back-btn" @click="storePreview(offers, 'offers', 'setOffersPreview')">
-        Preview
+        Vorschau
       </button>
     </div>
   </div>
@@ -141,21 +141,21 @@ export default {
     }
   },
   methods: {
-    getSelectedCustomer(customer) {
-      if (!customer) return
-      this.offers.selected_customer = customer
+    getSelectedCustomer(value) {
+      if (!value) return
+      this.offers.selected_customer = value
     },
-    getContactPerson(contact_person) {
-      if (!contact_person) return
-      this.offers.contact_person = contact_person
+    getContactPerson(value) {
+      if (!value) return
+      this.offers.contact_person = value
     },
-    getCurrency(currency) {
-      if (!currency) return
-      this.offers.currency = currency
+    getCurrency(value) {
+      if (!value) return
+      this.offers.currency = value
     },
-    getPositions(positions) {
-      if (!positions) return
-      // this.offer.positions = positions
+    getPositions(value) {
+      if (!value) return
+      // this.offers.positions = value
     }
   }
 }

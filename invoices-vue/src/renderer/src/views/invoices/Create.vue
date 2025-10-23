@@ -64,7 +64,7 @@
 
       <!-- preview -->
       <button class="back-btn" @click="storePreview(invoices, 'invoices', 'setInvoicesPreview')">
-        Preview
+        Vorschau
       </button>
     </div>
   </div>
@@ -72,10 +72,10 @@
 
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
-import ContactPerson from '../../components/form/SelectedCustomer.vue'
-import Currency from '../../components/form/SelectedCustomer.vue'
-import SmallCompany from '../../components/form/SelectedCustomer.vue'
-import Positions from '../../components/form/SelectedCustomer.vue'
+import ContactPerson from '../../components/form/ContactPerson.vue'
+import Currency from '../../components/form/Currency.vue'
+import SmallCompany from '../../components/form/SmallCompany.vue'
+import Positions from '../../components/form/Positions.vue'
 
 export default {
   name: 'CreateInvoices',

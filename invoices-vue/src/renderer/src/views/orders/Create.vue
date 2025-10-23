@@ -68,7 +68,7 @@
 
       <!-- preview -->
       <button class="back-btn" @click="storePreview(orders, 'orders', 'setOrdersPreview')">
-        Preview
+        Vorschau
       </button>
     </div>
   </div>
@@ -111,40 +111,23 @@ export default {
       const preview = this.$store.state.ordersPreview
       if (preview) this.orders = preview
     }
-    this.getCustomers()
   },
   methods: {
-    async getCustomers() {
-      try {
-        const response = await window.api.getCustomers()
-        if (response.success) {
-          this.customers = response.customers
-        } else {
-          console.error('Error fetching customers:', response.message)
-        }
-      } catch (error) {
-        console.error('Error fetching customers:', error)
-      }
+    getSelectedCustomer(value) {
+      if (!value) return
+      this.orders.selected_customer = value
     },
-    getCustomerById() {
-      const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.orders.selected_customer = { ...customer }
+    getContactPerson(value) {
+      if (!value) return
+      this.orders.contact_person = value
     },
-    getSelectedCustomer(customer) {
-      if (!customer) return
-      this.orders.selected_customer = customer
+    getCurrency(value) {
+      if (!value) return
+      this.orders.currency = value
     },
-    getContactPerson(contact_person) {
-      if (!contact_person) return
-      this.orders.contact_person = contact_person
-    },
-    getCurrency(currency) {
-      if (!currency) return
-      this.orders.currency = currency
-    },
-    getPositions(positions) {
-      if (!positions) return
-      this.orders.positions = positions
+    getPositions(value) {
+      if (!value) return
+      // this.orders.positions = value
     }
   }
 }
