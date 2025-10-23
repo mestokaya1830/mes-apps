@@ -75,10 +75,10 @@
 </template>
 
 <script>
-import SelectedCustomer from '../../components/SelectedCustomer.vue'
-import ContactPerson from '../../components/ContactPerson.vue'
-import Currency from '../../components/Currency.vue'
-import Positions from '../../components/Positions.vue'
+import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
+import ContactPerson from '../../components/form/ContactPerson.vue'
+import Currency from '../../components/form/Currency.vue'
+import Positions from '../../components/form/Positions.vue'
 export default {
   name: 'CreateOrder',
   components: {
