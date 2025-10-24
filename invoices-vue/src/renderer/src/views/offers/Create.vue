@@ -69,6 +69,9 @@
         </div>
       </div>
 
+      <!-- small company -->
+      <SmallCompany store-name="offersPreview" @get-small-company="getSmallCompany" />
+
       <!-- payment terms -->
       <PaymentTerms store-name="offersPreview" @get-payment-terms="getPaymentTerms" />
 
@@ -88,7 +91,8 @@ import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
 import Currency from '../../components/form/Currency.vue'
 import Positions from '../../components/form/Positions.vue'
-import PaymentTerms from '../../components/form/PaymenTerms.vue'
+import PaymentTerms from '../../components/form/PaymentTerms.vue'
+import SmallCompany from '../../components/form/SmallCompany.vue'
 
 export default {
   name: 'CreateOffer',
@@ -97,7 +101,8 @@ export default {
     ContactPerson,
     Currency,
     Positions,
-    PaymentTerms
+    PaymentTerms,
+    SmallCompany
   },
   inject: ['storePreview'],
   data() {
@@ -127,24 +132,22 @@ export default {
   },
   methods: {
     getSelectedCustomer(value) {
-      if (!value) return
       this.offers.selected_customer = value
     },
     getContactPerson(value) {
-      if (!value) return
       this.offers.contact_person = value
     },
     getCurrency(value) {
-      if (!value) return
       this.offers.currency = value
     },
-    getPositions(value) {
-      if (!value) return
-      // this.offers.positions = value
-    },
+    // getPositions(value) {
+    //   this.offers.positions = value
+    // },
     getPaymentTerms(value) {
-      if (!value) return
       this.offers.payment = value
+    },
+    getSmallCompany(value) {
+      this.offers.is_small_company = value
     }
   }
 }

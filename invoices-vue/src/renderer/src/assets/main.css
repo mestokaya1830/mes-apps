@@ -459,7 +459,10 @@ input:not([readonly]) {
   font-size: 12px;
   color: #64748b;
 }
-
+.position-service-period {
+  font-size: 12px;
+  color: #64748b;
+}
 /* TOTALS */
 .totals {
   margin-left: auto;

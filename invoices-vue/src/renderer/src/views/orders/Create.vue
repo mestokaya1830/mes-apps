@@ -40,11 +40,14 @@
       <!-- contact person -->
       <ContactPerson store-name="ordersPreview" @get-contact-person="getContactPerson" />
 
+      <!-- small company -->
+      <SmallCompany store-name="ordersPreview" @get-small-company="getSmallCompany" />
+
       <!-- currency -->
       <Currency store-name="ordersPreview" @get-currency="getCurrency" />
 
       <!-- payment terms -->
-      <PaymenTerms store-name="ordersPreview" @get-payment-terms="getPaymentTerms" />
+      <PaymentTerms store-name="ordersPreview" @get-payment-terms="getPaymentTerms" />
 
       <!-- positions -->
       <Positions store-name="ordersPreview" @get-positions="getPositions" />
@@ -62,7 +65,8 @@ import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
 import Currency from '../../components/form/Currency.vue'
 import Positions from '../../components/form/Positions.vue'
-import PaymenTerms from '../../components/form/PaymenTerms.vue'
+import PaymentTerms from '../../components/form/PaymentTerms.vue'
+import SmallCompany from '../../components/form/SmallCompany.vue'
 
 export default {
   name: 'CreateOrder',
@@ -71,7 +75,8 @@ export default {
     ContactPerson,
     Currency,
     Positions,
-    PaymenTerms
+    PaymentTerms,
+    SmallCompany
   },
   inject: ['storePreview'],
   data() {
@@ -99,24 +104,22 @@ export default {
   },
   methods: {
     getSelectedCustomer(value) {
-      if (!value) return
       this.orders.selected_customer = value
     },
     getContactPerson(value) {
-      if (!value) return
       this.orders.contact_person = value
     },
     getCurrency(value) {
-      if (!value) return
       this.orders.currency = value
     },
-    getPositions(value) {
-      if (!value) return
-      // this.orders.positions = value
-    },
+    // getPositions(value) {
+    //   this.orders.positions = value
+    // },
     getPaymentTerms(value) {
-      if (!value) return
       this.orders.payment = value
+    },
+    getSmallCompany(value) {
+      this.orders.is_small_company = value
     }
   }
 }

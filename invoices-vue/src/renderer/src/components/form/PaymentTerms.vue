@@ -3,7 +3,7 @@
     <div class="form-section">
       <div class="form-section-title">💳 Zahlungsinformationen</div>
 
-      <div class="form-row">
+      <div v-if="storeName === 'invoicesPreview'" class="form-row">
         <div class="form-group">
           <label class="form-label">Anzahlung (bereits bezahlt)</label>
           <input
@@ -25,16 +25,14 @@
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Zahlungsbedingungen / Payment Terms</label>
-          <textarea
-            v-model="payment.payment_conditions"
-            class="form-input payment-terms"
-            placeholder="50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss. / 50% upfront, balance upon completion."
-            @input="getPaymentTerms"
-          ></textarea>
-        </div>
+      <div class="form-group">
+        <label class="form-label">Zahlungsbedingungen / Payment Terms</label>
+        <textarea
+          v-model="payment.payment_conditions"
+          class="form-input payment-terms"
+          placeholder="50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss. / 50% upfront, balance upon completion."
+          @input="getPaymentTerms"
+        ></textarea>
       </div>
     </div>
   </div>

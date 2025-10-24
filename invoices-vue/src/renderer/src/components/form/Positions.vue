@@ -17,6 +17,16 @@
             <label class="form-label">Beschreibung</label>
             <input v-model="pos.description" type="text" class="form-input" />
           </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Leistungszeitraum Von</label>
+              <input v-model="pos.service_period_start" type="date" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Leistungszeitraum Bis</label>
+              <input v-model="pos.service_period_end" type="date" class="form-input" />
+            </div>
+          </div>
           <div class="position-inputs">
             <div class="form-group">
               <label class="form-label">Einheit</label>
@@ -72,6 +82,7 @@ export default {
       return this.positions
     }
   },
+
   methods: {
     addPosition() {
       this.positions.push({
@@ -80,7 +91,8 @@ export default {
         quantity: 1,
         unit: 'Stk',
         price: 0,
-        vat: 19
+        vat: 19,
+        unit_total: 0
       })
       this.$emit('get-positions', this.positions)
     },

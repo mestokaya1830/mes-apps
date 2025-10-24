@@ -73,35 +73,33 @@ export default {
         0
       )
     },
-    grandTotal() {
+    total() {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      return this.grandTotal - this.dinamicStore.payment.paid_amount
+      return this.total - this.dinamicStore.payment.paid_amount
     }
   },
   methods: {
     storePreview(data, storeLink, storeCommit) {
       if (data) this.dinamicStore = data
       try {
-        this.dinamicStore.positions = this.dinamicStore.positions.map((pos) => ({
-          ...pos,
-          unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
-        }))
+        // this.dinamicStore.positions = this.dinamicStore.positions.map((pos) => ({
+        //   ...pos,
+        //   unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
+        // }))
         //i used commit because "this" keyword not working in provider
         this.$store.commit(storeCommit, {
           id: this.dinamicStore.id,
           date: this.dinamicStore.date,
           valid_days: this.dinamicStore.valid_days,
-          service_period_start: this.dinamicStore.service_period_start,
-          service_period_end: this.dinamicStore.service_period_end,
           payment: this.dinamicStore.payment,
-          verwendung: this.dinamicStore.verwendung,
+          verwendungzweck: this.dinamicStore.verwendungzweck,
           is_small_company: this.dinamicStore.is_small_company,
           positions: this.dinamicStore.positions,
           subtotal: this.subtotal.toFixed(2),
           vat_amount: this.vatAmount.toFixed(2),
-          total: this.grandTotal.toFixed(2),
+          total: this.total.toFixed(2),
           outstanding: this.outstanding.toFixed(2),
           currency: this.dinamicStore.currency,
           selected_customer: { ...this.dinamicStore.selected_customer },

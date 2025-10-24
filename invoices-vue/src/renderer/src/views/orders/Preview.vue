@@ -66,62 +66,7 @@
         </div>
 
         <!-- Positions Table -->
-        <table class="positions-table">
-          <thead>
-            <tr>
-              <th style="width: 5%">Pos.</th>
-              <th style="width: 40%">Bezeichnung</th>
-              <th class="center" style="width: 8%">Menge</th>
-              <th class="center" style="width: 10%">Einheit</th>
-              <th class="right" style="width: 12%">Einzelpreis</th>
-              <th class="right" style="width: 10%">MwSt.</th>
-              <th class="right" style="width: 15%">Gesamtpreis</th>
-            </tr>
-          </thead>
-          <tbody v-if="ordersPreview.positions?.length">
-            <tr v-for="(item, index) in ordersPreview.positions" :key="index">
-              <td>{{ index + 1 }}</td>
-              <td>
-                <div class="position-title">{{ item.title || '–' }}</div>
-                <div v-if="item.description" class="position-description">
-                  {{ item.description }}
-                </div>
-              </td>
-              <td class="center">{{ item.quantity ?? 0 }}</td>
-              <td class="center">{{ item.unit || '' }}</td>
-              <td class="right">{{ formatCurrency(item.price, ordersPreview.currency) }}</td>
-              <td class="right">{{ item.vat != null ? item.vat + ' %' : '0 %' }}</td>
-              <td class="right">{{ formatCurrency(item.unit_total, ordersPreview.currency) }}</td>
-            </tr>
-          </tbody>
-          <tbody v-else>
-            <tr>
-              <td colspan="7" class="center text-gray-500">Keine Positionen vorhanden</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Totals -->
-        <div class="totals">
-          <div class="total-row">
-            <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{
-              formatCurrency(ordersPreview.subtotal, ordersPreview.currency)
-            }}</span>
-          </div>
-          <div class="total-row">
-            <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{
-              formatCurrency(ordersPreview.vat_amount, ordersPreview.currency)
-            }}</span>
-          </div>
-          <div class="total-row subtotal">
-            <span class="total-label">Auftragsbetrag (brutto):</span>
-            <span class="total-value">{{
-              formatCurrency(ordersPreview.total, ordersPreview.currency)
-            }}</span>
-          </div>
-        </div>
+        <PositionsPreview v-if="ordersPreview.positions" :data="ordersPreview" />
 
         <!-- Payment Terms -->
         <PaymentTermsPreview v-if="ordersPreview.payment" :data="ordersPreview.payment" />
@@ -154,6 +99,7 @@ import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import PaymentTermsPreview from '../../components/preview/PaymentTermsPreview.vue'
+import PositionsPreview from '../../components/preview/PositionsPreview.vue'
 
 export default {
   name: 'OrdersPreview',
@@ -162,7 +108,8 @@ export default {
     FooterSidePreview,
     ActionsButtonPreview,
     ContactPersonPreview,
-    PaymentTermsPreview
+    PaymentTermsPreview,
+    PositionsPreview
   },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
