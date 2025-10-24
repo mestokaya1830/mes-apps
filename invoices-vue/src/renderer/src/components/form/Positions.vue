@@ -10,7 +10,7 @@
             v-model="is_small_company"
             type="checkbox"
             class="switch-checkbox"
-            @change="getSmallCompany"
+            @change="getSmallCompany()"
           />
           <span class="slider round"></span>
         </label>
@@ -26,7 +26,7 @@
             v-model="is_reverse_charge"
             type="checkbox"
             class="switch-checkbox"
-            @change="getReverseCharge"
+            @change="getReverseCharge()"
           />
           <span class="slider round"></span>
         </label>
@@ -44,7 +44,7 @@
             type="number"
             class="form-input"
             step="0.01"
-            @input="getPaymentTerms"
+            @input="getPaymentTerms()"
           />
         </div>
         <div class="form-group">
@@ -53,7 +53,7 @@
             v-model.number="payment.payment_terms"
             type="number"
             class="form-input"
-            @input="getPaymentTerms"
+            @input="getPaymentTerms()"
           />
         </div>
       </div>
@@ -64,7 +64,7 @@
           v-model="payment.payment_conditions"
           class="form-input payment-terms"
           placeholder="50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss. / 50% upfront, balance upon completion."
-          @input="getPaymentTerms"
+          @input="getPaymentTerms()"
         ></textarea>
       </div>
     </div>
@@ -141,10 +141,6 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Unit Total (€)</label>
-            <input v-model.number="pos.unit_total" type="number" class="form-input" step="0.01" />
-          </div>
-          <div class="form-group">
             <label class="form-label">MwSt. (%)</label>
             <select v-model.number="pos.vat" class="form-input">
               <option :value="0">0</option>
@@ -152,6 +148,16 @@
               <option :value="19">19</option>
             </select>
           </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Unit Total (€)</label>
+          <input
+            v-model.number="pos.unit_total"
+            type="number"
+            class="form-input"
+            step="0.01"
+            readonly
+          />
         </div>
       </div>
     </div>
@@ -203,14 +209,14 @@ export default {
     }
   },
   methods: {
-    getSmallCompany(value) {
-      this.is_small_company = value
+    getSmallCompany() {
+      console.log(this.is_small_company)
     },
-    getReverseCharge(value) {
-      this.is_reverse_charge = value
+    getReverseCharge() {
+      console.log(this.is_reverse_charge)
     },
-    getCurrency(value) {
-      this.currency = value
+    getCurrency() {
+      console.log(this.currency)
     },
     addPosition() {
       this.positions.push({
@@ -233,13 +239,9 @@ export default {
       }
     },
     getUnitTotal(quantity, price, index) {
-      const store = this.$store.state[this.storeName]
-      const isSmallCompany = store?.is_small_company
-      const isReverseCharge = store?.reverse_charge
       const vat = this.positions[index].vat || 0
-
       const base = quantity * price
-      const total = isSmallCompany || isReverseCharge ? base : base * (1 + vat / 100)
+      const total = this.is_small_company || this.is_reverse_charge ? base : base * (1 + vat / 100)
 
       this.positions[index].unit_total = total.toFixed(2)
       console.log(this.positions)
