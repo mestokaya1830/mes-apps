@@ -82,9 +82,6 @@
           </div>
         </div>
 
-        <!-- Payment Terms -->
-        <PaymentTermsPreview v-if="offersPreview.payment" :data="offersPreview.payment" />
-
         <!-- Closing -->
         <div class="closing closing-pro">
           Wir bedanken uns für Ihr Vertrauen und freuen uns auf eine erfolgreiche Zusammenarbeit.<br /><br />
@@ -117,7 +114,6 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import PaymentTermsPreview from '../../components/preview/PaymentTermsPreview.vue'
 import PositionsPreview from '../../components/preview/PositionsPreview.vue'
 
 export default {
@@ -127,7 +123,6 @@ export default {
     FooterSidePreview,
     ActionsButtonPreview,
     ContactPersonPreview,
-    PaymentTermsPreview,
     PositionsPreview
   },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'formatValidDays'],

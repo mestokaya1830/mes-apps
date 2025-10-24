@@ -22,15 +22,6 @@ export default {
         if (!value) return ''
         return `KU-${String(value).padStart(5, '0')}`
       },
-      formatCurrency(value, currency) {
-        if (currency) {
-          const num = parseFloat(value) || 0
-          return new Intl.NumberFormat(currency.substr(4), {
-            style: 'currency',
-            currency: currency.substr(0, 3)
-          }).format(num)
-        }
-      },
       formatDate(value) {
         if (!value) return ''
         try {
@@ -63,23 +54,7 @@ export default {
       dinamicStore: {}
     }
   },
-  computed: {
-    subtotal() {
-      return this.dinamicStore.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
-    },
-    vatAmount() {
-      return this.dinamicStore.positions.reduce(
-        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-        0
-      )
-    },
-    total() {
-      return this.subtotal + this.vatAmount
-    },
-    outstanding() {
-      return this.total - this.dinamicStore.payment.paid_amount
-    }
-  },
+
   methods: {
     storePreview(data, storeLink, storeCommit) {
       if (data) this.dinamicStore = data
@@ -93,15 +68,12 @@ export default {
           id: this.dinamicStore.id,
           date: this.dinamicStore.date,
           valid_days: this.dinamicStore.valid_days,
-          payment: this.dinamicStore.payment,
           verwendungzweck: this.dinamicStore.verwendungzweck,
-          is_small_company: this.dinamicStore.is_small_company,
           positions: this.dinamicStore.positions,
-          subtotal: this.subtotal.toFixed(2),
-          vat_amount: this.vatAmount.toFixed(2),
-          total: this.total.toFixed(2),
-          outstanding: this.outstanding.toFixed(2),
-          currency: this.dinamicStore.currency,
+          // subtotal: this.subtotal.toFixed(2),
+          // vat_amount: this.vatAmount.toFixed(2),
+          // total: this.total.toFixed(2),
+          // outstanding: this.outstanding.toFixed(2),
           selected_customer: { ...this.dinamicStore.selected_customer },
           contact_person: { ...this.dinamicStore.contact_person }
         })

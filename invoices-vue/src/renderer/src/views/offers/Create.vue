@@ -50,9 +50,6 @@
       <!-- contact person -->
       <ContactPerson store-name="offersPreview" @get-contact-person="getContactPerson" />
 
-      <!-- currency -->
-      <Currency store-name="offersPreview" @get-currency="getCurrency" />
-
       <!-- legal validity -->
       <div class="form-section">
         <div class="form-section-title">
@@ -69,12 +66,6 @@
         </div>
       </div>
 
-      <!-- small company -->
-      <SmallCompany store-name="offersPreview" @get-small-company="getSmallCompany" />
-
-      <!-- payment terms -->
-      <PaymentTerms store-name="offersPreview" @get-payment-terms="getPaymentTerms" />
-
       <!-- positions -->
       <Positions store-name="offersPreview" @get-positions="getPositions" />
 
@@ -89,20 +80,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
-import Currency from '../../components/form/Currency.vue'
 import Positions from '../../components/form/Positions.vue'
-import PaymentTerms from '../../components/form/PaymentTerms.vue'
-import SmallCompany from '../../components/form/SmallCompany.vue'
 
 export default {
   name: 'CreateOffer',
   components: {
     SelectedCustomer,
     ContactPerson,
-    Currency,
-    Positions,
-    PaymentTerms,
-    SmallCompany
+    Positions
   },
   inject: ['storePreview'],
   data() {
@@ -118,7 +103,6 @@ export default {
         payment: {},
         is_legal_validity: false,
         positions: [],
-        currency: '',
         selected_customer: {},
         contact_person: {}
       }
@@ -137,18 +121,9 @@ export default {
     getContactPerson(value) {
       this.offers.contact_person = value
     },
-    getCurrency(value) {
-      this.offers.currency = value
-    },
     // getPositions(value) {
     //   this.offers.positions = value
     // },
-    getPaymentTerms(value) {
-      this.offers.payment = value
-    },
-    getSmallCompany(value) {
-      this.offers.is_small_company = value
-    }
   }
 }
 </script>

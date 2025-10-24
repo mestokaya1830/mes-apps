@@ -33,15 +33,6 @@
       <!-- contact person -->
       <ContactPerson store-name="invoicesPreview" @get-contect-person="getContectPerson" />
 
-      <!-- small company -->
-      <SmallCompany store-name="invoicesPreview" @get-small-company="getSmallCompany" />
-
-      <!-- currency -->
-      <Currency store-name="invoicesPreview" @get-currency="getCurrency" />
-
-      <!-- payment terms -->
-      <PaymentTerms store-name="invoicesPreview" @get-payment-terms="getPaymentTerms" />
-
       <!-- positions -->
       <Positions store-name="invoicesPreview" @get-positions="getPositions" />
 
@@ -56,20 +47,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
-import Currency from '../../components/form/Currency.vue'
-import SmallCompany from '../../components/form/SmallCompany.vue'
 import Positions from '../../components/form/Positions.vue'
-import PaymentTerms from '../../components/form/PaymentTerms.vue'
 
 export default {
   name: 'CreateInvoices',
   components: {
     SelectedCustomer,
     ContactPerson,
-    Currency,
-    SmallCompany,
-    Positions,
-    PaymentTerms
+    Positions
   },
   inject: ['storePreview'],
   data() {
@@ -78,7 +63,6 @@ export default {
       invoices: {
         id: 1,
         date: '',
-        is_small_company: false,
         service_period_start: '',
         service_period_end: '',
         verwendungzweck: '',

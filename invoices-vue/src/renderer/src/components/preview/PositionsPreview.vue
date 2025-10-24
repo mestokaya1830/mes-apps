@@ -84,6 +84,20 @@ export default {
       type: Object,
       required: true
     }
+  },
+  data() {
+    return {}
+  },
+  methods: {
+    formatCurrency(value, currency) {
+      if (currency) {
+        const num = parseFloat(value) || 0
+        return new Intl.NumberFormat(currency.substr(4), {
+          style: 'currency',
+          currency: currency.substr(0, 3)
+        }).format(num)
+      }
+    }
   }
 }
 </script>

@@ -40,15 +40,6 @@
       <!-- contact person -->
       <ContactPerson store-name="ordersPreview" @get-contact-person="getContactPerson" />
 
-      <!-- small company -->
-      <SmallCompany store-name="ordersPreview" @get-small-company="getSmallCompany" />
-
-      <!-- currency -->
-      <Currency store-name="ordersPreview" @get-currency="getCurrency" />
-
-      <!-- payment terms -->
-      <PaymentTerms store-name="ordersPreview" @get-payment-terms="getPaymentTerms" />
-
       <!-- positions -->
       <Positions store-name="ordersPreview" @get-positions="getPositions" />
 
@@ -63,20 +54,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
-import Currency from '../../components/form/Currency.vue'
 import Positions from '../../components/form/Positions.vue'
-import PaymentTerms from '../../components/form/PaymentTerms.vue'
-import SmallCompany from '../../components/form/SmallCompany.vue'
 
 export default {
   name: 'CreateOrder',
   components: {
     SelectedCustomer,
     ContactPerson,
-    Currency,
-    Positions,
-    PaymentTerms,
-    SmallCompany
+    Positions
   },
   inject: ['storePreview'],
   data() {
@@ -90,7 +75,6 @@ export default {
         verwendung: 'Nicht angegeben',
         payment: {},
         positions: [],
-        currency: '',
         selected_customer: {},
         contact_person: {}
       }
@@ -109,18 +93,9 @@ export default {
     getContactPerson(value) {
       this.orders.contact_person = value
     },
-    getCurrency(value) {
-      this.orders.currency = value
-    },
     // getPositions(value) {
     //   this.orders.positions = value
     // },
-    getPaymentTerms(value) {
-      this.orders.payment = value
-    },
-    getSmallCompany(value) {
-      this.orders.is_small_company = value
-    }
   }
 }
 </script>

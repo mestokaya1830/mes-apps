@@ -68,11 +68,7 @@
         <!-- Positions Table -->
         <PositionsPreview v-if="ordersPreview.positions" :data="ordersPreview" />
 
-        <!-- Payment Terms -->
-        <PaymentTermsPreview v-if="ordersPreview.payment" :data="ordersPreview.payment" />
-
         <!-- Contact Person -->
-
         <ContactPersonPreview
           v-if="ordersPreview.contact_person"
           :data="ordersPreview.contact_person"
@@ -98,7 +94,6 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import PaymentTermsPreview from '../../components/preview/PaymentTermsPreview.vue'
 import PositionsPreview from '../../components/preview/PositionsPreview.vue'
 
 export default {
@@ -108,7 +103,6 @@ export default {
     FooterSidePreview,
     ActionsButtonPreview,
     ContactPersonPreview,
-    PaymentTermsPreview,
     PositionsPreview
   },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
