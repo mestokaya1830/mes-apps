@@ -65,8 +65,8 @@
           vielen Dank für Ihre Auftragserteilung. Wir bestätigen Ihnen hiermit folgenden Auftrag:
         </div>
 
-        <!-- Positions Table -->
-        <PositionsPreview v-if="ordersPreview.positions" :data="ordersPreview" />
+        <!-- events -->
+        <EventsPreview v-if="ordersPreview.events" :data="ordersPreview" />
 
         <!-- Contact Person -->
         <ContactPersonPreview
@@ -94,7 +94,7 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import PositionsPreview from '../../components/preview/PositionsPreview.vue'
+import EventsPreview from '../../components/preview/EventsPreview.vue'
 
 export default {
   name: 'OrdersPreview',
@@ -103,7 +103,7 @@ export default {
     FooterSidePreview,
     ActionsButtonPreview,
     ContactPersonPreview,
-    PositionsPreview
+    EventsPreview
   },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {

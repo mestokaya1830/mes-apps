@@ -93,8 +93,8 @@
           für die erbrachten Leistungen erlauben wir uns, Ihnen wie folgt in Rechnung zu stellen:
         </div>
 
-        <!-- Positions Table -->
-        <PositionsPreview v-if="invoicesPreview.positions" :data="invoicesPreview" />
+        <!-- Events Table -->
+        <EventsPreview v-if="invoicesPreview.events" :data="invoicesPreview" />
 
         <!-- Contact Person -->
         <ContactPersonPreview
@@ -137,7 +137,7 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import PositionsPreview from '../../components/preview/PositionsPreview.vue'
+import EventsPreview from '../../components/preview/EventsPreview.vue'
 
 export default {
   name: 'InvoicesPreview',
@@ -146,7 +146,7 @@ export default {
     FooterSidePreview,
     ActionsButtonPreview,
     ContactPersonPreview,
-    PositionsPreview
+    EventsPreview
   },
   inject: ['formatCustomerId', 'formatDate'],
   data() {

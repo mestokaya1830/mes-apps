@@ -66,8 +66,8 @@
         </div>
       </div>
 
-      <!-- positions -->
-      <Positions store-name="offersPreview" @get-positions="getPositions" />
+      <!-- events -->
+      <Events store-name="offersPreview" @get-events="getEvents" />
 
       <!-- preview -->
       <button class="back-btn" @click="storePreview(offers, 'offers', 'setOffersPreview')">
@@ -80,14 +80,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
-import Positions from '../../components/form/Positions.vue'
+import Events from '../../components/form/Events.vue'
 
 export default {
   name: 'CreateOffer',
   components: {
     SelectedCustomer,
     ContactPerson,
-    Positions
+    Events
   },
   inject: ['storePreview'],
   data() {
@@ -96,15 +96,13 @@ export default {
       offers: {
         title: 'Mein erstes Angebot',
         id: '1',
+        source_page: 'offers',
         date: '2024-12-15',
         valid_days: '',
-        service_period_start: '',
-        service_period_end: '',
-        payment: {},
         is_legal_validity: false,
-        positions: [],
         selected_customer: {},
-        contact_person: {}
+        contact_person: {},
+        events: {}
       }
     }
   },
@@ -121,9 +119,9 @@ export default {
     getContactPerson(value) {
       this.offers.contact_person = value
     },
-    // getPositions(value) {
-    //   this.offers.positions = value
-    // },
+    getEvents(value) {
+      this.offers.events = value
+    }
   }
 }
 </script>

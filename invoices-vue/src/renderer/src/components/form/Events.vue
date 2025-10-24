@@ -7,7 +7,7 @@
         <label for="kleinunternehmer-checkbox" class="switch">
           <input
             id="kleinunternehmer-checkbox"
-            v-model="is_small_company"
+            v-model="events.is_small_company"
             type="checkbox"
             class="switch-checkbox"
             @change="getSmallCompany()"
@@ -23,7 +23,7 @@
         <label for="kleinunternehmer-checkbox" class="switch">
           <input
             id="kleinunternehmer-checkbox"
-            v-model="is_reverse_charge"
+            v-model="events.is_reverse_charge"
             type="checkbox"
             class="switch-checkbox"
             @change="getReverseCharge()"
@@ -40,7 +40,7 @@
         <div class="form-group">
           <label class="form-label">Anzahlung (bereits bezahlt)</label>
           <input
-            v-model.number="payment.paid_amount"
+            v-model.number="events.payment.paid_amount"
             type="number"
             class="form-input"
             step="0.01"
@@ -50,7 +50,7 @@
         <div class="form-group">
           <label class="form-label">Zahlungsziel (Tage)</label>
           <input
-            v-model.number="payment.payment_terms"
+            v-model.number="events.payment.payment_terms"
             type="number"
             class="form-input"
             @input="getPaymentTerms()"
@@ -61,7 +61,7 @@
       <div class="form-group">
         <label class="form-label">Zahlungsbedingungen / Payment Terms</label>
         <textarea
-          v-model="payment.payment_conditions"
+          v-model="events.payment.payment_conditions"
           class="form-input payment-terms"
           placeholder="50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss. / 50% upfront, balance upon completion."
           @input="getPaymentTerms()"
@@ -74,7 +74,7 @@
       <div class="form-section-title">💰 Währung</div>
       <div class="form-group">
         <label class="form-label">Waehrung</label>
-        <select v-model="currency" class="form-input" @change="getCurrency()">
+        <select v-model="events.currency" class="form-input" @change="getCurrency()">
           <option selected disabled>Wähle Waehrung</option>
           <option value="EUR.de-DE">EUR</option>
           <option value="USD.en-US">USD</option>
@@ -91,9 +91,9 @@
     </div>
     <!-- positions -->
     <div class="form-section-title">📦 Positionen</div>
-    <div v-if="positions && positions.length === 0">Keine Positionen vorhanden</div>
+    <div v-if="events.positions && events.positions.length === 0">Keine Positionen vorhanden</div>
     <div v-else class="positions-editor">
-      <div v-for="(pos, index) in positions" :key="index" class="position-item">
+      <div v-for="(pos, index) in events.positions" :key="index" class="position-item">
         <div class="position-header">
           <span class="position-number">Position {{ index + 1 }}</span>
           <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -166,85 +166,89 @@
 </template>
 <script>
 export default {
-  name: 'Positions',
+  name: 'Events',
   props: {
     storeName: {
       type: String,
       required: true
     }
   },
-  emits: ['get-positions'],
+  emits: ['get-events'],
   data() {
     return {
-      positions: [],
-      is_small_company: false,
-      is_reverse_charge: false,
-      currency: 'Wähle Waehrung',
-      payment: {
-        paid_amount: 0,
-        payment_terms: 0,
-        payment_conditions: ''
+      events: {
+        positions: [
+          {
+            title: 'Neue Position',
+            description: 'Beschreibung',
+            service_period_start: '',
+            service_period_end: '',
+            quantity: 1,
+            unit: 'Stk',
+            price: 0,
+            vat: 19,
+            unit_total: 0
+          }
+        ],
+        is_small_company: false,
+        is_reverse_charge: false,
+        currency: 'EUR.de-DE',
+        payment: {
+          paid_amount: 0,
+          payment_terms: 0,
+          payment_conditions: ''
+        }
       }
     }
   },
-  computed: {
-    subtotal() {
-      return this.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
-    },
-    vatAmount() {
-      return this.positions.reduce((sum, p) => sum + (p.quantity * p.price * p.vat) / 100, 0)
-    },
-    total() {
-      return this.subtotal + this.vatAmount
-    },
-    outstanding() {
-      return this.total - this.payment.paid_amount
-    }
-  },
   mounted() {
-    if (this.$store.state[this.storeName] && this.$store.state[this.storeName].positions) {
-      this.positions = this.$store.state[this.storeName].positions
+    if (this.$store.state[this.storeName] && this.$store.state[this.storeName].events) {
+      this.events = this.$store.state[this.storeName].events
     } else {
-      return this.positions
+      return this.events
     }
   },
   methods: {
     getSmallCompany() {
-      console.log(this.is_small_company)
+      console.log(this.events.is_small_company)
     },
     getReverseCharge() {
-      console.log(this.is_reverse_charge)
+      console.log(this.events.is_reverse_charge)
     },
     getCurrency() {
-      console.log(this.currency)
+      console.log(this.events.currency)
     },
     addPosition() {
-      this.positions.push({
+      this.events.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
+        service_period_start: '',
+        service_period_end: '',
         quantity: 1,
         unit: 'Stk',
         price: 0,
         vat: 19,
         unit_total: 0
       })
-      this.$emit('get-positions', this.positions)
+      this.$emit('get-events', this.events)
     },
     deletePosition(index) {
-      if (this.positions.length > 0) {
-        this.positions.splice(index, 1)
-        this.$emit('get-positions', this.positions)
+      if (this.events.positions.length > 0) {
+        this.events.positions.splice(index, 1)
+        this.$emit('get-events', this.events.positions)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
     getUnitTotal(quantity, price, index) {
-      const vat = this.positions[index].vat || 0
+      const vat = this.events.positions[index].vat || 0
       const base = quantity * price
-      const total = this.is_small_company || this.is_reverse_charge ? base : base * (1 + vat / 100)
+      const total =
+        this.events.is_small_company || this.events.is_reverse_charge
+          ? base
+          : base * (1 + vat / 100)
 
-      this.positions[index].unit_total = total.toFixed(2)
-      console.log(this.positions)
+      this.events.positions[index].unit_total = total.toFixed(2)
     }
   }
 }

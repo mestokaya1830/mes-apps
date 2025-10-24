@@ -46,18 +46,48 @@ export default {
           year: 'numeric'
         })
       },
+      formatCurrency(value, currency) {
+        if (currency) {
+          const num = parseFloat(value) || 0
+          return new Intl.NumberFormat(currency.substr(4), {
+            style: 'currency',
+            currency: currency.substr(0, 3)
+          }).format(num)
+        }
+      },
       storePreview: this.storePreview
     }
   },
   data() {
     return {
-      dinamicStore: {}
+      dinmaicData: null
     }
   },
-
+  computed: {
+    subtotal() {
+      return this.dinmaicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+    },
+    vatAmount() {
+      return this.dinmaicData.events.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
+    },
+    total() {
+      return this.subtotal + this.vatAmount
+    },
+    outstanding() {
+      if (!this.dinmaicData.events.payment.paid_amount) {
+        return this.total - this.dinmaicData.events.payment.paid_amount
+      }
+      return 0
+    }
+  },
   methods: {
     storePreview(data, storeLink, storeCommit) {
-      if (data) this.dinamicStore = data
+      if (data) this.dinmaicData = data
+      console.log(data)
+      console.log(this.dinmaicData)
       try {
         // this.dinamicStore.positions = this.dinamicStore.positions.map((pos) => ({
         //   ...pos,
@@ -65,17 +95,20 @@ export default {
         // }))
         //i used commit because "this" keyword not working in provider
         this.$store.commit(storeCommit, {
-          id: this.dinamicStore.id,
-          date: this.dinamicStore.date,
-          valid_days: this.dinamicStore.valid_days,
-          verwendungzweck: this.dinamicStore.verwendungzweck,
-          positions: this.dinamicStore.positions,
-          // subtotal: this.subtotal.toFixed(2),
-          // vat_amount: this.vatAmount.toFixed(2),
-          // total: this.total.toFixed(2),
-          // outstanding: this.outstanding.toFixed(2),
-          selected_customer: { ...this.dinamicStore.selected_customer },
-          contact_person: { ...this.dinamicStore.contact_person }
+          id: data.id,
+          source_page: data.source_page,
+          date: data.date,
+          valid_days: data.valid_days,
+          verwendungzweck: data.verwendungzweck,
+          events: { ...data.events },
+          summary: {
+            subtotal: this.subtotal.toFixed(2),
+            vat_amount: this.vatAmount.toFixed(2),
+            total: this.total.toFixed(2),
+            outstanding: this.outstanding.toFixed(2)
+          },
+          selected_customer: { ...data.selected_customer },
+          contact_person: { ...data.contact_person }
         })
         this.$router.push(`/${storeLink}-preview`)
       } catch (error) {

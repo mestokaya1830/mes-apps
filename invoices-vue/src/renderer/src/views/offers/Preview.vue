@@ -71,7 +71,7 @@
         </div>
 
         <!-- Positions Table -->
-        <PositionsPreview v-if="offersPreview.positions" :data="offersPreview" />
+        <EventsPreview v-if="offersPreview.events" :data="offersPreview" />
 
         <!-- Project Info -->
         <div class="delivery-box">
@@ -114,7 +114,7 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import PositionsPreview from '../../components/preview/PositionsPreview.vue'
+import EventsPreview from '../../components/preview/EventsPreview.vue'
 
 export default {
   name: 'OffersPreview',
@@ -123,7 +123,7 @@ export default {
     FooterSidePreview,
     ActionsButtonPreview,
     ContactPersonPreview,
-    PositionsPreview
+    EventsPreview
   },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'formatValidDays'],
   data() {

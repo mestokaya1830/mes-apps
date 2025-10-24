@@ -40,8 +40,8 @@
       <!-- contact person -->
       <ContactPerson store-name="ordersPreview" @get-contact-person="getContactPerson" />
 
-      <!-- positions -->
-      <Positions store-name="ordersPreview" @get-positions="getPositions" />
+      <!-- events -->
+      <Events store-name="ordersPreview" @get-events="getEvents" />
 
       <!-- preview -->
       <button class="back-btn" @click="storePreview(orders, 'orders', 'setOrdersPreview')">
@@ -54,14 +54,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
-import Positions from '../../components/form/Positions.vue'
+import Events from '../../components/form/Events.vue'
 
 export default {
   name: 'CreateOrder',
   components: {
     SelectedCustomer,
     ContactPerson,
-    Positions
+    Events
   },
   inject: ['storePreview'],
   data() {
@@ -69,14 +69,12 @@ export default {
       title: 'Auftrag erstellen',
       orders: {
         id: '1',
+        source_page: 'orders',
         date: '',
-        service_period_start: '',
-        service_period_end: '',
         verwendung: 'Nicht angegeben',
-        payment: {},
-        positions: [],
         selected_customer: {},
-        contact_person: {}
+        contact_person: {},
+        events: {}
       }
     }
   },
@@ -93,9 +91,9 @@ export default {
     getContactPerson(value) {
       this.orders.contact_person = value
     },
-    // getPositions(value) {
-    //   this.orders.positions = value
-    // },
+    getEvents(value) {
+      this.orders.events = value
+    }
   }
 }
 </script>

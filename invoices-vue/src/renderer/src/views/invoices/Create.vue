@@ -33,8 +33,8 @@
       <!-- contact person -->
       <ContactPerson store-name="invoicesPreview" @get-contect-person="getContectPerson" />
 
-      <!-- positions -->
-      <Positions store-name="invoicesPreview" @get-positions="getPositions" />
+      <!-- events -->
+      <Events store-name="invoicesPreview" @get-events="getEvents" />
 
       <!-- preview -->
       <button class="back-btn" @click="storePreview(invoices, 'invoices', 'setInvoicesPreview')">
@@ -47,14 +47,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import ContactPerson from '../../components/form/ContactPerson.vue'
-import Positions from '../../components/form/Positions.vue'
+import Events from '../../components/form/Events.vue'
 
 export default {
   name: 'CreateInvoices',
   components: {
     SelectedCustomer,
     ContactPerson,
-    Positions
+    Events
   },
   inject: ['storePreview'],
   data() {
@@ -62,15 +62,12 @@ export default {
       title: 'Rechnung erstellen',
       invoices: {
         id: 1,
+        source_page: 'invoices',
         date: '',
-        service_period_start: '',
-        service_period_end: '',
         verwendungzweck: '',
         selected_customer: {},
         contact_person: {},
-        currency: '',
-        positions: [],
-        payment: {}
+        events: {}
       }
     }
   },
@@ -85,22 +82,23 @@ export default {
   methods: {
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value //with emit from child component selected customer
+      console.log(this.invoices)
     },
     getContectPerson(value) {
       this.invoices.contact_person = value //with emit from child component contact person
     },
-    getSmallCompany(value) {
-      this.invoices.is_small_company = value //with emit from child component small company
-    },
-    getCurrency(value) {
-      this.invoices.currency = value //with emit from child component currency
-    },
-    getPositions(value) {
-      this.invoices.positions = value //with emit from child component positions
-    },
-    getPaymentTerms(value) {
-      this.invoices.payment = value //with emit from child component payment terms
+    getEvents(value) {
+      this.invoices.events = value //with emit from child component positions
     }
+    // getSmallCompany(value) {
+    //   this.events.invoices.is_small_company = value //with emit from child component small company
+    // },
+    // getCurrency(value) {
+    //   this.invoices.events.currency = value //with emit from child component currency
+    // },
+    // getPaymentTerms(value) {
+    //   this.invoices.events.payment = value //with emit from child component payment terms
+    // }
   }
 }
 </script>
