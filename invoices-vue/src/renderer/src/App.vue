@@ -94,6 +94,7 @@ export default {
         //i used commit because "this" keyword not working in provider
         this.$store.commit(storeCommit, {
           id: data.id,
+          title: data.title,
           source_page: data.source_page,
           date: data.date,
           valid_days: data.valid_days,

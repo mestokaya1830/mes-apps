@@ -168,18 +168,6 @@ export default {
   methods: {
     getInvoicesPreview() {
       this.invoicesPreview = this.$store.state.invoicesPreview
-      // Reverse charge durumu hesapla
-      if (
-        this.invoicesPreview.selected_customer &&
-        this.invoicesPreview.selected_customer.is_in_eu &&
-        this.invoicesPreview.selected_customer.country !== 'Germany' &&
-        this.invoicesPreview.selected_customer.vat_id &&
-        this.invoicesPreview.company_vat_id
-      ) {
-        this.invoicesPreview.reverse_charge = true
-      } else {
-        this.invoicesPreview.reverse_charge = false
-      }
     }
   }
 }

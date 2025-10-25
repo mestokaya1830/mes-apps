@@ -128,7 +128,12 @@
           </div>
           <div class="form-group">
             <label class="form-label">Menge</label>
-            <input v-model.number="pos.quantity" type="number" class="form-input" />
+            <input
+              v-model.number="pos.quantity"
+              type="number"
+              class="form-input"
+              @input="getUnitTotal(pos.quantity, pos.price, index)"
+            />
           </div>
           <div class="form-group">
             <label class="form-label">Preis (€)</label>
@@ -227,10 +232,12 @@ export default {
       if (value) {
         this.events.positions.map((item, index) => {
           this.events.positions[index].unit_total = (item.quantity * item.price).toFixed(2)
+          this.events.positions[index].vat = 0
           this.events.positions[index].vat_unit = 0
         })
       } else {
         this.events.positions.map((item, index) => {
+          this.events.positions[index].vat = 19
           this.events.positions[index].unit_total = (
             item.quantity *
             item.price *
@@ -267,7 +274,7 @@ export default {
     deletePosition(index) {
       if (this.events.positions.length > 0) {
         this.events.positions.splice(index, 1)
-        this.$emit('get-events', this.events.positions)
+        this.$emit('get-events', this.events)
       } else {
         alert('Keine Positionen vorhanden!')
       }

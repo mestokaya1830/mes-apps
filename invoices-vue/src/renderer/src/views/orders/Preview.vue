@@ -15,7 +15,7 @@
             <div>{{ ordersPreview.selected_customer.address }}</div>
             <div>
               {{ ordersPreview.selected_customer.postal_code }}
-              {{ ordersPreview.selected_customer.city }}
+              {{ ordersPreview.selected_customer.city }}<br />
               {{ ordersPreview.selected_customer.country }}
             </div>
           </div>

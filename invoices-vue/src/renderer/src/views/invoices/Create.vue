@@ -90,15 +90,6 @@ export default {
     getEvents(value) {
       this.invoices.events = value //with emit from child component positions
     }
-    // getSmallCompany(value) {
-    //   this.events.invoices.is_small_company = value //with emit from child component small company
-    // },
-    // getCurrency(value) {
-    //   this.invoices.events.currency = value //with emit from child component currency
-    // },
-    // getPaymentTerms(value) {
-    //   this.invoices.events.payment = value //with emit from child component payment terms
-    // }
   }
 }
 </script>

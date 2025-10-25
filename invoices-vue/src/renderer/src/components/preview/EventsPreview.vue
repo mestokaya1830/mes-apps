@@ -46,7 +46,7 @@
       </div>
 
       <!-- KDV sadece reverse charge değilse göster -->
-      <div v-if="!data.events.is_small_company && !data.events.reverse_charge" class="total-row">
+      <div class="total-row">
         <span class="total-label">MwSt.:</span>
         <span class="total-value">{{
           formatCurrency(data.summary.vat_amount, data.events.currency)

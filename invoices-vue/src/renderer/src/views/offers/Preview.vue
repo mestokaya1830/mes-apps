@@ -15,7 +15,7 @@
             <div>{{ offersPreview.selected_customer.address }}</div>
             <div>
               {{ offersPreview.selected_customer.postal_code }}
-              {{ offersPreview.selected_customer.city }}
+              {{ offersPreview.selected_customer.city }} <br />
               {{ offersPreview.selected_customer.country }}
             </div>
           </div>
@@ -57,9 +57,8 @@
 
         <!-- Document Title -->
         <div class="document-title">
-          Aangebotbestätigung
-          <span v-if="offersPreview.project_ref" class="project-badge">
-            Projekt: {{ offersPreview.project_ref }}
+          <span v-if="offersPreview.title" class="project-badge">
+            {{ offersPreview.title }}
           </span>
         </div>
 
