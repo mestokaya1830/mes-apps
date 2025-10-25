@@ -502,6 +502,16 @@ input:not([readonly]) {
   font-weight: 600;
   color: #1e293b;
 }
+.form-result{
+  display: flex;
+  justify-content: end;
+}
+.form-result-item{
+  display: flex;
+  align-items: center;
+  margin: 0 20px;
+  font-size: 12px;
+}
 /* KONTAKT BOX (PREMIUM) */
 .contact-box, .bank-box {
   background: #f1f5f9;

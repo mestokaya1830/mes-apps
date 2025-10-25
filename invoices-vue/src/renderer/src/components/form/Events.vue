@@ -10,7 +10,7 @@
             v-model="events.is_small_company"
             type="checkbox"
             class="switch-checkbox"
-            @change="getSmallCompany()"
+            @change="reCalculateTotal(events.is_small_company, 'is_small_company')"
           />
           <span class="slider round"></span>
         </label>
@@ -20,13 +20,13 @@
     <div class="form-section">
       <div class="form-section-title">
         <span>👤 Umkehrung der Steuerschuldnerschaft</span>
-        <label for="kleinunternehmer-checkbox" class="switch">
+        <label for="reverse_charge-checkbox" class="switch">
           <input
-            id="kleinunternehmer-checkbox"
+            id="reverse_charge-checkbox"
             v-model="events.is_reverse_charge"
             type="checkbox"
             class="switch-checkbox"
-            @change="getReverseCharge()"
+            @change="reCalculateTotal(events.is_reverse_charge, 'is_reverse_charge')"
           />
           <span class="slider round"></span>
         </label>
@@ -142,22 +142,28 @@
           </div>
           <div class="form-group">
             <label class="form-label">MwSt. (%)</label>
-            <select v-model.number="pos.vat" class="form-input">
+            <select
+              v-model.number="pos.vat"
+              class="form-input"
+              @change="getUnitTotal(pos.quantity, pos.price, index)"
+            >
               <option :value="0">0</option>
               <option :value="7">7</option>
               <option :value="19">19</option>
             </select>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Unit Total (€)</label>
-          <input
-            v-model.number="pos.unit_total"
-            type="number"
-            class="form-input"
-            step="0.01"
-            readonly
-          />
+        <div class="form-result">
+          <div>
+            <label class="form-label">Vat Unit (€)</label>
+            <div class="form-result-item">
+              {{ pos.vat_unit }}
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Unit Total (€)</label>
+            <div class="form-result-item">{{ pos.unit_total }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -187,6 +193,7 @@ export default {
             unit: 'Stk',
             price: 0,
             vat: 19,
+            vat_unit: 0,
             unit_total: 0
           }
         ],
@@ -201,6 +208,14 @@ export default {
       }
     }
   },
+  computed: {
+    checkSmallCompany() {
+      return this.events.is_reverse_charge
+    },
+    checkReverseCharge() {
+      return this.events.is_small_company
+    }
+  },
   mounted() {
     if (this.$store.state[this.storeName] && this.$store.state[this.storeName].events) {
       this.events = this.$store.state[this.storeName].events
@@ -209,8 +224,32 @@ export default {
     }
   },
   methods: {
-    getSmallCompany() {
-      console.log(this.events.is_small_company)
+    reCalculateTotal(value, input) {
+      if (input === 'is_small_company') {
+        this.events.is_reverse_charge = false
+      }
+      if (input === 'is_reverse_charge') {
+        this.events.is_small_company = false
+      }
+      if (value) {
+        this.events.positions.map((item, index) => {
+          this.events.positions[index].unit_total = (item.quantity * item.price).toFixed(2)
+          this.events.positions[index].vat_unit = 0
+        })
+      } else {
+        this.events.positions.map((item, index) => {
+          this.events.positions[index].unit_total = (
+            item.quantity *
+            item.price *
+            (1 + item.vat / 100)
+          ).toFixed(2)
+          this.events.positions[index].vat_unit = (
+            item.quantity *
+            item.price *
+            (item.vat / 100)
+          ).toFixed(2)
+        })
+      }
     },
     getReverseCharge() {
       console.log(this.events.is_reverse_charge)
@@ -249,6 +288,7 @@ export default {
           : base * (1 + vat / 100)
 
       this.events.positions[index].unit_total = total.toFixed(2)
+      this.events.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     }
   }
 }

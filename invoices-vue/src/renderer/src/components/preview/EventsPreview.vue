@@ -63,13 +63,13 @@
       <div v-if="data.events.paid_amount && data.events.paid_amount > 0" class="total-row paid">
         <span class="total-label">✓ Bereits bezahlt:</span>
         <span class="total-value"
-          >- {{ formatCurrency(data.events.paid_amount, data.events.currency) }}</span
+          >- {{ formatCurrency(data.summary.paid_amount, data.events.currency) }}</span
         >
       </div>
       <div v-if="data.source_page === 'invoices'" class="total-row outstanding">
         <span class="total-label">⚠️ Offener Betrag:</span>
         <span class="total-value">{{
-          formatCurrency(data.events.outstanding, data.events.currency)
+          formatCurrency(data.summary.outstanding, data.events.currency)
         }}</span>
       </div>
 

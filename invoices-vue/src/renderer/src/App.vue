@@ -60,15 +60,15 @@ export default {
   },
   data() {
     return {
-      dinmaicData: null
+      dinamicData: null
     }
   },
   computed: {
     subtotal() {
-      return this.dinmaicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.dinamicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.dinmaicData.events.positions.reduce(
+      return this.dinamicData.events.positions.reduce(
         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
         0
       )
@@ -77,17 +77,15 @@ export default {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      if (!this.dinmaicData.events.payment.paid_amount) {
-        return this.total - this.dinmaicData.events.payment.paid_amount
+      if (this.dinamicData.events.payment.paid_amount) {
+        return this.total - this.dinamicData.events.payment.paid_amount
       }
       return 0
     }
   },
   methods: {
     storePreview(data, storeLink, storeCommit) {
-      if (data) this.dinmaicData = data
-      console.log(data)
-      console.log(this.dinmaicData)
+      if (data) this.dinamicData = data
       try {
         // this.dinamicStore.positions = this.dinamicStore.positions.map((pos) => ({
         //   ...pos,
