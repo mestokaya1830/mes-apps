@@ -143,6 +143,7 @@
           <div class="form-group">
             <label class="form-label">MwSt. (%)</label>
             <select
+              v-if="!events.is_small_company && !events.is_reverse_charge"
               v-model.number="pos.vat"
               class="form-input"
               @change="getUnitTotal(pos.quantity, pos.price, index)"
@@ -206,14 +207,6 @@ export default {
           payment_conditions: ''
         }
       }
-    }
-  },
-  computed: {
-    checkSmallCompany() {
-      return this.events.is_reverse_charge
-    },
-    checkReverseCharge() {
-      return this.events.is_small_company
     }
   },
   mounted() {
