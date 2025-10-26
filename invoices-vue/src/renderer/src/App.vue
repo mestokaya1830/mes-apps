@@ -87,11 +87,6 @@ export default {
     storePreview(data, storeLink, storeCommit) {
       if (data) this.dinamicData = data
       try {
-        // this.dinamicStore.positions = this.dinamicStore.positions.map((pos) => ({
-        //   ...pos,
-        //   unit_total: parseFloat((pos.quantity * pos.price * (1 + pos.vat / 100)).toFixed(2))
-        // }))
-        //i used commit because "this" keyword not working in provider
         this.$store.commit(storeCommit, {
           id: data.id,
           title: data.title,
