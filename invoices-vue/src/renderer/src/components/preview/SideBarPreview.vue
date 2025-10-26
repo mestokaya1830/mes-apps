@@ -54,7 +54,7 @@
     </nav>
 
     <div v-if="$store.state.auth" class="sidebar-footer">
-      <a href="#" class="nav-link logout-link">
+      <a href="#" class="nav-link logout-link" @click="logout()">
         <span class="nav-icon">🚪</span>
         <span>Abmelden</span>
       </a>

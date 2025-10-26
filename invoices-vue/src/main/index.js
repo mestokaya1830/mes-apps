@@ -81,10 +81,13 @@ ipcMain.handle('control-window', (event, data) => {
 ipcMain.handle('register', async (event, image, data) => {
   try {
     if (data) {
-      console.log(data)
+      const companyDetailsJSON = JSON.stringify(data.company_details || {})
+      const contactPersonJSON = JSON.stringify(data.contact_person || {})
+
       const user = db
         .prepare(
           `INSERT INTO users (
+            gender,
             first_name,
             last_name,
             password,
@@ -93,11 +96,13 @@ ipcMain.handle('register', async (event, image, data) => {
             address,
             postal_code,
             city,
+            state,
             country,
             website,
-            firm_name,
-            legal_form,
-            managing_director,
+            company_name,
+            company_details,
+            company_signature,
+            contact_person,
             tax_number,
             tax_office,
             tax_prefix,
@@ -106,14 +111,15 @@ ipcMain.handle('register', async (event, image, data) => {
             court_location,
             logo,
             image_type,
-            company_signature,
             bank_name,
             bic,
             iban,
-            bank_account_holder
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            bank_account_holder,
+            invoice_approved
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         )
         .run(
+          data.gender,
           data.first_name,
           data.last_name,
           data.password,
@@ -122,11 +128,13 @@ ipcMain.handle('register', async (event, image, data) => {
           data.address,
           data.postal_code,
           data.city,
+          data.state,
           data.country,
           data.website,
-          data.firm_name,
-          data.legal_form,
-          data.managing_director,
+          data.company_name,
+          companyDetailsJSON,
+          data.company_signature,
+          contactPersonJSON,
           data.tax_number,
           data.tax_office,
           data.tax_prefix,
@@ -135,11 +143,11 @@ ipcMain.handle('register', async (event, image, data) => {
           data.court_location,
           Buffer.from(image),
           data.image_type,
-          data.company_signature,
           data.bank_name,
           data.bic,
           data.iban,
-          data.bank_account_holder
+          data.bank_account_holder,
+          data.invoice_approved
         )
 
       //for to disk storage
