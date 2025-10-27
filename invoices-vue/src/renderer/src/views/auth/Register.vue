@@ -289,11 +289,10 @@ export default {
         bic: 'DEUTDEBBXXX',
         iban: 'DE89370400440532013000',
         bank_account_holder: 'Max Mustermann',
-        image_type: ''
+        image_type: '',
+        invoice_approved: 'Rechnungsinformationen sind vom Benutzer genehmigt.'
       },
-      binaryImage: null,
       selectedImage: null,
-      invoice_approved: 'Rechnungsinformationen sind vom Benutzer genehmigt.',
 
       //data
       german_states: [
@@ -362,32 +361,26 @@ export default {
   methods: {
     async setLogo(event) {
       const file = event.target.files[0]
-      this.user.image_type = file.type
       if (!file) return
-      const previewReader = new FileReader()
-      previewReader.onload = () => {
-        this.selectedImage = previewReader.result // Base64 string, <img> için
-      }
-      previewReader.readAsDataURL(file)
 
-      // DB  binary
-      const binaryReader = new FileReader()
-      binaryReader.onload = () => {
-        this.binaryImage = new Uint8Array(binaryReader.result) // ArrayBuffer → Uint8Array
+      const reader = new FileReader()
+      reader.onload = () => {
+        this.selectedImage = reader.result
       }
-      binaryReader.readAsArrayBuffer(file)
+      reader.readAsDataURL(file)
     },
     // Submit form
     async register() {
-      console.log(this.user)
       if (this.user) {
-        if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
-        const result = await window.api.register(
-          Array.from(this.binaryImage),
-          JSON.parse(JSON.stringify(this.user))
+        if (!this.selectedImage) return alert('No image selected!')
+        const savedPath = await window.api.register(
+          JSON.parse(JSON.stringify(this.user)),
+          this.selectedImage
         )
-        // const result = await window.api.register(this.base64, JSON.parse(JSON.stringify(this.user)))
-        console.log(result)
+        if (savedPath) alert(`Image saved: ${savedPath}`)
+        else alert('Image could not be saved!')
+
+        const result = await window.api.register(JSON.stringify(this.user))
         if (result.success) {
           this.errorMessage = ''
           this.$router.push('/login')

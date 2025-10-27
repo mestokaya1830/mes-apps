@@ -73,7 +73,6 @@ export default {
   },
   mounted() {
     this.checkRegister()
-    console.log(this.$store.state.auth)
   },
   methods: {
     async checkRegister() {

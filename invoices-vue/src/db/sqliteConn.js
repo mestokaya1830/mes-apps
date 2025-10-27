@@ -48,18 +48,16 @@ export default db
 //     company_signature TEXT NOT NULL,                -- GmbH, AG, OHG vs.
 //     contact_person TEXT,                       -- Geschäftsführer
 //     tax_number TEXT NOT NULL,                    -- Steuernummer
-//     tax_office TEXT,                             -- Opsiyonel (Steueramt)
-//     tax_prefix TEXT,                             -- Opsiyonel (VAT ID prefix, örn: DE)
+//     tax_office TEXT,                             -- Opsiyonel (Steueramt)                             -- Opsiyonel (VAT ID prefix, örn: DE)
 //     vat_id TEXT,                                 -- USt-IdNr
 //     court_registration TEXT,                     -- Opsiyonel (Handelsregisternummer)
 //     court_location TEXT,                         -- Amtsgericht Berlin
 //     logo TEXT NOT NULL,
-//     image_type TEXT NOT NULL,
 //     bank_name TEXT NOT NULL,
 //     bic TEXT NOT NULL,
 //     iban TEXT NOT NULL,
 //     bank_account_holder TEXT NOT NULL,
-//     invoice_approved TEXT DEFAULT 'Rechnungsinformationen sind vom Benutzer genehmigt.',
+//     invoice_approved TEXT NOT NULL,
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)

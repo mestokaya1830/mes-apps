@@ -45,7 +45,7 @@
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/profile" exact-active-class="active" class="nav-link">
+          <router-link to="/about" exact-active-class="active" class="nav-link">
             <span class="nav-icon">ℹ️</span>
             <span>Über</span>
           </router-link>

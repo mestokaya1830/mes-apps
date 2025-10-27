@@ -1,23 +1,7 @@
 <template lang="">
   <div>
-    <!-- small company -->
-    <div class="form-section">
-      <div class="form-section-title">
-        <span>👤 Kleinunternehmer</span>
-        <label for="kleinunternehmer-checkbox" class="switch">
-          <input
-            id="kleinunternehmer-checkbox"
-            v-model="events.is_small_company"
-            type="checkbox"
-            class="switch-checkbox"
-            @change="reCalculateTotal(events.is_small_company, 'is_small_company')"
-          />
-          <span class="slider round"></span>
-        </label>
-      </div>
-    </div>
     <!-- reverse charge -->
-    <div class="form-section">
+    <div v-if="!events.is_small_company" class="form-section">
       <div class="form-section-title">
         <span>👤 Umkehrung der Steuerschuldnerschaft</span>
         <label for="reverse_charge-checkbox" class="switch">
@@ -26,7 +10,7 @@
             v-model="events.is_reverse_charge"
             type="checkbox"
             class="switch-checkbox"
-            @change="reCalculateTotal(events.is_reverse_charge, 'is_reverse_charge')"
+            @change="calculateReverseCharge()"
           />
           <span class="slider round"></span>
         </label>
@@ -217,19 +201,17 @@ export default {
   mounted() {
     if (this.$store.state[this.storeName] && this.$store.state[this.storeName].events) {
       this.events = this.$store.state[this.storeName].events
+      this.events.is_small_company = JSON.parse(
+        this.$store.state.auth.company_details
+      ).is_small_company
+      // this.events.is_small_company = false
     } else {
       return this.events
     }
   },
   methods: {
-    reCalculateTotal(value, input) {
-      if (input === 'is_small_company') {
-        this.events.is_reverse_charge = false
-      }
-      if (input === 'is_reverse_charge') {
-        this.events.is_small_company = false
-      }
-      if (value) {
+    calculateReverseCharge() {
+      if (this.events.is_reverse_charge) {
         this.events.positions.map((item, index) => {
           this.events.positions[index].unit_total = (item.quantity * item.price).toFixed(2)
           this.events.positions[index].vat = 0
@@ -250,12 +232,6 @@ export default {
           ).toFixed(2)
         })
       }
-    },
-    getReverseCharge() {
-      console.log(this.events.is_reverse_charge)
-    },
-    getCurrency() {
-      console.log(this.events.currency)
     },
     addPosition() {
       this.events.positions.push({
@@ -283,10 +259,9 @@ export default {
       const vat = this.events.positions[index].vat || 0
       const base = quantity * price
       const total =
-        this.events.is_small_company || this.events.is_reverse_charge
+        !this.events.is_small_company || !this.events.is_reverse_charge
           ? base
           : base * (1 + vat / 100)
-
       this.events.positions[index].unit_total = total.toFixed(2)
       this.events.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     }

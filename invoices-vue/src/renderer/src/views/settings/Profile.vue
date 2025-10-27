@@ -5,12 +5,7 @@
       <div class="profile-container">
         <span class="profile-label">{{ key }}:</span>
         <span v-if="key !== 'logo'">{{ value }}</span>
-        <img
-          v-if="key === 'logo'"
-          :src="`data:image/png;base64,${value}`"
-          alt=""
-          class="profile-logo"
-        />
+        <img v-if="key === 'logo'" src="/media/mesto-linux/Store/myworks/mes-apps/invoices-vue/src/public/uploads/test.png" alt="" class="profile-logo" />
       </div>
     </template>
     <router-link to="/edit-user">Edit User</router-link>
@@ -33,6 +28,7 @@ export default {
       try {
         const response = await window.api.getUser()
         this.user = response.user
+        console.log(this.user)
       } catch (error) {
         console.error(error)
       }
