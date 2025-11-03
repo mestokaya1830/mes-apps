@@ -292,6 +292,7 @@ export default {
         image_type: '',
         invoice_approved: 'Rechnungsinformationen sind vom Benutzer genehmigt.'
       },
+      binaryImage: null,
       selectedImage: null,
 
       //data
@@ -361,26 +362,32 @@ export default {
   methods: {
     async setLogo(event) {
       const file = event.target.files[0]
+      this.user.image_type = file.type
       if (!file) return
-
-      const reader = new FileReader()
-      reader.onload = () => {
-        this.selectedImage = reader.result
+      const previewReader = new FileReader()
+      previewReader.onload = () => {
+        this.selectedImage = previewReader.result // Base64 string, <img> için
       }
-      reader.readAsDataURL(file)
+      previewReader.readAsDataURL(file)
+
+      // DB  binary
+      const binaryReader = new FileReader()
+      binaryReader.onload = () => {
+        this.binaryImage = new Uint8Array(binaryReader.result) // ArrayBuffer → Uint8Array
+      }
+      binaryReader.readAsArrayBuffer(file)
     },
     // Submit form
     async register() {
+      console.log(this.user)
       if (this.user) {
-        if (!this.selectedImage) return alert('No image selected!')
-        const savedPath = await window.api.register(
-          JSON.parse(JSON.stringify(this.user)),
-          this.selectedImage
+        if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
+        const result = await window.api.register(
+          Array.from(this.binaryImage),
+          JSON.parse(JSON.stringify(this.user))
         )
-        if (savedPath) alert(`Image saved: ${savedPath}`)
-        else alert('Image could not be saved!')
-
-        const result = await window.api.register(JSON.stringify(this.user))
+        // const result = await window.api.register(this.base64, JSON.parse(JSON.stringify(this.user)))
+        console.log(result)
         if (result.success) {
           this.errorMessage = ''
           this.$router.push('/login')

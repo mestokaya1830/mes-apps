@@ -1,6 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
-import fs from 'fs'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
@@ -79,7 +78,7 @@ ipcMain.handle('control-window', (event, data) => {
   }
 })
 
-ipcMain.handle('register', async (event, data, image) => {
+ipcMain.handle('register', async (event, image, data) => {
   try {
     if (data) {
       const companyDetailsJSON = JSON.stringify(data.company_details || {})
@@ -110,12 +109,13 @@ ipcMain.handle('register', async (event, data, image) => {
             court_registration,
             court_location,
             logo,
+            image_type,
             bank_name,
             bic,
             iban,
             bank_account_holder,
             invoice_approved
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         )
         .run(
           data.gender,
@@ -139,7 +139,8 @@ ipcMain.handle('register', async (event, data, image) => {
           data.vat_id,
           data.court_registration,
           data.court_location,
-          'logoPath',
+          Buffer.from(image),
+          data.image_type,
           data.bank_name,
           data.bic,
           data.iban,
@@ -148,21 +149,16 @@ ipcMain.handle('register', async (event, data, image) => {
         )
 
       //for to disk storage
-      if (image) {
-        const parts = image.split(',')
-        if (parts.length === 2) {
-          const buffer = Buffer.from(parts[1].replace(/\s/g, ''), 'base64')
-          // const savePath = path.join(os.homedir(), fileName);//linux home folder
-          // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
-          const savePath = path.join(app.getAppPath(), 'public', 'uploads', 'test.png') // inner app uploads folder
-          console.log(savePath)
-          await fs.promises.writeFile(savePath, buffer)
-        } else {
-          console.error('Invalid base64 data URL')
-        }
-      } else {
-        console.error('No image provided')
-      }
+      // const buffer = Buffer.from(image.split(',')[1], 'base64')
+      // const savePath = path.join(
+      //   app.getAppPath(),
+      //   'src',
+      //   'renderer',
+      //   'src',
+      //   'assets',
+      //   data.firm_name.toLowerCase().replace(/[^a-z0-9_-]/gi, '_') + '.' + data.logo.split('.')[1]
+      // )
+      // await fs.promises.writeFile(savePath, buffer)
 
       return { success: true, user: user }
     } else {

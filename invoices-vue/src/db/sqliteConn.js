@@ -53,6 +53,7 @@ export default db
 //     court_registration TEXT,                     -- Opsiyonel (Handelsregisternummer)
 //     court_location TEXT,                         -- Amtsgericht Berlin
 //     logo TEXT NOT NULL,
+//     image_type TEXT NOT NULL,
 //     bank_name TEXT NOT NULL,
 //     bic TEXT NOT NULL,
 //     iban TEXT NOT NULL,
