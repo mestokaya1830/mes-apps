@@ -4,13 +4,13 @@
     <div class="header">
       <div class="company-info">
         <div class="company-name">{{ $store.state.auth.firm_name }}</div>
+        <div class="company-details">{{ $store.state.auth.address }}</div>
         <div class="company-details">
-          {{ $store.state.auth.address }}<br />
-          {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}<br />
-          Tel: {{ $store.state.auth.phone }}<br />
-          {{ $store.state.auth.email }}<br />
-          {{ $store.state.auth.website }}
+          {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}
         </div>
+        <div class="company-details">Tel: {{ $store.state.auth.phone }}</div>
+        <div class="company-details">Email: {{ $store.state.auth.email }}</div>
+        <div class="company-details">Web: {{ $store.state.auth.website }}</div>
       </div>
       <img :src="logoSrc" alt="Logo" class="preview-logo" />
     </div>
@@ -92,7 +92,7 @@ export default {
 
 .company-details {
   font-size: 12px;
-  color: #666;
+  color: var(--darkColor);
   line-height: 1.6;
 }
 

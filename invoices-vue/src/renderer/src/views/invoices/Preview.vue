@@ -12,8 +12,8 @@
             <div class="company-name-subtitle">
               {{ invoicesPreview.selected_customer.company_name }}
             </div>
-            <div>{{ invoicesPreview.selected_customer.address }}</div>
-            <div>
+            <div class="meta-label">{{ invoicesPreview.selected_customer.address }}</div>
+            <div class="meta-label">
               {{ invoicesPreview.selected_customer.postal_code }}
               {{ invoicesPreview.selected_customer.city }}<br />
               {{ invoicesPreview.selected_customer.country }}

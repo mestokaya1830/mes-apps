@@ -1,246 +1,267 @@
 <template>
-  <div>
-    <h2>Benutzerregistrierungsformular</h2>
-    <form class="register-form" @submit.prevent="register">
+  <div class="settings-page">
+    <h2 class="page-title">Benutzerregistrierungsformular</h2>
+
+    <form class="settings-form" @submit.prevent="register">
       <!-- Personal Information -->
-      <div>
-        <h3>Persönliche Informationen</h3>
-        <div>
-          <div class="md:col-span-2">
-            <label>Anrede</label>
+      <section class="section-personal">
+        <h3 class="section-title">Persönliche Informationen</h3>
+        <div class="form-blog">
+          <label class="form-field col-span-1">
+            <span>Anrede</span>
             <select v-model="user.gender" class="form-input">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
               <option value="Divers">Divers</option>
             </select>
-          </div>
-          <div>
-            <label>Vorname *</label>
+          </label>
+
+          <label class="form-field">
+            <span>Vorname *</span>
             <input
               v-model="user.first_name"
               type="text"
               required
               placeholder="Enter your first name"
             />
-          </div>
-          <div>
-            <label>Nachname *</label>
+          </label>
+
+          <label class="form-field">
+            <span>Nachname *</span>
             <input
               v-model="user.last_name"
               type="text"
               required
               placeholder="Enter your last name"
             />
-          </div>
-          <div>
-            <label>E-Mail *</label>
+          </label>
+
+          <label class="form-field">
+            <span>E-Mail *</span>
             <input v-model="user.email" type="email" required placeholder="example@email.com" />
-          </div>
-          <div>
-            <label>Passwort *</label>
+          </label>
+
+          <label class="form-field">
+            <span>Passwort *</span>
             <input
               v-model="user.password"
               type="password"
               required
               placeholder="Create a strong password"
             />
-          </div>
-          <div>
-            <label>Telefon</label>
+          </label>
+
+          <label class="form-field">
+            <span>Telefon</span>
             <input v-model="user.phone" type="tel" placeholder="+49 30 12345678" />
-          </div>
-          <div>
-            <label>Webseite</label>
+          </label>
+
+          <label class="form-field">
+            <span>Webseite</span>
             <input v-model="user.website" type="url" placeholder="www.example.com" />
-          </div>
+          </label>
         </div>
-      </div>
+      </section>
 
       <!-- Address Information -->
-      <div>
-        <h3>Adressinformationen</h3>
-        <div>
-          <div class="md:col-span-2">
-            <label>Adresse</label>
+      <section class="section-address">
+        <h3 class="section-title">Adressinformationen</h3>
+        <div class="form-blog">
+          <label class="form-field">
+            <span>Adresse</span>
             <input v-model="user.address" type="text" placeholder="Hauptstraße 123" />
-          </div>
-          <div>
-            <label>Postleitzahl</label>
+          </label>
+
+          <label class="form-field">
+            <span>Postleitzahl</span>
             <input v-model="user.postal_code" type="text" placeholder="10115" />
-          </div>
-          <div>
-            <label>Stadt</label>
+          </label>
+
+          <label class="form-field">
+            <span>Stadt</span>
             <input v-model="user.city" type="text" placeholder="Berlin" />
-          </div>
-          <div class="md:col-span-2">
-            <label>🇩🇪 Bundesland (Deutschland)</label>
+          </label>
+
+          <label class="form-field">
+            <span>🇩🇪 Bundesland (Deutschland)</span>
             <select v-model="user.state" class="form-input">
               <option disabled value="">Bitte wählen</option>
               <option v-for="item in german_states" :key="item.value" :value="item.value">
                 {{ item.label }}
               </option>
             </select>
-          </div>
+          </label>
         </div>
-      </div>
+      </section>
 
       <!-- Company Information -->
-      <div>
-        <h3>Unternehmensinformationen</h3>
-        <div>
-          <div>
-            <label>Firmenname</label>
+      <section class="section-company">
+        <h3 class="section-title">Unternehmensinformationen</h3>
+        <div class="form-blog">
+          <label class="form-field">
+            <span>Firmenname</span>
             <input v-model="user.company_name" type="text" placeholder="TechSolutions GmbH" />
-          </div>
-          <div>
-            <label>🇩🇪 Unternehmensform (Deutschland)</label>
+          </label>
+
+          <label class="form-field">
+            <span>🇩🇪 Unternehmensform (Deutschland)</span>
             <select v-model="user.company_details" class="form-input">
               <option disabled value="">-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
               </option>
             </select>
-          </div>
-          <div>
-            <label>Firmenlogo</label>
-            <input type="file" placeholder="/assets/logo.png" @change="setLogo($event)" />
-          </div>
-          <div>
-            <label>Logo-Vorschau</label>
-            <img :src="selectedImage" class="logo-preview" />
-          </div>
-        </div>
-      </div>
+          </label>
 
-      <!-- contact person -->
-      <div>
-        <h3>Ansprechpartner</h3>
-        <div>
-          <div class="md:col-span-2">
-            <label>Anrede</label>
+          <label class="form-field">
+            <span>Firmenlogo</span>
+            <input type="file" @change="setLogo($event)" />
+          </label>
+
+          <figure class="form-field logo-preview-wrapper">
+            <figcaption>Logo-Vorschau</figcaption>
+            <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
+          </figure>
+        </div>
+      </section>
+
+      <!-- Contact Person -->
+      <section class="section-contact-person">
+        <h3 class="section-title">Ansprechpartner</h3>
+        <div class="form-blog">
+          <label class="form-field col-span-1">
+            <span>Anrede</span>
             <select v-model="user.contact_person.gender" class="form-input">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
               <option value="Divers">Divers</option>
             </select>
-          </div>
-          <div>
-            <label>Vorname</label>
+          </label>
+
+          <label class="form-field">
+            <span>Vorname</span>
             <input
               v-model="user.contact_person.first_name"
               type="text"
               placeholder="Hans Mueller"
             />
-          </div>
-          <div>
-            <label>Nachname</label>
+          </label>
+
+          <label class="form-field">
+            <span>Nachname</span>
             <input v-model="user.contact_person.last_name" type="text" placeholder="Hans Mueller" />
-          </div>
-          <div>
-            <label>Telefon</label>
+          </label>
+
+          <label class="form-field">
+            <span>Telefon</span>
             <input v-model="user.contact_person.phone" type="tel" placeholder="+49 30 12345678" />
-          </div>
-          <div>
-            <label>E-Mail</label>
+          </label>
+
+          <label class="form-field">
+            <span>E-Mail</span>
             <input
               v-model="user.contact_person.email"
               type="email"
               placeholder="example@email.com"
             />
-          </div>
+          </label>
         </div>
-      </div>
+      </section>
 
       <!-- Tax Information -->
-      <div>
-        <h3>Steuerinformationen</h3>
-        <div>
-          <div>
-            <label>Steuernummer</label>
+      <section class="section-tax">
+        <h3 class="section-title">Steuerinformationen</h3>
+        <div class="form-blog">
+          <label class="form-field">
+            <span>Steuernummer</span>
             <input v-model="user.tax_number" type="text" placeholder="123/456/78901" />
-          </div>
-          <div>
-            <label>Finanzamt</label>
+          </label>
+
+          <label class="form-field">
+            <span>Finanzamt</span>
             <input
               v-model="user.tax_office"
               type="text"
               placeholder="Finanzamt Berlin Mitte/Tiergarten"
             />
-          </div>
-          <div>
-            <label>USt-IdNr.</label>
+          </label>
+
+          <label class="form-field">
+            <span>USt-IdNr.</span>
             <input v-model="user.vat_id" type="text" placeholder="DE123456789" />
-          </div>
-          <div>
-            <label>Handelsregistereintrag</label>
+          </label>
+
+          <label class="form-field">
+            <span>Handelsregistereintrag</span>
             <input v-model="user.court_registration" type="text" placeholder="HRB 12345 B" />
-          </div>
-          <div>
-            <label>Gerichtsstand</label>
+          </label>
+
+          <label class="form-field">
+            <span>Gerichtsstand</span>
             <input v-model="user.court_location" type="text" placeholder="Amtsgericht Berlin" />
-          </div>
+          </label>
         </div>
-      </div>
+      </section>
 
       <!-- Bank Information -->
-      <div>
-        <h3>Bankinformationen</h3>
-        <div>
-          <div>
-            <label>Bankname</label>
+      <section class="section-bank">
+        <h3 class="section-title">Bankinformationen</h3>
+        <div class="form-blog">
+          <label class="form-field">
+            <span>Bankname</span>
             <input v-model="user.bank_name" type="text" placeholder="Deutsche Bank AG" />
-          </div>
-          <div>
-            <label>BIC</label>
+          </label>
+
+          <label class="form-field">
+            <span>BIC</span>
             <input v-model="user.bic" type="text" placeholder="DEUTDEBBXXX" />
-          </div>
-          <div>
-            <label>IBAN</label>
+          </label>
+
+          <label class="form-field">
+            <span>IBAN</span>
             <input v-model="user.iban" type="text" placeholder="DE89370400440532013000" />
-          </div>
-          <div>
-            <label>Kontoinhaber</label>
+          </label>
+
+          <label class="form-field">
+            <span>Kontoinhaber</span>
             <input
               v-model="user.bank_account_holder"
               type="text"
               placeholder="TechSolutions GmbH"
             />
-          </div>
+          </label>
         </div>
-      </div>
+      </section>
 
       <!-- Company Signature -->
-      <div>
-        <h3>Unternehmenssignatur</h3>
-        <div>
-          <label>Signaturtext</label>
+      <section class="section-signature">
+        <h3 class="section-title">Unternehmenssignatur</h3>
+        <label class="form-field">
+          <span>Signaturtext</span>
           <textarea
             v-model="user.company_signature"
             rows="4"
             placeholder="Mit freundlichen Grüßen&#10;TechSolutions GmbH&#10;Hans Mueller&#10;Geschäftsführer"
           ></textarea>
-        </div>
-      </div>
+        </label>
+      </section>
+
       <!-- Submit Button -->
-      <div class="flex justify-center pt-6">
+      <div class="form-actions">
         <button type="submit" :disabled="isSubmitting" class="form-btn">
           <span v-if="isSubmitting">Saving...</span>
-          <span v-else>Benuzer speichern</span>
+          <span v-else>Benutzer speichern</span>
         </button>
       </div>
     </form>
 
-    <!-- Success Message -->
-    <div v-if="showSuccess">
-      <p class="font-medium">✅ Benutzer wurde erfolgreich gespeichert!</p>
-    </div>
-
-    <!-- Error Message -->
-    <div v-if="errorMessage">
-      <p class="font-medium">❌ Fehler: {{ errorMessage }}</p>
-    </div>
+    <!-- Messages -->
+    <p v-if="showSuccess" class="status-message success">
+      ✅ Benutzer wurde erfolgreich gespeichert!
+    </p>
+    <p v-if="errorMessage" class="status-message error">❌ Fehler: {{ errorMessage }}</p>
   </div>
 </template>
 
@@ -394,120 +415,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-/* Genel Form Alanı */
-.register-form {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  font-family: Arial, sans-serif;
-}
-
-/* Başlıklar */
-h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 1.8rem;
-  color: #333;
-}
-
-h3 {
-  margin: 1.5rem 0 1rem;
-  font-size: 1.2rem;
-  color: #444;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 0.3rem;
-}
-
-/* Grid Yapısı */
-form > div > div {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.2rem;
-}
-
-form > div > div > div {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Label */
-label {
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 0.4rem;
-  color: #333;
-}
-
-/* Input ve Textarea */
-input,
-textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: border-color 0.2s ease;
-}
-
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.15);
-}
-
-/* Tek kolon alanları */
-.md\:col-span-2 {
-  grid-column: span 2;
-}
-
-button:disabled {
-  background: #bbb;
-  cursor: not-allowed;
-}
-
-/* Success & Error */
-[v-cloak] {
-  display: none;
-}
-
-div[v-if='showSuccess'],
-div[v-if='errorMessage'] {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  border-radius: 8px;
-  text-align: center;
-}
-
-div[v-if='showSuccess'] {
-  background: #e7f9ed;
-  color: #1e7e34;
-}
-
-div[v-if='errorMessage'] {
-  background: #fdeaea;
-  color: #b71c1c;
-}
-
-.logo-preview {
-  width: 100px;
-  height: 60px;
-  border-radius: 5px;
-  object-fit: cover;
-}
-.form-btn {
-  margin-top: 2rem;
-}
-/* Responsive */
-@media (max-width: 768px) {
-  form > div > div {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
