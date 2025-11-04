@@ -147,19 +147,6 @@ ipcMain.handle('register', async (event, image, data) => {
           data.bank_account_holder,
           data.invoice_approved
         )
-
-      //for to disk storage
-      // const buffer = Buffer.from(image.split(',')[1], 'base64')
-      // const savePath = path.join(
-      //   app.getAppPath(),
-      //   'src',
-      //   'renderer',
-      //   'src',
-      //   'assets',
-      //   data.firm_name.toLowerCase().replace(/[^a-z0-9_-]/gi, '_') + '.' + data.logo.split('.')[1]
-      // )
-      // await fs.promises.writeFile(savePath, buffer)
-
       return { success: true, user: user }
     } else {
       return { success: false, message: 'Invalid email or password' }
@@ -171,25 +158,89 @@ ipcMain.handle('register', async (event, image, data) => {
 
 ipcMain.handle('update-user', async (event, image, data) => {
   try {
-    const row = db
-      .prepare(
-        'UPDATE users SET bank_name = ?, bic = ?, iban = ?, bank_account_holder = ?,image_type = ?, logo = ? WHERE id = ?'
-      )
-      .run(
-        data.bank_name,
-        data.bic,
-        data.iban,
-        data.bank_account_holder,
-        data.image_type,
-        Buffer.from(image),
-        1
-      )
-    return { success: true, customer: row }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
+    if (data) {
+      db.prepare('DELETE FROM users WHERE id != 1').run()
+      const companyDetailsJSON = JSON.stringify(data.company_details || {})
+      const contactPersonJSON = JSON.stringify(data.contact_person || {})
+
+      const user = db
+        .prepare(
+          `UPDATE users SET
+            gender = ?,
+            first_name = ?,
+            last_name = ?,
+            password = ?,
+            email = ?,
+            phone = ?,
+            address = ?,
+            postal_code = ?,
+            city = ?,
+            state = ?,
+            country = ?,
+            website = ?,
+            company_name = ?,
+            company_details = ?,
+            company_signature = ?,
+            contact_person = ?,
+            tax_number = ?,
+            tax_office = ?,
+            vat_id = ?,
+            court_registration = ?,
+            court_location = ?,
+            logo = ?,
+            image_type = ?,
+            bank_name = ?,
+            bic = ?,
+            iban = ?,
+            bank_account_holder = ?,
+            invoice_approved = ?
+          WHERE id = 1`
+        )
+        .run(
+          data.gender,
+          data.first_name,
+          data.last_name,
+          data.password,
+          data.email,
+          data.phone,
+          data.address,
+          data.postal_code,
+          data.city,
+          data.state,
+          data.country,
+          data.website,
+          data.company_name,
+          companyDetailsJSON,
+          data.company_signature,
+          contactPersonJSON,
+          data.tax_number,
+          data.tax_office,
+          data.vat_id,
+          data.court_registration,
+          data.court_location,
+          Buffer.from(image),
+          data.image_type,
+          data.bank_name,
+          data.bic,
+          data.iban,
+          data.bank_account_holder,
+          data.invoice_approved
+        )
+
+      if (user.changes > 0) {
+        return { success: true, message: 'Profil wurde erfolgreich aktualisiert' }
+      } else {
+        return { success: false, message: 'Profil konnte nicht aktualisiert werden' }
+      }
+    } else {
+      return { success: false, message: 'Ungültige Daten' }
+    }
+  } catch (error) {
+    console.error('updateProfile error:', error)
+    return { success: false, message: error.message }
   }
 })
+
 ipcMain.handle('check-register', async () => {
   try {
     const row = db.prepare('SELECT * FROM users').all()
@@ -362,23 +413,19 @@ ipcMain.handle('customer-details', async (event, id) => {
 
 ipcMain.handle('add-customer', async (event, data) => {
   console.log(data)
-  // try {
-  //   const row = db
-  //     .prepare('INSERT INTO customers (first_name, last_name, email, phone) VALUES (?,?,?,?)')
-  //     .run(data.first_name, data.last_name, data.email, data.phone)
-  //   return { success: true, customer: row }
-  // } catch (err) {
-  //   console.error('DB error:', err.message)
-  //   return { success: false, message: err.message }
-  // }
+  try {
+    const row = db
+      .prepare('INSERT INTO customers (first_name, last_name, email, phone) VALUES (?,?,?,?)')
+      .run(data.first_name, data.last_name, data.email, data.phone)
+    return { success: true, customer: row }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })
 
 ipcMain.handle('update-customer', async (event, data) => {
   const { id, customer } = data
-  // console.log('Customer:', customer)
-  // console.log('Is object?', typeof customer === 'object')
-  // console.log('Values:', Object.values(customer))
-
   try {
     const row = db
       .prepare(
@@ -409,12 +456,11 @@ ipcMain.handle('update-customer', async (event, data) => {
 })
 
 ipcMain.handle('delete-customer', async (event, id) => {
-  console.log(id)
-  // try {
-  //   const row = db.prepare('DELETE FROM customers WHERE id = ?').run(id)
-  //   return { success: true, customer: row }
-  // } catch (err) {
-  //   console.error('DB error:', err.message)
-  //   return { success: false, message: err.message }
-  // }
+  try {
+    const row = db.prepare('DELETE FROM customers WHERE id = ?').run(id)
+    return { success: true, customer: row }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Benutzerregistrierungsformular</h2>
-    <form @submit.prevent="register" class="register-form">
+    <form class="register-form" @submit.prevent="register">
       <!-- Personal Information -->
       <div>
         <h3>Persönliche Informationen</h3>
@@ -379,15 +379,12 @@ export default {
     },
     // Submit form
     async register() {
-      console.log(this.user)
       if (this.user) {
         if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
         const result = await window.api.register(
           Array.from(this.binaryImage),
           JSON.parse(JSON.stringify(this.user))
         )
-        // const result = await window.api.register(this.base64, JSON.parse(JSON.stringify(this.user)))
-        console.log(result)
         if (result.success) {
           this.errorMessage = ''
           this.$router.push('/login')

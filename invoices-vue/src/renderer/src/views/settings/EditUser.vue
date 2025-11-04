@@ -2,6 +2,7 @@
   <div>
     <h1>{{ title }}</h1>
     <form>
+      <div class="form-section-title">ℹ️ General</div>
       <div>
         <label for="bank">Bank Name</label>
         <input id="bank" v-model="user.bank_name" type="text" />
@@ -22,6 +23,14 @@
         <label for="logo">Logo</label>
         <img ref="logo" class="profile-logo" :src="imageSrc" alt="" @click="triggerFile" />
         <input id="logo" ref="logoInput" type="file" @change="setLogo" />
+      </div>
+      <div class="form-section-title">👥 Contact Person</div>
+      <div>
+        <label for="bic">Bic</label>
+        <input id="bic" v-model="user.contact_person.first_name" type="text" />
+        <input id="bic" v-model="user.contact_person.last_name" type="text" />
+        <input id="bic" v-model="user.contact_person.email" type="text" />
+        <input id="bic" v-model="user.contact_person.phone" type="text" />
       </div>
     </form>
     <button class="form-btn" @click="updateUser()">Update</button>
@@ -51,7 +60,8 @@ export default {
           bank_account_holder: response.user.bank_account_holder,
           bic: response.user.bic,
           logo: response.user.logo,
-          image_type: response.user.image_type
+          image_type: response.user.image_type,
+          contact_person: JSON.parse(response.user.contact_person)
         }
         this.imageSrc = `data:${this.user.image_type};base64,${this.user.logo}`
       } catch (error) {

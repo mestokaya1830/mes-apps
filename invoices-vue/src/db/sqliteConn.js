@@ -30,7 +30,7 @@ export default db
 // }
 
 // db.exec(`CREATE TABLE IF NOT EXISTS users (
-//     id INTEGER PRIMARY KEY CHECK(id = 1),
+//     id INTEGER PRIMARY KEY,
 //     gender TEXT NOT NULL,
 //     first_name TEXT NOT NULL,
 //     last_name TEXT NOT NULL,

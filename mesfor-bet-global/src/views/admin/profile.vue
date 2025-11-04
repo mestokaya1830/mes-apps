@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import axios from "axios"
 import LoaderComponent from "@/components/loader-component.vue";
 export default {
   name: 'Profile',

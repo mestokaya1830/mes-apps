@@ -1,7 +1,7 @@
 <template lang="">
   <div>
     <div v-if="contact_person" class="form-section">
-      <div class="form-section-title">👤 Sprachpartner (Optional)</div>
+      <div class="form-section-title">👥 Contact Person</div>
       <div class="form-group">
         <label class="form-label">Sprachpartner Vollname</label>
         <input
