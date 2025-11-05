@@ -54,6 +54,57 @@ export default {
             currency: currency.substr(0, 3)
           }).format(num)
         }
+      },
+      storePreview: this.storePreview
+    }
+  },
+  data() {
+    return {
+      dynamicData: null
+    }
+  },
+  computed: {
+    subtotal() {
+      return this.dinamicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+    },
+    vatAmount() {
+      return this.dinamicData.events.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
+    },
+    total() {
+      return this.subtotal + this.vatAmount
+    },
+    outstanding() {
+      if (this.dinamicData.events.payment.paid_amount) {
+        return this.total - this.dinamicData.events.payment.paid_amount
+      }
+      return 0
+    }
+  },
+  methods: {
+    storePreview(data, storeCommit) {
+      if (data) this.dinamicData = data
+      try {
+        this.$store.commit(storeCommit, {
+          id: data.id,
+          title: data.title,
+          source_page: data.source_page,
+          date: data.date,
+          valid_days: data.valid_days,
+          verwendungzweck: data.verwendungzweck,
+          events: { ...data.events },
+          summary: {
+            subtotal: this.subtotal.toFixed(2),
+            vat_amount: this.vatAmount.toFixed(2),
+            total: this.total.toFixed(2),
+            outstanding: this.outstanding.toFixed(2)
+          },
+          selected_customer: { ...data.selected_customer }
+        })
+      } catch (error) {
+        console.error('Error storing preview:', error)
       }
     }
   }

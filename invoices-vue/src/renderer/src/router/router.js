@@ -66,12 +66,6 @@ const routes = [
     meta: { title: 'Add New Offer', auth: true }
   },
   {
-    path: '/invoices/details/:id',
-    name: 'invoices-details',
-    component: () => import('../views/invoices/Details.vue'),
-    meta: { title: 'Offer Details', auth: true }
-  },
-  {
     path: '/invoices/preview',
     name: 'invoices-preview',
     component: () => import('../views/invoices/Preview.vue'),
@@ -93,13 +87,7 @@ const routes = [
     meta: { title: 'Add New Order', auth: true }
   },
   {
-    path: '/orders/details/:id',
-    name: 'orders-details',
-    component: () => import('../views/orders/Details.vue'),
-    meta: { title: 'Order Details', auth: true }
-  },
-  {
-    path: '/orders-preview',
+    path: '/orders/preview',
     name: 'orders-preview',
     component: () => import('../views/orders/Preview.vue'),
     meta: { title: 'Aufträge Vorschau', auth: true }
@@ -120,13 +108,7 @@ const routes = [
     meta: { title: 'Add New Offer', auth: true }
   },
   {
-    path: '/offers/details/:id',
-    name: 'offers-details',
-    component: () => import('../views/offers/Details.vue'),
-    meta: { title: 'Offer Details', auth: true }
-  },
-  {
-    path: '/offers-preview',
+    path: '/offers/preview',
     name: 'offers-preview',
     component: () => import('../views/offers/Preview.vue'),
     meta: { title: 'Offers Preview', auth: true }

@@ -41,7 +41,9 @@
       <Events store-name="ordersPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <StorePreview :data="orders" store-link="orders" store-commit="setOrdersPreview" />
+      <router-link to="/orders/preview" @click="setStore()">
+        <Button class="form-btn">Vorschau</Button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -49,15 +51,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import Events from '../../components/form/Events.vue'
-import StorePreview from '../../components/preview/StorePreview.vue'
 
 export default {
   name: 'CreateOrder',
   components: {
     SelectedCustomer,
-    Events,
-    StorePreview
+    Events
   },
+  inject: ['storePreview'],
   data() {
     return {
       title: 'Auftrag erstellen',
@@ -87,6 +88,9 @@ export default {
     },
     getEvents(value) {
       this.orders.events = value
+    },
+    setStore() {
+      this.storePreview(this.orders, 'setOrdersPreview')
     }
   }
 }

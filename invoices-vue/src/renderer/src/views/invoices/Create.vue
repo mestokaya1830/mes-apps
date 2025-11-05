@@ -34,7 +34,9 @@
       <Events store-name="invoicesPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <StorePreview :data="invoices" store-link="invoices" store-commit="setInvoicesPreview" />
+      <router-link to="/invoices/preview" class="form-btn" @click="setStore()"
+        >Vorschau</router-link
+      >
     </div>
   </div>
 </template>
@@ -42,15 +44,14 @@
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import Events from '../../components/form/Events.vue'
-import StorePreview from '../../components/preview/StorePreview.vue'
 
 export default {
   name: 'CreateInvoices',
   components: {
     SelectedCustomer,
-    Events,
-    StorePreview
+    Events
   },
+  inject: ['storePreview'],
   data() {
     return {
       title: 'Rechnung erstellen',
@@ -82,6 +83,9 @@ export default {
     },
     getEvents(value) {
       this.invoices.events = value //with emit from child component positions
+    },
+    setStore() {
+      this.storePreview(this.invoices, 'setInvoicesPreview')
     }
   }
 }
