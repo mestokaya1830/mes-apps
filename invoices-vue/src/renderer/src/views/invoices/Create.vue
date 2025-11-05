@@ -76,7 +76,6 @@ export default {
   methods: {
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value //with emit from child component selected customer
-      c
     },
     getContectPerson(value) {
       this.invoices.contact_person = value //with emit from child component contact person

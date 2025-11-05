@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="back-btn" @click="storePreview()">Vorschau</button>
+    <button class="form-btn" @click="storePreview()">Vorschau</button>
   </div>
 </template>
 <script>
@@ -65,7 +65,7 @@ export default {
           },
           selected_customer: { ...this.data.selected_customer },
         })
-        this.$router.push(`/${this.storeLink}-preview`)
+        this.$router.push(`/${this.storeLink}/preview`)
       } catch (error) {
         console.error('Error storing invoice preview:', error)
       }
