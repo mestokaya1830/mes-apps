@@ -41,8 +41,8 @@
       <Events store-name="ordersPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <router-link to="/orders/preview" @click="setStore()">
-        <Button class="form-btn">Vorschau</Button>
+      <router-link to="/orders/preview" class="preview-btn" @click="setStore()">
+        Vorschau
       </router-link>
     </div>
   </div>

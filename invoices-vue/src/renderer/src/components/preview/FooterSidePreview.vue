@@ -23,10 +23,7 @@
 </template>
 <script>
 export default {
-  name: 'FooterSide',
-  data() {
-    return {}
-  }
+  name: 'FooterSide'
 }
 </script>
 <style scoped>

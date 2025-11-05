@@ -34,7 +34,7 @@
       <Events store-name="invoicesPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <router-link to="/invoices/preview" class="form-btn" @click="setStore()"
+      <router-link to="/invoices/preview" class="preview-btn" @click="setStore()"
         >Vorschau</router-link
       >
     </div>
@@ -60,16 +60,15 @@ export default {
         source_page: 'invoices',
         date: '',
         verwendungzweck: '',
-        selected_customer: {},
-        contact_person: {},
-        events: {}
+        selected_customer: null,
+        contact_person: null,
+        events: null
       }
     }
   },
   mounted() {
     if (this.$store?.state?.invoicesPreview) {
-      const preview = this.$store.state.invoicesPreview
-      if (preview) this.invoices = preview
+      this.invoices = this.$store.state.invoicesPreview
     } else {
       return this.invoices
     }
@@ -85,7 +84,9 @@ export default {
       this.invoices.events = value //with emit from child component positions
     },
     setStore() {
+      console.time('commit')
       this.storePreview(this.invoices, 'setInvoicesPreview')
+      console.timeEnd('commit')
     }
   }
 }

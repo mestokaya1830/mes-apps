@@ -65,10 +65,10 @@ export default {
   },
   computed: {
     subtotal() {
-      return this.dinamicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      return this.dynamicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      return this.dinamicData.events.positions.reduce(
+      return this.dynamicData.events.positions.reduce(
         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
         0
       )
@@ -77,34 +77,36 @@ export default {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
-      if (this.dinamicData.events.payment.paid_amount) {
-        return this.total - this.dinamicData.events.payment.paid_amount
+      if (this.dynamicData.events.payment.paid_amount) {
+        return this.total - this.dynamicData.events.payment.paid_amount
       }
       return 0
     }
   },
   methods: {
-    storePreview(data, storeCommit) {
-      if (data) this.dinamicData = data
-      try {
-        this.$store.commit(storeCommit, {
-          id: data.id,
-          title: data.title,
-          source_page: data.source_page,
-          date: data.date,
-          valid_days: data.valid_days,
-          verwendungzweck: data.verwendungzweck,
-          events: { ...data.events },
-          summary: {
-            subtotal: this.subtotal.toFixed(2),
-            vat_amount: this.vatAmount.toFixed(2),
-            total: this.total.toFixed(2),
-            outstanding: this.outstanding.toFixed(2)
-          },
-          selected_customer: { ...data.selected_customer }
-        })
-      } catch (error) {
-        console.error('Error storing preview:', error)
+    storePreview(result, storeCommit) {
+      if (result && storeCommit) {
+        this.dynamicData = result
+        try {
+          this.$store.commit(storeCommit, {
+            id: result.id,
+            title: result.title,
+            source_page: result.source_page,
+            date: result.date,
+            valid_days: result.valid_days,
+            verwendungzweck: result.verwendungzweck,
+            events: result.events,
+            summary: {
+              subtotal: this.subtotal.toFixed(2),
+              vat_amount: this.vatAmount.toFixed(2),
+              total: this.total.toFixed(2),
+              outstanding: this.outstanding.toFixed(2)
+            },
+            selected_customer: result.selected_customer
+          })
+        } catch (error) {
+          console.error('Error storing preview:', error)
+        }
       }
     }
   }

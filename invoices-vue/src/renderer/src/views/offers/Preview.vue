@@ -140,7 +140,12 @@ export default {
   },
   methods: {
     getoffersPreview() {
-      this.offersPreview = this.$store.state.offersPreview
+       if (this.$store?.state?.offersPreview) {
+        const preview = this.$store.state.offersPreview
+        if (preview) this.offersPreview = preview
+      } else {
+        return this.offersPreview
+      }
     }
   }
 }

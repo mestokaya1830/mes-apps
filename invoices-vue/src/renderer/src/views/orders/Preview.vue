@@ -121,7 +121,12 @@ export default {
   },
   methods: {
     getOrdersPreview() {
-      this.ordersPreview = this.$store.state.ordersPreview
+      if (this.$store?.state?.ordersPreview) {
+        const preview = this.$store.state.ordersPreview
+        if (preview) this.ordersPreview = preview
+      } else {
+        return this.ordersPreview
+      }
     }
   }
 }

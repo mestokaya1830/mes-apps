@@ -65,9 +65,6 @@
 <script>
 export default {
   name: 'ModernSidebar',
-  data() {
-    return {}
-  },
   methods: {
     async logout() {
       try {

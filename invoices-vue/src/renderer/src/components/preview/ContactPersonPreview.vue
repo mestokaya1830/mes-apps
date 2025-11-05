@@ -24,7 +24,7 @@ export default {
     }
   },
   mounted() {
-    this.contact_person = JSON.parse(this.$store.state.auth.contact_person)
+    this.contact_person = this.$store.state.auth.contact_person
   }
 }
 </script>

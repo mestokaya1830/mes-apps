@@ -11,9 +11,6 @@
 <script>
 export default {
   name: 'AppTitleBar',
-  data() {
-    return {}
-  },
   methods: {
     async minimize() {
       await window.api.controlWindow('minimize')
