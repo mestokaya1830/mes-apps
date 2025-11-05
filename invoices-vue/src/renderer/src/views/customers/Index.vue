@@ -34,7 +34,6 @@ export default {
       try {
         const result = await window.api.getCustomers()
         this.customers = result.customers
-        console.log(result)
       } catch (error) {
         console.error(error)
       }
@@ -42,7 +41,7 @@ export default {
     async deleteCustomer(id) {
       try {
         const result = await window.api.deleteCustomer(id)
-        console.log(result)
+        co
       } catch (error) {
         console.error(error)
       }

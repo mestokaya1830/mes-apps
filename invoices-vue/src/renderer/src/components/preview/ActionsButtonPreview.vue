@@ -34,14 +34,21 @@ export default {
     return {}
   },
   methods: {
-    exportPDF() {
+    async exportPDF() {
+      await this.$nextTick() // Vue render bitti mi bekle
       const element = document.querySelector('.printable')
       if (!element) return
+
       const options = {
-        margin: 20,
+        margin: 16,
         filename: this.fileName + '.pdf',
-        image: { type: 'png', quality: 0.98 },
-        html2canvas: { scale: 2, logging: true, letterRendering: true },
+        image: { type: 'png', quality: 0.95 },
+        html2canvas: {
+          scale: 1.5,
+          useCORS: true,
+          logging: false,
+          scrollY: 0
+        },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       }
 
@@ -74,7 +81,7 @@ export default {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   display: flex;
   align-items: center;
-  margin:0 10px;
+  margin: 0 10px;
 }
 
 .btn-primary {

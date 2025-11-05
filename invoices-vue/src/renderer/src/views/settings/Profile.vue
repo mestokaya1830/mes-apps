@@ -337,7 +337,7 @@ export default {
             company_details: JSON.parse(response.user.company_details)
           }
           this.selectedImage = `data:${this.user.image_type};base64,${this.user.logo}`
-          console.log(this.user)
+ 
         }
         this.isLoading = false
       } catch (error) {

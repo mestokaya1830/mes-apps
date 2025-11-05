@@ -97,7 +97,6 @@ export default {
       try {
         const result = await window.api.customerDetails(this.$route.params.id)
         this.customer = result.customer
-        console.log(result)
       } catch (error) {
         console.error(error)
       }
@@ -112,7 +111,6 @@ export default {
         if (result.success) {
           this.$router.push('/customers/index')
         }
-        console.log(result)
       } catch (error) {
         console.error(error)
       }

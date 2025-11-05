@@ -172,7 +172,6 @@ export default {
         if (result.error) {
           throw new Error(result.error)
         }
-        console.log('Saving customer:', this.customer)
         this.showSuccess = true
       } catch (error) {
         this.errorMessage = error.message

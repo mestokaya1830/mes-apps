@@ -6,15 +6,14 @@ import db from '../db/sqliteConn.js'
 import nodeMailer from 'nodemailer'
 
 let win = null
-
 function createWindow() {
   win = new BrowserWindow({
-    // fullscreen: true,
     width: 1200,
     height: 800,
-    show: false,
+    show: false, // Pencereyi gizle
     frame: false,
     autoHideMenuBar: true,
+    backgroundColor: '#ffffff', // Beyaz flaş önler
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: path.resolve(__dirname, '../preload/preload.js'),
@@ -27,7 +26,8 @@ function createWindow() {
     }
   })
 
-  win.on('ready-to-show', () => {
+  // Pencere DOM + paint hazır olduğunda göster
+  win.once('ready-to-show', () => {
     win.show()
     win.setTitle('Mes Invoices App')
   })
@@ -44,26 +44,24 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(async () => {
+app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
   createWindow()
+
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  if (process.platform !== 'darwin') app.quit()
 })
 
 ipcMain.handle('control-window', (event, data) => {
-  console.log(data)
   if (!win) return
   switch (data) {
     case 'minimize':
@@ -257,7 +255,6 @@ ipcMain.handle('check-register', async () => {
 
 ipcMain.handle('login', async (event, data) => {
   const { email, password } = data
-  console.log(email, password)
   try {
     const row = db
       .prepare('SELECT * FROM users WHERE email = ? AND password = ?')
@@ -278,8 +275,6 @@ ipcMain.handle('email-verfication', async (event, data) => {
   const { email } = data
   const expiresAt = new Date(Date.now() + 60000 * 1)
   const token = Math.random().toString(36).substring(2, 50)
-  console.log(token)
-
   try {
     const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email)
     if (user) {
@@ -412,7 +407,6 @@ ipcMain.handle('customer-details', async (event, id) => {
 })
 
 ipcMain.handle('add-customer', async (event, data) => {
-  console.log(data)
   try {
     const row = db
       .prepare('INSERT INTO customers (first_name, last_name, email, phone) VALUES (?,?,?,?)')
@@ -447,7 +441,6 @@ ipcMain.handle('update-customer', async (event, data) => {
         customer.is_active,
         id
       )
-    console.log(row)
     return { success: true, customer: row }
   } catch (err) {
     console.error('DB error:', err.message)

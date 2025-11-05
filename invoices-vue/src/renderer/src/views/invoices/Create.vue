@@ -30,33 +30,27 @@
       <!-- customer -->
       <SelectedCustomer store-name="invoicesPreview" @get-selected-customer="getSelectedCustomer" />
 
-      <!-- contact person -->
-      <ContactPerson store-name="invoicesPreview" @get-contect-person="getContectPerson" />
-
       <!-- events -->
       <Events store-name="invoicesPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <button class="back-btn" @click="storePreview(invoices, 'invoices', 'setInvoicesPreview')">
-        Vorschau
-      </button>
+      <StorePreview :data="invoices" store-link="invoices" store-commit="setInvoicesPreview" />
     </div>
   </div>
 </template>
 
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
-import ContactPerson from '../../components/form/ContactPerson.vue'
 import Events from '../../components/form/Events.vue'
+import StorePreview from '../../components/preview/StorePreview.vue'
 
 export default {
   name: 'CreateInvoices',
   components: {
     SelectedCustomer,
-    ContactPerson,
-    Events
+    Events,
+    StorePreview
   },
-  inject: ['storePreview'],
   data() {
     return {
       title: 'Rechnung erstellen',
@@ -82,7 +76,7 @@ export default {
   methods: {
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value //with emit from child component selected customer
-      console.log(this.invoices)
+      c
     },
     getContectPerson(value) {
       this.invoices.contact_person = value //with emit from child component contact person

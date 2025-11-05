@@ -3,7 +3,7 @@
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <HeaderSidePreview :title="title" :color="'green'" />
+        <HeaderSidePreview :title="title" />
 
         <!-- Recipient & Invoice Details -->
         <div v-if="invoicesPreview.selected_customer" class="recipient">
@@ -97,10 +97,7 @@
         <EventsPreview v-if="invoicesPreview.events" :data="invoicesPreview" />
 
         <!-- Contact Person -->
-        <ContactPersonPreview
-          v-if="invoicesPreview.contact_person"
-          :data="invoicesPreview.contact_person"
-        />
+        <ContactPersonPreview />
         <!-- Bank Info -->
         <div class="bank-box">
           <div class="bank-title">🏦 Bankverbindung</div>
@@ -134,19 +131,19 @@
 
 <script>
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
-import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import EventsPreview from '../../components/preview/EventsPreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
+import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 
 export default {
   name: 'InvoicesPreview',
   components: {
     HeaderSidePreview,
-    FooterSidePreview,
-    ActionsButtonPreview,
+    EventsPreview,
     ContactPersonPreview,
-    EventsPreview
+    FooterSidePreview,
+    ActionsButtonPreview
   },
   inject: ['formatCustomerId', 'formatDate'],
   data() {
@@ -167,7 +164,7 @@ export default {
   },
   methods: {
     getInvoicesPreview() {
-      this.invoicesPreview = this.$store.state.invoicesPreview
+      this.invoicesPreview = JSON.parse(JSON.stringify(this.$store.state.invoicesPreview))
     }
   }
 }

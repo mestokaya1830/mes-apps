@@ -47,9 +47,6 @@
       <!--selected-customer -->
       <SelectedCustomer store-name="offersPreview" @get-selected-customer="getSelectedCustomer" />
 
-      <!-- contact person -->
-      <ContactPerson store-name="offersPreview" @get-contact-person="getContactPerson" />
-
       <!-- legal validity -->
       <div class="form-section">
         <div class="form-section-title">
@@ -70,26 +67,23 @@
       <Events store-name="offersPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <button class="back-btn" @click="storePreview(offers, 'offers', 'setOffersPreview')">
-        Vorschau
-      </button>
+      <StorePreview :data="offers" store-link="offers" store-commit="setOffersPreview" />
     </div>
   </div>
 </template>
 
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
-import ContactPerson from '../../components/form/ContactPerson.vue'
 import Events from '../../components/form/Events.vue'
+import StorePreview from '../../components/preview/StorePreview.vue'
 
 export default {
   name: 'CreateOffer',
   components: {
     SelectedCustomer,
-    ContactPerson,
-    Events
+    Events,
+    StorePreview
   },
-  inject: ['storePreview'],
   data() {
     return {
       title: 'Angebot erstellen',

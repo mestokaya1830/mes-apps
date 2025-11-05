@@ -1,17 +1,16 @@
 <template lang="">
   <div>
-    <div v-if="data" class="contact-box">
-      <div class="contact-title">👤 Ihre persönliche Ansprechpartnerin</div>
-      <div class="contact-person">
-        <div class="contact-avatar">SM</div>
-        <div class="contact-details">
-          <div class="contact-name">{{ data.full_name }}</div>
-          <div class="contact-info">
-            Projektmanagement & Kundenbetreuung<br />
-            📞 +{{ data.phone }}<br />
-            📧 {{ data.email }}
-          </div>
-        </div>
+    <div v-if="contact_person" class="contact-box">
+      <div class="bank-title">👤 Ansprechpartnerin</div>
+      <div class="bank-info">
+        <span class="bank-label">SM:</span>
+        <span class="bank-value"
+          >{{ contact_person.first_name }} {{ contact_person.last_name }}</span
+        >
+        <span class="bank-label">Tel: </span>
+        <span class="bank-value">+{{ contact_person.phone }}</span>
+        <span class="bank-label">Email: </span>
+        <span class="bank-value">{{ contact_person.email }}</span>
       </div>
     </div>
   </div>
@@ -19,12 +18,13 @@
 <script>
 export default {
   name: 'ContactPerson',
-  props: {
-    data: {
-      type: Object,
-      required: true
+  data() {
+    return {
+      contact_person: null
     }
+  },
+  mounted() {
+    this.contact_person = JSON.parse(this.$store.state.auth.contact_person)
   }
 }
 </script>
-

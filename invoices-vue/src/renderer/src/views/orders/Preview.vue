@@ -3,7 +3,7 @@
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <HeaderSidePreview :title="title" :color="'red'" />
+        <HeaderSidePreview :title="title" />
 
         <!-- Recipient & Order Details -->
         <div v-if="ordersPreview.selected_customer" class="recipient">
@@ -69,10 +69,7 @@
         <EventsPreview v-if="ordersPreview.events" :data="ordersPreview" />
 
         <!-- Contact Person -->
-        <ContactPersonPreview
-          v-if="ordersPreview.contact_person"
-          :data="ordersPreview.contact_person"
-        />
+        <ContactPersonPreview />
         <FooterSidePreview />
       </div>
 

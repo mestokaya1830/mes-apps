@@ -132,27 +132,6 @@ const routes = [
     meta: { title: 'Offers Preview', auth: true }
   },
 
-  //delivery
-
-  {
-    path: '/delivery',
-    name: 'delivery',
-    component: () => import('../views/delivery/Index.vue'),
-    meta: { title: 'Devliver', auth: true }
-  },
-  {
-    path: '/delivery/create',
-    name: 'delivery-create',
-    component: () => import('../views/delivery/Create.vue'),
-    meta: { title: 'Add New Delivery', auth: true }
-  },
-  {
-    path: '/delivery/details/:id',
-    name: 'delivery-details',
-    component: () => import('../views/delivery/Details.vue'),
-    meta: { title: 'Delivery Details', auth: true }
-  },
-
   //customers
 
   {

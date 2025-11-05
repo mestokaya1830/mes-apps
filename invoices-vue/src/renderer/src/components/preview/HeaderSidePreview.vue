@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="header-title" :style="{ color: color }">{{ title }}</h1>
+    <h1 class="header-title">{{ title }}</h1>
     <div class="header">
       <div class="company-info">
         <div class="company-name">{{ $store.state.auth.firm_name }}</div>
@@ -21,9 +21,6 @@ export default {
   name: 'HeaderSide',
   props: {
     title: {
-      type: String
-    },
-    color: {
       type: String
     }
   },
@@ -56,7 +53,7 @@ export default {
   padding-bottom: 15px;
   margin-bottom: 15px;
   align-items: center;
-  border-bottom: 3px solid #10b981;
+  border-bottom: 3px solid #91a7c5;
 }
 .header-title {
   text-align: center;

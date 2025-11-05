@@ -37,33 +37,27 @@
       <!-- customer -->
       <SelectedCustomer store-name="ordersPreview" @get-selected-customer="getSelectedCustomer" />
 
-      <!-- contact person -->
-      <ContactPerson store-name="ordersPreview" @get-contact-person="getContactPerson" />
-
       <!-- events -->
       <Events store-name="ordersPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <button class="back-btn" @click="storePreview(orders, 'orders', 'setOrdersPreview')">
-        Vorschau
-      </button>
+      <StorePreview :data="orders" store-link="orders" store-commit="setOrdersPreview" />
     </div>
   </div>
 </template>
 
 <script>
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
-import ContactPerson from '../../components/form/ContactPerson.vue'
 import Events from '../../components/form/Events.vue'
+import StorePreview from '../../components/preview/StorePreview.vue'
 
 export default {
   name: 'CreateOrder',
   components: {
     SelectedCustomer,
-    ContactPerson,
-    Events
+    Events,
+    StorePreview
   },
-  inject: ['storePreview'],
   data() {
     return {
       title: 'Auftrag erstellen',

@@ -405,15 +405,21 @@ input:not([readonly]) {
   margin: 0 20px;
   font-size: 12px;
 }
-
-/* BANK BOX */
-
-.bank-info {
+.contact-box, .bank-box{
+  background:#f1f5f9;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
+.bank-info, .contact-info {
   display: grid;
-  grid-template-columns: 80px 1fr;
+  grid-template-columns: 50px 1fr;
   gap: 4px;
   line-height: 1.6;
   font-size: 12px;
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
 .bank-label {
@@ -717,16 +723,6 @@ div[v-if='errorMessage'] {
   padding-left: 0.75rem;
 }
 
-.section-personal,
-.section-address,
-.section-company,
-.section-contact-person,
-.section-tax,
-.section-bank,
-.section-signature {
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-}
 
 .form-blog {
   display: flex;
