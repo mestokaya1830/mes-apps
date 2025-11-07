@@ -53,7 +53,7 @@
       </div>
     </nav>
 
-    <div v-if="$store.state.auth" class="sidebar-footer">
+    <div v-if="auth" class="sidebar-footer">
       <a href="#" class="nav-link logout-link" @click="logout()">
         <span class="nav-icon">🚪</span>
         <span>Abmelden</span>
@@ -63,12 +63,21 @@
 </template>
 
 <script>
+import store from '../../store/store.js'
 export default {
   name: 'ModernSidebar',
+  data() {
+    return {
+      auth: null
+    }
+  },
+  mounted() {
+    this.auth = store.state.auth
+  },
   methods: {
     async logout() {
       try {
-        await this.$store.commit('setAuth', null)
+        await store.setAuth('auth', null)
         this.$router.push('/login')
       } catch (error) {
         console.error('Abmeldefehler:', error)

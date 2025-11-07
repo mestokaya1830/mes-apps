@@ -4,7 +4,7 @@
       <div class="printable">
         <!-- Header -->
         <h1 class="header-title">{{ title }}</h1>
-        <div class="header">
+        <!-- <div class="header">
           <div class="company-info">
             <div class="company-name">{{ $store.state.auth.firm_name }}</div>
             <div class="company-details">{{ $store.state.auth.address }}</div>
@@ -16,10 +16,9 @@
             <div class="company-details">Web: {{ $store.state.auth.website }}</div>
           </div>
           <img :src="logoSrc" alt="Logo" class="preview-logo" />
-        </div>
+        </div> -->
 
-        <!-- Recipient & Invoice Details -->
-        <div v-if="invoicesPreview.selected_customer" class="recipient">
+        <!-- <div v-if="invoicesPreview.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
             <div class="company-name-subtitle">
@@ -33,7 +32,6 @@
             </div>
           </div>
 
-          <!-- invoice details -->
           <div class="invoice-details">
             <div class="section-title">Rechnungsdetails</div>
 
@@ -87,10 +85,10 @@
               <span class="meta-value">{{ invoicesPreview.selected_customer.vat_id }}</span>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Document Title -->
-        <div class="document-title">
+        <!-- <div class="document-title">
           {{ title }}
           <span
             v-if="invoicesPreview.paid_amount && invoicesPreview.paid_amount > 0"
@@ -98,7 +96,7 @@
           >
             ⏱️ Teilweise bezahlt
           </span>
-        </div>
+        </div> -->
 
         <!-- Intro Text -->
         <div class="intro-text">
@@ -107,7 +105,7 @@
         </div>
 
         <!-- Events Table -->
-        <table class="positions-table">
+        <!-- <table class="positions-table">
           <thead>
             <tr>
               <th style="width: 5%">Pos.</th>
@@ -148,18 +146,16 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
 
         <!-- summary -->
-        <div class="totals">
+        <!-- <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
               formatCurrency(invoicesPreview.summary.subtotal, invoicesPreview.events.currency)
             }}</span>
           </div>
-
-          <!-- KDV sadece reverse charge değilse göster -->
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
@@ -193,7 +189,6 @@
             }}</span>
           </div>
 
-          <!-- Küçük işletme veya Reverse-Charge notları (kdv yi musteri oder reverse charge)-->
           <div v-if="invoicesPreview.events.is_small_company" class="tax-note">
             ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
           </div>
@@ -201,11 +196,11 @@
           <div v-if="invoicesPreview.events.reverse_charge" class="tax-note">
             ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
           </div>
-        </div>
+        </div> -->
         <!-- Contact Person -->
-        <ContactPersonPreview />
+        <!-- <ContactPersonPreview /> -->
         <!-- Bank Info -->
-        <div class="bank-box">
+        <!-- <div class="bank-box">
           <div class="bank-title">🏦 Bankverbindung</div>
           <div class="bank-info">
             <span class="bank-label">Bank:</span>
@@ -217,16 +212,16 @@
             <span class="bank-label"> Verwendungszweck:</span>
             <span class="bank-value">{{ invoicesPreview.verwendungszweck }}</span>
           </div>
-        </div>
+        </div> -->
 
-        <FooterSidePreview />
+        <!-- <FooterSidePreview /> -->
       </div>
 
-      <ActionsButtonPreview
+      <!-- <ActionsButtonPreview
         v-if="invoicesPreview.selected_customer"
         :email="invoicesPreview.selected_customer.email"
         :file-name="title + ' ' + formatRechnungId"
-      />
+      /> -->
     </div>
 
     <router-link to="/invoices/create" class="back-link">
@@ -236,6 +231,7 @@
 </template>
 
 <script>
+import store from '../../store/store.js'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
@@ -282,12 +278,14 @@ export default {
     this.getInvoicesPreview()
   },
   methods: {
-    getInvoicesPreview() {
-      if (this.$store?.state?.invoicesPreview) {
-        this.invoicesPreview = this.$store.state.invoicesPreview
-      } else {
-        return this.invoicesPreview
-      }
+    async getInvoicesPreview() {
+      console.log(store.state.invoices)
+      // console.log(this.$store?.state?.invoicesPreview)
+      // if (this.$store?.state?.invoicesPreview) {
+      //   this.invoicesPreview = this.$store.state.invoicesPreview
+      // } else {
+      //   return this.invoicesPreview
+      // }
     }
   }
 }

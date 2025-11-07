@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import store from '../../store/store.js'
 export default {
   name: 'Login',
   data() {
@@ -91,7 +92,7 @@ export default {
         if (!res.success) {
           this.error.credential = res.message
         } else {
-          this.$store.commit('setAuth', res.user)
+          await store.setAuth(res.user)
           this.$router.push('/')
         }
       }

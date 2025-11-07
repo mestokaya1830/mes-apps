@@ -1,34 +1,53 @@
-import { createStore } from 'vuex'
-import VuexPersist from 'vuex-persist'
+// src/stores/useStore.js
+import { reactive, readonly } from 'vue'
+import localforage from 'localforage'
 
-const vuexLocalStorage = new VuexPersist({
-  key: 'vuex',
-  storage: window.localStorage
+localforage.config({
+  name: 'myApp',
+  storeName: 'appData'
 })
 
-export default createStore({
-  state: {
-    auth: null,
-    invoicesPreview: null,
-    offersPreview: null,
-    ordersPreview: null
-  },
-  mutations: {
-    setAuth(state, payload) {
-      state.auth = payload
-    },
-    setInvoicesPreview(state, payload) {
-      state.invoicesPreview = payload
-    },
-    setOffersPreview(state, payload) {
-      state.offersPreview = payload
-    },
-    setOrdersPreview(state, payload) {
-      state.ordersPreview = payload
-    }
-  },
-  actions: {},
-  getters: {},
-  modules: {},
-  plugins: [vuexLocalStorage.plugin]
+const state = reactive({
+  auth: null,
+  invoices: null
 })
+
+// init: IndexedDB’den önceki verileri yükle
+async function init() {
+  try {
+    const authStored = await localforage.getItem('auth')
+    if (authStored) state.auth = authStored
+
+    const invoices = await localforage.getItem('invoices')
+    if (invoices) state.invoices = invoices
+  } catch (err) {
+    console.error('Failed to load stored data:', err)
+  }
+}
+
+// sadece login’de auth kaydet
+async function setAuth(user) {
+  state.auth = user
+  try {
+    await localforage.setItem('auth', user)
+  } catch (err) {
+    console.error('Failed to save auth:', err)
+  }
+}
+
+// sadece orders preview geçerken kaydet
+async function setInvoices(data) {
+  state.invoices = data
+  try {
+    await localforage.setItem('invoices', data)
+  } catch (err) {
+    console.error('Failed to save invoices:', err)
+  }
+}
+
+export default {
+  state: readonly(state),
+  init,
+  setAuth,
+  setInvoices
+}

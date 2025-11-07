@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { toRaw } from 'vue'
+import store from './store/store.js'
 import TitleBar from './components/preview/TitleBarPreview.vue'
 import SideBar from './components/preview/SideBarPreview.vue'
 export default {
@@ -65,9 +67,11 @@ export default {
   },
   computed: {
     subtotal() {
+      if (!this.dynamicData || !this.dynamicData.events) return 0
       return this.dynamicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
+      if (!this.dynamicData || !this.dynamicData.events) return 0
       return this.dynamicData.events.positions.reduce(
         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
         0
@@ -77,6 +81,7 @@ export default {
       return this.subtotal + this.vatAmount
     },
     outstanding() {
+      if (!this.dynamicData || !this.dynamicData.events) return 0
       if (this.dynamicData.events.payment.paid_amount) {
         return this.total - this.dynamicData.events.payment.paid_amount
       }
@@ -84,26 +89,27 @@ export default {
     }
   },
   methods: {
-    storePreview(result, storeCommit) {
-      if (result && storeCommit) {
-        this.dynamicData = result
+    async storePreview(storeCommit, createData) {
+      if (createData && storeCommit) {
+        this.dynamicData = createData
         try {
-          this.$store.commit(storeCommit, {
-            id: result.id,
-            title: result.title,
-            source_page: result.source_page,
-            date: result.date,
-            valid_days: result.valid_days,
-            verwendungzweck: result.verwendungzweck,
-            events: result.events,
+          const invoices = {
+            id: createData.id,
+            title: createData.title,
+            source_page: createData.source_page,
+            date: createData.date,
+            valid_days: createData.valid_days,
+            verwendungzweck: createData.verwendungzweck,
+            events: createData.events,
             summary: {
               subtotal: this.subtotal.toFixed(2),
               vat_amount: this.vatAmount.toFixed(2),
               total: this.total.toFixed(2),
               outstanding: this.outstanding.toFixed(2)
             },
-            selected_customer: result.selected_customer
-          })
+            selected_customer: createData.selected_customer
+          }
+          await store[storeCommit](JSON.parse(JSON.stringify(invoices)))
         } catch (error) {
           console.error('Error storing preview:', error)
         }

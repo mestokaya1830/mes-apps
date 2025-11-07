@@ -85,11 +85,11 @@ export default {
   },
   mounted() {
     this.getCustomers()
-    if (this.$store.state[this.storeName] && this.$store.state[this.storeName].selected_customer) {
-      this.selected_customer = this.$store.state[this.storeName].selected_customer
-    } else {
-      return this.selected_customer
-    }
+    // if (this.$store.state[this.storeName] && this.$store.state[this.storeName].selected_customer) {
+    //   this.selected_customer = this.$store.state[this.storeName].selected_customer
+    // } else {
+    //   return this.selected_customer
+    // }
   },
   methods: {
     async getCustomers() {
@@ -106,7 +106,7 @@ export default {
     },
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.selected_customer = { ...customer }
+      if (customer) this.selected_customer = customer
       if (this.selected_customer) this.$emit('get-selected-customer', this.selected_customer)
     }
   }

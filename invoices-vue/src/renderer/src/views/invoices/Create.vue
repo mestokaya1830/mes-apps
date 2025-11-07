@@ -34,14 +34,13 @@
       <Events store-name="invoicesPreview" @get-events="getEvents" />
 
       <!-- preview -->
-      <router-link to="/invoices/preview" class="preview-btn" @click="setStore()"
-        >Vorschau</router-link
-      >
+      <router-link to="/invoices/preview" class="preview-btn" @click="setStore()">Vorschau</router-link>
     </div>
   </div>
 </template>
 
 <script>
+import store from '../../store/store.js'
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import Events from '../../components/form/Events.vue'
 
@@ -67,11 +66,11 @@ export default {
     }
   },
   mounted() {
-    if (this.$store?.state?.invoicesPreview) {
-      this.invoices = this.$store.state.invoicesPreview
-    } else {
-      return this.invoices
-    }
+    // if (this.$store?.state?.invoicesPreview) {
+    //   this.invoices = this.$store.state.invoicesPreview
+    // } else {
+    //   return this.invoices
+    // }
   },
   methods: {
     getSelectedCustomer(value) {
@@ -85,7 +84,7 @@ export default {
     },
     setStore() {
       console.time('commit')
-      this.storePreview(this.invoices, 'setInvoicesPreview')
+      this.storePreview('setInvoices', this.invoices)
       console.timeEnd('commit')
     }
   }

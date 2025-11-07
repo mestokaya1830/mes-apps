@@ -173,20 +173,7 @@ export default {
   data() {
     return {
       events: {
-        positions: [
-          {
-            title: 'Neue Position',
-            description: 'Beschreibung',
-            service_period_start: '',
-            service_period_end: '',
-            quantity: 1,
-            unit: 'Stk',
-            price: 0,
-            vat: 19,
-            vat_unit: 0,
-            unit_total: 0
-          }
-        ],
+        positions: [],
         is_small_company: false,
         is_reverse_charge: false,
         currency: 'EUR.de-DE',
@@ -199,15 +186,14 @@ export default {
     }
   },
   mounted() {
-    if (this.$store.state[this.storeName] && this.$store.state[this.storeName].events) {
-      this.events = this.$store.state[this.storeName].events
-      this.events.is_small_company = JSON.parse(
-        this.$store.state.auth.company_details
-      ).is_small_company
-      // this.events.is_small_company = false
-    } else {
-      return this.events
-    }
+    // if (this.$store.state[this.storeName] && this.$store.state[this.storeName].events) {
+    //   this.events = this.$store.state[this.storeName].events
+    //   this.events.is_small_company = JSON.parse(
+    //     this.$store.state.auth.company_details
+    //   ).is_small_company
+    // } else {
+    //   return this.events
+    // }
   },
   methods: {
     calculateReverseCharge() {
@@ -268,4 +254,4 @@ export default {
   }
 }
 </script>
-<style lang=""></style>
+
