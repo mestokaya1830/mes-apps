@@ -57,6 +57,10 @@
 export default {
   name: 'SelectedCustomer',
   props: {
+    customerData: {
+      type: Object,
+      required: false
+    },
     storeName: {
       type: String,
       reuquired: true
@@ -85,11 +89,7 @@ export default {
   },
   mounted() {
     this.getCustomers()
-    // if (this.$store.state[this.storeName] && this.$store.state[this.storeName].selected_customer) {
-    //   this.selected_customer = this.$store.state[this.storeName].selected_customer
-    // } else {
-    //   return this.selected_customer
-    // }
+    if (this.customerData) this.selected_customer = this.customerData
   },
   methods: {
     async getCustomers() {

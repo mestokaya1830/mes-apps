@@ -28,13 +28,25 @@
       </div>
 
       <!-- customer -->
-      <SelectedCustomer store-name="invoicesPreview" @get-selected-customer="getSelectedCustomer" />
+      <SelectedCustomer
+        v-if="invoices.selected_customer"
+        store-name="invoicesPreview"
+        :customerData="invoices.selected_customer"
+        @get-selected-customer="getSelectedCustomer"
+      />
 
       <!-- events -->
-      <Events store-name="invoicesPreview" @get-events="getEvents" />
+      <Events
+        store-name="invoicesPreview"
+        v-if="invoices.events"
+        :eventsData="invoices.events"
+        @get-events="getEvents"
+      />
 
       <!-- preview -->
-      <router-link to="/invoices/preview" class="preview-btn" @click="setStore()">Vorschau</router-link>
+      <router-link to="/invoices/preview" class="preview-btn" @click="setStore()"
+        >Vorschau</router-link
+      >
     </div>
   </div>
 </template>
@@ -60,19 +72,26 @@ export default {
         date: '',
         verwendungzweck: '',
         selected_customer: null,
-        contact_person: null,
         events: null
       }
     }
   },
   mounted() {
-    // if (this.$store?.state?.invoicesPreview) {
-    //   this.invoices = this.$store.state.invoicesPreview
-    // } else {
-    //   return this.invoices
-    // }
+    this.getStore()
   },
   methods: {
+    getStore() {
+      if (store.state.invoices) {
+        this.invoices = {
+          selected_customer: store.state.invoices.selected_customer,
+          events: store.state.invoices.events,
+          ...store.state.invoices
+        }
+      } else {
+        return this.invoices
+      }
+      console.log('invoices', this.invoices)
+    },
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value //with emit from child component selected customer
     },
@@ -80,7 +99,7 @@ export default {
       this.invoices.contact_person = value //with emit from child component contact person
     },
     getEvents(value) {
-      this.invoices.events = value //with emit from child component positions
+      this.invoices.events = value
     },
     setStore() {
       console.time('commit')

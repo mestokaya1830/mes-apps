@@ -1,24 +1,22 @@
 <template>
-  <div v-if="invoicesPreview">
+  <div v-if="invoicesPreview && auth">
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
         <h1 class="header-title">{{ title }}</h1>
-        <!-- <div class="header">
+        <div class="header">
           <div class="company-info">
-            <div class="company-name">{{ $store.state.auth.firm_name }}</div>
-            <div class="company-details">{{ $store.state.auth.address }}</div>
-            <div class="company-details">
-              {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}
-            </div>
-            <div class="company-details">Tel: {{ $store.state.auth.phone }}</div>
-            <div class="company-details">Email: {{ $store.state.auth.email }}</div>
-            <div class="company-details">Web: {{ $store.state.auth.website }}</div>
+            <div class="company-name">{{ auth.firm_name }}</div>
+            <div class="company-details">{{ auth.address }}</div>
+            <div class="company-details">{{ auth.postal_code }} {{ auth.city }}</div>
+            <div class="company-details">Tel: {{ auth.phone }}</div>
+            <div class="company-details">Email: {{ auth.email }}</div>
+            <div class="company-details">Web: {{ auth.website }}</div>
           </div>
           <img :src="logoSrc" alt="Logo" class="preview-logo" />
-        </div> -->
+        </div>
 
-        <!-- <div v-if="invoicesPreview.selected_customer" class="recipient">
+        <div v-if="invoicesPreview.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
             <div class="company-name-subtitle">
@@ -85,10 +83,10 @@
               <span class="meta-value">{{ invoicesPreview.selected_customer.vat_id }}</span>
             </div>
           </div>
-        </div> -->
+        </div>
 
         <!-- Document Title -->
-        <!-- <div class="document-title">
+        <div class="document-title">
           {{ title }}
           <span
             v-if="invoicesPreview.paid_amount && invoicesPreview.paid_amount > 0"
@@ -96,7 +94,7 @@
           >
             ⏱️ Teilweise bezahlt
           </span>
-        </div> -->
+        </div>
 
         <!-- Intro Text -->
         <div class="intro-text">
@@ -105,7 +103,7 @@
         </div>
 
         <!-- Events Table -->
-        <!-- <table class="positions-table">
+        <table class="positions-table">
           <thead>
             <tr>
               <th style="width: 5%">Pos.</th>
@@ -146,10 +144,10 @@
               </td>
             </tr>
           </tbody>
-        </table> -->
+        </table>
 
         <!-- summary -->
-        <!-- <div class="totals">
+        <div class="totals">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
@@ -196,32 +194,33 @@
           <div v-if="invoicesPreview.events.reverse_charge" class="tax-note">
             ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
           </div>
-        </div> -->
+        </div>
         <!-- Contact Person -->
-        <!-- <ContactPersonPreview /> -->
+        <ContactPersonPreview :contactData="auth.contact_person" />
+
         <!-- Bank Info -->
-        <!-- <div class="bank-box">
+        <div class="bank-box">
           <div class="bank-title">🏦 Bankverbindung</div>
           <div class="bank-info">
             <span class="bank-label">Bank:</span>
-            <span class="bank-value">{{ $store.state.auth.bank_name }}</span>
+            <span class="bank-value">{{ auth.bank_name }}</span>
             <span class="bank-label">IBAN:</span>
-            <span class="bank-value">{{ $store.state.auth.iban }}</span>
+            <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
-            <span class="bank-value">{{ $store.state.auth.bic }}</span>
+            <span class="bank-value">{{ auth.bic }}</span>
             <span class="bank-label"> Verwendungszweck:</span>
             <span class="bank-value">{{ invoicesPreview.verwendungszweck }}</span>
           </div>
-        </div> -->
+        </div>
 
-        <!-- <FooterSidePreview /> -->
+        <FooterSidePreview />
       </div>
 
-      <!-- <ActionsButtonPreview
+      <ActionsButtonPreview
         v-if="invoicesPreview.selected_customer"
         :email="invoicesPreview.selected_customer.email"
         :file-name="title + ' ' + formatRechnungId"
-      /> -->
+      />
     </div>
 
     <router-link to="/invoices/create" class="back-link">
@@ -247,7 +246,8 @@ export default {
   data() {
     return {
       title: 'Rechnungbestätigung',
-      invoicesPreview: null
+      invoicesPreview: null,
+      auth: null
     }
   },
   computed: {
@@ -257,7 +257,7 @@ export default {
       return `RE-${year}-${String(this.invoicesPreview.id).padStart(5, '0')}`
     },
     logoSrc() {
-      const logo = this.$store.state.auth.logo
+      const logo = this.auth.logo
       if (!logo) return null
       if (typeof logo === 'string') {
         if (logo.startsWith('data:image')) return logo
@@ -276,16 +276,19 @@ export default {
   },
   mounted() {
     this.getInvoicesPreview()
+    this.getAuth()
   },
   methods: {
     async getInvoicesPreview() {
-      console.log(store.state.invoices)
-      // console.log(this.$store?.state?.invoicesPreview)
-      // if (this.$store?.state?.invoicesPreview) {
-      //   this.invoicesPreview = this.$store.state.invoicesPreview
-      // } else {
-      //   return this.invoicesPreview
-      // }
+      if (store.state.invoices) {
+        this.invoicesPreview = store.state.invoices
+      }
+    },
+    async getAuth() {
+      if (store.state.auth) {
+        this.auth = store.state.auth
+        console.log('preview', this.auth)
+      }
     }
   }
 }
@@ -300,6 +303,7 @@ export default {
   align-items: center;
   border-bottom: 3px solid #91a7c5;
 }
+
 .header-title {
   text-align: center;
   font-size: 32px;
@@ -308,10 +312,12 @@ export default {
   padding-bottom: 20px;
   border-bottom: 1px solid #ddd;
 }
+
 .logo-container {
   flex-shrink: 0;
   margin-left: 20px;
 }
+
 .section-title {
   font-size: 10px;
   font-weight: 700;
@@ -320,12 +326,14 @@ export default {
   color: #94a3b8;
   margin-bottom: 16px;
 }
+
 .company-name {
   font-size: 20px;
   font-weight: bold;
   color: #10b981;
   margin-bottom: 4px;
 }
+
 .company-name-subtitle {
   font-size: 14px;
   font-weight: bold;
@@ -346,6 +354,7 @@ export default {
   display: block;
   /* margin: 0 auto; */
 }
+
 .positions-table {
   width: 100%;
   border-collapse: collapse;
@@ -394,10 +403,12 @@ export default {
   font-size: 14px;
   color: #1e293b;
 }
+
 .positions-table td.right {
   text-align: right;
   font-weight: 600;
 }
+
 .position-title {
   font-weight: 600;
   color: #0f172a;
@@ -414,10 +425,12 @@ export default {
   font-size: 12px;
   color: #64748b;
 }
+
 .position-service-period {
   font-size: 12px;
   color: #64748b;
 }
+
 /* TOTALS */
 .totals {
   margin-left: auto;
@@ -446,6 +459,7 @@ export default {
   color: #dc2626;
   font-weight: 600;
 }
+
 .total-label {
   font-size: 14px;
   color: #64748b;
@@ -457,6 +471,7 @@ export default {
   font-weight: 600;
   color: #1e293b;
 }
+
 .outstanding {
   display: flex;
   align-items: center;
@@ -465,16 +480,19 @@ export default {
   background: #16a34a;
   border-radius: 6px;
 }
+
 .outstanding .total-label {
   color: #fff;
   font-weight: 600;
   font-size: 14px;
 }
+
 .outstanding .total-value {
   color: #fff;
   font-weight: 600;
   font-size: 18px;
 }
+
 .tax-note {
   margin-top: 16px;
   padding: 16px;

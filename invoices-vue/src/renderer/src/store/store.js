@@ -25,7 +25,6 @@ async function init() {
   }
 }
 
-// sadece login’de auth kaydet
 async function setAuth(user) {
   state.auth = user
   try {
@@ -35,7 +34,6 @@ async function setAuth(user) {
   }
 }
 
-// sadece orders preview geçerken kaydet
 async function setInvoices(data) {
   state.invoices = data
   try {

@@ -164,6 +164,10 @@
 export default {
   name: 'Events',
   props: {
+    eventsData: {
+      type: Object,
+      required: false
+    },
     storeName: {
       type: String,
       required: true
@@ -186,14 +190,13 @@ export default {
     }
   },
   mounted() {
-    // if (this.$store.state[this.storeName] && this.$store.state[this.storeName].events) {
-    //   this.events = this.$store.state[this.storeName].events
-    //   this.events.is_small_company = JSON.parse(
-    //     this.$store.state.auth.company_details
-    //   ).is_small_company
-    // } else {
-    //   return this.events
-    // }
+    if (this.eventsData) {
+      this.events = {
+        ...this.eventsData,
+        positions: [...this.eventsData.positions],
+        payment: { ...this.eventsData.payment }
+      }
+    }
   },
   methods: {
     calculateReverseCharge() {
@@ -219,7 +222,7 @@ export default {
         })
       }
     },
-    addPosition() {
+    async addPosition() {
       this.events.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
@@ -254,4 +257,3 @@ export default {
   }
 }
 </script>
-

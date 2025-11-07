@@ -1,16 +1,14 @@
 <template lang="">
   <div>
-    <div v-if="contact_person" class="contact-box">
+    <div v-if="contact" class="contact-box">
       <div class="bank-title">👤 Ansprechpartnerin</div>
       <div class="bank-info">
         <span class="bank-label">SM:</span>
-        <span class="bank-value"
-          >{{ contact_person.first_name }} {{ contact_person.last_name }}</span
-        >
+        <span class="bank-value">{{ contact.first_name }} {{ contact.last_name }}</span>
         <span class="bank-label">Tel: </span>
-        <span class="bank-value">+{{ contact_person.phone }}</span>
+        <span class="bank-value">+{{ contact.phone }}</span>
         <span class="bank-label">Email: </span>
-        <span class="bank-value">{{ contact_person.email }}</span>
+        <span class="bank-value">{{ contact.email }}</span>
       </div>
     </div>
   </div>
@@ -18,13 +16,19 @@
 <script>
 export default {
   name: 'ContactPerson',
+  props: {
+    contactData: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
-      contact_person: null
+      contact: {}
     }
   },
   mounted() {
-    this.contact_person = this.$store.state.auth.contact_person
+    if (this.contactData) this.contact = JSON.parse(this.contactData)
   }
 }
 </script>

@@ -1,24 +1,6 @@
 <template lang="">
   <div>
-    <div class="footer">
-      <div class="footer-line">
-        <strong>{{ $store.state.auth.firm_name }}</strong> • Geschäftsführer:
-        {{ $store.state.auth.ceo }} • {{ $store.state.auth.register_court }} HRB
-        {{ $store.state.auth.register_number }}
-        {{ $store.state.auth.address }}
-        {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}
-      </div>
-      <div class="footer-line">
-        <strong>Bankverbindung:</strong> {{ $store.state.auth.bank_name }} • IBAN:{{
-          $store.state.auth.iban
-        }}
-        • BIC:
-        {{ $store.state.auth.bic }}
-      </div>
-      <div class="footer-line">
-        <strong>Steuernummer:</strong> 12/345/67890 • <strong>USt-IdNr.:</strong> DE123456789
-      </div>
-    </div>
+    <div class="footer">Footer</div>
   </div>
 </template>
 <script>
