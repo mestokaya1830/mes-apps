@@ -287,7 +287,6 @@ export default {
     async getAuth() {
       if (store.state.auth) {
         this.auth = store.state.auth
-        console.log('preview', this.auth)
       }
     }
   }

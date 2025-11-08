@@ -199,6 +199,9 @@ export default {
     }
   },
   methods: {
+    getCurrency() {
+      this.$emit('get-events', this.events)
+    },
     calculateReverseCharge() {
       if (this.events.is_reverse_charge) {
         this.events.positions.map((item, index) => {

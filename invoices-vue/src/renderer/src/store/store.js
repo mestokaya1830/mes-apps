@@ -33,6 +33,14 @@ async function setAuth(user) {
     console.error('Failed to save auth:', err)
   }
 }
+async function clearAuth() {
+  state.auth = null
+  try {
+    await localforage.removeItem('auth')
+  } catch (err) {
+    console.error('Failed to clear auth:', err)
+  }
+}
 
 async function setInvoices(data) {
   state.invoices = data
@@ -47,5 +55,6 @@ export default {
   state: readonly(state),
   init,
   setAuth,
+  clearAuth,
   setInvoices
 }

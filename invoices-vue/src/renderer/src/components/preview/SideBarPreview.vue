@@ -77,7 +77,7 @@ export default {
   methods: {
     async logout() {
       try {
-        await store.setAuth('auth', null)
+        await store.clearAuth()
         this.$router.push('/login')
       } catch (error) {
         console.error('Abmeldefehler:', error)
