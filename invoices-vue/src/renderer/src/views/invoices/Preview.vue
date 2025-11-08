@@ -208,7 +208,7 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label"> Verwendungszweck:</span>
+            <span class="bank-label"> Verwen..:</span>
             <span class="bank-value">{{ invoicesPreview.verwendungszweck }}</span>
           </div>
         </div>

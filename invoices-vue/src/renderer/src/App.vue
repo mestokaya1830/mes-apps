@@ -99,7 +99,7 @@ export default {
             source_page: createData.source_page,
             date: createData.date,
             valid_days: createData.valid_days,
-            verwendungzweck: createData.verwendungzweck,
+            verwendungszweck: createData.verwendungszweck,
             events: createData.events,
             summary: {
               subtotal: this.subtotal.toFixed(2),

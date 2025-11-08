@@ -28,17 +28,11 @@
             type="number"
             class="form-input"
             step="0.01"
-            @input="getPaymentTerms()"
           />
         </div>
         <div class="form-group">
           <label class="form-label">Zahlungsziel (Tage)</label>
-          <input
-            v-model.number="events.payment.payment_terms"
-            type="number"
-            class="form-input"
-            @input="getPaymentTerms()"
-          />
+          <input v-model.number="events.payment.payment_terms" type="number" class="form-input" />
         </div>
       </div>
 
@@ -48,7 +42,6 @@
           v-model="events.payment.payment_conditions"
           class="form-input payment-terms"
           placeholder="50 % Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss. / 50% upfront, balance upon completion."
-          @input="getPaymentTerms()"
         ></textarea>
       </div>
     </div>

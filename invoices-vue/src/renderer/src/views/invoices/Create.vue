@@ -22,8 +22,8 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Verwendungzweck</label>
-          <input v-model="invoices.verwendung" type="text" class="form-input" />
+          <label class="form-label">Verwendungszweck</label>
+          <input v-model="invoices.verwendungszweck" type="text" class="form-input" />
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default {
         id: 1,
         source_page: 'invoices',
         date: '',
-        verwendungzweck: '',
+        verwendungszweck: '',
         selected_customer: null,
         events: null
       }
@@ -90,7 +90,6 @@ export default {
       } else {
         return this.invoices
       }
-      console.log('invoices', this.invoices)
     },
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value //with emit from child component selected customer
