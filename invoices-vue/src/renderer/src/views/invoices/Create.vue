@@ -29,16 +29,13 @@
 
       <!-- customer -->
       <SelectedCustomer
-        v-if="invoices.selected_customer"
-        store-name="invoicesPreview"
         :customerData="invoices.selected_customer"
         @get-selected-customer="getSelectedCustomer"
       />
 
       <!-- events -->
       <Events
-        store-name="invoicesPreview"
-        v-if="invoices.events"
+        store-name="invoices"
         :eventsData="invoices.events"
         @get-events="getEvents"
       />
@@ -67,8 +64,8 @@ export default {
     return {
       title: 'Rechnung erstellen',
       invoices: {
+        title: 'Meine erste Rechnung',
         id: 1,
-        source_page: 'invoices',
         date: '',
         verwendungszweck: '',
         selected_customer: null,
@@ -77,19 +74,20 @@ export default {
     }
   },
   mounted() {
-    this.getStore()
+    // this.getStore()
   },
   methods: {
     getStore() {
       if (store.state.invoices) {
         this.invoices = {
+          ...store.state.invoices,
           selected_customer: store.state.invoices.selected_customer,
-          events: store.state.invoices.events,
-          ...store.state.invoices
+          events: store.state.invoices.events
         }
       } else {
         return this.invoices
       }
+      console.log(this.invoices);
     },
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value //with emit from child component selected customer
@@ -99,6 +97,7 @@ export default {
     },
     getEvents(value) {
       this.invoices.events = value
+      console.log(this.invoices)
     },
     setStore() {
       console.time('commit')

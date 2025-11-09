@@ -44,8 +44,12 @@
         </div>
       </div>
 
-      <!--selected-customer -->
-      <SelectedCustomer store-name="offersPreview" @get-selected-customer="getSelectedCustomer" />
+      <!-- customer -->
+      <SelectedCustomer
+        v-if="offers.selected_customer"
+        :customerData="offers.selected_customer"
+        @get-selected-customer="getSelectedCustomer"
+      />
 
       <!-- legal validity -->
       <div class="form-section">
@@ -64,8 +68,12 @@
       </div>
 
       <!-- events -->
-      <Events store-name="offersPreview" @get-events="getEvents" />
-
+      <Events
+        store-name="offersPreview"
+        v-if="offers.events"
+        :eventsData="offers.events"
+        @get-events="getEvents"
+      />
       <!-- preview -->
       <router-link to="/offers/preview" class="preview-btn" @click="setStore()">
         Vorschau
@@ -75,6 +83,7 @@
 </template>
 
 <script>
+import store from '../../store/store.js'
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import Events from '../../components/form/Events.vue'
 
@@ -102,9 +111,14 @@ export default {
     }
   },
   mounted() {
-    if (this.$store?.state?.offersPreview) {
-      const preview = this.$store.state.offersPreview
-      if (preview) this.offers = preview
+    if (store.state.offers) {
+      this.offers = {
+        selected_customer: store.state.offers.selected_customer,
+        events: store.state.offers.events,
+        ...store.state.offers
+      }
+    } else {
+      return this.offers
     }
   },
   methods: {
@@ -118,7 +132,7 @@ export default {
       this.offers.events = value
     },
     setStore() {
-      this.storePreview(this.offers, 'setOffersPreview')
+      this.storePreview('setOffers', this.offers)
     }
   }
 }

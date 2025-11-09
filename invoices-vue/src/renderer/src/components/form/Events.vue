@@ -1,7 +1,7 @@
 <template lang="">
   <div>
     <!-- reverse charge -->
-    <div v-if="!events.is_small_company" class="form-section">
+    <div class="form-section">
       <div class="form-section-title">
         <span>👤 Umkehrung der Steuerschuldnerschaft</span>
         <label for="reverse_charge-checkbox" class="switch">
@@ -20,7 +20,7 @@
     <!-- payment terms -->
     <div class="form-section">
       <div class="form-section-title">💳 Zahlungsinformationen</div>
-      <div v-if="storeName === 'invoicesPreview'" class="form-row">
+      <div v-if="storeName === 'invoices'" class="form-row">
         <div class="form-group">
           <label class="form-label">Anzahlung (bereits bezahlt)</label>
           <input
@@ -125,7 +125,7 @@
           <div class="form-group">
             <label class="form-label">MwSt. (%)</label>
             <select
-              v-if="!events.is_small_company && !events.is_reverse_charge"
+              v-if="!events.is_reverse_charge"
               v-model.number="pos.vat"
               class="form-input"
               @change="getUnitTotal(pos.quantity, pos.price, index)"
@@ -171,28 +171,38 @@ export default {
     return {
       events: {
         positions: [],
-        is_small_company: false,
+        source_page: 'invoices',
         is_reverse_charge: false,
         currency: 'EUR.de-DE',
         payment: {
           paid_amount: 0,
           payment_terms: 0,
           payment_conditions: ''
+        },
+        summary: {
+          subtotal: 0,
+          vat_amount: 0,
+          total: 0,
+          outstanding: 0
         }
       }
     }
   },
+
   mounted() {
     if (this.eventsData) {
       this.events = {
         ...this.eventsData,
-        positions: [...this.eventsData.positions],
-        payment: { ...this.eventsData.payment }
+        positions: this.eventsData.positions ? [...this.eventsData.positions] : [],
+        payment: { ...this.eventsData.payment },
+        summary: { ...this.eventsData.summary }
       }
+    } else {
+      return this.events
     }
   },
   methods: {
-    getCurrency() {
+    updateEventsField() {
       this.$emit('get-events', this.events)
     },
     calculateReverseCharge() {
@@ -217,6 +227,7 @@ export default {
           ).toFixed(2)
         })
       }
+      this.$emit('get-events', this.events)
     },
     async addPosition() {
       this.events.positions.push({
@@ -243,10 +254,7 @@ export default {
     getUnitTotal(quantity, price, index) {
       const vat = this.events.positions[index].vat || 0
       const base = quantity * price
-      const total =
-        !this.events.is_small_company || !this.events.is_reverse_charge
-          ? base
-          : base * (1 + vat / 100)
+      const total = !this.events.is_reverse_charge ? base : base * (1 + vat / 100)
       this.events.positions[index].unit_total = total.toFixed(2)
       this.events.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     }

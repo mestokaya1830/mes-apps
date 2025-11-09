@@ -1,16 +1,14 @@
 <template>
   <div>
     <h1 class="header-title">{{ title }}</h1>
-    <div class="header">
+    <div v-if="headerData" class="header">
       <div class="company-info">
-        <div class="company-name">{{ $store.state.auth.firm_name }}</div>
-        <div class="company-details">{{ $store.state.auth.address }}</div>
-        <div class="company-details">
-          {{ $store.state.auth.postal_code }} {{ $store.state.auth.city }}
-        </div>
-        <div class="company-details">Tel: {{ $store.state.auth.phone }}</div>
-        <div class="company-details">Email: {{ $store.state.auth.email }}</div>
-        <div class="company-details">Web: {{ $store.state.auth.website }}</div>
+        <div class="company-name">{{ headerData.company_name }}</div>
+        <div class="company-details">{{ headerData.address }}</div>
+        <div class="company-details">{{ headerData.postal_code }} {{ headerData.city }}</div>
+        <div class="company-details">Tel: {{ headerData.phone }}</div>
+        <div class="company-details">Email: {{ headerData.email }}</div>
+        <div class="company-details">Web: {{ headerData.website }}</div>
       </div>
       <img :src="logoSrc" alt="Logo" class="preview-logo" />
     </div>
@@ -21,12 +19,22 @@ export default {
   name: 'HeaderSide',
   props: {
     title: {
-      type: String
+      type: String,
+      required: true
+    },
+    auth: {
+      type: Object,
+      required: false
+    }
+  },
+  data() {
+    return {
+      headerData: {}
     }
   },
   computed: {
     logoSrc() {
-      const logo = this.$store.state.auth.logo
+      const logo = this.headerData.logo
       if (!logo) return null
       if (typeof logo === 'string') {
         if (logo.startsWith('data:image')) return logo
@@ -41,6 +49,11 @@ export default {
         console.error(error)
         return null
       }
+    }
+  },
+  mounted() {
+    if (this.auth) {
+      this.headerData = this.auth
     }
   }
 }

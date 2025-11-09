@@ -290,8 +290,7 @@ export default {
         company_name: 'Musterfirma GmbH',
         company_details: {
           company_type_short: '',
-          company_type: '',
-          is_small_company: false
+          company_type: ''
         },
         company_signature: 'https://www.example.de/signature.png',
         contact_person: {

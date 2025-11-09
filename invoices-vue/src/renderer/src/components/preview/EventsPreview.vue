@@ -1,5 +1,5 @@
 <template lang="">
-  <div>
+  <div v-if="eventsPreview" class="events-preview">
     <!-- Positions Table -->
     <table class="positions-table">
       <thead>
@@ -13,8 +13,9 @@
           <th class="right" style="width: 15%">Gesamtpreis</th>
         </tr>
       </thead>
-      <tbody v-if="data.events.positions">
-        <tr v-for="(item, index) in data.events.positions" :key="index">
+
+      <tbody v-if="eventsPreview.positions && eventsPreview.positions.length > 0">
+        <tr v-for="(item, index) in eventsPreview.positions" :key="index">
           <td>{{ index + 1 }}</td>
           <td>
             <div class="position-title">{{ item.title }}</div>
@@ -27,58 +28,67 @@
           </td>
           <td class="center">{{ item.quantity }}</td>
           <td class="center">{{ item.unit }}</td>
-          <td class="right">{{ formatCurrency(item.price, data.events.currency) }}</td>
+          <td class="right">{{ formatCurrency(item.price, eventsPreview.currency) }}</td>
           <td class="right">
-            {{ data.events.reverse_charge || data.events.is_small_company ? '0%' : item.vat + '%' }}
+            {{
+              eventsPreview.reverse_charge ? '0%' : item.vat + '%'
+            }}
           </td>
-          <td class="right">{{ formatCurrency(item.unit_total, data.events.currency) }}</td>
+          <td class="right">
+            {{ formatCurrency(item.unit_total, eventsPreview.currency) }}
+          </td>
         </tr>
       </tbody>
     </table>
 
     <!-- summary -->
-    <div class="totals">
+    <div v-if="eventsPreview.summary" class="totals">
       <div class="total-row">
         <span class="total-label">Zwischensumme (netto):</span>
         <span class="total-value">{{
-          formatCurrency(data.summary.subtotal, data.events.currency)
+          formatCurrency(eventsPreview.summary.subtotal, eventsPreview.currency)
         }}</span>
       </div>
 
-      <!-- KDV sadece reverse charge değilse göster -->
       <div class="total-row">
         <span class="total-label">MwSt.:</span>
         <span class="total-value">{{
-          formatCurrency(data.summary.vat_amount, data.events.currency)
+          formatCurrency(eventsPreview.summary.vat_amount, eventsPreview.currency)
         }}</span>
       </div>
 
       <div class="total-row subtotal">
         <span class="total-label">Rechnungsbetrag (brutto):</span>
         <span class="total-value">{{
-          formatCurrency(data.summary.total, data.events.currency)
+          formatCurrency(eventsPreview.summary.total, eventsPreview.currency)
         }}</span>
       </div>
 
-      <div v-if="data.events.paid_amount && data.events.paid_amount > 0" class="total-row paid">
+      <div
+        v-if="eventsPreview.paid_amount && eventsPreview.paid_amount > 0"
+        class="total-row paid"
+      >
         <span class="total-label">✓ Bereits bezahlt:</span>
         <span class="total-value"
-          >- {{ formatCurrency(data.summary.paid_amount, data.events.currency) }}</span
+          >-
+          {{
+            formatCurrency(eventsPreview.summary.paid_amount, eventsPreview.currency)
+          }}</span
         >
       </div>
-      <div v-if="data.source_page === 'invoices'" class="total-row outstanding">
+
+      <div v-if="eventsPreview.source_page === 'invoices'" class="total-row outstanding">
         <span class="total-label">⚠️ Offener Betrag:</span>
         <span class="total-value">{{
-          formatCurrency(data.summary.outstanding, data.events.currency)
+          formatCurrency(eventsPreview.summary.outstanding, eventsPreview.currency)
         }}</span>
       </div>
 
-      <!-- Küçük işletme veya Reverse-Charge notları (kdv yi musteri oder reverse charge)-->
-      <div v-if="data.events.is_small_company" class="tax-note">
+      <div class="tax-note">
         ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
       </div>
 
-      <div v-if="data.events.reverse_charge" class="tax-note">
+      <div v-if="eventsPreview.is_reverse_charge" class="tax-note">
         ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
       </div>
     </div>
@@ -93,6 +103,53 @@ export default {
     data: {
       type: Object,
       required: true
+    }
+  },
+  data() {
+    return {
+      eventsPreview: null
+    }
+  },
+
+  mounted() {
+    if (this.data) {
+      this.eventsPreview = {
+        ...this.data,
+        positions: this.data.positions ? [...this.data.positions] : [],
+        payment: this.data.payment
+      }
+      console.log('Events Preview Data:', this.eventsPreview)
+      this.eventsPreview.summary = {
+        subtotal: this.subtotal(),
+        vat_amount: this.vatAmount(),
+        total: this.total(),
+        outstanding: this.outstanding()
+      }
+    } else {
+      return this.eventsPreview
+    }
+  },
+  methods: {
+    subtotal() {
+      if (!this.eventsPreview) return 0
+      return this.eventsPreview.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+    },
+    vatAmount() {
+      if (!this.eventsPreview) return 0
+      return this.eventsPreview.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
+    },
+    total() {
+      return this.subtotal() + this.vatAmount()
+    },
+    outstanding() {
+      if (!this.eventsPreview) return 0
+      if (this.eventsPreview.payment.paid_amount) {
+        return this.total() - this.eventsPreview.payment.paid_amount
+      }
+      return 0
     }
   }
 }

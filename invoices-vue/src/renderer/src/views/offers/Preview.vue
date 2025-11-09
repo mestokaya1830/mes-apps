@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="preview-panel">
+    <div v-if="offersPreview && auth" class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <HeaderSidePreview :title="title" />
+        <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- Recipient & offer Details -->
         <div v-if="offersPreview?.selected_customer" class="recipient">
@@ -70,7 +70,7 @@
         </div>
 
         <!-- Positions Table -->
-        <EventsPreview v-if="offersPreview.events" :data="offersPreview" />
+        <EventsPreview v-if="offersPreview.events" :data="offersPreview.events" />
 
         <!-- Project Info -->
         <div class="delivery-box">
@@ -88,7 +88,7 @@
         </div>
 
         <!-- Contact Person -->
-        <ContactPersonPreview />
+        <ContactPersonPreview :contactData="auth.contact_person"/>
         <FooterSidePreview />
       </div>
 
@@ -106,26 +106,28 @@
 </template>
 
 <script>
+import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import EventsPreview from '../../components/preview/EventsPreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import EventsPreview from '../../components/preview/EventsPreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'OffersPreview',
   components: {
     HeaderSidePreview,
-    FooterSidePreview,
-    ActionsButtonPreview,
+    EventsPreview,
     ContactPersonPreview,
-    EventsPreview
+    FooterSidePreview,
+    ActionsButtonPreview
   },
   inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'formatValidDays'],
   data() {
     return {
       title: 'Angebotbestätigung',
-      offersPreview: {}
+      offersPreview: null,
+      auth: null
     }
   },
   computed: {
@@ -137,14 +139,22 @@ export default {
   },
   mounted() {
     this.getoffersPreview()
+    this.getAuth()
   },
   methods: {
     getoffersPreview() {
-       if (this.$store?.state?.offersPreview) {
-        const preview = this.$store.state.offersPreview
-        if (preview) this.offersPreview = preview
+      if (store.state.offers) {
+        this.offersPreview = store.state.offers
       } else {
         return this.offersPreview
+      }
+      console.log('Offers Preview Data:', this.offersPreview)
+    },
+    async getAuth() {
+      if (store.state.auth) {
+        this.auth = store.state.auth
+      } else {
+        return this.auth
       }
     }
   }

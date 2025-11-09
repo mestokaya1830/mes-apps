@@ -18,6 +18,7 @@
 </template>
 <script>
 import html2pdf from 'html2pdf.js'
+import store from '../../store/store.js'
 export default {
   name: 'ActionsButton',
   props: {
@@ -53,12 +54,20 @@ export default {
       }
 
       html2pdf().set(options).from(element).save()
+      this.clearInvoicesStore()
     },
     printDocument() {
       window.print()
     },
     sendEmail() {
       console.log(this.email)
+    },
+    async clearInvoicesStore() {
+      try {
+        await store.clearInvoices()
+      } catch (error) {
+        console.error('Abmeldefehler:', error)
+      }
     }
   }
 }

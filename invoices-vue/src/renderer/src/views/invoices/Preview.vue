@@ -3,18 +3,7 @@
     <div class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <h1 class="header-title">{{ title }}</h1>
-        <div class="header">
-          <div class="company-info">
-            <div class="company-name">{{ auth.firm_name }}</div>
-            <div class="company-details">{{ auth.address }}</div>
-            <div class="company-details">{{ auth.postal_code }} {{ auth.city }}</div>
-            <div class="company-details">Tel: {{ auth.phone }}</div>
-            <div class="company-details">Email: {{ auth.email }}</div>
-            <div class="company-details">Web: {{ auth.website }}</div>
-          </div>
-          <img :src="logoSrc" alt="Logo" class="preview-logo" />
-        </div>
+        <HeaderSidePreview :title="title" :auth="auth" />
 
         <div v-if="invoicesPreview.selected_customer" class="recipient">
           <div class="recipient-address">
@@ -85,17 +74,6 @@
           </div>
         </div>
 
-        <!-- Document Title -->
-        <div class="document-title">
-          {{ title }}
-          <span
-            v-if="invoicesPreview.paid_amount && invoicesPreview.paid_amount > 0"
-            class="status-badge"
-          >
-            ⏱️ Teilweise bezahlt
-          </span>
-        </div>
-
         <!-- Intro Text -->
         <div class="intro-text">
           Sehr geehrter Kunde,<br />
@@ -103,98 +81,8 @@
         </div>
 
         <!-- Events Table -->
-        <table class="positions-table">
-          <thead>
-            <tr>
-              <th style="width: 5%">Pos.</th>
-              <th style="width: 40%">Bezeichnung</th>
-              <th class="center" style="width: 8%">Menge</th>
-              <th class="center" style="width: 10%">Einheit</th>
-              <th class="right" style="width: 12%">Einzelpreis</th>
-              <th class="right" style="width: 10%">MwSt.</th>
-              <th class="right" style="width: 15%">Gesamtpreis</th>
-            </tr>
-          </thead>
-          <tbody v-if="invoicesPreview.events.positions">
-            <tr v-for="(item, index) in invoicesPreview.events.positions" :key="index">
-              <td>{{ index + 1 }}</td>
-              <td>
-                <div class="position-title">{{ item.title }}</div>
-                <div v-if="item.description" class="position-description">
-                  {{ item.description }}
-                </div>
-                <div class="position-service-period">
-                  Leistungszeitraum: {{ item.service_period_start }} - {{ item.service_period_end }}
-                </div>
-              </td>
-              <td class="center">{{ item.quantity }}</td>
-              <td class="center">{{ item.unit }}</td>
-              <td class="right">
-                {{ formatCurrency(item.price, invoicesPreview.events.currency) }}
-              </td>
-              <td class="right">
-                {{
-                  invoicesPreview.events.reverse_charge || invoicesPreview.events.is_small_company
-                    ? '0%'
-                    : item.vat + '%'
-                }}
-              </td>
-              <td class="right">
-                {{ formatCurrency(item.unit_total, invoicesPreview.events.currency) }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <EventsPreview v-if="invoicesPreview.events" :data="invoicesPreview.events" />
 
-        <!-- summary -->
-        <div class="totals">
-          <div class="total-row">
-            <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{
-              formatCurrency(invoicesPreview.summary.subtotal, invoicesPreview.events.currency)
-            }}</span>
-          </div>
-          <div class="total-row">
-            <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{
-              formatCurrency(invoicesPreview.summary.vat_amount, invoicesPreview.events.currency)
-            }}</span>
-          </div>
-
-          <div class="total-row subtotal">
-            <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{
-              formatCurrency(invoicesPreview.summary.total, invoicesPreview.events.currency)
-            }}</span>
-          </div>
-
-          <div
-            v-if="invoicesPreview.events.paid_amount && invoicesPreview.events.paid_amount > 0"
-            class="total-row paid"
-          >
-            <span class="total-label">✓ Bereits bezahlt:</span>
-            <span class="total-value"
-              >-
-              {{
-                formatCurrency(invoicesPreview.summary.paid_amount, invoicesPreview.events.currency)
-              }}</span
-            >
-          </div>
-          <div v-if="invoicesPreview.source_page === 'invoices'" class="total-row outstanding">
-            <span class="total-label">⚠️ Offener Betrag:</span>
-            <span class="total-value">{{
-              formatCurrency(invoicesPreview.summary.outstanding, invoicesPreview.events.currency)
-            }}</span>
-          </div>
-
-          <div v-if="invoicesPreview.events.is_small_company" class="tax-note">
-            ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
-          </div>
-
-          <div v-if="invoicesPreview.events.reverse_charge" class="tax-note">
-            ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
-          </div>
-        </div>
         <!-- Contact Person -->
         <ContactPersonPreview :contactData="auth.contact_person" />
 
@@ -231,18 +119,22 @@
 
 <script>
 import store from '../../store/store.js'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
+import EventsPreview from '../../components/preview/EventsPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'InvoicesPreview',
   components: {
+    HeaderSidePreview,
+    EventsPreview,
     ContactPersonPreview,
-    FooterSidePreview,
-    ActionsButtonPreview
+    ActionsButtonPreview,
+    FooterSidePreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatCurrency', 'formatValidDays'],
+  inject: ['formatCustomerId', 'formatDate', 'formatValidDays'],
   data() {
     return {
       title: 'Rechnungbestätigung',
@@ -287,6 +179,8 @@ export default {
     async getAuth() {
       if (store.state.auth) {
         this.auth = store.state.auth
+      } else {
+        return this.auth
       }
     }
   }

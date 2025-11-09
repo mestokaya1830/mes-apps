@@ -65,29 +65,6 @@ export default {
       dynamicData: null
     }
   },
-  computed: {
-    subtotal() {
-      if (!this.dynamicData || !this.dynamicData.events) return 0
-      return this.dynamicData.events.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
-    },
-    vatAmount() {
-      if (!this.dynamicData || !this.dynamicData.events) return 0
-      return this.dynamicData.events.positions.reduce(
-        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-        0
-      )
-    },
-    total() {
-      return this.subtotal + this.vatAmount
-    },
-    outstanding() {
-      if (!this.dynamicData || !this.dynamicData.events) return 0
-      if (this.dynamicData.events.payment.paid_amount) {
-        return this.total - this.dynamicData.events.payment.paid_amount
-      }
-      return 0
-    }
-  },
   methods: {
     async storePreview(storeCommit, createData) {
       if (createData && storeCommit) {
@@ -101,12 +78,6 @@ export default {
             valid_days: createData.valid_days,
             verwendungszweck: createData.verwendungszweck,
             events: createData.events,
-            summary: {
-              subtotal: this.subtotal.toFixed(2),
-              vat_amount: this.vatAmount.toFixed(2),
-              total: this.total.toFixed(2),
-              outstanding: this.outstanding.toFixed(2)
-            },
             selected_customer: createData.selected_customer
           }
           await store[storeCommit](JSON.parse(JSON.stringify(invoices)))

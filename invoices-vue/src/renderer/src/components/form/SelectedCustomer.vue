@@ -60,10 +60,6 @@ export default {
     customerData: {
       type: Object,
       required: false
-    },
-    storeName: {
-      type: String,
-      reuquired: true
     }
   },
   emits: ['get-selected-customer'],
