@@ -10,7 +10,7 @@
 
       <!-- base -->
       <div class="form-section">
-        <div class="form-section-title">📌 Abgebot Title</div>
+        <div class="form-section-title">📌 Angebot Title</div>
         <div class="form-group">
           <label class="form-label">Title</label>
           <input v-model="offers.title" type="text" class="form-input" />
@@ -46,7 +46,6 @@
 
       <!-- customer -->
       <SelectedCustomer
-        v-if="offers.selected_customer"
         :customerData="offers.selected_customer"
         @get-selected-customer="getSelectedCustomer"
       />
@@ -69,13 +68,13 @@
 
       <!-- events -->
       <Events
-        store-name="offersPreview"
-        v-if="offers.events"
+        eventType="offers"
         :eventsData="offers.events"
         @get-events="getEvents"
       />
+
       <!-- preview -->
-      <router-link to="/offers/preview" class="preview-btn" @click="setStore()">
+      <router-link to="/offers/preview" class="preview-btn" @click="setStore">
         Vorschau
       </router-link>
     </div>
@@ -103,25 +102,28 @@ export default {
         source_page: 'offers',
         date: '2024-12-15',
         valid_days: '',
+        service_period_start: '',
+        service_period_end: '',
         is_legal_validity: false,
-        selected_customer: {},
-        contact_person: {},
-        events: {}
+        selected_customer: null,
+        events: null
       }
     }
   },
   mounted() {
-    if (store.state.offers) {
-      this.offers = {
-        selected_customer: store.state.offers.selected_customer,
-        events: store.state.offers.events,
-        ...store.state.offers
-      }
-    } else {
-      return this.offers
-    }
+    this.getStore()
   },
   methods: {
+    getStore() {
+      if (store.state.offers) {
+        this.offers = {
+          ...this.offers, // Önce varsayılanları koru
+          ...store.state.offers, // Sonra store'dan gelenleri ekle
+          selected_customer: store.state.offers.selected_customer || null,
+          events: store.state.offers.events || null
+        }
+      }
+    },
     getSelectedCustomer(value) {
       this.offers.selected_customer = value
     },

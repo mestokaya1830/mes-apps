@@ -80,8 +80,105 @@
           für die erbrachten Leistungen erlauben wir uns, Ihnen wie folgt in Rechnung zu stellen:
         </div>
 
-        <!-- Events Table -->
-        <EventsPreview v-if="invoicesPreview.events" :data="invoicesPreview.events" />
+        <table class="positions-table">
+          <thead>
+            <tr>
+              <th style="width: 5%">Pos.</th>
+              <th style="width: 40%">Bezeichnung</th>
+              <th class="center" style="width: 8%">Menge</th>
+              <th class="center" style="width: 10%">Einheit</th>
+              <th class="right" style="width: 12%">Einzelpreis</th>
+              <th class="right" style="width: 10%">MwSt.</th>
+              <th class="right" style="width: 15%">Gesamtpreis</th>
+            </tr>
+          </thead>
+
+          <tbody v-if="invoicesPreview.positions && invoicesPreview.positions.length > 0">
+            <tr v-for="(item, index) in invoicesPreview.positions" :key="index">
+              <td>{{ index + 1 }}</td>
+              <td>
+                <div class="position-title">{{ item.title }}</div>
+                <div v-if="item.description" class="position-description">
+                  {{ item.description }}
+                </div>
+                <div
+                  v-if="item.service_period_start && item.service_period_end"
+                  class="position-service-period"
+                >
+                  Leistungszeitraum: {{ formatDate(item.service_period_start) }} -
+                  {{ formatDate(item.service_period_end) }}
+                </div>
+              </td>
+              <td class="center">{{ item.quantity }}</td>
+              <td class="center">{{ item.unit }}</td>
+              <td class="right">{{ formatCurrency(item.price, invoicesPreview.currency) }}</td>
+              <td class="right">
+                {{ invoicesPreview.is_reverse_charge ? '0%' : item.vat + '%' }}
+              </td>
+              <td class="right">
+                {{ formatCurrency(item.unit_total, invoicesPreview.currency) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- summary -->
+        <div v-if="invoicesPreview.summary" class="totals">
+          <div class="total-row">
+            <span class="total-label">Zwischensumme (netto):</span>
+            <span class="total-value">{{
+              formatCurrency(invoicesPreview.summary.subtotal, invoicesPreview.currency)
+            }}</span>
+          </div>
+
+          <div class="total-row">
+            <span class="total-label">MwSt.:</span>
+            <span class="total-value">{{
+              formatCurrency(invoicesPreview.summary.vat_amount, invoicesPreview.currency)
+            }}</span>
+          </div>
+
+          <div class="total-row subtotal">
+            <span class="total-label">Rechnungsbetrag (brutto):</span>
+            <span class="total-value">{{
+              formatCurrency(invoicesPreview.summary.total, invoicesPreview.currency)
+            }}</span>
+          </div>
+
+          <div
+            v-if="
+              invoicesPreview.payment &&
+              invoicesPreview.payment.paid_amount &&
+              invoicesPreview.payment.paid_amount > 0
+            "
+            class="total-row paid"
+          >
+            <span class="total-label">✓ Bereits bezahlt:</span>
+            <span class="total-value">
+              - {{ formatCurrency(invoicesPreview.payment.paid_amount, invoicesPreview.currency) }}
+            </span>
+          </div>
+
+          <div
+            v-if="invoicesPreview.summary && invoicesPreview.summary.outstanding > 0"
+            class="total-row outstanding"
+          >
+            <span class="total-label">⚠️ Offener Betrag:</span>
+            <span class="total-value">{{
+              formatCurrency(invoicesPreview.summary.outstanding, invoicesPreview.currency)
+            }}</span>
+          </div>
+
+          <!-- Sadece Kleinunternehmer için -->
+          <div v-if="auth.is_kleinunternehmer" class="tax-note">
+            ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
+          </div>
+
+          <!-- Reverse Charge için -->
+          <div v-if="invoicesPreview.is_reverse_charge" class="tax-note">
+            ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
+          </div>
+        </div>
 
         <!-- Contact Person -->
         <ContactPersonPreview :contactData="auth.contact_person" />
@@ -96,7 +193,7 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label"> Verwen..:</span>
+            <span class="bank-label">Verwen..:</span>
             <span class="bank-value">{{ invoicesPreview.verwendungszweck }}</span>
           </div>
         </div>
@@ -120,7 +217,6 @@
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import EventsPreview from '../../components/preview/EventsPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
@@ -129,12 +225,11 @@ export default {
   name: 'InvoicesPreview',
   components: {
     HeaderSidePreview,
-    EventsPreview,
     ContactPersonPreview,
     ActionsButtonPreview,
     FooterSidePreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatValidDays'],
+  inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {
     return {
       title: 'Rechnungbestätigung',
@@ -144,7 +239,7 @@ export default {
   },
   computed: {
     formatRechnungId() {
-      if (!this.invoicesPreview.id) return ''
+      if (!this.invoicesPreview || !this.invoicesPreview.id) return ''
       const year = new Date().getFullYear()
       return `RE-${year}-${String(this.invoicesPreview.id).padStart(5, '0')}`
     },
@@ -171,16 +266,16 @@ export default {
     this.getAuth()
   },
   methods: {
-    async getInvoicesPreview() {
+    getInvoicesPreview() {
       if (store.state.invoices) {
         this.invoicesPreview = store.state.invoices
       }
     },
-    async getAuth() {
+    getAuth() {
       if (store.state.auth) {
         this.auth = store.state.auth
       } else {
-        return this.auth
+        console.warn('No auth data in store')
       }
     }
   }

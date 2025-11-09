@@ -70,7 +70,91 @@
         </div>
 
         <!-- Positions Table -->
-        <EventsPreview v-if="offersPreview.events" :data="offersPreview.events" />
+        <table class="positions-table">
+          <thead>
+            <tr>
+              <th style="width: 5%">Pos.</th>
+              <th style="width: 40%">Bezeichnung</th>
+              <th class="center" style="width: 8%">Menge</th>
+              <th class="center" style="width: 10%">Einheit</th>
+              <th class="right" style="width: 12%">Einzelpreis</th>
+              <th class="right" style="width: 10%">MwSt.</th>
+              <th class="right" style="width: 15%">Gesamtpreis</th>
+            </tr>
+          </thead>
+
+          <tbody v-if="offersPreview.positions && offersPreview.positions.length > 0">
+            <tr v-for="(item, index) in offersPreview.positions" :key="index">
+              <td>{{ index + 1 }}</td>
+              <td>
+                <div class="position-title">{{ item.title }}</div>
+                <div v-if="item.description" class="position-description">
+                  {{ item.description }}
+                </div>
+                <div class="position-service-period">
+                  Leistungszeitraum: {{ item.service_period_start }} - {{ item.service_period_end }}
+                </div>
+              </td>
+              <td class="center">{{ item.quantity }}</td>
+              <td class="center">{{ item.unit }}</td>
+              <td class="right">{{ formatCurrency(item.price, offersPreview.currency) }}</td>
+              <td class="right">
+                {{ offersPreview.reverse_charge ? '0%' : item.vat + '%' }}
+              </td>
+              <td class="right">
+                {{ formatCurrency(item.unit_total, offersPreview.currency) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- summary -->
+        <div v-if="offersPreview.summary" class="totals">
+          <div class="total-row">
+            <span class="total-label">Zwischensumme (netto):</span>
+            <span class="total-value">{{
+              formatCurrency(offersPreview.summary.subtotal, offersPreview.currency)
+            }}</span>
+          </div>
+
+          <div class="total-row">
+            <span class="total-label">MwSt.:</span>
+            <span class="total-value">{{
+              formatCurrency(offersPreview.summary.vat_amount, offersPreview.currency)
+            }}</span>
+          </div>
+
+          <div class="total-row subtotal">
+            <span class="total-label">Rechnungsbetrag (brutto):</span>
+            <span class="total-value">{{
+              formatCurrency(offersPreview.summary.total, offersPreview.currency)
+            }}</span>
+          </div>
+
+          <div
+            v-if="offersPreview.paid_amount && offersPreview.paid_amount > 0"
+            class="total-row paid"
+          >
+            <span class="total-label">✓ Bereits bezahlt:</span>
+            <span class="total-value"
+              >-
+              {{ formatCurrency(offersPreview.summary.paid_amount, offersPreview.currency) }}</span
+            >
+          </div>
+
+          <div v-if="offersPreview.eventType === 'invoices'" class="total-row outstanding">
+            <span class="total-label">⚠️ Offener Betrag:</span>
+            <span class="total-value">{{
+              formatCurrency(offersPreview.summary.outstanding, offersPreview.currency)
+            }}</span>
+          </div>
+
+          <div class="tax-note">⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.</div>
+
+          <div v-if="offersPreview.is_reverse_charge" class="tax-note">
+            ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
+          </div>
+        </div>
 
         <!-- Project Info -->
         <div class="delivery-box">
@@ -88,7 +172,7 @@
         </div>
 
         <!-- Contact Person -->
-        <ContactPersonPreview :contactData="auth.contact_person"/>
+        <ContactPersonPreview :contactData="auth.contact_person" />
         <FooterSidePreview />
       </div>
 
@@ -108,7 +192,6 @@
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import EventsPreview from '../../components/preview/EventsPreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
@@ -117,12 +200,11 @@ export default {
   name: 'OffersPreview',
   components: {
     HeaderSidePreview,
-    EventsPreview,
     ContactPersonPreview,
     FooterSidePreview,
     ActionsButtonPreview
   },
-  inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'formatValidDays'],
+  inject: ['formatCustomerId', 'formatDate', 'formatValidDays'],
   data() {
     return {
       title: 'Angebotbestätigung',
@@ -138,11 +220,11 @@ export default {
     }
   },
   mounted() {
-    this.getoffersPreview()
+    this.getOffersPreview()
     this.getAuth()
   },
   methods: {
-    getoffersPreview() {
+    getOffersPreview() {
       if (store.state.offers) {
         this.offersPreview = store.state.offers
       } else {

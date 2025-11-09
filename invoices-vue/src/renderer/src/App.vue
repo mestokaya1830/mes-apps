@@ -1,4 +1,4 @@
-<template lang="">
+<template>
   <div>
     <TitleBar></TitleBar>
     <div class="container">
@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import { toRaw } from 'vue'
 import store from './store/store.js'
 import TitleBar from './components/preview/TitleBarPreview.vue'
 import SideBar from './components/preview/SideBarPreview.vue'
@@ -49,38 +48,69 @@ export default {
         })
       },
       formatCurrency(value, currency) {
-        if (currency) {
-          const num = parseFloat(value) || 0
-          return new Intl.NumberFormat(currency.substr(4), {
-            style: 'currency',
-            currency: currency.substr(0, 3)
-          }).format(num)
-        }
+        if (!currency) return '0,00 €' // Default değer
+        const num = parseFloat(value) || 0
+        return new Intl.NumberFormat(currency.substr(4), {
+          style: 'currency',
+          currency: currency.substr(0, 3)
+        }).format(num)
       },
       storePreview: this.storePreview
     }
   },
+
   data() {
     return {
-      dynamicData: null
+      storeData: null
+    }
+  },
+  computed: {
+    subTotal() {
+      if (!this.storeData) return 0
+      return this.storeData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+    },
+    vatAmount() {
+      if (!this.storeData) return 0
+      return this.storeData.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
+    },
+    total() {
+      return this.subTotal + this.vatAmount // Parantez kaldırıldı
+    },
+    outstanding() {
+      if (!this.storeData) return 0
+      if (this.storeData.payment.paid_amount) {
+        return this.total - this.storeData.payment.paid_amount // Parantez kaldırıldı
+      }
+      return 0
     }
   },
   methods: {
     async storePreview(storeCommit, createData) {
       if (createData && storeCommit) {
-        this.dynamicData = createData
+        this.storeData = createData
         try {
           const invoices = {
-            id: createData.id,
-            title: createData.title,
-            source_page: createData.source_page,
-            date: createData.date,
-            valid_days: createData.valid_days,
-            verwendungszweck: createData.verwendungszweck,
-            events: createData.events,
-            selected_customer: createData.selected_customer
+            id: createData.id || 1,
+            date: createData.date || '',
+            verwendungszweck: createData.verwendungszweck || '',
+            selected_customer: createData.selected_customer || null,
+            currency: createData.currency || 'EUR-DE',
+            is_reverse_charge: createData.is_reverse_charge || false,
+            positions: createData.positions || [],
+            payment: createData.payment || {},
+            summary: {
+              subtotal: this.subTotal,
+              vat_amount: this.vatAmount,
+              total: this.total,
+              paid_amount: createData.payment.paid_amount || 0,
+              outstanding: this.outstanding
+            }
           }
           await store[storeCommit](JSON.parse(JSON.stringify(invoices)))
+          console.log(createData)
         } catch (error) {
           console.error('Error storing preview:', error)
         }

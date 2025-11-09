@@ -35,13 +35,20 @@
       </div>
 
       <!-- customer -->
-      <SelectedCustomer store-name="ordersPreview" @get-selected-customer="getSelectedCustomer" />
+      <SelectedCustomer
+        :customerData="orders.selected_customer"
+        @get-selected-customer="getSelectedCustomer"
+      />
 
       <!-- events -->
-      <Events store-name="ordersPreview" @get-events="getEvents" />
+      <Events 
+        eventType="orders" 
+        :eventsData="orders.events"
+        @get-events="getEvents" 
+      />
 
       <!-- preview -->
-      <router-link to="/orders/preview" class="preview-btn" @click="setStore()">
+      <router-link to="/orders/preview" class="preview-btn" @click="setStore">
         Vorschau
       </router-link>
     </div>
@@ -49,6 +56,7 @@
 </template>
 
 <script>
+import store from '../../store/store.js'
 import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
 import Events from '../../components/form/Events.vue'
 
@@ -66,20 +74,29 @@ export default {
         id: '1',
         source_page: 'orders',
         date: '',
+        service_period_start: '',
+        service_period_end: '',
         verwendung: 'Nicht angegeben',
-        selected_customer: {},
-        contact_person: {},
-        events: {}
+        selected_customer: null,
+        events: null
       }
     }
   },
   mounted() {
-    if (this.$store?.state?.ordersPreview) {
-      const preview = this.$store.state.ordersPreview
-      if (preview) this.orders = preview
-    }
+    this.getStore()
   },
+
   methods: {
+    getStore() {
+      if (store.state.orders) {
+        this.orders = {
+          ...this.orders, // Önce varsayılanları koru
+          ...store.state.orders, // Sonra store'dan gelenleri ekle
+          selected_customer: store.state.orders.selected_customer || null,
+          events: store.state.orders.events || null
+        }
+      }
+    },
     getSelectedCustomer(value) {
       this.orders.selected_customer = value
     },
@@ -90,7 +107,7 @@ export default {
       this.orders.events = value
     },
     setStore() {
-      this.storePreview(this.orders, 'setOrdersPreview')
+      this.storePreview('orders', this.orders)
     }
   }
 }
