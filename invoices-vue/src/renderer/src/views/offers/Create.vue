@@ -44,11 +44,82 @@
         </div>
       </div>
 
-      <!-- customer -->
-      <SelectedCustomer
-        :customerData="offers.selected_customer"
-        @get-selected-customer="getSelectedCustomer"
-      />
+      <div v-if="customers" class="form-section">
+        <div class="form-section-title">👤 Kunde</div>
+        <div class="form-group">
+          <label class="form-label">Kundendaten</label>
+          <select v-model="customerList" class="form-input" @change="getCustomerById">
+            <option selected disabled>Wähle Kunden</option>
+            <option v-for="item in customers" :key="item.id" :value="item.id">
+              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
+            </option>
+          </select>
+        </div>
+        <div v-if="offers.selected_customer.id" class="customer-details">
+          <div class="form-group">
+            <label class="form-label">Kunden-Nr.</label>
+            <input v-model="offers.selected_customer.id" type="text" class="form-input" readonly />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Firmname</label>
+            <input
+              v-model="offers.selected_customer.company_name"
+              type="text"
+              class="form-input"
+              readonly
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Vorname</label>
+              <input
+                v-model="offers.selected_customer.first_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nachname</label>
+              <input
+                v-model="offers.selected_customer.last_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Adresse</label>
+            <input
+              v-model="offers.selected_customer.address"
+              type="text"
+              class="form-input"
+              readonly
+            />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">PLZ</label>
+              <input
+                v-model="offers.selected_customer.postal_code"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Stadt</label>
+              <input
+                v-model="offers.selected_customer.city"
+                type="text"
+                class="form-input"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- legal validity -->
       <div class="form-section">
@@ -66,13 +137,111 @@
         </div>
       </div>
 
-      <!-- events -->
-      <Events
-        eventType="offers"
-        :eventsData="offers.events"
-        @get-events="getEvents"
-      />
-
+      <!-- currency -->
+      <div class="form-section">
+        <div class="form-section-title">💰 Währung</div>
+        <div class="form-group">
+          <label class="form-label">Waehrung</label>
+          <select v-model="offers.currency" class="form-input">
+            <option selected disabled>Wähle Waehrung</option>
+            <option value="EUR.de-DE">EUR</option>
+            <option value="USD.en-US">USD</option>
+            <option value="GBP.en-GB">GBP</option>
+            <option value="CHF.ch-CH">CHF</option>
+            <option value="JPY.ja-JP">JPY</option>
+            <option value="AUD.en-AU">AUD</option>
+            <option value="CAD.en-CA">CAD</option>
+            <option value="CNY.zh-CN">CNY</option>
+            <option value="SEK.sv-SE">SEK</option>
+            <option value="NZD.en-NZ">NZD</option>
+          </select>
+        </div>
+      </div>
+      <!-- positions -->
+      <div class="form-section-title">📦 Positionen</div>
+      <div v-if="offers.positions && offers.positions.length === 0">Keine Positionen vorhanden</div>
+      <div v-else class="positions-editor">
+        <div v-for="(pos, index) in offers.positions" :key="index" class="position-item">
+          <div class="position-header">
+            <span class="position-number">Position {{ index + 1 }}</span>
+            <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bezeichnung</label>
+            <input v-model="pos.title" type="text" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Beschreibung</label>
+            <input v-model="pos.description" type="text" class="form-input" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Leistungszeitraum Von</label>
+              <input v-model="pos.service_period_start" type="date" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Leistungszeitraum Bis</label>
+              <input v-model="pos.service_period_end" type="date" class="form-input" />
+            </div>
+          </div>
+          <div class="position-inputs">
+            <div class="form-group">
+              <label class="form-label">Einheit</label>
+              <select v-model="pos.unit" class="form-input">
+                <option>Stk</option>
+                <option>Std</option>
+                <option>Tag</option>
+                <option>Pauschal</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Menge</label>
+              <input
+                v-model.number="pos.quantity"
+                type="number"
+                class="form-input"
+                @input="getUnitTotal(pos.quantity, pos.price, index)"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Preis (€)</label>
+              <input
+                v-model.number="pos.price"
+                type="number"
+                class="form-input"
+                step="0.01"
+                @input="getUnitTotal(pos.quantity, pos.price, index)"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label">MwSt. (%)</label>
+              <select
+                v-if="!offers.is_reverse_charge"
+                v-model.number="pos.vat"
+                class="form-input"
+                @change="getUnitTotal(pos.quantity, pos.price, index)"
+              >
+                <option :value="0">0</option>
+                <option :value="7">7</option>
+                <option :value="19">19</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-result">
+            <div>
+              <label class="form-label">Vat Unit (€)</label>
+              <div class="form-result-item">
+                {{ pos.vat_unit }}
+              </div>
+            </div>
+            <div>
+              <label class="form-label">Unit Total (€)</label>
+              <div class="form-result-item">{{ pos.unit_total }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
       <!-- preview -->
       <router-link to="/offers/preview" class="preview-btn" @click="setStore">
         Vorschau
@@ -83,19 +252,15 @@
 
 <script>
 import store from '../../store/store.js'
-import SelectedCustomer from '../../components/form/SelectedCustomer.vue'
-import Events from '../../components/form/Events.vue'
 
 export default {
   name: 'CreateOffer',
-  components: {
-    SelectedCustomer,
-    Events
-  },
   inject: ['storePreview'],
   data() {
     return {
       title: 'Angebot erstellen',
+      customers: [],
+      customerList: 'Wähle Kunden',
       offers: {
         title: 'Mein erstes Angebot',
         id: '1',
@@ -105,33 +270,92 @@ export default {
         service_period_start: '',
         service_period_end: '',
         is_legal_validity: false,
-        selected_customer: null,
-        events: null
+        selected_customer: {},
+        currency: 'EUR.de-DE',
+        positions: [],
+        payment: {
+          paid_amount: 0,
+          payment_terms: 14,
+          payment_conditions: ''
+        }
       }
     }
   },
   mounted() {
     this.getStore()
+    this.getCustomers()
   },
   methods: {
-    getStore() {
-      if (store.state.offers) {
-        this.offers = {
-          ...this.offers, // Önce varsayılanları koru
-          ...store.state.offers, // Sonra store'dan gelenleri ekle
-          selected_customer: store.state.offers.selected_customer || null,
-          events: store.state.offers.events || null
+    async getCustomers() {
+      try {
+        const response = await window.api.getCustomers()
+        if (response.success) {
+          this.customers = response.customers
         }
+      } catch (error) {
+        console.error('Error fetching customers:', error)
       }
     },
-    getSelectedCustomer(value) {
-      this.offers.selected_customer = value
+    getCustomerById() {
+      const customer = this.customers.find((item) => item.id === this.customerList)
+      if (customer) this.offers.selected_customer = customer
     },
-    getContactPerson(value) {
-      this.offers.contact_person = value
+    getStore() {
+      if (store.state.offers) {
+        this.offers = JSON.parse(JSON.stringify(store.state.offers))
+      }
     },
-    getEvents(value) {
-      this.offers.events = value
+    calculateReverseCharge() {
+      this.offers.positions.forEach((item, index) => {
+        const base = item.quantity * item.price
+
+        if (this.offers.is_reverse_charge) {
+          this.offers.positions[index].vat = 0
+          this.offers.positions[index].vat_unit = 0
+          this.offers.positions[index].unit_total = base.toFixed(2)
+        } else {
+          const vat = 19
+          this.offers.positions[index].vat = vat
+          this.offers.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
+          this.offers.positions[index].unit_total = (base * (1 + vat / 100)).toFixed(2)
+        }
+      })
+    },
+    addPosition() {
+      this.offers.positions.push({
+        title: 'Neue Position',
+        description: 'Beschreibung',
+        service_period_start: '',
+        service_period_end: '',
+        quantity: 1,
+        unit: 'Stk',
+        price: 0,
+        vat: 19,
+        unit_total: 0
+      })
+    },
+    deletePosition(index) {
+      if (this.offers.positions.length > 0) {
+        this.offers.positions.splice(index, 1)
+      } else {
+        alert('Keine Positionen vorhanden!')
+      }
+    },
+    getUnitTotal(quantity, price, index) {
+      const vat = this.offers.positions[index].vat || 0
+      const base = quantity * price
+      let total = 0
+      if (this.offers.is_reverse_charge) {
+        this.offers.positions[index].vat = 0
+        this.offers.positions[index].vat_unit = 0
+        this.offers.positions[index].unit_total = base.toFixed(2)
+        return
+      } else {
+        total = base * (1 + vat / 100)
+      }
+
+      this.offers.positions[index].unit_total = total.toFixed(2)
+      this.offers.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
     setStore() {
       this.storePreview('setOffers', this.offers)

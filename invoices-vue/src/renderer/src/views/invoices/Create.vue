@@ -27,12 +27,6 @@
         </div>
       </div>
 
-      <!-- customer -->
-      <!-- <SelectedCustomer
-        v-if="invoices.selected_customer || {}"
-        :customerData="invoices.selected_customer"
-        @get-selected-customer="getSelectedCustomer"
-      /> -->
       <div v-if="customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
@@ -115,13 +109,6 @@
         </div>
       </div>
 
-      <!-- events -->
-      <!-- <Events
-        v-if="invoices.events"
-        eventType="invoices"
-        :eventsData="invoices.events"
-        @get-events="getEvents"
-      /> -->
       <div class="form-section">
         <div class="form-section-title">
           <span>👤 Umkehrung der Steuerschuldnerschaft</span>
@@ -300,9 +287,9 @@ export default {
         id: 1,
         date: '',
         verwendungszweck: '',
+        is_reverse_charge: false,
         selected_customer: {},
         currency: 'EUR.de-DE',
-        is_reverse_charge: false,
         positions: [],
         payment: {
           paid_amount: 0,
