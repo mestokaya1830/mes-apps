@@ -8,15 +8,6 @@
         </div>
       </div>
 
-      <!-- Offer Title -->
-      <div class="form-section">
-        <div class="form-section-title">📌 Angebot Titel</div>
-        <div class="form-group">
-          <label class="form-label">Titel</label>
-          <input v-model="offers.title" type="text" class="form-input" />
-        </div>
-      </div>
-
       <!-- Base -->
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
@@ -48,12 +39,11 @@
         </div>
       </div>
 
-      <!-- Customers -->
       <div v-if="customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
-          <label class="form-label">Kundendaten *</label>
-          <select v-model="customerList" class="form-input" @change="getCustomerById" required>
+          <label class="form-label">Kundendaten</label>
+          <select v-model="customerList" class="form-input" @change="getCustomerById">
             <option selected disabled>Wähle Kunden</option>
             <option v-for="item in customers" :key="item.id" :value="item.id">
               {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
@@ -66,7 +56,7 @@
             <input v-model="offers.selected_customer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Firmenname</label>
+            <label class="form-label">Firmname</label>
             <input
               v-model="offers.selected_customer.company_name"
               type="text"
@@ -95,7 +85,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Anschrift</label>
+            <label class="form-label">Adresse</label>
             <input
               v-model="offers.selected_customer.address"
               type="text"
@@ -123,18 +113,24 @@
               />
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">USt-IdNr. (Kunde)</label>
-            <input
-              v-model="offers.selected_customer.vat_id"
-              type="text"
-              class="form-input"
-              readonly
-            />
-          </div>
         </div>
       </div>
 
+      <!-- legal validity -->
+      <div class="form-section">
+        <div class="form-section-title">
+          <span>👤 Rechtsgültigkeit</span>
+          <label for="rechtsgültigkeit-checkbox" class="switch">
+            <input
+              id="rechtsgültigkeit-checkbox"
+              v-model="offers.is_legal_validity"
+              type="checkbox"
+              class="switch-checkbox"
+            />
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
       <!-- Tax -->
       <div class="form-section">
         <div class="form-section-title">💼 Steueroptionen</div>
@@ -187,7 +183,6 @@
           </div>
         </div>
       </div>
-
       <!-- currency -->
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
@@ -208,103 +203,92 @@
           </select>
         </div>
       </div>
-
-      <!-- Positions -->
-      <div class="form-section">
-        <div class="form-section-title">📦 Positionen</div>
-        <div v-if="offers.positions && offers.positions.length === 0" class="empty-state">
-          Keine Positionen vorhanden
-        </div>
-        <div v-else class="positions-editor">
-          <div v-for="(pos, index) in offers.positions" :key="index" class="position-item">
-            <div class="position-header">
-              <span class="position-number">Pos. {{ index + 1 }}</span>
-              <button class="delete-btn" @click="deletePosition(index)">🗑️ Entfernen</button>
+      <!-- positions -->
+      <div class="form-section-title">📦 Positionen</div>
+      <div v-if="offers.positions && offers.positions.length === 0">Keine Positionen vorhanden</div>
+      <div v-else class="positions-editor">
+        <div v-for="(pos, index) in offers.positions" :key="index" class="position-item">
+          <div class="position-header">
+            <span class="position-number">Position {{ index + 1 }}</span>
+            <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bezeichnung</label>
+            <input v-model="pos.title" type="text" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Beschreibung</label>
+            <input v-model="pos.description" type="text" class="form-input" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Leistungszeitraum Von</label>
+              <input v-model="pos.service_period_start" type="date" class="form-input" />
             </div>
             <div class="form-group">
-              <label class="form-label">Bezeichnung *</label>
-              <input v-model="pos.title" type="text" class="form-input" required />
+              <label class="form-label">Leistungszeitraum Bis</label>
+              <input v-model="pos.service_period_end" type="date" class="form-input" />
+            </div>
+          </div>
+          <div class="position-inputs">
+            <div class="form-group">
+              <label class="form-label">Einheit</label>
+              <select v-model="pos.unit" class="form-input">
+                <option>Stk.</option>
+                <option>Std.</option>
+                <option>Tag</option>
+                <option>Monat</option>
+                <option>Pauschal</option>
+                <option>m²</option>
+                <option>kg</option>
+              </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Beschreibung</label>
-              <textarea v-model="pos.description" class="form-input" rows="2"></textarea>
+              <label class="form-label">Menge</label>
+              <input
+                v-model.number="pos.quantity"
+                type="number"
+                class="form-input"
+                @input="getUnitTotal(pos.quantity, pos.price, index)"
+              />
             </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Leistungszeitraum Von</label>
-                <input v-model="pos.service_period_start" type="date" class="form-input" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Leistungszeitraum Bis</label>
-                <input v-model="pos.service_period_end" type="date" class="form-input" />
-              </div>
+            <div class="form-group">
+              <label class="form-label">Preis (€)</label>
+              <input
+                v-model.number="pos.price"
+                type="number"
+                class="form-input"
+                step="0.01"
+                @input="getUnitTotal(pos.quantity, pos.price, index)"
+              />
             </div>
-            <div class="position-inputs">
-              <div class="form-group">
-                <label class="form-label">Einheit</label>
-                <select v-model="pos.unit" class="form-input" required>
-                  <option>Stk.</option>
-                  <option>Std.</option>
-                  <option>Tag</option>
-                  <option>Monat</option>
-                  <option>Pauschal</option>
-                  <option>m²</option>
-                  <option>kg</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Menge</label>
-                <input
-                  v-model.number="pos.quantity"
-                  type="number"
-                  step="0.01"
-                  class="form-input"
-                  required
-                  @input="calculatePosition(index)"
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Einzelpreis (Netto)</label>
-                <input
-                  v-model.number="pos.price"
-                  type="number"
-                  class="form-input"
-                  step="0.01"
-                  required
-                  @input="calculatePosition(index)"
-                />
-              </div>
-              <div class="form-group">
-                <label class="form-label">MwSt. (%)</label>
-                <select
-                  v-model.number="pos.vat"
-                  class="form-input"
-                  :disabled="offers.is_reverse_charge || offers.is_kleinunternehmer"
-                  @change="calculatePosition(index)"
-                >
-                  <option :value="0">0%</option>
-                  <option :value="7">7%</option>
-                  <option :value="19">19%</option>
-                </select>
+            <div class="form-group">
+              <label class="form-label">MwSt. (%)</label>
+              <select
+                v-if="!offers.is_reverse_charge"
+                v-model.number="pos.vat"
+                class="form-input"
+                @change="getUnitTotal(pos.quantity, pos.price, index)"
+              >
+                <option :value="0">0</option>
+                <option :value="7">7</option>
+                <option :value="19">19</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-result">
+            <div>
+              <label class="form-label">Vat Unit (€)</label>
+              <div class="form-result-item">
+                {{ pos.vat_unit }}
               </div>
             </div>
-            <!-- <div class="form-result">
-              <div class="result-item">
-                <label class="form-label">Gesamtpreis (Netto)</label>
-                <div class="result-value">{{ formatCurrency(pos.net_total) }}</div>
-              </div>
-              <div class="result-item">
-                <label class="form-label">MwSt.-Betrag</label>
-                <div class="result-value">{{ formatCurrency(pos.vat_amount) }}</div>
-              </div>
-              <div class="result-item">
-                <label class="form-label">Gesamtpreis (Brutto)</label>
-                <div class="result-value total">{{ formatCurrency(pos.gross_total) }}</div>
-              </div>
-            </div> -->
+            <div>
+              <label class="form-label">Unit Total (€)</label>
+              <div class="form-result-item">{{ pos.unit_total }}</div>
+            </div>
           </div>
         </div>
-        <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
       </div>
 
       <!-- Payment -->
@@ -360,13 +344,12 @@
           ></textarea>
         </div>
       </div>
+      <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
 
-      <!-- Buttons -->
-      <div class="form-actions">
-        <router-link to="/offers/preview" class="preview-btn" @click="setStore">
-          👁️ Vorschau anzeigen
-        </router-link>
-      </div>
+      <!-- preview button -->
+      <router-link to="/offers/preview" class="preview-btn" @click="setStore">
+        👁️ Vorschau anzeigen
+      </router-link>
     </div>
   </div>
 </template>
@@ -383,11 +366,11 @@ export default {
       customers: [],
       customerList: 'Wähle Kunden',
       offers: {
-        title: 'Angebot',
-        id: this.generateOfferNumber(),
+        title: 'Mein erstes Angebot',
+        id: '1',
         source_page: 'offers',
         date: new Date().toISOString().split('T')[0],
-        valid_until: this.calculateValidUntil(30),
+        valid_until: '',
         service_period_start: '',
         service_period_end: '',
         is_legal_validity: false,
@@ -399,17 +382,11 @@ export default {
         payment: {
           paid_amount: 0,
           payment_terms: 14,
+          payment_conditions: '',
           has_skonto: false,
           skonto_percentage: 2,
-          skonto_days: 7,
-          payment_conditions: ''
+          skonto_days: 7
         }
-      },
-      totals: {
-        net: 0,
-        vat: 0,
-        gross: 0,
-        vatByRate: {}
       }
     }
   },
@@ -418,16 +395,6 @@ export default {
     this.getCustomers()
   },
   methods: {
-    generateOfferNumber() {
-      const year = new Date().getFullYear()
-      const random = Math.floor(Math.random() * 9999) + 1
-      return `ANG-${year}-${String(random).padStart(4, '0')}`
-    },
-    calculateValidUntil(days) {
-      const date = new Date()
-      date.setDate(date.getDate() + days)
-      return date.toISOString().split('T')[0]
-    },
     async getCustomers() {
       try {
         const response = await window.api.getCustomers()
@@ -445,90 +412,59 @@ export default {
     getStore() {
       if (store.state.offers) {
         this.offers = JSON.parse(JSON.stringify(store.state.offers))
-        this.calculateTotals()
       }
     },
     calculateReverseCharge() {
-      if (this.offers.is_reverse_charge) {
-        this.offers.is_kleinunternehmer = false
-      }
-      this.offers.positions.forEach((pos, index) => {
+      this.offers.positions.forEach((item, index) => {
+        const base = item.quantity * item.price
+
         if (this.offers.is_reverse_charge) {
           this.offers.positions[index].vat = 0
+          this.offers.positions[index].vat_unit = 0
+          this.offers.positions[index].unit_total = base.toFixed(2)
+        } else {
+          const vat = 19
+          this.offers.positions[index].vat = vat
+          this.offers.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
+          this.offers.positions[index].unit_total = (base * (1 + vat / 100)).toFixed(2)
         }
-        this.calculatePosition(index)
-      })
-    },
-    calculateKleinunternehmer() {
-      if (this.offers.is_kleinunternehmer) {
-        this.offers.is_reverse_charge = false
-      }
-      this.offers.positions.forEach((pos, index) => {
-        if (this.offers.is_kleinunternehmer) {
-          this.offers.positions[index].vat = 0
-        }
-        this.calculatePosition(index)
       })
     },
     addPosition() {
       this.offers.positions.push({
         title: 'Neue Position',
-        description: '',
+        description: 'Beschreibung',
         service_period_start: '',
         service_period_end: '',
         quantity: 1,
-        unit: 'Stk.',
+        unit: 'Stk',
         price: 0,
-        vat: this.offers.is_reverse_charge || this.offers.is_kleinunternehmer ? 0 : 19,
-        net_total: 0,
-        vat_amount: 0,
-        gross_total: 0
+        vat: 19,
+        unit_total: 0
       })
     },
     deletePosition(index) {
       if (this.offers.positions.length > 0) {
         this.offers.positions.splice(index, 1)
-        this.calculateTotals()
+      } else {
+        alert('Keine Positionen vorhanden!')
       }
     },
-    calculatePosition(index) {
-      const pos = this.offers.positions[index]
-      const netTotal = pos.quantity * pos.price
-      const vatRate = this.offers.is_reverse_charge || this.offers.is_kleinunternehmer ? 0 : pos.vat
-      const vatAmount = netTotal * (vatRate / 100)
-      const grossTotal = netTotal + vatAmount
-
-      this.offers.positions[index].net_total = netTotal
-      this.offers.positions[index].vat_amount = vatAmount
-      this.offers.positions[index].gross_total = grossTotal
-
-      this.calculateTotals()
-    },
-    calculateTotals() {
-      let totalNet = 0
-      let totalVat = 0
-      let totalGross = 0
-      const vatByRate = {}
-
-      this.offers.positions.forEach((pos) => {
-        totalNet += pos.net_total || 0
-        totalVat += pos.vat_amount || 0
-        totalGross += pos.gross_total || 0
-
-        if (pos.vat > 0 && !this.offers.is_reverse_charge && !this.offers.is_kleinunternehmer) {
-          if (!vatByRate[pos.vat]) {
-            vatByRate[pos.vat] = 0
-          }
-          vatByRate[pos.vat] += pos.vat_amount || 0
-        }
-      })
-
-      this.totals = {
-        net: totalNet,
-        vat: totalVat,
-        gross: totalGross,
-        vatByRate
+    getUnitTotal(quantity, price, index) {
+      const vat = this.offers.positions[index].vat || 0
+      const base = quantity * price
+      let total = 0
+      if (this.offers.is_reverse_charge) {
+        this.offers.positions[index].vat = 0
+        this.offers.positions[index].vat_unit = 0
+        this.offers.positions[index].unit_total = base.toFixed(2)
+        return
+      } else {
+        total = base * (1 + vat / 100)
       }
+
+      this.offers.positions[index].unit_total = total.toFixed(2)
+      this.offers.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
     setStore() {
       this.storePreview('setOffers', this.offers)
