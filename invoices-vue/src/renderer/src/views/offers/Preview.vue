@@ -5,68 +5,67 @@
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
-        <!-- Recipient & offer Details -->
-        <div v-if="offersPreview?.selected_customer" class="recipient">
-          <div class="recipient-address">
-            <div class="section-title">Empfänger</div>
-            <div class="company-name-subtitle">
-              {{ offersPreview.selected_customer.company_name }}
-            </div>
-            <div>{{ offersPreview.selected_customer.address }}</div>
-            <div>
-              {{ offersPreview.selected_customer.postal_code }}
-              {{ offersPreview.selected_customer.city }} <br />
-              {{ offersPreview.selected_customer.country }}
+        <!-- Absender (Sender) Info -->
+        <div class="sender-line">
+          {{ auth.company_name }} · {{ auth.address }} · {{ auth.postal_code }} {{ auth.city }}
+        </div>
+
+        <!-- Recipient & Offer Details -->
+        <div class="main-content">
+          <div class="recipient-section">
+            <div v-if="offersPreview?.selected_customer" class="recipient-address">
+              <div v-if="offersPreview.selected_customer.company_name" class="company-name">
+                {{ offersPreview.selected_customer.company_name }}
+              </div>
+              <div v-if="offersPreview.selected_customer.first_name || offersPreview.selected_customer.last_name">
+                {{ offersPreview.selected_customer.first_name }} {{ offersPreview.selected_customer.last_name }}
+              </div>
+              <div>{{ offersPreview.selected_customer.address }}</div>
+              <div>
+                {{ offersPreview.selected_customer.postal_code }}
+                {{ offersPreview.selected_customer.city }}
+              </div>
+              <div v-if="offersPreview.selected_customer.country">
+                {{ offersPreview.selected_customer.country }}
+              </div>
             </div>
           </div>
 
-          <div class="invoice-details">
-            <div class="section-title">Angebotdetails</div>
+          <div class="offer-meta">
             <div class="meta-row">
-              <span class="meta-label">Aangebot-Nr.:</span>
-              <span class="meta-value">{{ formatAngebotId }}</span>
+              <span class="meta-label">Angebotsnummer:</span>
+              <span class="meta-value">{{ offersPreview.id }}</span>
             </div>
             <div class="meta-row">
-              <span class="meta-label">Datum:</span>
+              <span class="meta-label">Angebotsdatum:</span>
               <span class="meta-value">{{ formatDate(offersPreview.date) }}</span>
             </div>
-            <div class="meta-row">
-              <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(offersPreview.selected_customer.id)
-              }}</span>
-            </div>
-
-            <!-- Optional tax fields -->
-            <div v-if="offersPreview.selected_customer.tax_number" class="meta-row">
-              <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ offersPreview.selected_customer.tax_number }}</span>
-            </div>
-            <div v-if="offersPreview.selected_customer.vat_id" class="meta-row">
-              <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ offersPreview.selected_customer.vat_id }}</span>
-            </div>
-            <div v-if="offersPreview.valid_days" class="meta-row">
+            <div v-if="offersPreview.valid_until" class="meta-row">
               <span class="meta-label">Gültig bis:</span>
-              <span class="meta-value">{{
-                formatValidDays(offersPreview.date, offersPreview.valid_days)
-              }}</span>
+              <span class="meta-value">{{ formatDate(offersPreview.valid_until) }}</span>
+            </div>
+            <div v-if="offersPreview.selected_customer?.id" class="meta-row">
+              <span class="meta-label">Kunden-Nr.:</span>
+              <span class="meta-value">{{ offersPreview.selected_customer.id }}</span>
+            </div>
+            <div v-if="offersPreview.service_period_start && offersPreview.service_period_end" class="meta-row">
+              <span class="meta-label">Leistungszeitraum:</span>
+              <span class="meta-value">
+                {{ formatDate(offersPreview.service_period_start) }} - {{ formatDate(offersPreview.service_period_end) }}
+              </span>
             </div>
           </div>
         </div>
 
         <!-- Document Title -->
         <div class="document-title">
-          <span v-if="offersPreview.title" class="project-badge">
-            {{ offersPreview.title }}
-          </span>
+          <h1>{{ offersPreview.title || 'Angebot' }}</h1>
         </div>
 
         <!-- Intro Text -->
         <div class="intro-text">
-          Sehr geehrter Herr Weber,<br /><br />
-          vielen Dank für Ihre Auftragserteilung. Hiermit bestätigen wir den Eingang Ihres Auftrags
-          auf Grundlage unseres Angebots vom {{ formatDate(offersPreview.offer_date) }}.
+          Sehr geehrte Damen und Herren,<br /><br />
+          vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:
         </div>
 
         <!-- Positions Table -->
@@ -75,11 +74,11 @@
             <tr>
               <th style="width: 5%">Pos.</th>
               <th style="width: 40%">Bezeichnung</th>
-              <th class="center" style="width: 8%">Menge</th>
+              <th class="center" style="width: 10%">Menge</th>
               <th class="center" style="width: 10%">Einheit</th>
-              <th class="right" style="width: 12%">Einzelpreis</th>
+              <th class="right" style="width: 15%">Einzelpreis</th>
               <th class="right" style="width: 10%">MwSt.</th>
-              <th class="right" style="width: 15%">Gesamtpreis</th>
+              <th class="right" style="width: 15%">Gesamt</th>
             </tr>
           </thead>
 
@@ -91,112 +90,124 @@
                 <div v-if="item.description" class="position-description">
                   {{ item.description }}
                 </div>
-                <div class="position-service-period">
-                  Leistungszeitraum: {{ item.service_period_start }} - {{ item.service_period_end }}
+                <div v-if="item.service_period_start && item.service_period_end" class="position-service-period">
+                  Leistungszeitraum: {{ formatDate(item.service_period_start) }} - {{ formatDate(item.service_period_end) }}
                 </div>
               </td>
-              <td class="center">{{ item.quantity }}</td>
+              <td class="center">{{ formatNumber(item.quantity) }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, offersPreview.currency) }}</td>
-              <td class="right">
-                {{ offersPreview.reverse_charge ? '0%' : item.vat + '%' }}
-              </td>
-              <td class="right">
-                {{ formatCurrency(item.unit_total, offersPreview.currency) }}
-              </td>
+              <td class="right">{{ formatCurrency(item.price) }}</td>
+              <td class="right">{{ item.vat }}%</td>
+              <td class="right">{{ formatCurrency(item.gross) }}</td>
             </tr>
           </tbody>
         </table>
 
-        <!-- summary -->
-        <div v-if="offersPreview.summary" class="totals">
+        <!-- Summary/Totals -->
+        <div class="totals-section">
           <div class="total-row">
-            <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{
-              formatCurrency(offersPreview.summary.subtotal, offersPreview.currency)
-            }}</span>
+            <span class="total-label">Summe Netto:</span>
+            <span class="total-value">{{ formatCurrency(totals.net) }}</span>
           </div>
 
-          <div class="total-row">
-            <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{
-              formatCurrency(offersPreview.summary.vat_amount, offersPreview.currency)
-            }}</span>
+          <!-- VAT Breakdown by Rate -->
+          <div v-if="!offersPreview.is_kleinunternehmer && !offersPreview.is_reverse_charge">
+            <div v-for="(amount, rate) in totals.vatByRate" :key="rate" class="total-row vat-row">
+              <span class="total-label">zzgl. {{ rate }}% MwSt.:</span>
+              <span class="total-value">{{ formatCurrency(amount) }}</span>
+            </div>
           </div>
 
-          <div class="total-row subtotal">
-            <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{
-              formatCurrency(offersPreview.summary.total, offersPreview.currency)
-            }}</span>
+          <div class="total-row total-final">
+            <span class="total-label">Gesamtbetrag:</span>
+            <span class="total-value">{{ formatCurrency(totals.gross) }}</span>
           </div>
 
-          <div
-            v-if="
-              offersPreview.payment &&
-              offersPreview.payment.paid_amount &&
-              offersPreview.payment.paid_amount > 0
-            "
-            class="total-row paid"
-          >
-            <span class="total-label">✓ Bereits bezahlt:</span>
-            <span class="total-value">
-              - {{ formatCurrency(offersPreview.payment.paid_amount, offersPreview.currency) }}
-            </span>
+          <!-- Tax Notes -->
+          <div v-if="offersPreview.is_kleinunternehmer" class="tax-note kleinunternehmer">
+            <strong>Hinweis:</strong> Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
           </div>
 
-          <div
-            v-if="offersPreview.summary && offersPreview.summary.outstanding > 0"
-            class="total-row outstanding"
-          >
-            <span class="total-label">⚠️ Offener Betrag:</span>
-            <span class="total-value">{{
-              formatCurrency(offersPreview.summary.outstanding, offersPreview.currency)
-            }}</span>
-          </div>
-
-          <!-- Sadece Kleinunternehmer için -->
-          <div v-if="auth.is_kleinunternehmer" class="tax-note">
-            ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
-          </div>
-
-          <!-- Reverse Charge için -->
-          <div v-if="offersPreview.is_reverse_charge" class="tax-note">
-            ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
+          <div v-if="offersPreview.is_reverse_charge" class="tax-note reverse-charge">
+            <strong>Hinweis:</strong> Steuerschuldnerschaft des Leistungsempfängers gemäß §13b UStG (Reverse Charge).
           </div>
         </div>
 
-        <!-- Project Info -->
-        <div class="delivery-box">
-          <div class="delivery-title">📅 Geplanter Projektstart</div>
-          <div>
-            Projektstart: {{ formatDate(offersPreview.project_start) }}<br />
-            Voraussichtliche Dauer: {{ offersPreview.project_duration }} Wochen
+        <!-- Payment Terms -->
+        <div v-if="offersPreview.payment" class="payment-section">
+          <div class="section-heading">Zahlungsbedingungen</div>
+          <div class="payment-content">
+            <p v-if="offersPreview.payment.terms">
+              Zahlbar innerhalb <strong>{{ offersPreview.payment.terms }} Tagen</strong> netto nach Rechnungsdatum.
+            </p>
+            <p v-if="offersPreview.payment.has_skonto">
+              Bei Zahlung innerhalb von <strong>{{ offersPreview.payment.skonto_days }} Tagen</strong> 
+              gewähren wir <strong>{{ offersPreview.payment.skonto_percentage }}% Skonto</strong>.
+            </p>
+            <p v-if="offersPreview.payment.payment_conditions">
+              {{ offersPreview.payment.payment_conditions }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Bank Details -->
+        <div v-if="auth.bank || offersPreview.bank" class="bank-section">
+          <div class="section-heading">Bankverbindung</div>
+          <div class="bank-details">
+            <div v-if="auth.bank?.bank_name || offersPreview.bank?.bank_name">
+              Kreditinstitut: {{ auth.bank?.bank_name || offersPreview.bank?.bank_name }}
+            </div>
+            <div v-if="auth.bank?.iban || offersPreview.bank?.iban">
+              IBAN: {{ auth.bank?.iban || offersPreview.bank?.iban }}
+            </div>
+            <div v-if="auth.bank?.bic || offersPreview.bank?.bic">
+              BIC: {{ auth.bank?.bic || offersPreview.bank?.bic }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Legal Validity -->
+        <div v-if="offersPreview.is_legal_validity" class="signature-section">
+          <div class="signature-note">
+            Durch Ihre Unterschrift bestätigen Sie die Annahme dieses Angebots.
+          </div>
+          <div class="signature-box">
+            <div class="signature-line">
+              <div>_____________________________</div>
+              <div class="signature-label">Ort, Datum</div>
+            </div>
+            <div class="signature-line">
+              <div>_____________________________</div>
+              <div class="signature-label">Unterschrift</div>
+            </div>
           </div>
         </div>
 
         <!-- Closing -->
-        <div class="closing closing-pro">
-          Wir bedanken uns für Ihr Vertrauen und freuen uns auf eine erfolgreiche Zusammenarbeit.<br /><br />
+        <div class="closing">
+          Wir freuen uns auf Ihre Rückmeldung und stehen für Rückfragen gerne zur Verfügung.<br /><br />
           Mit freundlichen Grüßen
         </div>
 
         <!-- Contact Person -->
-        <ContactPersonPreview :contactData="auth.contact_person" />
-        <FooterSidePreview />
+        <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
+        
+        <!-- Footer with Company Details -->
+        <FooterSidePreview :auth="auth" />
       </div>
 
+      <!-- Action Buttons -->
       <ActionsButtonPreview
         v-if="offersPreview.selected_customer"
         tableName="offers"
         :email="offersPreview.selected_customer.email"
-        :documentId="formatAngebotId"
+        :documentId="offersPreview.id"
         :invoicesData="offersPreview"
       />
     </div>
 
     <router-link to="/offers/create" class="back-link">
-      ← Zurück zur Auftragserstellung
+      ← Zurück zur Bearbeitung
     </router-link>
   </div>
 </template>
@@ -207,7 +218,6 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
-
 export default {
   name: 'OffersPreview',
   components: {
@@ -216,77 +226,82 @@ export default {
     FooterSidePreview,
     ActionsButtonPreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
+  inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency', 'formatNumber'],
   data() {
     return {
-      title: 'Angebotbestätigung',
+      title: 'Angebot',
       offersPreview: null,
-      auth: null
-    }
-  },
-  computed: {
-    formatAngebotId() {
-      if (!this.offersPreview.id) return ''
-      const year = new Date().getFullYear()
-      return `ANG-${year}-${String(this.offersPreview.id).padStart(5, '0')}`
+      auth: null,
+      totals: {
+        net: 0,
+        gross: 0,
+        vatByRate: {}
+      }
     }
   },
   mounted() {
     this.getOffersPreview()
     this.getAuth()
+    this.calculateTotals()
   },
   methods: {
     getOffersPreview() {
       if (store.state.offers) {
         this.offersPreview = store.state.offers
-      } else {
-        return this.offersPreview
       }
-      console.log('Offers Preview Data:', this.offersPreview)
     },
     getAuth() {
       if (store.state.auth) {
         this.auth = store.state.auth
-      } else {
-        return this.auth
       }
+    },
+    calculateTotals() {
+      if (!this.offersPreview?.positions) return
+
+      let net = 0
+      let gross = 0
+      const vatByRate = {}
+
+      this.offersPreview.positions.forEach(pos => {
+        net += pos.net || 0
+        gross += pos.gross || 0
+
+        if (pos.vat > 0 && !this.offersPreview.is_kleinunternehmer && !this.offersPreview.is_reverse_charge) {
+          if (!vatByRate[pos.vat]) {
+            vatByRate[pos.vat] = 0
+          }
+          vatByRate[pos.vat] += pos.vat_amt || 0
+        }
+      })
+
+      this.totals = { net, gross, vatByRate }
     }
   }
 }
 </script>
-<style>
+
+<style scoped>
+/* Positions Table */
 .positions-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 16px;
-  font-size: 9px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  margin-bottom: 30px;
+  font-size: 10pt;
 }
 
 .positions-table thead {
-  background: #f1f5f9;
+  background: #f8f9fa;
+  border-top: 2px solid #333;
+  border-bottom: 2px solid #333;
 }
 
 .positions-table th {
-  padding: 14px 16px;
+  padding: 10px 8px;
   text-align: left;
-  font-size: 11px;
+  font-size: 9pt;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: #333;
-  border: 1px solid #e2e8f0;
-}
-
-.positions-table th.left,
-.positions-table td.left {
-  text-align: left;
-}
-
-.positions-table th.right,
-.positions-table td.right {
-  text-align: right;
 }
 
 .positions-table th.center,
@@ -294,112 +309,197 @@ export default {
   text-align: center;
 }
 
+.positions-table th.right,
+.positions-table td.right {
+  text-align: right;
+}
+
 .positions-table tbody tr {
   border-bottom: 1px solid #e9ecef;
 }
 
 .positions-table td {
-  padding: 18px 16px;
-  font-size: 14px;
-  color: #1e293b;
-}
-
-.positions-table td.right {
-  text-align: right;
-  font-weight: 600;
+  padding: 12px 8px;
+  vertical-align: top;
 }
 
 .position-title {
   font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 4px;
-}
-
-.position-amount {
-  font-weight: 600;
-  color: #0f172a;
+  color: #000;
   margin-bottom: 4px;
 }
 
 .position-description {
-  font-size: 12px;
-  color: #64748b;
+  font-size: 9pt;
+  color: #666;
+  margin-top: 4px;
 }
 
 .position-service-period {
-  font-size: 12px;
-  color: #64748b;
+  font-size: 8pt;
+  color: #888;
+  margin-top: 4px;
+  font-style: italic;
 }
 
-/* TOTALS */
-.totals {
+/* Totals Section */
+.totals-section {
   margin-left: auto;
-  width: 280px;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  width: 300px;
+  margin-bottom: 40px;
 }
 
 .total-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
-  font-size: 10px;
+  padding: 8px 0;
+  font-size: 10pt;
 }
 
-.total-row.subtotal {
-  border-top: 1px solid #dee2e6;
-  padding-top: 10px;
+.total-row.vat-row {
+  font-size: 9pt;
+  color: #666;
 }
 
-.total-row.paid {
-  color: #10b981;
-}
-
-.total-row.outstanding {
-  color: #dc2626;
-  font-weight: 600;
+.total-row.total-final {
+  border-top: 2px solid #333;
+  border-bottom: 3px double #333;
+  padding: 12px 0;
+  margin-top: 8px;
+  font-size: 12pt;
+  font-weight: 700;
 }
 
 .total-label {
-  font-size: 14px;
-  color: #64748b;
   font-weight: 500;
 }
 
 .total-value {
-  font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  text-align: right;
 }
 
-.outstanding {
-  display: flex;
-  align-items: center;
-  margin-top: 16px;
-  padding: 20px 24px;
-  background: #16a34a;
-  border-radius: 6px;
+.total-final .total-value {
+  font-size: 14pt;
 }
 
-.outstanding .total-label {
-  color: #fff;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.outstanding .total-value {
-  color: #fff;
-  font-weight: 600;
-  font-size: 18px;
-}
-
+/* Tax Notes */
 .tax-note {
-  margin-top: 16px;
-  padding: 16px;
-  background: #fef3c7;
-  border: 1px solid #fde68a;
-  border-radius: 8px;
-  display: flex;
-  gap: 12px;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 9pt;
+  line-height: 1.5;
+}
+
+.tax-note.kleinunternehmer {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}
+
+.tax-note.reverse-charge {
+  background: #d1ecf1;
+  border: 1px solid #17a2b8;
+  color: #0c5460;
+}
+
+/* Payment Section */
+.payment-section,
+.bank-section {
+  margin-bottom: 30px;
+}
+
+.section-heading {
+  font-size: 11pt;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.payment-content,
+.bank-details {
+  font-size: 10pt;
+  line-height: 1.8;
+}
+
+.payment-content p {
+  margin: 8px 0;
+}
+
+/* Signature Section */
+.signature-section {
+  margin: 40px 0;
+}
+
+.signature-note {
+  font-size: 10pt;
+  margin-bottom: 30px;
+  color: #666;
+}
+
+.signature-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 40px;
+}
+
+.signature-line {
+  text-align: center;
+}
+
+.signature-line > div:first-child {
+  border-bottom: 1px solid #333;
+  padding-bottom: 2px;
+  margin-bottom: 8px;
+}
+
+.signature-label {
+  font-size: 9pt;
+  color: #666;
+}
+
+/* Closing */
+.closing {
+  margin: 40px 0 30px;
+  line-height: 1.8;
+}
+
+/* Back Link */
+.back-link {
+  display: inline-block;
+  margin: 20px;
+  padding: 10px 20px;
+  background: #4a90e2;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.back-link:hover {
+  background: #357abd;
+}
+
+/* Print Styles */
+@media print {
+  .preview-panel {
+    background: #fff;
+    padding: 0;
+  }
+
+  .printable {
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .back-link {
+    display: none;
+  }
 }
 </style>

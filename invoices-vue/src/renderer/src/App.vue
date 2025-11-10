@@ -55,6 +55,9 @@ export default {
           currency: currency.substr(0, 3)
         }).format(num)
       },
+      formatNumber(value) {
+        return new Intl.NumberFormat('de-DE').format(value || 0)
+      },
       storePreview: this.storePreview
     }
   },
