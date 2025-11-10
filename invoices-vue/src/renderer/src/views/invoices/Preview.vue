@@ -203,8 +203,10 @@
 
       <ActionsButtonPreview
         v-if="invoicesPreview.selected_customer"
+        tableName="invoices"
         :email="invoicesPreview.selected_customer.email"
-        :file-name="title + ' ' + formatRechnungId"
+        :documentId="formatRechnungId"
+        :invoicesData="invoicesPreview"
       />
     </div>
 

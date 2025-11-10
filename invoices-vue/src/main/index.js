@@ -457,3 +457,14 @@ ipcMain.handle('delete-customer', async (event, id) => {
     return { success: false, message: err.message }
   }
 })
+
+ipcMain.handle('save-document', async (event, data) => {
+  try {
+    // Placeholder for save document logic
+    console.log('Document data received for saving:', data)
+    return { success: true, message: 'Document saved successfully' }
+  } catch (err) {
+    console.error('Save document error:', err.message)
+    return { success: false, message: err.message }
+  }
+})

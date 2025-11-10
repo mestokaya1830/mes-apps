@@ -1,11 +1,15 @@
 <template lang="">
   <div>
     <div class="action-buttons">
+      <button class="btn btn-primary" @click="saveDocument">
+        <span class="nav-icon">💾</span>
+        <span>Speichern</span>
+      </button>
       <button class="btn btn-secondary" @click="sendEmail">
         <span class="nav-icon">📧</span>
         <span>E-Mail</span>
       </button>
-      <button class="btn btn-primary" @click="exportPDF">
+      <button class="btn btn-pdf" @click="exportPDF">
         <span class="nav-icon">📄</span>
         <span>PDF</span>
       </button>
@@ -22,12 +26,20 @@ import store from '../../store/store.js'
 export default {
   name: 'ActionsButton',
   props: {
+    invoicesData: {
+      type: Object,
+      required: true
+    },
     email: {
       type: String,
       required: true
     },
-    fileName: {
+    tableName: {
       type: String,
+      required: true
+    },
+    documentId: {
+      type: [String, Number],
       required: true
     }
   },
@@ -56,11 +68,27 @@ export default {
       html2pdf().set(options).from(element).save()
       this.clearInvoicesStore()
     },
+    async saveDocument() {
+      if (this.invoicesData && this.documentId && this.tableName && this.email) {
+        await window.api.saveDocument({
+          tableName: this.tableName,
+          documentId: this.documentId,
+          email: this.email,
+          data: JSON.stringify(this.invoicesData)
+        })
+        console.log(this.invoicesData)
+        console.log(this.documentId)
+        console.log(this.tableName)
+        console.log(this.email)
+      }
+    },
     printDocument() {
       window.print()
+      this.clearInvoicesStore()
     },
     sendEmail() {
       console.log(this.email)
+      this.clearInvoicesStore()
     },
     async clearInvoicesStore() {
       try {
@@ -94,7 +122,11 @@ export default {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: #22c55e;
+  color: white;
+}
+.btn-pdf {
+  background: #2263c5;
   color: white;
 }
 
