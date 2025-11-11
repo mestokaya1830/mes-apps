@@ -130,7 +130,7 @@
               v-model="invoices.is_reverse_charge"
               type="checkbox"
               class="switch-checkbox"
-              @change="calculateReverseCharge"
+              @change="onReverseChargeChange"
             />
             <span class="slider round"></span>
           </label>
@@ -147,7 +147,7 @@
               v-model="invoices.is_kleinunternehmer"
               type="checkbox"
               class="switch-checkbox"
-              @change="calculateKleinunternehmer"
+              @change="onKleinunternehmerChange"
             />
             <span class="slider round"></span>
           </label>
@@ -155,21 +155,6 @@
             <strong>Kleinunternehmerregelung (§19 UStG)</strong>
             <small>Keine Umsatzsteuer wird berechnet</small>
           </div>
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">
-          <span>👤 Umkehrung der Steuerschuldnerschaft</span>
-          <label for="reverse_charge-checkbox" class="switch">
-            <input
-              id="reverse_charge-checkbox"
-              v-model="invoices.is_reverse_charge"
-              type="checkbox"
-              class="switch-checkbox"
-              @change="calculateReverseCharge()"
-            />
-            <span class="slider round"></span>
-          </label>
         </div>
       </div>
 
@@ -299,13 +284,13 @@
             <div class="form-group">
               <label class="form-label">Einheit</label>
               <select v-model="pos.unit" class="form-input">
-                <option>Stk.</option>
-                <option>Std.</option>
-                <option>Tag</option>
-                <option>Monat</option>
-                <option>Pauschal</option>
-                <option>m²</option>
-                <option>kg</option>
+                <option value="Stk">Stk</option>
+                <option value="Std">Std</option>
+                <option value="Tag">Tag</option>
+                <option value="Monat">Monat</option>
+                <option value="Pauschal">Pauschal</option>
+                <option value="m²">m²</option>
+                <option value="kg">kg</option>
               </select>
             </div>
             <div class="form-group">
@@ -423,12 +408,24 @@ export default {
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value
     },
+    onReverseChargeChange() {
+      if (this.invoices.is_reverse_charge) {
+        this.invoices.is_kleinunternehmer = false
+      }
+      this.calculateUmsatzsteuer()
+    },
 
-    calculateReverseCharge() {
+    onKleinunternehmerChange() {
+      if (this.invoices.is_kleinunternehmer) {
+        this.invoices.is_reverse_charge = false
+      }
+      this.calculateUmsatzsteuer()
+    },
+    calculateUmsatzsteuer() {
       this.invoices.positions.forEach((item, index) => {
         const base = item.quantity * item.price
 
-        if (this.invoices.is_reverse_charge) {
+        if (this.invoices.is_reverse_charge || this.invoices.is_kleinunternehmer) {
           this.invoices.positions[index].vat = 0
           this.invoices.positions[index].vat_unit = 0
           this.invoices.positions[index].unit_total = base.toFixed(2)

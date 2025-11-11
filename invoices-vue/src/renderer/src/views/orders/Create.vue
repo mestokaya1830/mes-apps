@@ -236,17 +236,17 @@
             <div class="form-group">
               <label class="form-label">Einheit</label>
               <select v-model="pos.unit" class="form-input">
-                <option>Stk</option>
-                <option>Std</option>
-                <option>Tag</option>
-                <option>Monat</option>
-                <option>Jahr</option>
-                <option>Pauschal</option>
-                <option>m</option>
-                <option>m²</option>
-                <option>m³</option>
-                <option>kg</option>
-                <option>l</option>
+                <option value="Stk">Stk</option>
+                <option value="Std">Std</option>
+                <option value="Tag">Tag</option>
+                <option value="Monat">Monat</option>
+                <option value="Jahr">Jahr</option>
+                <option value="Pauschal">Pauschal</option>
+                <option value="m">m</option>
+                <option value="m²">m²</option>
+                <option value="m³">m³</option>
+                <option value="kg">kg</option>
+                <option value="l">l</option>
               </select>
             </div>
             <div class="form-group">
