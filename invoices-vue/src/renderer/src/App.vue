@@ -98,10 +98,12 @@ export default {
           const invoices = {
             id: createData.id || 1,
             date: createData.date || '',
-            verwendungszweck: createData.verwendungszweck || '',
+            service_date: createData.service_date || '',
+            payment_reference: createData.payment_reference || '',
             selected_customer: createData.selected_customer || null,
             currency: createData.currency || 'EUR-DE',
             is_reverse_charge: createData.is_reverse_charge || false,
+            is_small_company: createData.is_small_company || false,
             positions: createData.positions || [],
             payment: createData.payment || {},
             summary: {
@@ -113,7 +115,7 @@ export default {
             }
           }
           await store[storeCommit](JSON.parse(JSON.stringify(invoices)))
-          console.log(createData)
+          console.log(this.storeData)
         } catch (error) {
           console.error('Error storing preview:', error)
         }

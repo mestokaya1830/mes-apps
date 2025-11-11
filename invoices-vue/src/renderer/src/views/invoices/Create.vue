@@ -28,9 +28,9 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Verwendungszweck / Betreff</label>
+          <label class="form-label">payment_reference / Betreff</label>
           <input
-            v-model="invoices.verwendungszweck"
+            v-model="invoices.payment_reference"
             type="text"
             class="form-input"
             placeholder="z.B. Webentwicklung Projekt XYZ"
@@ -144,7 +144,7 @@
           <label for="kleinunternehmer-checkbox" class="switch">
             <input
               id="kleinunternehmer-checkbox"
-              v-model="invoices.is_kleinunternehmer"
+              v-model="invoices.is_small_company"
               type="checkbox"
               class="switch-checkbox"
               @change="onKleinunternehmerChange"
@@ -258,9 +258,9 @@
       </div>
       <div v-else class="positions-editor">
         <div v-for="(pos, index) in invoices.positions" :key="index" class="position-item">
-          <div class="position-header">
+          <div class="positions-header">
             <span class="position-number">Position {{ index + 1 }}</span>
-            <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
+            <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
           </div>
           <div class="form-group">
             <label class="form-label">Bezeichnung</label>
@@ -280,7 +280,7 @@
               <input v-model="pos.service_period_end" type="date" class="form-input" />
             </div>
           </div>
-          <div class="position-inputs">
+          <div class="form-row form-row-4">
             <div class="form-group">
               <label class="form-label">Einheit</label>
               <select v-model="pos.unit" class="form-input">
@@ -326,14 +326,14 @@
               </select>
             </div>
           </div>
-          <div class="form-result">
-            <div>
+          <div class="positions-total">
+            <div class="positions-total-item">
               <label class="form-label">Vat Unit (€)</label>
               <div class="form-result-item">
                 {{ pos.vat_unit }}
               </div>
             </div>
-            <div>
+            <div class="positions-total-item">
               <label class="form-label">Unit Total (€)</label>
               <div class="form-result-item">{{ pos.unit_total }}</div>
             </div>
@@ -363,10 +363,10 @@ export default {
       invoices: {
         id: 1,
         date: '',
-        service_date: new Date().toISOString().split('T')[0],
-        verwendungszweck: '',
+        service_date: '',
+        payment_reference: '',
         is_reverse_charge: false,
-        is_kleinunternehmer: false,
+        is_small_company: false,
         selected_customer: {},
         currency: 'EUR.de-DE',
         positions: [],
@@ -410,13 +410,13 @@ export default {
     },
     onReverseChargeChange() {
       if (this.invoices.is_reverse_charge) {
-        this.invoices.is_kleinunternehmer = false
+        this.invoices.is_small_company = false
       }
       this.calculateUmsatzsteuer()
     },
 
     onKleinunternehmerChange() {
-      if (this.invoices.is_kleinunternehmer) {
+      if (this.invoices.is_small_company) {
         this.invoices.is_reverse_charge = false
       }
       this.calculateUmsatzsteuer()
@@ -425,7 +425,7 @@ export default {
       this.invoices.positions.forEach((item, index) => {
         const base = item.quantity * item.price
 
-        if (this.invoices.is_reverse_charge || this.invoices.is_kleinunternehmer) {
+        if (this.invoices.is_reverse_charge || this.invoices.is_small_company) {
           this.invoices.positions[index].vat = 0
           this.invoices.positions[index].vat_unit = 0
           this.invoices.positions[index].unit_total = base.toFixed(2)
@@ -481,3 +481,211 @@ export default {
   }
 }
 </script>
+
+<style>
+/* EDITOR PANEL */
+.editor-panel {
+  width: 70%;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.editor-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.editor-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.editor-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* FORM GROUPS */
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.form-row-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+input:not([readonly]) {
+  background: #fff;
+}
+.positions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.add-position-btn {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 20px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.delete-position-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+}
+.positions-total {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+.positions-total-item {
+  margin-left: 16px;
+}
+.positions-total-item > div {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin-left: 10px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #2196f3;
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin-left: 10px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #2196f3;
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+</style>

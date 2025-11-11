@@ -32,6 +32,12 @@
               <span class="meta-value">{{ formatDate(invoicesPreview.date) }}</span>
             </div>
 
+            <!-- Leistungsdatum hinzugefügt -->
+            <div v-if="invoicesPreview.service_date" class="meta-row">
+              <span class="meta-label">Leistungsdatum:</span>
+              <span class="meta-value">{{ formatDate(invoicesPreview.service_date) }}</span>
+            </div>
+
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
@@ -72,6 +78,10 @@
               <span class="meta-value">{{ invoicesPreview.selected_customer.vat_id }}</span>
             </div>
           </div>
+        </div>
+
+        <div v-if="invoicesPreview.payment_reference" class="subject-line">
+          <strong>Betreff:</strong> {{ invoicesPreview.payment_reference }}
         </div>
 
         <!-- Intro Text -->
@@ -123,7 +133,7 @@
         </table>
 
         <!-- summary -->
-        <div v-if="invoicesPreview.summary" class="totals">
+        <div v-if="invoicesPreview.summary" class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
@@ -170,13 +180,49 @@
           </div>
 
           <!-- Sadece Kleinunternehmer için -->
-          <div v-if="auth.is_kleinunternehmer" class="tax-note">
+          <div v-if="invoicesPreview.is_small_company" class="tax-note small-company">
             ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
           </div>
 
           <!-- Reverse Charge için -->
           <div v-if="invoicesPreview.is_reverse_charge" class="tax-note">
             ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
+          </div>
+        </div>
+
+        <!-- Zahlungsbedingungen Bölümü Eklendi -->
+        <div v-if="invoicesPreview.payment" class="payment-terms-box">
+          <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
+
+          <div class="payment-terms-content">
+            <div v-if="invoicesPreview.payment.payment_terms" class="payment-term-item">
+              <strong>Zahlungsziel:</strong>
+              {{ invoicesPreview.payment.payment_terms }} Tage netto (fällig bis
+              {{ calculateDueDate(invoicesPreview.date, invoicesPreview.payment.payment_terms) }})
+            </div>
+
+            <div
+              v-if="invoicesPreview.payment.has_skonto"
+              class="payment-term-item skonto-highlight"
+            >
+              <strong>💰 Skonto:</strong>
+              {{ invoicesPreview.payment.skonto_percentage }}% Skonto bei Zahlung innerhalb von
+              {{ invoicesPreview.payment.skonto_days }} Tagen (bis
+              {{ calculateDueDate(invoicesPreview.date, invoicesPreview.payment.skonto_days) }})
+              <div class="skonto-amount">
+                Skonto-Betrag:
+                {{ formatCurrency(calculateSkontoAmount(), invoicesPreview.currency) }}
+                = Zahlbetrag:
+                {{ formatCurrency(calculateAmountWithSkonto(), invoicesPreview.currency) }}
+              </div>
+            </div>
+
+            <div v-if="invoicesPreview.payment.payment_conditions" class="payment-term-item">
+              <strong>Zusätzliche Bedingungen:</strong>
+              <div class="payment-conditions-text">
+                {{ invoicesPreview.payment.payment_conditions }}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -279,35 +325,188 @@ export default {
       } else {
         console.warn('No auth data in store')
       }
+    },
+    calculateDueDate(invoiceDate, days) {
+      if (!invoiceDate || !days) return ''
+      const date = new Date(invoiceDate)
+      date.setDate(date.getDate() + days)
+      return this.formatDate(date.toISOString().split('T')[0])
+    },
+    calculateSkontoAmount() {
+      if (
+        !this.invoicesPreview?.summary?.total ||
+        !this.invoicesPreview?.payment?.skonto_percentage
+      ) {
+        return 0
+      }
+      const outstanding =
+        this.invoicesPreview.summary.outstanding || this.invoicesPreview.summary.total
+      return (outstanding * this.invoicesPreview.payment.skonto_percentage) / 100
+    },
+    calculateAmountWithSkonto() {
+      if (!this.invoicesPreview?.summary?.total) return 0
+      const outstanding =
+        this.invoicesPreview.summary.outstanding || this.invoicesPreview.summary.total
+      return outstanding - this.calculateSkontoAmount()
     }
   }
 }
 </script>
-
 <style>
-.header {
+/* PREVIEW PANEL */
+.preview-panel {
+  width: 80%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: auto;
+  padding: 20px;
+  top: 20px;
+}
+
+/* RECIPIENT */
+.recipient {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-  align-items: center;
-  border-bottom: 3px solid #91a7c5;
-}
-
-.header-title {
-  text-align: center;
-  font-size: 32px;
-  font-weight: bold;
   margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #ddd;
+}
+.recipient-address {
+  font-weight: 600;
+  color: var(--lightColor);
+  font-size: 12px;
 }
 
-.logo-container {
-  flex-shrink: 0;
-  margin-left: 20px;
+/* META INFO */
+.meta-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  margin-bottom: 4px;
 }
 
+.meta-label {
+  font-weight: 600;
+  color: var(--lightColor);
+  font-size: 12px;
+}
+
+.meta-value {
+  color: var(--midColor);
+  font-size: 12px;
+}
+
+/* INTRO */
+.intro-text {
+  margin-bottom: 16px;
+  line-height: 1.6;
+  font-size: 10px;
+}
+
+/* BANK + CONTACT BOX */
+.bank-box {
+  background: #f1f5f9;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
+
+.bank-info {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: 4px;
+  line-height: 1.6;
+  font-size: 12px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.bank-label {
+  color: #444;
+}
+
+.bank-value {
+  font-weight: 600;
+  color: #333;
+}
+
+/* BACK LINK */
+.back-link {
+  display: inline-block;
+  cursor: pointer;
+  margin: 40px 0;
+  font-size: 18px;
+  color: #3b82f6;
+  text-decoration: none;
+  border: 1px solid #3b82f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Positions Table */
+.positions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  font-size: 10pt;
+}
+
+.positions-table thead {
+  background: #f8f9fa;
+  border-top: 2px solid #333;
+  border-bottom: 2px solid #333;
+}
+
+.positions-table th {
+  padding: 10px 8px;
+  text-align: left;
+  font-size: 9pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #333;
+}
+
+.positions-table th.center,
+.positions-table td.center {
+  text-align: center;
+}
+
+.positions-table th.right,
+.positions-table td.right {
+  text-align: right;
+}
+
+.positions-table tbody tr {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.positions-table td {
+  padding: 12px 8px;
+  vertical-align: top;
+}
+
+.position-title {
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.position-description {
+  font-size: 9pt;
+  color: #666;
+  margin-top: 4px;
+}
+
+.position-service-period {
+  font-size: 8pt;
+  color: #888;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* Section Title */
 .section-title {
   font-size: 10px;
   font-weight: 700;
@@ -317,179 +516,124 @@ export default {
   margin-bottom: 16px;
 }
 
-.company-name {
-  font-size: 20px;
-  font-weight: bold;
-  color: #10b981;
-  margin-bottom: 4px;
-}
-
-.company-name-subtitle {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 4px;
-}
-
-.company-details {
-  font-size: 12px;
-  color: var(--darkColor);
-  line-height: 1.6;
-}
-
-.preview-logo {
-  max-width: 160px;
-  max-height: 100px;
-  width: auto;
-  height: auto;
-  display: block;
-  /* margin: 0 auto; */
-}
-
-.positions-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 16px;
-  font-size: 9px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
-.positions-table thead {
-  background: #f1f5f9;
-}
-
-.positions-table th {
-  padding: 14px 16px;
-  text-align: left;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #333;
-  border: 1px solid #e2e8f0;
-}
-
-.positions-table th.left,
-.positions-table td.left {
-  text-align: left;
-}
-
-.positions-table th.right,
-.positions-table td.right {
-  text-align: right;
-}
-
-.positions-table th.center,
-.positions-table td.center {
-  text-align: center;
-}
-
-.positions-table tbody tr {
-  border-bottom: 1px solid #e9ecef;
-}
-
-.positions-table td {
-  padding: 18px 16px;
-  font-size: 14px;
-  color: #1e293b;
-}
-
-.positions-table td.right {
-  text-align: right;
-  font-weight: 600;
-}
-
-.position-title {
-  font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 4px;
-}
-
-.position-amount {
-  font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 4px;
-}
-
-.position-description {
-  font-size: 12px;
-  color: #64748b;
-}
-
-.position-service-period {
-  font-size: 12px;
-  color: #64748b;
-}
-
-/* TOTALS */
-.totals {
+/* Summary Section */
+.summary-section {
   margin-left: auto;
-  width: 280px;
-  margin-top: 40px;
-  margin-bottom: 20px;
+  width: 300px;
+  margin-bottom: 40px;
 }
 
 .total-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
-  font-size: 10px;
+  padding: 8px 0;
+  font-size: 10pt;
 }
 
 .total-row.subtotal {
-  border-top: 1px solid #dee2e6;
-  padding-top: 10px;
+  font-size: 11pt;
+  font-weight: 700;
 }
 
 .total-row.paid {
-  color: #10b981;
+  color: #16a34a;
+  font-weight: 700;
 }
 
 .total-row.outstanding {
   color: #dc2626;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .total-label {
-  font-size: 14px;
-  color: #64748b;
   font-weight: 500;
 }
 
 .total-value {
-  font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
+  text-align: right;
 }
 
-.outstanding {
-  display: flex;
-  align-items: center;
-  margin-top: 16px;
-  padding: 20px 24px;
-  background: #16a34a;
-  border-radius: 6px;
-}
-
-.outstanding .total-label {
-  color: #fff;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.outstanding .total-value {
-  color: #fff;
-  font-weight: 600;
-  font-size: 18px;
-}
-
+/* Tax Notes */
 .tax-note {
-  margin-top: 16px;
-  padding: 16px;
-  background: #fef3c7;
-  border: 1px solid #fde68a;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 9pt;
+  line-height: 1.5;
+}
+
+.small-company {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}
+
+/* Subject Line */
+.subject-line {
+  margin: 20px 0;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #0066cc;
+  font-size: 14px;
+}
+
+/* Payment Terms */
+.payment-terms-box {
+  margin: 30px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
   border-radius: 8px;
+}
+
+.payment-terms-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #0066cc;
+}
+
+.payment-terms-content {
   display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+
+.payment-term-item {
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 8px 0;
+}
+
+.payment-term-item strong {
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.skonto-highlight {
+  background-color: #e7f3ff;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #0066cc;
+}
+
+.skonto-amount {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #0066cc;
+  font-weight: 600;
+}
+
+.payment-conditions-text {
+  margin-top: 6px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  white-space: pre-wrap;
+  font-size: 12px;
+  color: #666;
 }
 </style>
