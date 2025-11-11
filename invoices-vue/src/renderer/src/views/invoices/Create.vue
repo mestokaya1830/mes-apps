@@ -122,38 +122,55 @@
       <!-- Wat -->
       <div class="form-section">
         <div class="form-section-title">💼 Steueroptionen</div>
-
-        <div class="form-option">
-          <label for="reverse-charge-checkbox" class="switch">
-            <input
-              id="reverse-charge-checkbox"
-              v-model="invoices.is_reverse_charge"
-              type="checkbox"
-              class="switch-checkbox"
-              @change="onReverseChargeChange"
-            />
-            <span class="slider round"></span>
-          </label>
-          <div class="option-text">
-            <strong>Reverse-Charge-Verfahren</strong>
-            <small>Steuerschuldnerschaft des Leistungsempfängers (§13b UStG)</small>
+        <div class="form-section">
+          <div class="switch-container">
+            <label for="is_small_company" class="switch">
+              <input
+                id="is_small_company"
+                v-model="invoices.tax_options.is_small_company"
+                type="checkbox"
+                @change="checkTaxOptions('is_small_company')"
+              />
+              <span class="slider round"></span>
+            </label>
+            <div class="switch-text">
+              <strong>Kleinunternehmerregelung (§19 UStG)</strong>
+              <small class="option-description">Keine Umsatzsteuer wird berechnet</small>
+            </div>
           </div>
-        </div>
-
-        <div class="form-option">
-          <label for="kleinunternehmer-checkbox" class="switch">
-            <input
-              id="kleinunternehmer-checkbox"
-              v-model="invoices.is_small_company"
-              type="checkbox"
-              class="switch-checkbox"
-              @change="onKleinunternehmerChange"
-            />
-            <span class="slider round"></span>
-          </label>
-          <div class="option-text">
-            <strong>Kleinunternehmerregelung (§19 UStG)</strong>
-            <small>Keine Umsatzsteuer wird berechnet</small>
+          <div class="switch-container">
+            <label for="is_reverse_charge" class="switch">
+              <input
+                id="is_reverse_charge"
+                v-model="invoices.tax_options.is_reverse_charge"
+                type="checkbox"
+                @change="checkTaxOptions('is_reverse_charge')"
+              />
+              <span class="slider round"></span>
+            </label>
+            <div class="switch-text">
+              <strong>Reverse-Charge-Verfahren</strong>
+              <small class="option-description"
+                >Steuerschuldnerschaft des Leistungsempfängers (§13b UStG)</small
+              >
+            </div>
+          </div>
+          <div class="switch-container">
+            <label for="is_eu_delivery" class="switch">
+              <input
+                id="is_eu_delivery"
+                v-model="invoices.tax_options.is_eu_delivery"
+                type="checkbox"
+                @change="checkTaxOptions('is_eu_delivery')"
+              />
+              <span class="slider round"></span>
+            </label>
+            <div class="switch-text">
+              <strong>Innergemeinschaftliche Lieferung</strong>
+              <small class="option-description"
+                >Steuerfrei gemäß §4 Nr.1b UStG (Europa içi, opsiyonel)</small
+              >
+            </div>
           </div>
         </div>
       </div>
@@ -273,11 +290,21 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Leistungszeitraum Von</label>
-              <input v-model="pos.service_period_start" type="date" class="form-input" />
+              <input
+                v-model="pos.service_period_start"
+                type="date"
+                class="form-input"
+                @change="validateServicePeriod(pos)"
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Leistungszeitraum Bis</label>
-              <input v-model="pos.service_period_end" type="date" class="form-input" />
+              <input
+                v-model="pos.service_period_end"
+                type="date"
+                class="form-input"
+                @change="validateServicePeriod(pos)"
+              />
             </div>
           </div>
           <div class="form-row form-row-4">
@@ -354,7 +381,7 @@
 import store from '../../store/store.js'
 export default {
   name: 'CreateInvoices',
-  inject: ['storePreview'],
+  inject: ['storePreview', 'validateServicePeriod'],
   data() {
     return {
       title: 'Rechnung erstellen',
@@ -365,11 +392,14 @@ export default {
         date: '',
         service_date: '',
         payment_reference: '',
-        is_reverse_charge: false,
-        is_small_company: false,
         selected_customer: {},
         currency: 'EUR.de-DE',
         positions: [],
+        tax_options: {
+          is_small_company: false,
+          is_reverse_charge: false,
+          is_eu_delivery: false
+        },
         payment: {
           paid_amount: 0,
           payment_terms: 14,
@@ -408,24 +438,25 @@ export default {
     getSelectedCustomer(value) {
       this.invoices.selected_customer = value
     },
-    onReverseChargeChange() {
-      if (this.invoices.is_reverse_charge) {
-        this.invoices.is_small_company = false
+    checkTaxOptions(current) {
+      if (current) {
+        for (const item in this.invoices.tax_options) {
+          if (item !== current) {
+            this.invoices.tax_options[item] = false
+          }
+        }
+        this.calculateUmsatzsteuer()
       }
-      this.calculateUmsatzsteuer()
-    },
-
-    onKleinunternehmerChange() {
-      if (this.invoices.is_small_company) {
-        this.invoices.is_reverse_charge = false
-      }
-      this.calculateUmsatzsteuer()
     },
     calculateUmsatzsteuer() {
       this.invoices.positions.forEach((item, index) => {
         const base = item.quantity * item.price
 
-        if (this.invoices.is_reverse_charge || this.invoices.is_small_company) {
+        if (
+          this.invoices.tax_options.is_reverse_charge ||
+          this.invoices.tax_options.is_small_company ||
+          this.invoices.tax_options.is_eu_delivery
+        ) {
           this.invoices.positions[index].vat = 0
           this.invoices.positions[index].vat_unit = 0
           this.invoices.positions[index].unit_total = base.toFixed(2)
@@ -461,7 +492,11 @@ export default {
       const vat = this.invoices.positions[index].vat || 0
       const base = quantity * price
       let total = 0
-      if (this.invoices.is_reverse_charge) {
+      if (
+        this.invoices.tax_options.is_reverse_charge ||
+        this.invoices.tax_options.is_small_company ||
+        this.invoices.tax_options.is_eu_delivery
+      ) {
         this.invoices.positions[index].vat = 0
         this.invoices.positions[index].vat_unit = 0
         this.invoices.positions[index].unit_total = base.toFixed(2)
@@ -535,9 +570,11 @@ export default {
   gap: 12px;
   margin-bottom: 12px;
 }
+
 .form-row-4 {
   grid-template-columns: repeat(4, 1fr);
 }
+
 .form-group {
   margin-bottom: 12px;
 }
@@ -562,6 +599,8 @@ export default {
 input:not([readonly]) {
   background: #fff;
 }
+
+/* POSITIONS */
 .positions-header {
   display: flex;
   justify-content: space-between;
@@ -583,6 +622,7 @@ input:not([readonly]) {
   cursor: pointer;
   transition: background 0.2s ease;
 }
+
 .delete-position-btn {
   background: transparent;
   border: none;
@@ -590,33 +630,45 @@ input:not([readonly]) {
   font-size: 16px;
   cursor: pointer;
 }
+
 .positions-total {
   display: flex;
   justify-content: flex-end;
   margin-top: 12px;
 }
+
 .positions-total-item {
   margin-left: 16px;
 }
+
 .positions-total-item > div {
   margin-bottom: 4px;
   font-size: 12px;
   font-weight: 500;
   color: #4b5563;
 }
+/* SWITCH CONTROL */
+.switch-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.switch-text {
+  margin-left: 16px;
+}
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 24px;
+  min-width: 50px;
+  height: 28px;
   margin-left: 10px;
 }
-
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
+
 .slider {
   position: absolute;
   cursor: pointer;
@@ -635,56 +687,16 @@ input:not([readonly]) {
   height: 18px;
   width: 18px;
   left: 3px;
-  bottom: 3px;
+  bottom: 5px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
 }
+
 input:checked + .slider {
   background-color: #2196f3;
 }
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-  margin-left: 10px;
-}
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 24px;
-}
-
-.slider:before {
-  position: absolute;
-  content: '';
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-input:checked + .slider {
-  background-color: #2196f3;
-}
 input:checked + .slider:before {
   transform: translateX(26px);
 }

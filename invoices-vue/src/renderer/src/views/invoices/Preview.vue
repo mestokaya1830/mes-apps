@@ -179,18 +179,25 @@
             }}</span>
           </div>
 
-          <!-- Sadece Kleinunternehmer için -->
-          <div v-if="invoicesPreview.is_small_company" class="tax-note small-company">
-            ⚠️ Gemäß §19 UStG wird keine Umsatzsteuer berechnet.
-          </div>
+          <div class="preview-section">
+            <div v-if="invoicesPreview.tax_options.is_small_company" class="tax-note small-company">
+              ⚠️ Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
+            </div>
 
-          <!-- Reverse Charge için -->
-          <div v-if="invoicesPreview.is_reverse_charge" class="tax-note">
-            ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß §4 Nr.1b UStG (Reverse Charge).
+            <div v-else-if="invoicesPreview.tax_options.is_reverse_charge" class="tax-note">
+              ⚠️ Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span
+                >§13b UStG</span
+              >)
+            </div>
+
+            <div v-else-if="invoicesPreview.tax_options.is_eu_delivery" class="tax-note">
+              ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß
+              <span>§4 Nr.1b UStG</span> (Europa içi)
+            </div>
           </div>
         </div>
 
-        <!-- Zahlungsbedingungen Bölümü Eklendi -->
+        <!-- payment -->
         <div v-if="invoicesPreview.payment" class="payment-terms-box">
           <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
 

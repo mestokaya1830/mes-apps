@@ -58,6 +58,17 @@ export default {
       formatNumber(value) {
         return new Intl.NumberFormat('de-DE').format(value || 0)
       },
+      validateServicePeriod(pos) {
+        if (!pos.service_period_start || !pos.service_period_end) return
+
+        const start = new Date(pos.service_period_start)
+        const end = new Date(pos.service_period_end)
+
+        if (start > end) {
+          alert('❌ Das Startdatum darf nicht nach dem Enddatum liegen.')
+          pos.service_period_end = '' // ← Reactive veri güncelleniyor
+        }
+      },
       storePreview: this.storePreview
     }
   },
@@ -105,6 +116,7 @@ export default {
             is_reverse_charge: createData.is_reverse_charge || false,
             is_small_company: createData.is_small_company || false,
             positions: createData.positions || [],
+            tax_options: createData.tax_options || {},
             payment: createData.payment || {},
             summary: {
               subtotal: this.subTotal,
