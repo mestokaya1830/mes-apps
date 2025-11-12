@@ -8,7 +8,7 @@
         <!-- customers -->
         <div v-if="invoicesPreview.selected_customer" class="recipient">
           <div class="recipient-address">
-            <div class="section-title">Empfänger</div>
+            <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
               {{ invoicesPreview.selected_customer.company_name }}
             </div>
@@ -20,8 +20,9 @@
             </div>
           </div>
 
-          <div class="invoice-details">
-            <div class="section-title">Rechnungsdetails</div>
+          <!-- recipient details -->
+          <div class="recipient-details">
+            <div class="recipient-title">Rechnungsdetails</div>
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
@@ -33,7 +34,7 @@
               <span class="meta-value">{{ formatDate(invoicesPreview.date) }}</span>
             </div>
 
-            <!-- Leistungsdatum hinzugefügt -->
+            <!-- Service date -->
             <div v-if="invoicesPreview.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
               <span class="meta-value">{{ formatDate(invoicesPreview.service_date) }}</span>
@@ -262,6 +263,7 @@
         :email="invoicesPreview.selected_customer.email"
         :documentId="formatRechnungId"
         :invoicesData="invoicesPreview"
+        :clearStoreName="'clearInvoices'"
       />
     </div>
 
@@ -464,8 +466,6 @@ export default {
 
 .positions-table thead {
   background: #f8f9fa;
-  border-top: 2px solid #333;
-  border-bottom: 2px solid #333;
 }
 
 .positions-table th {
@@ -515,8 +515,8 @@ export default {
   font-style: italic;
 }
 
-/* Section Title */
-.section-title {
+/* recipient Title */
+.recipient-title {
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;

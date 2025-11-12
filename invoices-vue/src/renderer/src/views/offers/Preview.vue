@@ -255,8 +255,8 @@
         <!-- Contact Person -->
         <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
 
-        <!-- Footer with Company Details -->
-        <div class="pdf-footer">
+        <!-- leagal validity -->
+        <div v-if="offersPreview.is_legal" class="pdf-footer">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
             Rechtsgültige Unterschrift erforderlich
@@ -285,6 +285,7 @@
         :email="offersPreview.selected_customer.email"
         :documentId="offersPreview.id"
         :invoicesData="offersPreview"
+        clearStoreName="clearOffers"
       />
     </div>
 

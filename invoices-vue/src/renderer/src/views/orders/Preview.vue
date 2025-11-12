@@ -2,13 +2,13 @@
   <div v-if="ordersPreview">
     <div class="preview-panel">
       <div class="printable">
-        <!-- Header -->
+        <!-- Header section -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
-        <!-- Recipient & Order Details -->
+        <!-- Recipient and order details -->
         <div v-if="ordersPreview.selected_customer" class="recipient">
           <div class="recipient-address">
-            <div class="section-title">Kunde</div>
+            <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
               {{ ordersPreview.selected_customer.company_name }}
             </div>
@@ -20,12 +20,15 @@
             </div>
           </div>
 
-          <div class="invoice-details">
-            <div class="section-title">Auftragsdaten</div>
+          <!-- recipient details -->
+          <div class="recipient-details">
+            <div class="recipient-title">Auftragsdetails</div>
+
             <div class="meta-row">
               <span class="meta-label">Auftrags-Nr.:</span>
-              <span class="meta-value">{{ formatAuftragId }}</span>
+              <span class="meta-value">{{ formattedOrderId }}</span>
             </div>
+
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
               <span class="meta-value">{{ formatDate(ordersPreview.date) }}</span>
@@ -36,69 +39,66 @@
                 formatCustomerId(ordersPreview.selected_customer.id)
               }}</span>
             </div>
+            <div v-if="auth.tax_number" class="meta-row">
+              <span class="meta-label">Tax Number:</span>
+              <span class="meta-value">{{ auth.tax_number }}</span>
+            </div>
+            <div v-if="auth.vat_id" class="meta-row">
+              <span class="meta-label">VAT ID:</span>
+              <span class="meta-value">{{ auth.vat_id }}</span>
+            </div>
 
-            <!-- Leistungszeitraum -->
+            <!-- Optional: customer reference -->
+            <!-- <div v-if="ordersPreview.customer_reference" class="meta-row">
+              <span class="meta-label">Reference:</span>
+              <span class="meta-value">{{ ordersPreview.customer_reference }}</span>
+            </div> -->
+
+            <!-- Service period -->
             <div
               v-if="ordersPreview.service_period_start && ordersPreview.service_period_end"
               class="meta-row"
             >
-              <span class="meta-label">Leistungszeitraum:</span>
+              <span class="meta-label">Service Period:</span>
               <span class="meta-value">
                 {{ formatDate(ordersPreview.service_period_start) }} -
                 {{ formatDate(ordersPreview.service_period_end) }}
               </span>
             </div>
+          </div>
 
-            <!-- NEU: Liefertermin -->
-            <div v-if="ordersPreview.delivery_date" class="meta-row">
-              <span class="meta-label">Liefertermin:</span>
-              <span class="meta-value">{{ formatDate(ordersPreview.delivery_date) }}</span>
-            </div>
+          <!-- Delivery date -->
+          <div v-if="ordersPreview.delivery_date" class="meta-row">
+            <span class="meta-label">Delivery Date:</span>
+            <span class="meta-value">{{ formatDate(ordersPreview.delivery_date) }}</span>
+          </div>
 
-            <!-- NEU: Gültigkeit -->
-            <div v-if="ordersPreview.validity_date" class="meta-row">
-              <span class="meta-label">Gültig bis:</span>
-              <span class="meta-value">{{ formatDate(ordersPreview.validity_date) }}</span>
-            </div>
+          <!-- Valid until -->
+          <div v-if="ordersPreview.validity_date" class="meta-row">
+            <span class="meta-label">Valid Until:</span>
+            <span class="meta-value">{{ formatDate(ordersPreview.validity_date) }}</span>
+          </div>
 
-            <!-- Optional tax fields -->
-            <div v-if="auth.tax_number" class="meta-row">
-              <span class="meta-label">Steuernummer:</span>
-              <span class="meta-value">{{ auth.tax_number }}</span>
-            </div>
-            <div v-if="auth.vat_id" class="meta-row">
-              <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ auth.vat_id }}</span>
-            </div>
+          <!-- Optional delivery address if different -->
+          <div v-if="ordersPreview.delivery_address" class="meta-row">
+            <span class="meta-label">Delivery Address:</span>
+            <span class="meta-value">{{ ordersPreview.delivery_address }}</span>
           </div>
         </div>
 
-        <!-- Intro Text -->
-        <div class="intro-text">
-          <template v-if="ordersPreview.selected_customer?.gender === 'f'">
-            Sehr geehrte Frau {{ ordersPreview.selected_customer?.last_name }},
-          </template>
-          <template v-else-if="ordersPreview.selected_customer?.gender === 'm'">
-            Sehr geehrter Herr {{ ordersPreview.selected_customer?.last_name }},
-          </template>
-          <template v-else> Sehr geehrte Damen und Herren, </template>
-          <br /><br />
-          vielen Dank für Ihren Auftrag. Hiermit bestätigen wir diesen wie folgt:
-        </div>
-
-        <!-- Positions Table -->
+        <!-- Positions table -->
         <table class="positions-table">
           <thead>
             <tr>
               <th style="width: 5%">Pos.</th>
-              <th style="width: 50%">Bezeichnung</th>
-              <th class="center" style="width: 10%">Menge</th>
+              <th style="width: 40%">Bezeichnung</th>
+              <th class="center" style="width: 8%">Menge</th>
+              <th class="center" style="width: 10%">Einheit</th>
               <th class="right" style="width: 12%">Einzelpreis</th>
-              <th class="center" style="width: 8%">MwSt.</th>
-              <th class="right" style="width: 15%">Gesamt</th>
+              <th class="right" style="width: 10%">MwSt.</th>
+              <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-
           <tbody v-if="ordersPreview.positions && ordersPreview.positions.length > 0">
             <tr v-for="(item, index) in ordersPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
@@ -108,141 +108,140 @@
                   {{ item.description }}
                 </div>
                 <div
-                  class="position-service-period"
                   v-if="item.service_period_start && item.service_period_end"
+                  class="position-service-period"
                 >
                   Leistungszeitraum: {{ formatDate(item.service_period_start) }} -
                   {{ formatDate(item.service_period_end) }}
                 </div>
               </td>
-              <td class="center">{{ item.quantity }} {{ item.unit || 'Stk' }}</td>
+              <td class="center">{{ item.quantity }}</td>
+              <td class="center">{{ item.unit }}</td>
+              <td class="right">{{ formatCurrency(item.price, ordersPreview.currency) }}</td>
               <td class="right">
-                {{ formatCurrency(item.price, ordersPreview.currency) }}
+                {{ item.vat + '%' }}
               </td>
-              <td class="center">{{ item.vat }}%</td>
               <td class="right">
-                {{ formatCurrency(item.gross_amount || item.unit_total, ordersPreview.currency) }}
+                {{ formatCurrency(item.unit_total, ordersPreview.currency) }}
               </td>
             </tr>
           </tbody>
         </table>
 
-        <!-- NEU: Erweiterte Summary mit MwSt-Aufschlüsselung -->
-        <div v-if="ordersPreview.summary" class="totals">
-          <!-- Nettobetrag -->
+        <!-- summary -->
+        <div v-if="ordersPreview.summary" class="summary-section">
           <div class="total-row">
-            <span class="total-label">Summe Netto:</span>
+            <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
               formatCurrency(ordersPreview.summary.subtotal, ordersPreview.currency)
             }}</span>
           </div>
 
-          <!-- MwSt-Aufschlüsselung -->
-          <div
-            v-for="vat in ordersPreview.summary.vat_breakdown"
-            :key="vat.rate"
-            class="total-row vat-breakdown"
-          >
-            <span class="total-label">+ MwSt ({{ vat.rate }}%):</span>
+          <div class="total-row">
+            <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(vat.amount, ordersPreview.currency)
+              formatCurrency(ordersPreview.summary.vat_amount, ordersPreview.currency)
             }}</span>
           </div>
 
-          <!-- Gesamtbetrag -->
-          <div class="total-row total-gross">
-            <span class="total-label">Gesamtbetrag (Brutto):</span>
-            <span class="total-value total-value-highlight">{{
+          <div class="total-row subtotal">
+            <span class="total-label">Rechnungsbetrag (brutto):</span>
+            <span class="total-value">{{
               formatCurrency(ordersPreview.summary.total, ordersPreview.currency)
             }}</span>
           </div>
-
-          <!-- Kleinunternehmer Hinweis -->
-          <div v-if="auth.is_kleinunternehmer" class="tax-note">
-            <span class="tax-icon">ℹ️</span>
-            <span>Gemäß §19 UStG wird keine Umsatzsteuer berechnet.</span>
-          </div>
         </div>
 
-        <!-- NEU: Zahlungs- und Lieferbedingungen -->
+        <!-- Payment and delivery terms -->
         <div v-if="hasPaymentOrDeliveryTerms" class="terms-section">
-          <div class="section-title">Zahlungs- und Lieferbedingungen</div>
-
+          <div class="section-title">Payment & Delivery Terms</div>
           <div class="terms-grid">
-            <!-- Zahlungsbedingungen -->
-            <div
-              v-if="ordersPreview.payment && ordersPreview.payment.payment_terms"
-              class="term-item"
-            >
-              <span class="term-label">Zahlungsbedingungen:</span>
-              <span class="term-value">{{ getPaymentTermsText }}</span>
+            <div v-if="ordersPreview.payment?.payment_terms" class="term-item">
+              <span class="term-label">Payment Terms:</span>
+              <span class="term-value">{{ paymentTermsText }}</span>
             </div>
-
-            <!-- Zahlungsart -->
-            <div
-              v-if="ordersPreview.payment && ordersPreview.payment.payment_method"
-              class="term-item"
-            >
-              <span class="term-label">Zahlungsart:</span>
+            <div v-if="ordersPreview.payment?.payment_method" class="term-item">
+              <span class="term-label">Payment Method:</span>
               <span class="term-value">{{ ordersPreview.payment.payment_method }}</span>
             </div>
-
-            <!-- Lieferbedingungen -->
             <div v-if="ordersPreview.delivery_terms" class="term-item">
-              <span class="term-label">Lieferbedingungen:</span>
+              <span class="term-label">Delivery Terms:</span>
               <span class="term-value">{{ ordersPreview.delivery_terms }}</span>
             </div>
-
-            <!-- Versandart -->
             <div v-if="ordersPreview.shipping_method" class="term-item">
-              <span class="term-label">Versandart:</span>
+              <span class="term-label">Shipping Method:</span>
               <span class="term-value">{{ ordersPreview.shipping_method }}</span>
             </div>
           </div>
-
-          <!-- Zusätzliche Zahlungshinweise -->
-          <div
-            v-if="ordersPreview.payment && ordersPreview.payment.payment_conditions"
-            class="payment-conditions"
-          >
+          <div v-if="ordersPreview.payment?.payment_conditions" class="payment-conditions">
             {{ ordersPreview.payment.payment_conditions }}
           </div>
         </div>
 
-        <!-- NEU: Kundennotiz -->
-        <div v-if="ordersPreview.customer_notes" class="customer-notes">
-          <div class="section-title">Hinweise</div>
-          <div class="notes-content">{{ ordersPreview.customer_notes }}</div>
-        </div>
-
-        <!-- NEU: Besondere Hinweise -->
-        <div v-if="ordersPreview.special_notes" class="special-notes">
-          <div class="section-title">Besondere Hinweise</div>
-          <div class="notes-content">{{ ordersPreview.special_notes }}</div>
-        </div>
-
-        <!-- Abschlusstext -->
+        <!-- Closing text -->
         <div class="closing-text">
-          Wir freuen uns auf die Zusammenarbeit und stehen für Rückfragen gerne zur Verfügung.
+          Wir freuen uns auf die Zusammenarbeit mit Ihnen und beantworten gerne alle Ihre Fragen.
           <br /><br />
-          Mit freundlichen Grüßen
+          Mit freundlichen Grüßen,
         </div>
 
+        <!-- Contact person -->
         <ContactPersonPreview :contactData="auth.contact_person" />
+
+        <!-- Bank information -->
+        <div class="bank-box">
+          <div class="bank-title">🏦 Bank Details</div>
+          <div class="bank-info">
+            <span class="bank-label">Bank:</span>
+            <span class="bank-value">{{ auth.bank_name }}</span>
+            <span class="bank-label">IBAN:</span>
+            <span class="bank-value">{{ auth.iban }}</span>
+            <span class="bank-label">BIC:</span>
+            <span class="bank-value">{{ auth.bic }}</span>
+            <span class="bank-label">Payment Reference:</span>
+            <span class="bank-value">{{ ordersPreview.verwendungszweck }}</span>
+          </div>
+        </div>
+
+        <!-- leagal validity -->
+        <div v-if="ordersPreview.is_legal" class="pdf-footer">
+          <label style="display: flex; align-items: center; gap: 8px">
+            <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
+            Rechtsgültige Unterschrift erforderlich
+          </label>
+
+          <div
+            class="signature-box"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px"
+          >
+            <div class="signature-line">
+              <div>_____________________________</div>
+              <div class="signature-label">Ort, Datum</div>
+            </div>
+            <div class="signature-line">
+              <div>_____________________________</div>
+              <div class="signature-label">Unterschrift</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer with legal info / AGB notice -->
         <FooterSidePreview />
       </div>
 
+      <!-- Actions -->
       <ActionsButtonPreview
         v-if="ordersPreview.selected_customer"
         tableName="orders"
         :email="ordersPreview.selected_customer.email"
-        :documentId="formatAuftragId"
+        :documentId="formattedOrderId"
         :invoicesData="ordersPreview"
+        clearStoreName="orders"
       />
     </div>
 
     <router-link to="/orders/create" class="back-link">
-      ← Zurück zur Auftragserstellung
+      ← Zurück zur Rechnungserstellung
     </router-link>
   </div>
 </template>
@@ -255,14 +254,14 @@ import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
-  name: 'OrdersPreview',
+  name: 'OrdersPreviewPage',
   components: {
     HeaderSidePreview,
     FooterSidePreview,
     ActionsButtonPreview,
     ContactPersonPreview
   },
-  inject: ['formatCustomerId', 'formatCurrency', 'formatDate', 'formatNumber'],
+  inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Auftragsbestätigung',
@@ -271,11 +270,13 @@ export default {
     }
   },
   computed: {
-    formatAuftragId() {
+    // Format order ID like AUF-2025-00001
+    formattedOrderId() {
       if (!this.ordersPreview.id) return ''
       const year = new Date().getFullYear()
       return `AUF-${year}-${String(this.ordersPreview.id).padStart(5, '0')}`
     },
+    // Check if payment or delivery terms exist
     hasPaymentOrDeliveryTerms() {
       return (
         (this.ordersPreview.payment &&
@@ -286,15 +287,13 @@ export default {
         this.ordersPreview.shipping_method
       )
     },
-    getPaymentTermsText() {
-      if (!this.ordersPreview.payment || !this.ordersPreview.payment.payment_terms) return ''
-
+    // Get readable payment terms text
+    paymentTermsText() {
+      if (!this.ordersPreview.payment?.payment_terms) return ''
       const terms = this.ordersPreview.payment.payment_terms
-
-      if (terms === 'vorkasse') return 'Vorkasse'
-      if (terms === 0) return 'Sofort zahlbar'
-
-      return `Zahlbar innerhalb von ${terms} Tagen`
+      if (terms === 'vorkasse') return 'Prepayment'
+      if (terms === 0) return 'Due immediately'
+      return `Due within ${terms} days`
     }
   },
   mounted() {
@@ -305,54 +304,65 @@ export default {
     getOrdersPreview() {
       if (store.state.orders) {
         this.ordersPreview = store.state.orders
-      } else {
-        return this.ordersPreview
       }
     },
     getAuth() {
       if (store.state.auth) {
         this.auth = store.state.auth
-      } else {
-        return this.auth
       }
     }
   }
 }
 </script>
 
-<style scoped>
+<style>
+/* RECIPIENT */
+.recipient {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.recipient-address {
+  font-weight: 600;
+  color: var(--lightColor);
+  font-size: 12px;
+}
+/* META INFO */
+.meta-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  margin-bottom: 4px;
+}
+
+.meta-label {
+  font-weight: 600;
+  color: var(--lightColor);
+  font-size: 12px;
+}
+
+.meta-value {
+  color: var(--midColor);
+  font-size: 12px;
+}
+/* Positions Table */
 .positions-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 16px;
-  font-size: 9px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  margin-bottom: 30px;
+  font-size: 10pt;
 }
 
 .positions-table thead {
-  background: #f1f5f9;
+  background: #f8f9fa;
 }
 
 .positions-table th {
-  padding: 14px 16px;
+  padding: 10px 8px;
   text-align: left;
-  font-size: 11px;
+  font-size: 9pt;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: #333;
-  border: 1px solid #e2e8f0;
-}
-
-.positions-table th.left,
-.positions-table td.left {
-  text-align: left;
-}
-
-.positions-table th.right,
-.positions-table td.right {
-  text-align: right;
 }
 
 .positions-table th.center,
@@ -360,85 +370,75 @@ export default {
   text-align: center;
 }
 
+.positions-table th.right,
+.positions-table td.right {
+  text-align: right;
+}
+
 .positions-table tbody tr {
   border-bottom: 1px solid #e9ecef;
 }
 
 .positions-table td {
-  padding: 18px 16px;
-  font-size: 14px;
-  color: #1e293b;
-}
-
-.positions-table td.right {
-  text-align: right;
-  font-weight: 600;
+  padding: 12px 8px;
+  vertical-align: top;
 }
 
 .position-title {
   font-weight: 600;
-  color: #0f172a;
+  color: #000;
   margin-bottom: 4px;
 }
 
 .position-description {
-  font-size: 12px;
-  color: #64748b;
+  font-size: 9pt;
+  color: #666;
   margin-top: 4px;
-  line-height: 1.4;
 }
 
 .position-service-period {
-  font-size: 11px;
-  color: #64748b;
+  font-size: 8pt;
+  color: #888;
   margin-top: 4px;
   font-style: italic;
 }
 
-/* TOTALS */
-.totals {
+/* Summary Section */
+.summary-section {
   margin-left: auto;
-  width: 320px;
-  margin-top: 40px;
-  margin-bottom: 30px;
+  width: 300px;
+  margin-bottom: 40px;
 }
 
 .total-row {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  font-size: 10px;
+  font-size: 10pt;
 }
 
-.total-row.vat-breakdown {
-  padding-left: 16px;
-  font-size: 13px;
-  color: #64748b;
+.total-row.subtotal {
+  font-size: 11pt;
+  font-weight: 700;
 }
 
-.total-row.total-gross {
-  border-top: 2px solid #1e293b;
-  margin-top: 8px;
-  padding-top: 12px;
+.total-row.paid {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.total-row.outstanding {
+  color: #dc2626;
   font-weight: 700;
 }
 
 .total-label {
-  font-size: 14px;
-  color: #64748b;
   font-weight: 500;
 }
 
 .total-value {
-  font-size: 14px;
   font-weight: 600;
-  color: #1e293b;
-}
-
-.total-value-highlight {
-  font-size: 16px;
-  color: #16a34a;
-  font-weight: 700;
+  text-align: right;
 }
 
 .tax-note {
@@ -453,13 +453,12 @@ export default {
   color: #92400e;
   align-items: flex-start;
 }
-
 .tax-icon {
   font-size: 18px;
   flex-shrink: 0;
 }
 
-/* NEU: Zahlungs- und Lieferbedingungen */
+/* ---------- Payment & delivery ---------- */
 .terms-section {
   margin: 30px 0;
   padding: 20px;
@@ -467,41 +466,35 @@ export default {
   border-radius: 8px;
   border: 1px solid #e9ecef;
 }
-
-.section-title {
-  font-size: 15px;
+.recipient-title {
+  font-size: 10px;
   font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  color: #94a3b8;
+  margin-bottom: 16px;
 }
-
 .terms-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 16px;
 }
-
 .term-item {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
 .term-label {
   font-size: 12px;
   color: #64748b;
   font-weight: 500;
 }
-
 .term-value {
   font-size: 14px;
   color: #1e293b;
   font-weight: 600;
 }
-
 .payment-conditions {
   margin-top: 16px;
   padding: 12px;
@@ -512,29 +505,7 @@ export default {
   line-height: 1.5;
 }
 
-/* NEU: Notizen */
-.customer-notes,
-.special-notes {
-  margin: 25px 0;
-  padding: 20px;
-  background: #f1f5f9;
-  border-radius: 8px;
-  border-left: 4px solid #3b82f6;
-}
-
-.special-notes {
-  border-left-color: #f59e0b;
-  background: #fffbeb;
-}
-
-.notes-content {
-  font-size: 14px;
-  color: #334155;
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-
-/* Abschlusstext */
+/* ---------- Closing text ---------- */
 .closing-text {
   margin: 40px 0 30px 0;
   font-size: 14px;
@@ -542,26 +513,44 @@ export default {
   line-height: 1.6;
 }
 
-/* Intro Text */
-.intro-text {
+/* ---------- Bank info ---------- */
+.bank-box {
   margin: 30px 0;
-  font-size: 14px;
-  color: #1e293b;
-  line-height: 1.6;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  background: #f8f9fa;
 }
-
-/* Responsive adjustments */
+.bank-title {
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.bank-info {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+}
+/* BACK LINK */
+.back-link {
+  display: inline-block;
+  cursor: pointer;
+  margin: 40px 0;
+  font-size: 18px;
+  color: #3b82f6;
+  text-decoration: none;
+  border: 1px solid #3b82f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.back-link:hover {
+  text-decoration: underline;
+}
+/* ---------- Responsive / print ---------- */
 @media print {
   .terms-section,
-  .customer-notes,
-  .special-notes {
+  .positions-table {
     page-break-inside: avoid;
   }
-
-  .positions-table {
-    page-break-inside: auto;
-  }
-
   .positions-table tr {
     page-break-inside: avoid;
     page-break-after: auto;

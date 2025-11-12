@@ -34,20 +34,13 @@ async function init() {
   }
 }
 
+// set
 async function setAuth(user) {
   state.auth = user
   try {
     await localforage.setItem('auth', user)
   } catch (err) {
     console.error('Failed to save auth:', err)
-  }
-}
-async function clearAuth() {
-  try {
-    await localforage.removeItem('auth')
-    state.auth = undefined
-  } catch (err) {
-    console.error('Failed to clear auth:', err)
   }
 }
 
@@ -57,15 +50,6 @@ async function setInvoices(data) {
     await localforage.setItem('invoices', data)
   } catch (err) {
     console.error('Failed to save invoices:', err)
-  }
-}
-async function clearInvoices() {
-  state._isClearing = true // Flag'i aç
-  try {
-    await localforage.removeItem('invoices')
-    state.invoices = undefined
-  } catch (err) {
-    console.error('Failed to clear invoices:', err)
   }
 }
 async function setOffers(data) {
@@ -85,13 +69,53 @@ async function setOrders(data) {
   }
 }
 
+//clear
+async function clearAuth() {
+  try {
+    await localforage.removeItem('auth')
+    state.auth = undefined
+  } catch (err) {
+    console.error('Failed to clear auth:', err)
+  }
+}
+async function clearInvoices() {
+  state._isClearing = true // Flag'i aç
+  try {
+    await localforage.removeItem('invoices')
+    state.invoices = undefined
+  } catch (err) {
+    console.error('Failed to clear invoices:', err)
+  }
+}
+async function clearOffers() {
+  state._isClearing = true // Flag'i aç
+  try {
+    await localforage.removeItem('offers')
+    state.offers = undefined
+  } catch (err) {
+    console.error('Failed to clear offers:', err)
+  }
+}
+async function clearOrders() {
+  state._isClearing = true // Flag'i aç
+  try {
+    await localforage.removeItem('orders')
+    state.orders = undefined
+  } catch (err) {
+    console.error('Failed to clear orders:', err)
+  }
+}
+
+
 export default {
   state: readonly(state),
   init,
   setAuth,
-  clearAuth,
   setInvoices,
-  clearInvoices,
   setOffers,
-  setOrders
+  setOrders,
+  clearAuth,
+  clearInvoices,
+  clearOffers,
+  clearOrders
 }

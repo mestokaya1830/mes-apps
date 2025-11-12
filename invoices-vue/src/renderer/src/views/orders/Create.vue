@@ -3,10 +3,10 @@
     <div class="editor-panel">
       <div class="editor-header">
         <div class="editor-title">📝{{ title }}</div>
-        <div class="editor-subtitle">Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live</div>
+        <div class="editor-subtitle">Bearbeiten Sie die Auftragsdaten und sehen Sie die Vorschau live</div>
       </div>
-  
-      <!-- base -->
+
+      <!-- Base -->
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-row">
@@ -15,11 +15,11 @@
             <input v-model="orders.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Rechnungsdatum</label>
+            <label class="form-label">Datum</label>
             <input v-model="orders.date" type="date" class="form-input" />
           </div>
         </div>
-  
+
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Leistungszeitraum Von</label>
@@ -31,25 +31,26 @@
           </div>
         </div>
       </div>
-      <!-- NEU: Gültigkeit & Liefertermin -->
+
+      <!-- Validity & Delivery Date -->
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Angebot gültig bis</label>
+          <label class="form-label">Gültig bis</label>
           <input v-model="orders.validity_date" type="date" class="form-input" />
-          <small class="form-hint">Optional: Gültigkeitsdatum des Angebots</small>
+          <small class="form-hint">Optional</small>
         </div>
         <div class="form-group">
-          <label class="form-label">Voraussichtlicher Liefertermin</label>
+          <label class="form-label">Liefertermin</label>
           <input v-model="orders.delivery_date" type="date" class="form-input" />
-          <small class="form-hint">Optional: Erwartetes Lieferdatum</small>
+          <small class="form-hint">Optional</small>
         </div>
       </div>
-  
-      <!-- customer -->
+
+      <!-- Customer Selection -->
       <div v-if="customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
         <div class="form-group">
-          <label class="form-label">Kundendaten</label>
+          <label class="form-label">Kundenauswahl</label>
           <select v-model="customerList" class="form-input" @change="getCustomerById">
             <option selected disabled>Wähle Kunden</option>
             <option v-for="item in customers" :key="item.id" :value="item.id">
@@ -57,78 +58,70 @@
             </option>
           </select>
         </div>
+
         <div v-if="orders.selected_customer.id" class="customer-details">
-          <div class="form-group">
-            <label class="form-label">Kunden-Nr.</label>
-            <input v-model="orders.selected_customer.id" type="text" class="form-input" readonly />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Firmname</label>
-            <input
-              v-model="orders.selected_customer.company_name"
-              type="text"
-              class="form-input"
-              readonly
-            />
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Kunden-Nr.</label>
+              <input v-model="orders.selected_customer.id" type="text" class="form-input" readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Firma</label>
+              <input v-model="orders.selected_customer.company_name" type="text" class="form-input" readonly />
+            </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname</label>
-              <input
-                v-model="orders.selected_customer.first_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="orders.selected_customer.first_name" type="text" class="form-input" readonly />
             </div>
             <div class="form-group">
               <label class="form-label">Nachname</label>
-              <input
-                v-model="orders.selected_customer.last_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="orders.selected_customer.last_name" type="text" class="form-input" readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Adresse</label>
-            <input
-              v-model="orders.selected_customer.address"
-              type="text"
-              class="form-input"
-              readonly
-            />
+            <input v-model="orders.selected_customer.address" type="text" class="form-input" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">PLZ</label>
-              <input
-                v-model="orders.selected_customer.postal_code"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="orders.selected_customer.postal_code" type="text" class="form-input" readonly />
             </div>
             <div class="form-group">
               <label class="form-label">Stadt</label>
-              <input
-                v-model="orders.selected_customer.city"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="orders.selected_customer.city" type="text" class="form-input" readonly />
             </div>
+            <div class="form-group">
+              <label class="form-label">Land</label>
+              <input v-model="orders.selected_customer.country" type="text" class="form-input" readonly />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-Mail</label>
+            <input v-model="orders.selected_customer.email" type="email" class="form-input" readonly />
           </div>
         </div>
       </div>
-      <!-- currency -->
+
+      <!-- Legally Binding -->
+      <div class="switch-container">
+        <label for="is_legal" class="switch">
+          <input id="is_legal" v-model="orders.is_legal" type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+        <div class="switch-text">
+          <strong>Legally binding signature</strong>
+        </div>
+      </div>
+      
+      <!-- Currency -->
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
-          <label class="form-label">Waehrung</label>
+          <label class="form-label">Währung</label>
           <select v-model="orders.currency" class="form-input">
-            <option selected disabled>Wähle Waehrung</option>
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
             <option value="GBP.en-GB">GBP</option>
@@ -142,10 +135,11 @@
           </select>
         </div>
       </div>
-      <!-- NEU: Zahlungs- und Lieferbedingungen -->
+
+      <!-- Payment & Delivery Terms -->
       <div class="form-section">
         <div class="form-section-title">💳 Zahlungs- und Lieferbedingungen</div>
-  
+
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Zahlungsbedingungen</label>
@@ -165,11 +159,11 @@
               <option value="Lastschrift">Lastschrift</option>
               <option value="PayPal">PayPal</option>
               <option value="Kreditkarte">Kreditkarte</option>
-              <option value="Bar">Barzahlung</option>
+              <option value="Bar">Bar</option>
             </select>
           </div>
         </div>
-  
+
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Lieferbedingungen</label>
@@ -177,9 +171,9 @@
               <option value="">Nicht angegeben</option>
               <option value="Frei Haus">Frei Haus</option>
               <option value="Ab Werk">Ab Werk</option>
-              <option value="CIF">CIF (Cost, Insurance, Freight)</option>
-              <option value="FOB">FOB (Free on Board)</option>
-              <option value="DDP">DDP (Delivered Duty Paid)</option>
+              <option value="CIF">CIF</option>
+              <option value="FOB">FOB</option>
+              <option value="DDP">DDP</option>
             </select>
           </div>
           <div class="form-group">
@@ -194,7 +188,7 @@
             </select>
           </div>
         </div>
-  
+
         <div class="form-group">
           <label class="form-label">Zusätzliche Zahlungshinweise</label>
           <textarea
@@ -205,105 +199,106 @@
           ></textarea>
         </div>
       </div>
-      <!-- positions -->
-      <div class="form-section-title">📦 Positionen</div>
-      <div v-if="orders.positions && orders.positions.length === 0">Keine Positionen vorhanden</div>
-      <div v-else class="positions-editor">
-        <div v-for="(pos, index) in orders.positions" :key="index" class="position-item">
-          <div class="position-header">
-            <span class="position-number">Position {{ index + 1 }}</span>
-            <button class="delete-btn" @click="deletePosition(index)">🗑️ Löschen</button>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bezeichnung</label>
-            <input v-model="pos.title" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Beschreibung</label>
-            <input v-model="pos.description" type="text" class="form-input" />
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Leistungszeitraum Von</label>
-              <input v-model="pos.service_period_start" type="date" class="form-input" />
+
+      <!-- Positions -->
+      <div class="form-section">
+        <div class="form-section-title">📦 Positionen</div>
+        <div v-if="orders.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-else class="positions-editor">
+          <div v-for="(pos, index) in orders.positions" :key="index" class="position-item">
+            <div class="positions-header">
+              <span class="position-number">Position {{ index + 1 }}</span>
+              <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
             </div>
             <div class="form-group">
-              <label class="form-label">Leistungszeitraum Bis</label>
-              <input v-model="pos.service_period_end" type="date" class="form-input" />
-            </div>
-          </div>
-          <div class="position-inputs">
-            <div class="form-group">
-              <label class="form-label">Einheit</label>
-              <select v-model="pos.unit" class="form-input">
-                <option value="Stk">Stk</option>
-                <option value="Std">Std</option>
-                <option value="Tag">Tag</option>
-                <option value="Monat">Monat</option>
-                <option value="Jahr">Jahr</option>
-                <option value="Pauschal">Pauschal</option>
-                <option value="m">m</option>
-                <option value="m²">m²</option>
-                <option value="m³">m³</option>
-                <option value="kg">kg</option>
-                <option value="l">l</option>
-              </select>
+              <label class="form-label">Bezeichnung</label>
+              <input v-model="pos.title" type="text" class="form-input" />
             </div>
             <div class="form-group">
-              <label class="form-label">Menge</label>
-              <input
-                v-model.number="pos.quantity"
-                type="number"
-                class="form-input"
-                @input="getUnitTotal(pos.quantity, pos.price, index)"
-              />
+              <label class="form-label">Beschreibung</label>
+              <input v-model="pos.description" type="text" class="form-input" />
             </div>
-            <div class="form-group">
-              <label class="form-label">Preis (€)</label>
-              <input
-                v-model.number="pos.price"
-                type="number"
-                class="form-input"
-                step="0.01"
-                @input="getUnitTotal(pos.quantity, pos.price, index)"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">MwSt. (%)</label>
-              <select
-                v-if="!orders.is_reverse_charge"
-                v-model.number="pos.vat"
-                class="form-input"
-                @change="getUnitTotal(pos.quantity, pos.price, index)"
-              >
-                <option :value="0">0</option>
-                <option :value="7">7</option>
-                <option :value="19">19</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-result">
-            <div>
-              <label class="form-label">Vat Unit (€)</label>
-              <div class="form-result-item">
-                {{ pos.vat_unit }}
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Leistungszeitraum Von</label>
+                <input v-model="pos.service_period_start" type="date" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Leistungszeitraum Bis</label>
+                <input v-model="pos.service_period_end" type="date" class="form-input" />
               </div>
             </div>
-            <div>
-              <label class="form-label">Unit Total (€)</label>
-              <div class="form-result-item">{{ pos.unit_total }}</div>
+            <div class="form-row form-row-4">
+              <div class="form-group">
+                <label class="form-label">Einheit</label>
+                <select v-model="pos.unit" class="form-input">
+                  <option value="Stk">Stk</option>
+                  <option value="Std">Std</option>
+                  <option value="Tag">Tag</option>
+                  <option value="Monat">Monat</option>
+                  <option value="Jahr">Jahr</option>
+                  <option value="Pauschal">Pauschal</option>
+                  <option value="m">m</option>
+                  <option value="m²">m²</option>
+                  <option value="m³">m³</option>
+                  <option value="kg">kg</option>
+                  <option value="l">l</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Menge</label>
+                <input
+                  v-model.number="pos.quantity"
+                  type="number"
+                  class="form-input"
+                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Preis (€)</label>
+                <input
+                  v-model.number="pos.price"
+                  type="number"
+                  class="form-input"
+                  step="0.01"
+                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">MwSt. (%)</label>
+                <select
+                  v-model.number="pos.vat"
+                  class="form-input"
+                  @change="getUnitTotal(pos.quantity, pos.price, index)"
+                >
+                  <option :value="0">0</option>
+                  <option :value="7">7</option>
+                  <option :value="19">19</option>
+                </select>
+              </div>
             </div>
+            <div class="positions-total">
+               <div class="positions-total-item">
+                 <label class="form-label">Vat Unit (€)</label>
+                 <div class="form-result-item">
+                   {{ pos.vat_unit }}
+                 </div>
+               </div>
+               <div class="positions-total-item">
+                 <label class="form-label">Unit Total (€)</label>
+                 <div class="form-result-item">{{ pos.unit_total }}</div>
+               </div>
+             </div>
           </div>
         </div>
+        <button class="add-position-btn" @click="addPosition">➕ Position hinzufügen</button>
       </div>
-      <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
-  
-      <!-- NEU: Notizen -->
+
+      <!-- Notes -->
       <div class="form-section">
-        <div class="form-section-title">📝 Notizen und Hinweise</div>
-  
+        <div class="form-section-title">📝 Notizen & Hinweise</div>
         <div class="form-group">
-          <label class="form-label">Kundennotiz (erscheint auf Dokument)</label>
+          <label class="form-label">Kundennotiz</label>
           <textarea
             v-model="orders.customer_notes"
             class="form-input"
@@ -311,9 +306,8 @@
             placeholder="Dieser Text wird auf der Auftragsbestätigung angezeigt"
           ></textarea>
         </div>
-  
         <div class="form-group">
-          <label class="form-label">Interne Notiz (nicht sichtbar für Kunden)</label>
+          <label class="form-label">Interne Notiz</label>
           <textarea
             v-model="orders.internal_notes"
             class="form-input"
@@ -321,19 +315,18 @@
             placeholder="Nur für interne Zwecke"
           ></textarea>
         </div>
-  
         <div class="form-group">
           <label class="form-label">Besondere Hinweise</label>
           <textarea
             v-model="orders.special_notes"
             class="form-input"
             rows="2"
-            placeholder="z.B. Sonderwünsche, Auftragsänderungen, etc."
+            placeholder="z.B. Sonderwünsche, Auftragsänderungen"
           ></textarea>
         </div>
       </div>
-  
-      <!-- preview button -->
+
+      <!-- Preview Button -->
       <router-link to="/orders/preview" class="preview-btn" @click="setStore">
         👁️ Vorschau anzeigen
       </router-link>
@@ -356,6 +349,7 @@ export default {
         id: '1',
         source_page: 'orders',
         date: new Date().toISOString().split('T')[0],
+        is_legal: false,
         service_period_start: '',
         service_period_end: '',
         validity_date: '',
@@ -382,14 +376,11 @@ export default {
     this.getStore()
     this.getCustomers()
   },
-
   methods: {
     async getCustomers() {
       try {
         const response = await window.api.getCustomers()
-        if (response.success) {
-          this.customers = response.customers
-        }
+        if (response.success) this.customers = response.customers
       } catch (error) {
         console.error('Error fetching customers:', error)
       }
@@ -399,61 +390,30 @@ export default {
       if (customer) this.orders.selected_customer = customer
     },
     getStore() {
-      if (store.state.orders) {
-        this.orders = JSON.parse(JSON.stringify(store.state.orders))
-      }
-    },
-    calculateReverseCharge() {
-      this.orders.positions.forEach((item, index) => {
-        const base = item.quantity * item.price
-
-        if (this.orders.is_reverse_charge) {
-          this.orders.positions[index].vat = 0
-          this.orders.positions[index].vat_unit = 0
-          this.orders.positions[index].unit_total = base.toFixed(2)
-        } else {
-          const vat = 19
-          this.orders.positions[index].vat = vat
-          this.orders.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
-          this.orders.positions[index].unit_total = (base * (1 + vat / 100)).toFixed(2)
-        }
-      })
+      if (store.state.orders) this.orders = JSON.parse(JSON.stringify(store.state.orders))
     },
     addPosition() {
       this.orders.positions.push({
         title: 'Neue Position',
-        description: 'Beschreibung',
+        description: '',
         service_period_start: '',
         service_period_end: '',
         quantity: 1,
         unit: 'Stk',
         price: 0,
         vat: 19,
+        vat_unit: 0,
         unit_total: 0
       })
     },
     deletePosition(index) {
-      if (this.orders.positions.length > 0) {
-        this.orders.positions.splice(index, 1)
-      } else {
-        alert('Keine Positionen vorhanden!')
-      }
+      if (this.orders.positions.length > 0) this.orders.positions.splice(index, 1)
     },
     getUnitTotal(quantity, price, index) {
       const vat = this.orders.positions[index].vat || 0
       const base = quantity * price
-      let total = 0
-      if (this.orders.is_reverse_charge) {
-        this.orders.positions[index].vat = 0
-        this.orders.positions[index].vat_unit = 0
-        this.orders.positions[index].unit_total = base.toFixed(2)
-        return
-      } else {
-        total = base * (1 + vat / 100)
-      }
-
-      this.orders.positions[index].unit_total = total.toFixed(2)
       this.orders.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
+      this.orders.positions[index].unit_total = (base * (1 + vat / 100)).toFixed(2)
     },
     setStore() {
       this.storePreview('setOrders', this.orders)
@@ -461,3 +421,191 @@ export default {
   }
 }
 </script>
+<style>
+/* Mevcut stiller korunmuştur */
+</style>
+
+<style>
+/* EDITOR PANEL */
+.editor-panel {
+  width: 70%;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.editor-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.editor-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.editor-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* FORM GROUPS */
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-row-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+input:not([readonly]) {
+  background: #fff;
+}
+
+/* POSITIONS */
+.positions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.add-position-btn {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 20px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.delete-position-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.positions-total {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.positions-total-item {
+  margin-left: 16px;
+}
+
+.positions-total-item > div {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+}
+/* SWITCH CONTROL */
+.switch-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.switch-text {
+  margin-left: 16px;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  min-width: 50px;
+  height: 28px;
+  margin-left: 10px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 5px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+</style>

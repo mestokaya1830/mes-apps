@@ -126,6 +126,26 @@
         </div>
       </div>
 
+      <!-- currency -->
+      <div class="form-section">
+        <div class="form-section-title">💰 Währung</div>
+        <div class="form-group">
+          <label class="form-label">Waehrung</label>
+          <select v-model="offers.currency" class="form-input">
+            <option value="EUR.de-DE">EUR</option>
+            <option value="USD.en-US">USD</option>
+            <option value="GBP.en-GB">GBP</option>
+            <option value="CHF.ch-CH">CHF</option>
+            <option value="JPY.ja-JP">JPY</option>
+            <option value="AUD.en-AU">AUD</option>
+            <option value="CAD.en-CA">CAD</option>
+            <option value="CNY.zh-CN">CNY</option>
+            <option value="SEK.sv-SE">SEK</option>
+            <option value="NZD.en-NZ">NZD</option>
+          </select>
+        </div>
+      </div>
+
       <!-- Positionen -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
@@ -232,6 +252,7 @@ export default {
         valid_until: '',
         is_legal: false,
         subject: '',
+        currency: 'EUR.de-DE',
         selected_customer: {},
         positions: [],
         payment: {

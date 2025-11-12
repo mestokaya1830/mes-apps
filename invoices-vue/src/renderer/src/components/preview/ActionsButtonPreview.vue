@@ -41,7 +41,11 @@ export default {
     documentId: {
       type: [String, Number],
       required: true
-    }
+    },
+    clearStoreName: {
+      type: String,
+      required: false
+    },
   },
   data() {
     return {}
@@ -66,7 +70,7 @@ export default {
       }
 
       html2pdf().set(options).from(element).save()
-      this.clearInvoicesStore()
+      this.clearStore()
     },
     async saveDocument() {
       if (this.invoicesData && this.documentId && this.tableName && this.email) {
@@ -80,21 +84,23 @@ export default {
         console.log(this.documentId)
         console.log(this.tableName)
         console.log(this.email)
+        console.log(this.clearStoreName)
       }
+      this.clearStore()
     },
     printDocument() {
       window.print()
-      this.clearInvoicesStore()
+      this.clearStore()
     },
     sendEmail() {
       console.log(this.email)
-      this.clearInvoicesStore()
+      this.clearStore()
     },
-    async clearInvoicesStore() {
+    async clearStore() {
       try {
-        await store.clearInvoices()
+        await store[this.clearStoreName]()
       } catch (error) {
-        console.error('Abmeldefehler:', error)
+        console.error(error)
       }
     }
   }

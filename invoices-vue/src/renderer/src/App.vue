@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     async storePreview(storeCommit, createData) {
-      console.log('Storing preview data...', storeCommit, createData)
+      // console.log('Create data...', storeCommit, createData)
       if (createData && storeCommit) {
         try {
           this.storeData = {
@@ -117,7 +117,7 @@ export default {
             }
           }
           await store[storeCommit](JSON.parse(JSON.stringify(this.storeData)))
-          console.log(this.storeData)
+          console.log('storeData', this.storeData)
         } catch (error) {
           console.error('Error storing preview:', error)
         }
