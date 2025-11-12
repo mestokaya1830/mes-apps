@@ -80,11 +80,6 @@ export default {
           email: this.email,
           data: JSON.stringify(this.invoicesData)
         })
-        console.log(this.invoicesData)
-        console.log(this.documentId)
-        console.log(this.tableName)
-        console.log(this.email)
-        console.log(this.clearStoreName)
       }
       this.clearStore()
     },
