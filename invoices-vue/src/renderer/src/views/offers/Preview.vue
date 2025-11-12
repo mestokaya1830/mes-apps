@@ -17,8 +17,14 @@
               <div v-if="offersPreview.selected_customer.company_name" class="company-name">
                 {{ offersPreview.selected_customer.company_name }}
               </div>
-              <div v-if="offersPreview.selected_customer.first_name || offersPreview.selected_customer.last_name">
-                {{ offersPreview.selected_customer.first_name }} {{ offersPreview.selected_customer.last_name }}
+              <div
+                v-if="
+                  offersPreview.selected_customer.first_name ||
+                  offersPreview.selected_customer.last_name
+                "
+              >
+                {{ offersPreview.selected_customer.first_name }}
+                {{ offersPreview.selected_customer.last_name }}
               </div>
               <div>{{ offersPreview.selected_customer.address }}</div>
               <div>
@@ -48,10 +54,14 @@
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{ offersPreview.selected_customer.id }}</span>
             </div>
-            <div v-if="offersPreview.service_period_start && offersPreview.service_period_end" class="meta-row">
+            <div
+              v-if="offersPreview.service_period_start && offersPreview.service_period_end"
+              class="meta-row"
+            >
               <span class="meta-label">Leistungszeitraum:</span>
               <span class="meta-value">
-                {{ formatDate(offersPreview.service_period_start) }} - {{ formatDate(offersPreview.service_period_end) }}
+                {{ formatDate(offersPreview.service_period_start) }} -
+                {{ formatDate(offersPreview.service_period_end) }}
               </span>
             </div>
           </div>
@@ -90,8 +100,12 @@
                 <div v-if="item.description" class="position-description">
                   {{ item.description }}
                 </div>
-                <div v-if="item.service_period_start && item.service_period_end" class="position-service-period">
-                  Leistungszeitraum: {{ formatDate(item.service_period_start) }} - {{ formatDate(item.service_period_end) }}
+                <div
+                  v-if="item.service_period_start && item.service_period_end"
+                  class="position-service-period"
+                >
+                  Leistungszeitraum: {{ formatDate(item.service_period_start) }} -
+                  {{ formatDate(item.service_period_end) }}
                 </div>
               </td>
               <td class="center">{{ formatNumber(item.quantity) }}</td>
@@ -129,7 +143,8 @@
           </div>
 
           <div v-if="offersPreview.is_reverse_charge" class="tax-note reverse-charge">
-            <strong>Hinweis:</strong> Steuerschuldnerschaft des Leistungsempfängers gemäß §13b UStG (Reverse Charge).
+            <strong>Hinweis:</strong> Steuerschuldnerschaft des Leistungsempfängers gemäß §13b UStG
+            (Reverse Charge).
           </div>
         </div>
 
@@ -138,11 +153,13 @@
           <div class="section-heading">Zahlungsbedingungen</div>
           <div class="payment-content">
             <p v-if="offersPreview.payment.terms">
-              Zahlbar innerhalb <strong>{{ offersPreview.payment.terms }} Tagen</strong> netto nach Rechnungsdatum.
+              Zahlbar innerhalb <strong>{{ offersPreview.payment.terms }} Tagen</strong> netto nach
+              Rechnungsdatum.
             </p>
             <p v-if="offersPreview.payment.has_skonto">
-              Bei Zahlung innerhalb von <strong>{{ offersPreview.payment.skonto_days }} Tagen</strong> 
-              gewähren wir <strong>{{ offersPreview.payment.skonto_percentage }}% Skonto</strong>.
+              Bei Zahlung innerhalb von
+              <strong>{{ offersPreview.payment.skonto_days }} Tagen</strong> gewähren wir
+              <strong>{{ offersPreview.payment.skonto_percentage }}% Skonto</strong>.
             </p>
             <p v-if="offersPreview.payment.payment_conditions">
               {{ offersPreview.payment.payment_conditions }}
@@ -191,9 +208,28 @@
 
         <!-- Contact Person -->
         <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
-        
+
         <!-- Footer with Company Details -->
-        <FooterSidePreview :auth="auth" />
+       <div class="pdf-footer">
+          <label style="display: flex; align-items: center; gap: 8px">
+            <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
+            Rechtsgültige Unterschrift erforderlich
+          </label>
+
+          <div
+            class="signature-box"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px"
+          >
+            <div class="signature-line">
+              <div>_____________________________</div>
+              <div class="signature-label">Ort, Datum</div>
+            </div>
+            <div class="signature-line">
+              <div>_____________________________</div>
+              <div class="signature-label">Unterschrift</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Action Buttons -->
@@ -206,9 +242,7 @@
       />
     </div>
 
-    <router-link to="/offers/create" class="back-link">
-      ← Zurück zur Bearbeitung
-    </router-link>
+    <router-link to="/offers/create" class="back-link"> ← Zurück zur Bearbeitung </router-link>
   </div>
 </template>
 
@@ -262,11 +296,15 @@ export default {
       let gross = 0
       const vatByRate = {}
 
-      this.offersPreview.positions.forEach(pos => {
+      this.offersPreview.positions.forEach((pos) => {
         net += pos.net || 0
         gross += pos.gross || 0
 
-        if (pos.vat > 0 && !this.offersPreview.is_kleinunternehmer && !this.offersPreview.is_reverse_charge) {
+        if (
+          pos.vat > 0 &&
+          !this.offersPreview.is_kleinunternehmer &&
+          !this.offersPreview.is_reverse_charge
+        ) {
           if (!vatByRate[pos.vat]) {
             vatByRate[pos.vat] = 0
           }
