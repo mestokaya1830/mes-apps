@@ -47,12 +47,10 @@
               <span class="meta-label">VAT ID:</span>
               <span class="meta-value">{{ auth.vat_id }}</span>
             </div>
-
-            <!-- Optional: customer reference -->
-            <!-- <div v-if="ordersPreview.customer_reference" class="meta-row">
-              <span class="meta-label">Reference:</span>
+            <div v-if="ordersPreview.customer_reference" class="meta-row">
+              <span class="meta-label">Kundenreferenz:</span>
               <span class="meta-value">{{ ordersPreview.customer_reference }}</span>
-            </div> -->
+            </div>
 
             <!-- Service period -->
             <div
@@ -66,26 +64,7 @@
               </span>
             </div>
           </div>
-
-          <!-- Delivery date -->
-          <div v-if="ordersPreview.delivery_date" class="meta-row">
-            <span class="meta-label">Delivery Date:</span>
-            <span class="meta-value">{{ formatDate(ordersPreview.delivery_date) }}</span>
-          </div>
-
-          <!-- Valid until -->
-          <div v-if="ordersPreview.validity_date" class="meta-row">
-            <span class="meta-label">Valid Until:</span>
-            <span class="meta-value">{{ formatDate(ordersPreview.validity_date) }}</span>
-          </div>
-
-          <!-- Optional delivery address if different -->
-          <div v-if="ordersPreview.delivery_address" class="meta-row">
-            <span class="meta-label">Delivery Address:</span>
-            <span class="meta-value">{{ ordersPreview.delivery_address }}</span>
-          </div>
         </div>
-
         <!-- Positions table -->
         <table class="positions-table">
           <thead>
@@ -152,8 +131,28 @@
           </div>
         </div>
 
+         <div class="form-section">
+          <!-- Delivery date -->
+          <div v-if="ordersPreview.delivery_date" class="meta-row">
+            <span class="meta-label">Delivery Date:</span>
+            <span class="meta-value">{{ formatDate(ordersPreview.delivery_date) }}</span>
+          </div>
+
+          <!-- Valid until -->
+          <div v-if="ordersPreview.validity_date" class="meta-row">
+            <span class="meta-label">Valid Until:</span>
+            <span class="meta-value">{{ formatDate(ordersPreview.validity_date) }}</span>
+          </div>
+
+          <!-- Optional delivery address if different -->
+          <div v-if="ordersPreview.delivery_address" class="meta-row">
+            <span class="meta-label">Delivery Address:</span>
+            <span class="meta-value">{{ ordersPreview.delivery_address }}</span>
+          </div>
+        </div>
+
         <!-- Payment and delivery terms -->
-        <div v-if="hasPaymentOrDeliveryTerms" class="terms-section">
+        <div v-if="ordersPreview" class="terms-section">
           <div class="section-title">Payment & Delivery Terms</div>
           <div class="terms-grid">
             <div v-if="ordersPreview.payment?.payment_terms" class="term-item">
@@ -180,9 +179,8 @@
 
         <!-- Closing text -->
         <div class="closing-text">
-          Wir freuen uns auf die Zusammenarbeit mit Ihnen und beantworten gerne alle Ihre Fragen.
-          <br /><br />
-          Mit freundlichen Grüßen,
+          {{ ordersPreview.closing_text }}
+          <p>Mit freundlichen Grüßen,</p>
         </div>
 
         <!-- Contact person -->
@@ -198,7 +196,7 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label">Payment Reference:</span>
+            <span class="bank-label">Verwendungszweck:</span>
             <span class="bank-value">{{ ordersPreview.verwendungszweck }}</span>
           </div>
         </div>
@@ -507,10 +505,11 @@ export default {
 
 /* ---------- Closing text ---------- */
 .closing-text {
-  margin: 40px 0 30px 0;
+  margin: 40px 0;
   font-size: 14px;
   color: #475569;
   line-height: 1.6;
+  margin-left: 20px;
 }
 
 /* ---------- Bank info ---------- */

@@ -3,7 +3,9 @@
     <div class="editor-panel">
       <div class="editor-header">
         <div class="editor-title">📝{{ title }}</div>
-        <div class="editor-subtitle">Bearbeiten Sie die Auftragsdaten und sehen Sie die Vorschau live</div>
+        <div class="editor-subtitle">
+          Bearbeiten Sie die Auftragsdaten und sehen Sie die Vorschau live
+        </div>
       </div>
 
       <!-- Base -->
@@ -32,20 +34,6 @@
         </div>
       </div>
 
-      <!-- Validity & Delivery Date -->
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Gültig bis</label>
-          <input v-model="orders.validity_date" type="date" class="form-input" />
-          <small class="form-hint">Optional</small>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Liefertermin</label>
-          <input v-model="orders.delivery_date" type="date" class="form-input" />
-          <small class="form-hint">Optional</small>
-        </div>
-      </div>
-
       <!-- Customer Selection -->
       <div v-if="customers" class="form-section">
         <div class="form-section-title">👤 Kunde</div>
@@ -63,45 +51,132 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Kunden-Nr.</label>
-              <input v-model="orders.selected_customer.id" type="text" class="form-input" readonly />
+              <input
+                v-model="orders.selected_customer.id"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Firma</label>
-              <input v-model="orders.selected_customer.company_name" type="text" class="form-input" readonly />
+              <input
+                v-model="orders.selected_customer.company_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname</label>
-              <input v-model="orders.selected_customer.first_name" type="text" class="form-input" readonly />
+              <input
+                v-model="orders.selected_customer.first_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Nachname</label>
-              <input v-model="orders.selected_customer.last_name" type="text" class="form-input" readonly />
+              <input
+                v-model="orders.selected_customer.last_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Adresse</label>
-            <input v-model="orders.selected_customer.address" type="text" class="form-input" readonly />
+            <input
+              v-model="orders.selected_customer.address"
+              type="text"
+              class="form-input"
+              readonly
+            />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">PLZ</label>
-              <input v-model="orders.selected_customer.postal_code" type="text" class="form-input" readonly />
+              <input
+                v-model="orders.selected_customer.postal_code"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Stadt</label>
-              <input v-model="orders.selected_customer.city" type="text" class="form-input" readonly />
+              <input
+                v-model="orders.selected_customer.city"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Land</label>
-              <input v-model="orders.selected_customer.country" type="text" class="form-input" readonly />
+              <input
+                v-model="orders.selected_customer.country"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
-            <input v-model="orders.selected_customer.email" type="email" class="form-input" readonly />
+            <input
+              v-model="orders.selected_customer.email"
+              type="email"
+              class="form-input"
+              readonly
+            />
           </div>
+        </div>
+      </div>
+
+      <!-- Customer Reference -->
+      <div class="form-section">
+        <div class="form-section-title">📌 Kundenreferenz</div>
+        <div class="form-group">
+          <label class="form-label">Kundenreferenz</label>
+          <input
+            v-model="orders.customer_reference"
+            type="text"
+            class="form-input"
+            placeholder="Müşteri referans numarası"
+          />
+          <small class="form-hint">Optional</small>
+        </div>
+      </div>
+
+      <!-- Validity & Delivery Date -->
+      <div class="form-section">
+        <div class="form-section-title">📅 Gültigkeit & Lieferdatum</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Gültig bis</label>
+            <input v-model="orders.validity_date" type="date" class="form-input" />
+            <small class="form-hint">Optional</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Liefertermin</label>
+            <input v-model="orders.delivery_date" type="date" class="form-input" />
+            <small class="form-hint">Optional</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lieferadresse</label>
+          <textarea
+            v-model="orders.delivery_address"
+            rows="2"
+            class="form-input"
+            placeholder="Lieferadresse eingeben"
+          ></textarea>
+          <small class="form-hint">Optional</small>
         </div>
       </div>
 
@@ -115,7 +190,7 @@
           <strong>Legally binding signature</strong>
         </div>
       </div>
-      
+
       <!-- Currency -->
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
@@ -278,17 +353,17 @@
               </div>
             </div>
             <div class="positions-total">
-               <div class="positions-total-item">
-                 <label class="form-label">Vat Unit (€)</label>
-                 <div class="form-result-item">
-                   {{ pos.vat_unit }}
-                 </div>
-               </div>
-               <div class="positions-total-item">
-                 <label class="form-label">Unit Total (€)</label>
-                 <div class="form-result-item">{{ pos.unit_total }}</div>
-               </div>
-             </div>
+              <div class="positions-total-item">
+                <label class="form-label">Vat Unit (€)</label>
+                <div class="form-result-item">
+                  {{ pos.vat_unit }}
+                </div>
+              </div>
+              <div class="positions-total-item">
+                <label class="form-label">Unit Total (€)</label>
+                <div class="form-result-item">{{ pos.unit_total }}</div>
+              </div>
+            </div>
           </div>
         </div>
         <button class="add-position-btn" @click="addPosition">➕ Position hinzufügen</button>
@@ -326,6 +401,19 @@
         </div>
       </div>
 
+      <!-- Closing Text -->
+      <div class="form-section">
+        <div class="form-section-title">📝 Schlussbemerkung / Closing Text</div>
+        <div class="form-group">
+          <textarea
+            v-model="orders.closing_text"
+            class="form-input"
+            rows="3"
+            placeholder="Hier können Sie Ihren Schlusstext eingeben"
+          ></textarea>
+          <small class="form-hint">Optional</small>
+        </div>
+      </div>
       <!-- Preview Button -->
       <router-link to="/orders/preview" class="preview-btn" @click="setStore">
         👁️ Vorschau anzeigen
@@ -359,9 +447,11 @@ export default {
         verwendung: 'Nicht angegeben',
         selected_customer: {},
         currency: 'EUR.de-DE',
+        customer_reference: '',
         customer_notes: '',
         internal_notes: '',
         special_notes: '',
+        closing_text: '',
         positions: [],
         payment: {
           paid_amount: 0,
