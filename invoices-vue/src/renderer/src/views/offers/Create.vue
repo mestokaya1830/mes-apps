@@ -8,7 +8,7 @@
         </div>
       </div>
 
-      <!-- Grunddaten -->
+      <!-- Base -->
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-group">
@@ -22,15 +22,14 @@
             <input v-model="offers.date" type="date" class="form-input" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Leistungsdatum</label>
-            <input v-model="offers.service_date" type="date" class="form-input" />
-            <small class="form-hint">Datum der Leistungserbringung</small>
+            <label class="form-label">Gültigkeitsdatum</label>
+            <input v-model="offers.valid_until" type="date" class="form-input" />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Betreff / Beschreibung</label>
           <input
-            v-model="offers.payment_reference"
+            v-model="offers.subject"
             type="text"
             class="form-input"
             placeholder="z.B. Webentwicklung Projekt XYZ"
@@ -53,12 +52,7 @@
         <div v-if="offers.selected_customer.id" class="customer-details">
           <div class="form-group">
             <label class="form-label">Kunden-Nr.</label>
-            <input
-              v-model="offers.selected_customer.id"
-              type="text"
-              class="form-input"
-              readonly
-            />
+            <input v-model="offers.selected_customer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Firmname</label>
@@ -121,6 +115,17 @@
         </div>
       </div>
 
+      <!-- Legally Binding -->
+      <div class="switch-container">
+        <label for="is_legal" class="switch">
+          <input id="is_legal" v-model="offers.is_legal" type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+        <div class="switch-text">
+          <strong>Legally binding signature</strong>
+        </div>
+      </div>
+
       <!-- Positionen -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
@@ -156,27 +161,52 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Menge</label>
-                <input v-model.number="pos.quantity" type="number" class="form-input" />
+                <input
+                  v-model.number="pos.quantity"
+                  type="number"
+                  class="form-input"
+                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                />
               </div>
               <div class="form-group">
                 <label class="form-label">Preis (€)</label>
-                <input v-model.number="pos.price" type="number" class="form-input" step="0.01" />
+                <input
+                  v-model.number="pos.price"
+                  type="number"
+                  class="form-input"
+                  step="0.01"
+                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                />
               </div>
               <div class="form-group">
                 <label class="form-label">MwSt. (%)</label>
-                <select v-model.number="pos.vat" class="form-input">
+                <select
+                  v-model.number="pos.vat"
+                  class="form-input"
+                  @change="getUnitTotal(pos.quantity, pos.price, index)"
+                >
                   <option :value="0">0</option>
                   <option :value="7">7</option>
                   <option :value="19">19</option>
                 </select>
               </div>
             </div>
+            <div class="positions-total">
+              <div class="positions-total-item">
+                <label class="form-label">Vat Unit (€)</label>
+                <div class="form-result-item">
+                  {{ pos.vat_unit }}
+                </div>
+              </div>
+              <div class="positions-total-item">
+                <label class="form-label">Unit Total (€)</label>
+                <div class="form-result-item">{{ pos.unit_total }}</div>
+              </div>
+            </div>
           </div>
         </div>
         <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
       </div>
-
-      
 
       <!-- Vorschau Button -->
       <router-link to="/offers/preview" class="preview-btn" @click="setStore">
@@ -190,6 +220,7 @@
 import store from '../../store/store.js'
 export default {
   name: 'CreateOffers',
+  inject: ['storePreview'],
   data() {
     return {
       title: 'Angebot erstellen',
@@ -198,10 +229,14 @@ export default {
       offers: {
         id: 1,
         date: '',
-        service_date: '',
-        payment_reference: '',
+        valid_until: '',
+        is_legal: false,
+        subject: '',
         selected_customer: {},
-        positions: []
+        positions: [],
+        payment: {
+          paid_amount: 0 //for store purpose
+        }
       }
     }
   },
@@ -246,13 +281,199 @@ export default {
         alert('Keine Positionen vorhanden!')
       }
     },
+    getUnitTotal(quantity, price, index) {
+      const vat = this.offers.positions[index].vat || 0
+      const base = quantity * price
+      this.offers.positions[index].unit_total = base.toFixed(2)
+      this.offers.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
+    },
     setStore() {
-      store.commit('setOffers', this.offers)
+      this.storePreview('setOffers', this.offers)
     }
   }
 }
 </script>
-
 <style>
-/* Basit stil ve grid yapıları önceki formdan alınabilir */
+/* EDITOR PANEL */
+.editor-panel {
+  width: 70%;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.editor-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.editor-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.editor-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* FORM GROUPS */
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-row-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+input:not([readonly]) {
+  background: #fff;
+}
+
+/* POSITIONS */
+.positions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.add-position-btn {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 20px 0;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.delete-position-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.positions-total {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.positions-total-item {
+  margin-left: 16px;
+}
+
+.positions-total-item > div {
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+}
+/* SWITCH CONTROL */
+.switch-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.switch-text {
+  margin-left: 16px;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  min-width: 50px;
+  height: 28px;
+  margin-left: 10px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 5px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
 </style>

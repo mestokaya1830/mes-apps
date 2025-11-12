@@ -103,30 +103,20 @@ export default {
   },
   methods: {
     async storePreview(storeCommit, createData) {
+      console.log('Storing preview data...', storeCommit, createData)
       if (createData && storeCommit) {
-        this.storeData = createData
         try {
-          const invoices = {
-            id: createData.id || 1,
-            date: createData.date || '',
-            service_date: createData.service_date || '',
-            payment_reference: createData.payment_reference || '',
-            selected_customer: createData.selected_customer || null,
-            currency: createData.currency || 'EUR-DE',
-            is_reverse_charge: createData.is_reverse_charge || false,
-            is_small_company: createData.is_small_company || false,
-            positions: createData.positions || [],
-            tax_options: createData.tax_options || {},
-            payment: createData.payment || {},
+          this.storeData = {
+            ...createData,
             summary: {
               subtotal: this.subTotal,
               vat_amount: this.vatAmount,
               total: this.total,
               paid_amount: createData.payment.paid_amount || 0,
-              outstanding: this.outstanding
+              outstanding: this.outstanding || 0
             }
           }
-          await store[storeCommit](JSON.parse(JSON.stringify(invoices)))
+          await store[storeCommit](JSON.parse(JSON.stringify(this.storeData)))
           console.log(this.storeData)
         } catch (error) {
           console.error('Error storing preview:', error)

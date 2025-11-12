@@ -5,6 +5,7 @@
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
+        <!-- customers -->
         <div v-if="invoicesPreview.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
@@ -90,6 +91,7 @@
           für die erbrachten Leistungen erlauben wir uns, Ihnen wie folgt in Rechnung zu stellen:
         </div>
 
+        <!-- Positions Table -->
         <table class="positions-table">
           <thead>
             <tr>
