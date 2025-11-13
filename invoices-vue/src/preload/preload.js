@@ -15,5 +15,6 @@ contextBridge.exposeInMainWorld('api', {
   addCustomer: async (id) => ipcRenderer.invoke('add-customer', id),
   updateCustomer: async (data) => ipcRenderer.invoke('update-customer', data),
   deleteCustomer: async (data) => ipcRenderer.invoke('delete-customer', data),
-  saveDocument: async (data) => ipcRenderer.invoke('save-document', data)
+  saveDocument: async (data) => ipcRenderer.invoke('save-document', data),
+  getDocument: async (data, tableName) => ipcRenderer.invoke('get-document', data, tableName)
 })

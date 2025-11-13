@@ -18,7 +18,7 @@ process.on('exit', () => db.close())
 export default db
 
 // try {
-//   db.prepare('DROP TABLE users').run()
+//   db.prepare('DROP TABLE orders').run()
 // } catch (err) {
 //   console.error(err.message)
 // }
@@ -103,34 +103,58 @@ export default db
 //invoices
 // db.exec(`CREATE TABLE IF NOT EXISTS invoices (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     user_id INTEGER NOT NULL,           -- Fatura yazan firma (login'den gelir)
-//     customer_id INTEGER NOT NULL,       -- Seçilen müşteri
+//     date TEXT NOT NULL,
+//     status TEXT NOT NULL,
+//     currency TEXT NOT NULL,
+//     service_date TEXT NOT NULL,
+//     customer TEXT NOT NULL,
+//     payment TEXT NOT NULL,
+//     positions TEXT NOT NULL,
+//     tax_options TEXT NOT NULL,
+//     summary TEXT NOT NULL,
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+// );`)
 
-//     -- Fatura Bilgileri
-//     invoice_type TEXT NOT NULL,         -- 'FAT', 'SRV', 'BIL' vs.
-//     invoice_number TEXT NOT NULL,       -- SRV-0001, BIL-0005 vs.
-//     invoice_date DATE NOT NULL,         -- Fatura tarihi
-//     due_date DATE,                      -- Vade tarihi
+//offers
+// db.exec(`CREATE TABLE IF NOT EXISTS offers (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     date TEXT NOT NULL,
+//     status TEXT NOT NULL,
+//     currency TEXT NOT NULL,
+//     subject TEXT NOT NULL,
+//     valid_until TEXT NOT NULL,
+//     is_legal TEXT NOT NULL,
+//     customer TEXT NOT NULL,
+//     payment TEXT NOT NULL,
+//     positions TEXT NOT NULL,
+//     summary TEXT NOT NULL,
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+// );`)
 
-//     -- Fatura İçeriği
-//     subject TEXT,                       -- Fatura başlığı
-//     invoice_items TEXT NOT NULL,        -- Yapılan işler (JSON array)
-//     notes TEXT,                         -- Ek notlar/şartlar
-
-//     -- Hesaplama Sonuçları
-//     subtotal DECIMAL(10,2) NOT NULL,    -- KDV hariç toplam
-//     tax_rate DECIMAL(5,2) NOT NULL,     -- KDV oranı %19, %7, %0
-//     tax_amount DECIMAL(10,2) NOT NULL,  -- KDV tutarı
-//     total_amount DECIMAL(10,2) NOT NULL, -- Genel toplam
-
-//     -- Durum Takibi
-//     status TEXT DEFAULT 'draft',        -- draft, sent, paid
-//     payment_status TEXT DEFAULT 'pending', -- pending, paid, overdue
-
-//     -- Dosya
-//     pdf_path TEXT,                      -- PDF dosya yolu
-
-//     -- Sistem
+//orders
+// db.exec(`CREATE TABLE IF NOT EXISTS orders (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     date TEXT NOT NULL,
+//     currency TEXT NOT NULL,
+//     status TEXT NOT NULL,
+//     is_legal TEXT NOT NULL,
+//     service_period_start TEXT NOT NULL,
+//     service_period_end TEXT NOT NULL,
+//     validity_date TEXT NOT NULL,
+//     delivery_date TEXT NOT NULL,
+//     delivery_terms TEXT NOT NULL,
+//     shipping_method TEXT NOT NULL,
+//     customer_reference TEXT NOT NULL,
+//     customer_notes TEXT NOT NULL,
+//     internal_notes TEXT NOT NULL,
+//     special_notes TEXT NOT NULL,
+//     closing_text TEXT NOT NULL,
+//     selected_customer TEXT NOT NULL,
+//     positions TEXT NOT NULL,
+//     payment TEXT NOT NULL,
+//     summary TEXT NOT NULL,
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 // );`)

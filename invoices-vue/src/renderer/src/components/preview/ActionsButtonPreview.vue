@@ -26,7 +26,7 @@ import store from '../../store/store.js'
 export default {
   name: 'ActionsButton',
   props: {
-    invoicesData: {
+    dbData: {
       type: Object,
       required: true
     },
@@ -73,12 +73,12 @@ export default {
       this.clearStore()
     },
     async saveDocument() {
-      if (this.invoicesData && this.documentId && this.tableName && this.email) {
+      if (this.dbData && this.documentId && this.tableName && this.email) {
         await window.api.saveDocument({
           tableName: this.tableName,
           documentId: this.documentId,
           email: this.email,
-          data: JSON.stringify(this.invoicesData)
+          data: JSON.parse(JSON.stringify(this.dbData))
         })
       }
       this.clearStore()

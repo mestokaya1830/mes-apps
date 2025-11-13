@@ -284,7 +284,7 @@
         tableName="offers"
         :email="offersPreview.selected_customer.email"
         :documentId="offersPreview.id"
-        :invoicesData="offersPreview"
+        :dbData="offersPreview"
         clearStoreName="clearOffers"
       />
     </div>

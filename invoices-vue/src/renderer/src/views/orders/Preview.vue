@@ -131,7 +131,7 @@
           </div>
         </div>
 
-         <div class="form-section">
+        <div class="form-section">
           <!-- Delivery date -->
           <div v-if="ordersPreview.delivery_date" class="meta-row">
             <span class="meta-label">Delivery Date:</span>
@@ -197,7 +197,7 @@
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
             <span class="bank-label">Verwendungszweck:</span>
-            <span class="bank-value">{{ ordersPreview.verwendungszweck }}</span>
+            <span class="bank-value">{{ ordersPreview.payment.verwendungszweck }}</span>
           </div>
         </div>
 
@@ -233,8 +233,8 @@
         tableName="orders"
         :email="ordersPreview.selected_customer.email"
         :documentId="formattedOrderId"
-        :invoicesData="ordersPreview"
-        clearStoreName="orders"
+        :dbData="ordersPreview"
+        clearStoreName="clearOrders"
       />
     </div>
 

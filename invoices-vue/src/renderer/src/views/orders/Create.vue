@@ -211,6 +211,17 @@
         </div>
       </div>
 
+      <!-- Payment Terms -->
+      <div class="form-section">
+        <label class="form-label">💬 Verwendungszweck</label>
+        <input
+          v-model="orders.payment.verwendungszweck"
+          type="text"
+          class="form-input"
+          required
+          placeholder="Bitte geben Sie den Verwendungszweck an (z.B. Rechnungsnummer RE-2025-00001)"
+        />
+      </div>
       <!-- Payment & Delivery Terms -->
       <div class="form-section">
         <div class="form-section-title">💳 Zahlungs- und Lieferbedingungen</div>
@@ -435,8 +446,9 @@ export default {
       customerList: 'Wähle Kunden',
       orders: {
         id: '1',
-        source_page: 'orders',
-        date: new Date().toISOString().split('T')[0],
+        date: '',
+        status: 'Aktiv',
+        currency: 'EUR.de-DE',
         is_legal: false,
         service_period_start: '',
         service_period_end: '',
@@ -444,26 +456,25 @@ export default {
         delivery_date: '',
         delivery_terms: '',
         shipping_method: '',
-        verwendung: 'Nicht angegeben',
-        selected_customer: {},
-        currency: 'EUR.de-DE',
         customer_reference: '',
         customer_notes: '',
         internal_notes: '',
         special_notes: '',
         closing_text: '',
+        selected_customer: {},
         positions: [],
         payment: {
           paid_amount: 0,
           payment_terms: 14,
           payment_method: '',
-          payment_conditions: ''
+          payment_conditions: '',
+          verwendungzweck: 'Nicht angegeben'
         }
       }
     }
   },
   mounted() {
-    this.getStore()
+    // this.getStore()
     this.getCustomers()
   },
   methods: {

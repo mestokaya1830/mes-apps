@@ -252,6 +252,7 @@ export default {
         valid_until: '',
         is_legal: false,
         subject: '',
+        status: 'Aktiv',
         currency: 'EUR.de-DE',
         selected_customer: {},
         positions: [],

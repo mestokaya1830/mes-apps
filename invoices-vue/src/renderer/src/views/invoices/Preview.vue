@@ -82,7 +82,7 @@
           </div>
         </div>
 
-        <div v-if="invoicesPreview.payment_reference" class="subject-line">
+        <div v-if="invoicesPreview.payment.payment_reference" class="subject-line">
           <strong>Betreff:</strong> {{ invoicesPreview.payment_reference }}
         </div>
 
@@ -250,7 +250,7 @@
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
             <span class="bank-label">Verwen..:</span>
-            <span class="bank-value">{{ invoicesPreview.verwendungszweck }}</span>
+            <span class="bank-value">{{ invoicesPreview.payment.verwendungszweck }}</span>
           </div>
         </div>
 
@@ -262,7 +262,7 @@
         tableName="invoices"
         :email="invoicesPreview.selected_customer.email"
         :documentId="formatRechnungId"
-        :invoicesData="invoicesPreview"
+        :dbData="invoicesPreview"
         :clearStoreName="'clearInvoices'"
       />
     </div>

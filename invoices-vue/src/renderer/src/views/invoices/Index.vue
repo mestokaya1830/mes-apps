@@ -3,6 +3,7 @@
     <h1>{{ title }}</h1>
     <span class="form-btn">
       <router-link to="/invoices/create" class="link">Neue Rechnung erstellen</router-link>
+      <p v-if="invoiceList">{{ invoiceList }}</p>
     </span>
   </div>
 </template>
@@ -11,10 +12,23 @@
 export default {
   data() {
     return {
-      title: 'Rechnungen List'
+      title: 'Rechnungen List',
+      invoiceList: null
     }
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    this.getInvoiceList()
+  },
+  methods: {
+    async getInvoiceList() {
+      try {
+        const result = await window.api.getDocument('invoices')
+        this.invoiceList = result.rows
+        console.log(this.invoiceList)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
 }
 </script>

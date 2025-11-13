@@ -30,7 +30,7 @@
         <div class="form-group">
           <label class="form-label">payment_reference / Betreff</label>
           <input
-            v-model="invoices.payment_reference"
+            v-model="invoices.payment.payment_reference"
             type="text"
             class="form-input"
             placeholder="z.B. Webentwicklung Projekt XYZ"
@@ -203,6 +203,16 @@
             >
           </div>
         </div>
+        <div class="form-section">
+          <label class="form-label">💬 Verwendungszweck</label>
+          <input
+            v-model="invoices.payment.verwendungszweck"
+            type="text"
+            class="form-input"
+            required
+            placeholder="Bitte geben Sie den Verwendungszweck an (z.B. Rechnungsnummer RE-2025-00001)"
+          />
+        </div>
         <div class="form-option">
           <label for="skonto-checkbox" class="switch">
             <input
@@ -241,12 +251,6 @@
             placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
           ></textarea>
         </div>
-
-        <!-- Offener Betrag -->
-        <!-- <div v-if="invoices.payment.paid_amount > 0" class="outstanding-box">
-          <div class="outstanding-label">Offener Betrag:</div>
-          <div class="outstanding-value">{{ formatCurrency(outstanding) }}</div>
-        </div> -->
       </div>
 
       <!-- currency -->
@@ -271,107 +275,107 @@
       </div>
 
       <!-- positions -->
-       <div class="form-section">
-         <div class="form-section-title">📦 Positionen</div>
-         <div v-if="invoices.positions && invoices.positions.length === 0">
-           Keine Positionen vorhanden
-         </div>
-         <div v-else class="positions-editor">
-           <div v-for="(pos, index) in invoices.positions" :key="index" class="position-item">
-             <div class="positions-header">
-               <span class="position-number">Position {{ index + 1 }}</span>
-               <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
-             </div>
-             <div class="form-group">
-               <label class="form-label">Bezeichnung</label>
-               <input v-model="pos.title" type="text" class="form-input" />
-             </div>
-             <div class="form-group">
-               <label class="form-label">Beschreibung</label>
-               <input v-model="pos.description" type="text" class="form-input" />
-             </div>
-             <div class="form-row">
-               <div class="form-group">
-                 <label class="form-label">Leistungszeitraum Von</label>
-                 <input
-                   v-model="pos.service_period_start"
-                   type="date"
-                   class="form-input"
-                   @change="validateServicePeriod(pos)"
-                 />
-               </div>
-               <div class="form-group">
-                 <label class="form-label">Leistungszeitraum Bis</label>
-                 <input
-                   v-model="pos.service_period_end"
-                   type="date"
-                   class="form-input"
-                   @change="validateServicePeriod(pos)"
-                 />
-               </div>
-             </div>
-             <div class="form-row form-row-4">
-               <div class="form-group">
-                 <label class="form-label">Einheit</label>
-                 <select v-model="pos.unit" class="form-input">
-                   <option value="Stk">Stk</option>
-                   <option value="Std">Std</option>
-                   <option value="Tag">Tag</option>
-                   <option value="Monat">Monat</option>
-                   <option value="Pauschal">Pauschal</option>
-                   <option value="m²">m²</option>
-                   <option value="kg">kg</option>
-                 </select>
-               </div>
-               <div class="form-group">
-                 <label class="form-label">Menge</label>
-                 <input
-                   v-model.number="pos.quantity"
-                   type="number"
-                   class="form-input"
-                   @input="getUnitTotal(pos.quantity, pos.price, index)"
-                 />
-               </div>
-               <div class="form-group">
-                 <label class="form-label">Preis (€)</label>
-                 <input
-                   v-model.number="pos.price"
-                   type="number"
-                   class="form-input"
-                   step="0.01"
-                   @input="getUnitTotal(pos.quantity, pos.price, index)"
-                 />
-               </div>
-               <div class="form-group">
-                 <label class="form-label">MwSt. (%)</label>
-                 <select
-                   v-if="!invoices.is_reverse_charge"
-                   v-model.number="pos.vat"
-                   class="form-input"
-                   @change="getUnitTotal(pos.quantity, pos.price, index)"
-                 >
-                   <option :value="0">0</option>
-                   <option :value="7">7</option>
-                   <option :value="19">19</option>
-                 </select>
-               </div>
-             </div>
-             <div class="positions-total">
-               <div class="positions-total-item">
-                 <label class="form-label">Vat Unit (€)</label>
-                 <div class="form-result-item">
-                   {{ pos.vat_unit }}
-                 </div>
-               </div>
-               <div class="positions-total-item">
-                 <label class="form-label">Unit Total (€)</label>
-                 <div class="form-result-item">{{ pos.unit_total }}</div>
-               </div>
-             </div>
-           </div>
-         </div>
-         <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
-       </div>
+      <div class="form-section">
+        <div class="form-section-title">📦 Positionen</div>
+        <div v-if="invoices.positions && invoices.positions.length === 0">
+          Keine Positionen vorhanden
+        </div>
+        <div v-else class="positions-editor">
+          <div v-for="(pos, index) in invoices.positions" :key="index" class="position-item">
+            <div class="positions-header">
+              <span class="position-number">Position {{ index + 1 }}</span>
+              <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bezeichnung</label>
+              <input v-model="pos.title" type="text" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Beschreibung</label>
+              <input v-model="pos.description" type="text" class="form-input" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Leistungszeitraum Von</label>
+                <input
+                  v-model="pos.service_period_start"
+                  type="date"
+                  class="form-input"
+                  @change="validateServicePeriod(pos)"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Leistungszeitraum Bis</label>
+                <input
+                  v-model="pos.service_period_end"
+                  type="date"
+                  class="form-input"
+                  @change="validateServicePeriod(pos)"
+                />
+              </div>
+            </div>
+            <div class="form-row form-row-4">
+              <div class="form-group">
+                <label class="form-label">Einheit</label>
+                <select v-model="pos.unit" class="form-input">
+                  <option value="Stk">Stk</option>
+                  <option value="Std">Std</option>
+                  <option value="Tag">Tag</option>
+                  <option value="Monat">Monat</option>
+                  <option value="Pauschal">Pauschal</option>
+                  <option value="m²">m²</option>
+                  <option value="kg">kg</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Menge</label>
+                <input
+                  v-model.number="pos.quantity"
+                  type="number"
+                  class="form-input"
+                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Preis (€)</label>
+                <input
+                  v-model.number="pos.price"
+                  type="number"
+                  class="form-input"
+                  step="0.01"
+                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">MwSt. (%)</label>
+                <select
+                  v-if="!invoices.is_reverse_charge"
+                  v-model.number="pos.vat"
+                  class="form-input"
+                  @change="getUnitTotal(pos.quantity, pos.price, index)"
+                >
+                  <option :value="0">0</option>
+                  <option :value="7">7</option>
+                  <option :value="19">19</option>
+                </select>
+              </div>
+            </div>
+            <div class="positions-total">
+              <div class="positions-total-item">
+                <label class="form-label">Vat Unit (€)</label>
+                <div class="form-result-item">
+                  {{ pos.vat_unit }}
+                </div>
+              </div>
+              <div class="positions-total-item">
+                <label class="form-label">Unit Total (€)</label>
+                <div class="form-result-item">{{ pos.unit_total }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
+      </div>
 
       <!-- preview button -->
       <router-link to="/invoices/preview" class="preview-btn" @click="setStore">
@@ -395,7 +399,6 @@ export default {
         id: 1,
         date: '',
         service_date: '',
-        payment_reference: '',
         selected_customer: {},
         currency: 'EUR.de-DE',
         positions: [],
@@ -408,10 +411,13 @@ export default {
           paid_amount: 0,
           payment_terms: 14,
           payment_conditions: '',
+          payment_reference: '',
           has_skonto: false,
           skonto_percentage: 2,
-          skonto_days: 7
-        }
+          skonto_days: 7,
+          verwendungszweck: ''
+        },
+        status: 'Aktiv'
       }
     }
   },

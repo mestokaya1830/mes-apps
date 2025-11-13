@@ -459,12 +459,157 @@ ipcMain.handle('delete-customer', async (event, id) => {
 })
 
 ipcMain.handle('save-document', async (event, data) => {
+  console.log('Saving document data:', data)
+
+  //save invoice table
+  if (data.tableName === 'invoices') {
+    try {
+      const customer = JSON.stringify(data.data.selected_customer || {})
+      const payment = JSON.stringify(data.data.payment || {})
+      const positions = JSON.stringify(data.data.positions || {})
+      const tax_options = JSON.stringify(data.data.tax_options || {})
+      const summary = JSON.stringify(data.data.summary || {})
+      const row = db
+      db.prepare(
+        `
+    INSERT INTO invoices (
+      date,
+      status,
+      currency,
+      service_date,
+      customer,
+      payment,
+      positions,
+      tax_options,
+      summary
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `
+      ).run(
+        data.data.date,
+        data.data.status,
+        data.data.currency,
+        data.data.service_date,
+        customer,
+        payment,
+        positions,
+        tax_options,
+        summary
+      )
+      return { success: true, customer: row }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
+  //save offers table
+  if (data.tableName === 'offers') {
+    try {
+      const customer = JSON.stringify(data.data.selected_customer || {})
+      const payment = JSON.stringify(data.data.payment || {})
+      const positions = JSON.stringify(data.data.positions || {})
+      const summary = JSON.stringify(data.data.summary || {})
+      const row = db
+      db.prepare(
+        `
+    INSERT INTO offers (
+      date,
+      status,
+      currency,
+      subject,
+      valid_until,
+      is_legal,
+      customer,
+      payment,
+      positions,
+      summary
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+  `
+      ).run(
+        data.data.date,
+        data.data.status,
+        data.data.currency,
+        data.data.subject,
+        data.data.valid_until,
+        String(data.data.is_legal),
+        customer,
+        payment,
+        positions,
+        summary
+      )
+      return { success: true, customer: row }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
+
+  //save orders table
+  if (data.tableName === 'orders') {
+    try {
+      const customer = JSON.stringify(data.data.selected_customer || {})
+      const payment = JSON.stringify(data.data.payment || {})
+      const positions = JSON.stringify(data.data.positions || {})
+      const summary = JSON.stringify(data.data.summary || {})
+      const row = db
+      db.prepare(
+        `
+    INSERT INTO orders (
+      date,
+      status,
+      currency,
+      is_legal,
+      service_period_start,
+      service_period_end,
+      validity_date,
+      delivery_date,
+      delivery_terms,
+      shipping_method,
+      customer_reference,
+      customer_notes,
+      internal_notes,
+      special_notes,
+      closing_text,
+      selected_customer,
+      positions,
+      payment,
+      summary
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `
+      ).run(
+        data.data.date,
+        data.data.status,
+        data.data.currency,
+        String(data.data.is_legal),
+        data.data.service_period_start,
+        data.data.service_period_end,
+        data.data.validity_date,
+        data.data.delivery_date,
+        data.data.delivery_terms,
+        data.data.shipping_method,
+        data.data.customer_reference,
+        data.data.customer_notes,
+        data.data.internal_notes,
+        data.data.special_notes,
+        data.data.closing_text,
+        customer,
+        payment,
+        positions,
+        summary
+      )
+      return { success: true, customer: row }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
+})
+
+ipcMain.handle('get-document', async (data, tableName) => {
   try {
-    // Placeholder for save document logic
-    console.log('Document data received for saving:', data)
-    return { success: true, message: 'Document saved successfully' }
+    const rows = db.prepare(`SELECT * FROM ${tableName}`).all()
+    return { success: true, rows }
   } catch (err) {
-    console.error('Save document error:', err.message)
+    console.error('DB error:', err.message)
     return { success: false, message: err.message }
   }
 })
