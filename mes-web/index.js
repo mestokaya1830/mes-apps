@@ -173,3 +173,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   
 });
+
+
+{/* <script>
+  if (window.innerWidth <= 768) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = './css/index-mobil.css';
+    document.head.appendChild(link);
+  }
+</script> */}
