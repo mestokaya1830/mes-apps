@@ -24,28 +24,33 @@
         <div class="form-section-title">🧾 Kundeninformationen</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Unternehmenstyp *</label>
-            <input v-model="customer.company_type" type="text" class="form-input" />
+            <label class="form-label">Unternehmenstyp <span class="stars">*</span></label>
+            <select v-model="customer.customer_type" class="form-input">
+              <option disabled value="">Wähle Unternehmenstyp</option>
+              <option v-for="item in companies" :key="item.value" :value="item">
+                {{ item.label }}
+              </option>
+            </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Firmenname *</label>
-            <input v-model="customer.company_name" type="date" class="form-input" required />
+            <label class="form-label">Firmenname <span class="stars">*</span></label>
+            <input v-model="customer.company_name" type="text" class="form-input" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Vorname</label>
-            <input v-model="customer.first_name" type="date" class="form-input" />
+            <label class="form-label">Vorname <span class="stars">*</span></label>
+            <input v-model="customer.first_name" type="text" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">Nachname</label>
-            <input v-model="customer.last_name" type="date" class="form-input" />
+            <label class="form-label">Nachname <span class="stars">*</span></label>
+            <input v-model="customer.last_name" type="text" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">E-Mail</label>
-            <input v-model="customer.email" type="date" class="form-input" />
+            <label class="form-label">E-Mail <span class="stars">*</span></label>
+            <input v-model="customer.email" type="email" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">Telefonnummer</label>
-            <input v-model="customer.phone" type="date" class="form-input" />
+            <label class="form-label">Telefonnummer <span class="stars">*</span></label>
+            <input v-model="customer.phone" type="number" class="form-input" />
           </div>
         </div>
       </div>
@@ -53,20 +58,20 @@
         <div class="form-section-title">📍 Adressdaten</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Addresse *</label>
+            <label class="form-label">Addresse <span class="stars">*</span></label>
             <input v-model="customer.address" type="text" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">Postleitzahl *</label>
-            <input v-model="customer.postal_code" type="date" class="form-input" required />
+            <label class="form-label">Postleitzahl <span class="stars">*</span></label>
+            <input v-model="customer.postal_code" type="number" class="form-input" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Stadt</label>
-            <input v-model="customer.city" type="date" class="form-input" />
+            <label class="form-label">Stadt <span class="stars">*</span></label>
+            <input v-model="customer.city" type="text" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">Land</label>
-            <input v-model="customer.country" type="date" class="form-input" />
+            <label class="form-label">Land <span class="stars">*</span></label>
+            <input v-model="customer.country" type="text" class="form-input" />
           </div>
         </div>
       </div>
@@ -74,40 +79,16 @@
         <div class="form-section-title">💼 Steuerinformationen</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Steuernummer *</label>
+            <label class="form-label">Steuernummer <span class="stars">*</span></label>
             <input v-model="customer.tax_number" type="text" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">Postleitzahl *</label>
-            <input v-model="customer.postal_code" type="text" class="form-input" required />
+            <label class="form-label">USt-IdNr. <span class="stars">*</span></label>
+            <input v-model="customer.vat_id" type="text" class="form-input" />
           </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">USt-IdNr.</label>
-          <input
-            v-model="customer.vat_id"
-            type="text"
-            class="form-input"
-            placeholder="DE123456789"
-          />
         </div>
       </div>
       <div class="form-section">
-        <div class="form-section-title">⚙️ Systeminformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Status *</label>
-            <select v-model="customer.is_active" class="form-input">
-              <option value="">Select status</option>
-              <option value="1">Active</option>
-              <option value="0">Inactive</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Erstellt *</label>
-            <input v-model="customer.created_at" type="text" class="form-input" required />
-          </div>
-        </div>
         <div v-if="showSuccess" class="">
           <p class="font-medium">✅ Kunde erfolgreich gespeichert!</p>
         </div>
@@ -136,21 +117,62 @@ export default {
       showSuccess: false,
       errorMessage: '',
       customer: {
-        customer_type: 'individual',
+        customer_type: '',
         company_name: '',
-        first_name: 'Maximilian',
-        last_name: 'Weber',
-        address: 'Friedrichstraße 158',
-        postal_code: '10117',
-        city: 'Berlin',
-        country: 'Deutschland',
-        email: 'max.weber@web.de',
-        phone: '+49 30 7854321',
-        tax_number: '11/456/78901',
+        first_name: '',
+        last_name: '',
+        address: '',
+        postal_code: '',
+        city: '',
+        country: '',
+        email: '',
+        phone: '+49',
+        tax_number: '',
         vat_id: '',
-        is_active: true,
         created_at: ''
-      }
+      },
+      companies: [
+        { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
+        // Şahıs işletmesi – en yaygın küçük işletme türü (Kleinunternehmer §19 UStG)
+        { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },
+        // Serbest meslek (doktor, mimar, mühendis, yazar vb.) – KDV bazen muaf
+        { value: 'Gbr', label: 'GbR (Gesellschaft bürgerlichen Rechts)', is_small_company: true },
+        // Adi ortaklık – serbest meslek sahipleri veya küçük işletmeler
+        { value: 'Ug', label: 'UG (haftungsbeschränkt)', is_small_company: true },
+        // Mini GmbH – düşük sermaye ile limited şirket
+        {
+          value: 'GmbH',
+          label: 'GmbH (Gesellschaft mit beschränkter Haftung)',
+          is_small_company: false
+        },
+        // Limited şirket – genelde KDV yükümlüsü
+        { value: 'Ohg', label: 'OHG (Offene Handelsgesellschaft)', is_small_company: false },
+        // Ticari ortaklık – küçük sayılmaz
+        { value: 'Kg', label: 'KG (Kommanditgesellschaft)', is_small_company: false },
+        // Komandit ortaklık – orta veya büyük ölçekli işletmeler
+        { value: 'GmbH_co_KG', label: 'GmbH & Co. KG', is_small_company: false },
+        // GmbH'nin komandit ortak olduğu özel ortaklık türü
+        { value: 'Partg', label: 'PartG (Partnerschaftsgesellschaft)', is_small_company: false },
+        // Profesyonel meslekler (avukat, doktor, diş hekimi, mimar vb.) için ortaklık
+        {
+          value: 'Partgmbb',
+          label: 'PartGmbB (Partnerschaftsgesellschaft mit beschränkter Berufshaftung)',
+          is_small_company: false
+        },
+        // Sınırlı mesleki sorumluluklu ortaklık
+        { value: 'Ek', label: 'e.K. (eingetragener Kaufmann)', is_small_company: true },
+        // Tescilli tacir – genelde küçük veya orta işletmeler
+        { value: 'Ev', label: 'e.V. (eingetragener Verein)', is_small_company: false },
+        // Dernek – kâr amacı gütmeyen organizasyonlar
+        { value: 'GgmbH', label: 'gGmbH (gemeinnützige GmbH)', is_small_company: false },
+        // Kar amacı gütmeyen limited şirket – özel vergi durumu (§4 UStG)
+        { value: 'Stiftung', label: 'Stiftung', is_small_company: false },
+        // Vakıf – genellikle kamu yararına çalışan kuruluşlar
+        { value: 'Ag', label: 'AG (Aktiengesellschaft)', is_small_company: false },
+        // Anonim şirket – büyük ölçekli işletmeler
+        { value: 'Se', label: 'SE (Societas Europaea)', is_small_company: false }
+        // Avrupa şirketi – uluslararası düzeyde faaliyet gösteren büyük firmalar
+      ]
     }
   },
   methods: {
@@ -162,11 +184,9 @@ export default {
       try {
         const data = JSON.parse(JSON.stringify(this.customer))
         const result = await window.api.addCustomer(data)
-        // Save the customer to the server
-        if (result.error) {
-          throw new Error(result.error)
+        if (result.success) {
+          this.showSuccess = true
         }
-        this.showSuccess = true
       } catch (error) {
         this.errorMessage = error.message
       } finally {
@@ -252,7 +272,7 @@ export default {
 
 .form-input {
   width: 100%;
-  padding: 8px 12px;
+  min-height: 42px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 13px;
@@ -362,5 +382,9 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(26px);
+}
+.stars{
+  color: darkred;
+  font-size: 16px;
 }
 </style>

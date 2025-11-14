@@ -12,17 +12,17 @@
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-group">
-          <label class="form-label">Angebotsnummer *</label>
+          <label class="form-label">Angebotsnummer <span class="stars">*</span></label>
           <input v-model="offers.id" type="text" class="form-input" readonly />
           <small class="form-hint">Format: AN-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Angebotsdatum *</label>
+            <label class="form-label">Angebotsdatum <span class="stars">*</span></label>
             <input v-model="offers.date" type="date" class="form-input" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Gültigkeitsdatum</label>
+            <label class="form-label">Gültigkeitsdatum <span class="stars">*</span></label>
             <input v-model="offers.valid_until" type="date" class="form-input" />
           </div>
         </div>
@@ -51,11 +51,11 @@
         </div>
         <div v-if="offers.selected_customer.id" class="customer-details">
           <div class="form-group">
-            <label class="form-label">Kunden-Nr.</label>
+            <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
             <input v-model="offers.selected_customer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Firmname</label>
+            <label class="form-label">Firmname <span class="stars">*</span></label>
             <input
               v-model="offers.selected_customer.company_name"
               type="text"
@@ -65,7 +65,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Vorname</label>
+              <label class="form-label">Vorname <span class="stars">*</span></label>
               <input
                 v-model="offers.selected_customer.first_name"
                 type="text"
@@ -74,7 +74,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Nachname</label>
+              <label class="form-label">Nachname <span class="stars">*</span></label>
               <input
                 v-model="offers.selected_customer.last_name"
                 type="text"
@@ -84,7 +84,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Adresse</label>
+            <label class="form-label">Adresse <span class="stars">*</span></label>
             <input
               v-model="offers.selected_customer.address"
               type="text"
@@ -94,7 +94,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">PLZ</label>
+              <label class="form-label">PLZ <span class="stars">*</span></label>
               <input
                 v-model="offers.selected_customer.postal_code"
                 type="text"
@@ -103,7 +103,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Stadt</label>
+              <label class="form-label">Stadt <span class="stars">*</span></label>
               <input
                 v-model="offers.selected_customer.city"
                 type="text"
@@ -500,4 +500,7 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
+.stars{
+  color: darkred;
+  font-size: 16px;}
 </style>

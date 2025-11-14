@@ -12,17 +12,17 @@
       <div class="form-section">
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-group">
-          <label class="form-label">Rechnungsnummer *</label>
+          <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
           <input v-model="invoices.id" type="text" class="form-input" readonly />
           <small class="form-hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Rechnungsdatum *</label>
+            <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
             <input v-model="invoices.date" type="date" class="form-input" required />
           </div>
           <div class="form-group">
-            <label class="form-label">Leistungsdatum</label>
+            <label class="form-label">Leistungsdatum <span class="stars">*</span></label>
             <input v-model="invoices.service_date" type="date" class="form-input" />
             <small class="form-hint">Datum der Leistungserbringung</small>
           </div>
@@ -51,7 +51,7 @@
         </div>
         <div v-if="invoices.selected_customer.id" class="customer-details">
           <div class="form-group">
-            <label class="form-label">Kunden-Nr.</label>
+            <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
             <input
               v-model="invoices.selected_customer.id"
               type="text"
@@ -60,7 +60,7 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Firmname</label>
+            <label class="form-label">Firmname <span class="stars">*</span></label>
             <input
               v-model="invoices.selected_customer.company_name"
               type="text"
@@ -70,7 +70,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Vorname</label>
+              <label class="form-label">Vorname <span class="stars">*</span></label>
               <input
                 v-model="invoices.selected_customer.first_name"
                 type="text"
@@ -79,7 +79,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Nachname</label>
+              <label class="form-label">Nachname <span class="stars">*</span></label>
               <input
                 v-model="invoices.selected_customer.last_name"
                 type="text"
@@ -89,7 +89,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Adresse</label>
+            <label class="form-label">Adresse <span class="stars">*</span></label>
             <input
               v-model="invoices.selected_customer.address"
               type="text"
@@ -99,7 +99,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">PLZ</label>
+              <label class="form-label">PLZ <span class="stars">*</span></label>
               <input
                 v-model="invoices.selected_customer.postal_code"
                 type="text"
@@ -108,7 +108,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Stadt</label>
+              <label class="form-label">Stadt <span class="stars">*</span></label>
               <input
                 v-model="invoices.selected_customer.city"
                 type="text"
@@ -712,4 +712,7 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
+.stars{
+  color: darkred;
+  font-size: 16px;}
 </style>

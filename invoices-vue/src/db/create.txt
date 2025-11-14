@@ -49,6 +49,8 @@ db.exec(`CREATE TABLE tokens (
 //customers
 db.exec(`CREATE TABLE IF NOT EXISTS customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_type TEXT NOT NULL,
+    company_name TEXT NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     email TEXT NOT NULL,
@@ -57,11 +59,8 @@ db.exec(`CREATE TABLE IF NOT EXISTS customers (
     postal_code TEXT NOT NULL,
     city TEXT NOT NULL,
     country TEXT NOT NULL,
-    company_name TEXT NOT NULL,
-    customer_type TEXT NOT NULL,
     tax_number TEXT NOT NULL,
     vat_id TEXT NOT NULL,
-    is_active TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );`)

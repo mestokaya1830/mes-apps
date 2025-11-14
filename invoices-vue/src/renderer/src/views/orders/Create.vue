@@ -13,22 +13,22 @@
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Auftragsnummer</label>
+            <label class="form-label">Auftragsnummer <span class="stars">*</span></label>
             <input v-model="orders.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Datum</label>
+            <label class="form-label">Datum <span class="stars">*</span></label>
             <input v-model="orders.date" type="date" class="form-input" />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Leistungszeitraum Von</label>
+            <label class="form-label">Leistungszeitraum Von <span class="stars">*</span></label>
             <input v-model="orders.service_period_start" type="date" class="form-input" />
           </div>
           <div class="form-group">
-            <label class="form-label">Leistungszeitraum Bis</label>
+            <label class="form-label">Leistungszeitraum Bis <span class="stars">*</span></label>
             <input v-model="orders.service_period_end" type="date" class="form-input" />
           </div>
         </div>
@@ -50,7 +50,7 @@
         <div v-if="orders.selected_customer.id" class="customer-details">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Kunden-Nr.</label>
+              <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
               <input
                 v-model="orders.selected_customer.id"
                 type="text"
@@ -59,7 +59,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Firma</label>
+              <label class="form-label">Firma <span class="stars">*</span></label>
               <input
                 v-model="orders.selected_customer.company_name"
                 type="text"
@@ -70,7 +70,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Vorname</label>
+              <label class="form-label">Vorname <span class="stars">*</span></label>
               <input
                 v-model="orders.selected_customer.first_name"
                 type="text"
@@ -79,7 +79,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Nachname</label>
+              <label class="form-label">Nachname <span class="stars">*</span></label>
               <input
                 v-model="orders.selected_customer.last_name"
                 type="text"
@@ -89,7 +89,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Adresse</label>
+            <label class="form-label">Adresse <span class="stars">*</span></label>
             <input
               v-model="orders.selected_customer.address"
               type="text"
@@ -99,7 +99,7 @@
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">PLZ</label>
+              <label class="form-label">PLZ <span class="stars">*</span></label>
               <input
                 v-model="orders.selected_customer.postal_code"
                 type="text"
@@ -108,7 +108,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Stadt</label>
+              <label class="form-label">Stadt <span class="stars">*</span></label>
               <input
                 v-model="orders.selected_customer.city"
                 type="text"
@@ -117,7 +117,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Land</label>
+              <label class="form-label">Land <span class="stars">*</span></label>
               <input
                 v-model="orders.selected_customer.country"
                 type="text"
@@ -127,7 +127,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">E-Mail</label>
+            <label class="form-label">E-Mail <span class="stars">*</span></label>
             <input
               v-model="orders.selected_customer.email"
               type="email"
@@ -169,7 +169,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Lieferadresse</label>
+          <label class="form-label">Lieferadresse <span class="stars">*</span></label>
           <textarea
             v-model="orders.delivery_address"
             rows="2"
@@ -213,7 +213,7 @@
 
       <!-- Payment Terms -->
       <div class="form-section">
-        <label class="form-label">💬 Verwendungszweck</label>
+        <label class="form-label">💬 Verwendungszweck <span class="stars">*</span></label>
         <input
           v-model="orders.payment.verwendungszweck"
           type="text"
@@ -228,7 +228,7 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Zahlungsbedingungen</label>
+            <label class="form-label">Zahlungsbedingungen <span class="stars">*</span></label>
             <select v-model="orders.payment.payment_terms" class="form-input">
               <option :value="0">Sofort zahlbar</option>
               <option :value="7">Zahlbar innerhalb von 7 Tagen</option>
@@ -238,7 +238,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Zahlungsart</label>
+            <label class="form-label">Zahlungsart <span class="stars">*</span></label>
             <select v-model="orders.payment.payment_method" class="form-input">
               <option value="">Nicht angegeben</option>
               <option value="Überweisung">Überweisung</option>
@@ -252,7 +252,7 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Lieferbedingungen</label>
+            <label class="form-label">Lieferbedingungen <span class="stars">*</span></label>
             <select v-model="orders.delivery_terms" class="form-input">
               <option value="">Nicht angegeben</option>
               <option value="Frei Haus">Frei Haus</option>
@@ -263,7 +263,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Versandart</label>
+            <label class="form-label">Versandart <span class="stars">*</span></label>
             <select v-model="orders.shipping_method" class="form-input">
               <option value="">Nicht angegeben</option>
               <option value="DHL">DHL</option>
@@ -276,7 +276,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Zusätzliche Zahlungshinweise</label>
+          <label class="form-label">Zusätzliche Zahlungshinweise <span class="stars">*</span></label>
           <textarea
             v-model="orders.payment.payment_conditions"
             class="form-input"
@@ -414,7 +414,7 @@
 
       <!-- Closing Text -->
       <div class="form-section">
-        <div class="form-section-title">📝 Schlussbemerkung / Closing Text</div>
+        <div class="form-section-title">📝 Schlussbemerkung / Closing Text <span class="stars">*</span></div>
         <div class="form-group">
           <textarea
             v-model="orders.closing_text"
@@ -468,7 +468,7 @@ export default {
           payment_terms: 14,
           payment_method: '',
           payment_conditions: '',
-          verwendungzweck: 'Nicht angegeben'
+          verwendungszweck: 'Nicht angegeben'
         }
       }
     }
@@ -710,5 +710,9 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(26px);
+}
+.stars{
+  color: darkred;
+  font-size: 16px;
 }
 </style>

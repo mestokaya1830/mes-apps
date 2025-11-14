@@ -447,7 +447,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 /* EDITOR PANEL */
 .editor-panel {
   width: 70%;
@@ -519,7 +519,7 @@ export default {
 
 .form-input {
   width: 100%;
-  padding: 8px 12px;
+  min-height: 46px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 13px;

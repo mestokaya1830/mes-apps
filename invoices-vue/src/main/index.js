@@ -8,7 +8,7 @@ import nodeMailer from 'nodemailer'
 let win = null
 function createWindow() {
   win = new BrowserWindow({
-    width: 1200,
+    width: 1260,
     height: 800,
     show: false, // Pencereyi gizle
     frame: false,
