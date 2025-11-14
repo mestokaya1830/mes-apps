@@ -459,7 +459,6 @@ ipcMain.handle('delete-customer', async (event, id) => {
 })
 
 ipcMain.handle('save-document', async (event, data) => {
-  console.log('Saving document data:', data)
 
   //save invoice table
   if (data.tableName === 'invoices') {

@@ -1,0 +1,59 @@
+
+try {
+  db.prepare('DROP TABLE orders').run()
+} catch (err) {
+  console.error(err.message)
+}
+
+try {
+  db.prepare('DELETE FROM users').run() // veya DROP TABLE users için: 'DROP TABLE users'
+} catch (err) {
+  console.error(err.message)
+}
+
+
+try {
+  db.prepare('INSERT INTO users (email, password) VALUES (?, ?)').run('mesto@outlook.com', '909090')
+} catch (err) {
+  console.error(err.message)
+}
+
+try {
+  const users = db.prepare('SELECT * FROM users').all()
+  console.log('Users:', users)
+} catch (err) {
+  console.error(err.message)
+}
+
+
+try {
+  const user = db.prepare('SELECT * FROM users WHERE email = ?').get('mesto@outlook.com')
+  console.log('User:', user)
+} catch (err) {
+  console.error(err.message)
+}
+
+
+try {
+  const user = db.prepare('UPDATE users SET email = ? WHERE id = ?').run('mesto@outlook.com', 1)
+  console.log('User:', user)
+} catch (err) {
+  console.error(err.message)
+}
+
+
+try {
+  const user = db.prepare('DELETE FROM users WHERE id = ?').run(1)
+  console.log('User:', user)
+} catch (err) {
+  console.error(err.message)
+}
+
+
+
+try {
+  db.exec('ALTER TABLE users DROP COLUMN invoice_categories')
+  db.close()
+} catch (err) {
+  console.error(err.message)
+}
