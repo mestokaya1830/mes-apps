@@ -7,7 +7,7 @@
         <h1 class="title">{{ title }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
       </div>
-      <router-link to="/invoices" class="action-btn details-btn">
+       <router-link to="/invoices/create" class="add-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
