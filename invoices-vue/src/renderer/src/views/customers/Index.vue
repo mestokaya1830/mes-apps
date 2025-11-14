@@ -1,17 +1,17 @@
 <template>
-  <div class="container">
+  <div class="editor-panel">
     <!-- Header Section -->
-    <div class="header">
+    <div class="editor-header-block">
       <div>
         <h1 class="title">{{ title }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Kunden</p>
       </div>
-      <router-link to="/customers/create" class="add-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+       <router-link to="/customers/create" class="add-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
-        <span>Neu Kunde hinzufügen</span>
+        <span>Neue Kunden erstellen</span>
       </router-link>
     </div>
 
@@ -66,6 +66,7 @@
 
 <script>
 export default {
+  name: 'Customers',
   data() {
     return {
       title: 'Kunden',
@@ -115,10 +116,11 @@ export default {
 }
 
 /* Header */
-.header {
+.editor-header-block {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 80%;
   margin-bottom: 40px;
   flex-wrap: wrap;
   gap: 20px;

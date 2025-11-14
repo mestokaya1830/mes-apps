@@ -1,9 +1,9 @@
 <template>
   <div>
-    <TitleBar></TitleBar>
+    <TitleBar />
     <div class="container">
-      <SideBar></SideBar>
-      <router-view class="layouts"></router-view>
+      <SideBar />
+      <router-view class="layouts" />
     </div>
   </div>
 </template>

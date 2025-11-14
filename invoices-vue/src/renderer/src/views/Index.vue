@@ -1,6 +1,50 @@
-<template lang="">
-  <div>
-    <h1>{{ title }}</h1>
+<template>
+  <div class="editor-panel">
+
+    <!-- Header -->
+    <div class="editor-header-block">
+      <div>
+        <h1 class="title">{{ title }}</h1>
+        <p class="subtitle">Übersicht Ihrer Rechnungen, Angebote und Aufträge</p>
+      </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="customer-grid">
+      <!-- Rechnungen Card -->
+      <div class="customer-card" @click="goTo('invoices')" style="cursor:pointer;">
+        <div class="card-header">
+          <div class="customer-avatar">💶</div>
+          <div class="customer-info">
+            <h3 class="customer-name">Rechnungen</h3>
+            <span class="customer-type-badge">Gesamt: {{ totalInvoices }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Angebote Card -->
+      <div class="customer-card" @click="goTo('offers')" style="cursor:pointer;">
+        <div class="card-header">
+          <div class="customer-avatar">📄</div>
+          <div class="customer-info">
+            <h3 class="customer-name">Angebote</h3>
+            <span class="customer-type-badge">Gesamt: {{ totalOffers }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aufträge Card -->
+      <div class="customer-card" @click="goTo('orders')" style="cursor:pointer;">
+        <div class="card-header">
+          <div class="customer-avatar">📦</div>
+          <div class="customer-info">
+            <h3 class="customer-name">Aufträge</h3>
+            <span class="customer-type-badge">Gesamt: {{ totalOrders }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -8,10 +52,179 @@
 export default {
   data() {
     return {
-      title: 'Dashboard'
+      title: 'Dashboard',
+      totalInvoices: 0,
+      totalOffers: 0,
+      totalOrders: 0
     }
   },
-  mounted() {},
-  methods: {}
+  mounted() {
+    this.loadDashboardData()
+  },
+  methods: {
+    async loadDashboardData() {
+      try {
+        const invoices = await window.api.getDocument('invoices')
+        const offers = await window.api.getDocument('offers')
+        const orders = await window.api.getDocument('orders')
+
+        this.totalInvoices = invoices.rows.length
+        this.totalOffers = offers.rows.length
+        this.totalOrders = orders.rows.length
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    goTo(path) {
+      this.$router.push(`/${path}`)
+    }
+  }
 }
 </script>
+
+<style scoped>
+/* Önceki CSS aynen korunuyor */
+.editor-panel {
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.editor-header-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: #718096;
+  margin: 8px 0 0 0;
+  font-size: 14px;
+}
+
+.customer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+  width: 80%;
+}
+
+.customer-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.customer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.customer-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.customer-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.customer-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 6px 0;
+}
+
+.customer-type-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #edf2f7;
+  color: #4a5568;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .customer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.customer-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Küçük/orta ekran */
+  width: 100%;
+}
+
+/* Kartlar */
+.customer-card {
+  display: grid;
+  grid-template-columns: auto 1fr; /* Avatar + içerik yan yana */
+  align-items: start;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 16px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  height: auto; /* İçerik kadar */
+}
+
+.customer-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+
+/* TAM EKRAN (>1600px): alt alta, tam genişlik */
+@media (min-width: 1600px) {
+  .customer-grid {
+    grid-template-columns: 1fr; /* Tek sütun */
+  }
+
+  .customer-card {
+    width: 100%;  /* Tam genişlik */
+  }
+}
+
+</style>

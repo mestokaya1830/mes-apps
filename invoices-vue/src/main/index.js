@@ -602,9 +602,19 @@ ipcMain.handle('save-document', async (event, data) => {
   }
 })
 
-ipcMain.handle('get-document', async (data, name) => {
+ipcMain.handle('get-document', async (data, tabelName) => {
   try {
-    const rows = db.prepare(`SELECT * FROM ${name}`).all()
+    const rows = db.prepare(`SELECT * FROM ${tabelName}`).all()
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-document-by-id', async (data, id, tableName) => {
+  try {
+    const rows = db.prepare(`SELECT * FROM ${tableName} WHERE id = ?`).get(id)
     return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)

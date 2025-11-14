@@ -1,8 +1,23 @@
 <template>
   <div>
     <div class="editor-panel">
-      <div class="editor-header">
+      <div class="editor-header-block">
         <div class="editor-title">📝{{ title }}</div>
+        <router-link to="/customers" class="add-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+        </router-link>
       </div>
       <!-- Base -->
       <div class="form-section">
@@ -172,7 +187,10 @@ export default {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.editor-header {
+.editor-header-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 2px solid #e5e7eb;
