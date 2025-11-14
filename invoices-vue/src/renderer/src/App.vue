@@ -75,17 +75,17 @@ export default {
 
   data() {
     return {
-      storeData: null
+      dynamicData: null
     }
   },
   computed: {
     subTotal() {
-      if (!this.storeData) return 0
-      return this.storeData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      if (!this.dynamicData) return 0
+      return this.dynamicData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
     },
     vatAmount() {
-      if (!this.storeData) return 0
-      return this.storeData.positions.reduce(
+      if (!this.dynamicData) return 0
+      return this.dynamicData.positions.reduce(
         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
         0
       )
@@ -94,30 +94,30 @@ export default {
       return this.subTotal + this.vatAmount // Parantez kaldırıldı
     },
     outstanding() {
-      if (!this.storeData) return 0
-      if (this.storeData.payment.paid_amount) {
-        return this.total - this.storeData.payment.paid_amount // Parantez kaldırıldı
+      if (!this.dynamicData) return 0
+      if (this.dynamicData.payment.paid_amount) {
+        return this.total - this.dynamicData.payment.paid_amount // Parantez kaldırıldı
       }
       return 0
     }
   },
   methods: {
-    async storePreview(storeCommit, createData) {
-      // console.log('Create data...', storeCommit, createData)
-      if (createData && storeCommit) {
+    async storePreview(storeName, storeData) {
+      if (storeData && store) {
         try {
-          this.storeData = {
-            ...createData,
+          this.dynamicData = {
+            ...storeData,
             summary: {
               subtotal: this.subTotal,
               vat_amount: this.vatAmount,
               total: this.total,
-              paid_amount: createData.payment.paid_amount || 0,
+              paid_amount: storeData.payment.paid_amount || 0,
               outstanding: this.outstanding || 0
             }
           }
-          await store[storeCommit](JSON.parse(JSON.stringify(this.storeData)))
-          console.log('storeData', this.storeData)
+          await store.setStore(storeName, JSON.parse(JSON.stringify(this.dynamicData)))
+          // await store[storeCommit](JSON.parse(JSON.stringify(this.storeData)))
+          console.log('storeData', this.dynamicData)
         } catch (error) {
           console.error('Error storing preview:', error)
         }

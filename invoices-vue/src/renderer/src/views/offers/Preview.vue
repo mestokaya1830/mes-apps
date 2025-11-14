@@ -281,11 +281,10 @@
       <!-- Action Buttons -->
       <ActionsButtonPreview
         v-if="offersPreview.selected_customer"
-        tableName="offers"
-        :email="offersPreview.selected_customer.email"
         :documentId="offersPreview.id"
+        :email="offersPreview.selected_customer.email"
+        dataName="offers"
         :dbData="offersPreview"
-        clearStoreName="clearOffers"
       />
     </div>
 

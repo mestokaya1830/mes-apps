@@ -92,7 +92,7 @@ export default {
         if (!res.success) {
           this.error.credential = res.message
         } else {
-          await store.setAuth(res.user)
+          await store.setStore('auth', res.user)
           this.$router.push('/')
         }
       }

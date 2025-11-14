@@ -259,11 +259,10 @@
 
       <ActionsButtonPreview
         v-if="invoicesPreview.selected_customer"
-        tableName="invoices"
-        :email="invoicesPreview.selected_customer.email"
         :documentId="formatRechnungId"
+        :email="invoicesPreview.selected_customer.email"
+        dataName="invoices"
         :dbData="invoicesPreview"
-        :clearStoreName="'clearInvoices'"
       />
     </div>
 

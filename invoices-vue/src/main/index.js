@@ -459,9 +459,8 @@ ipcMain.handle('delete-customer', async (event, id) => {
 })
 
 ipcMain.handle('save-document', async (event, data) => {
-
   //save invoice table
-  if (data.tableName === 'invoices') {
+  if (data.name === 'invoices') {
     try {
       const customer = JSON.stringify(data.data.selected_customer || {})
       const payment = JSON.stringify(data.data.payment || {})
@@ -501,7 +500,7 @@ ipcMain.handle('save-document', async (event, data) => {
     }
   }
   //save offers table
-  if (data.tableName === 'offers') {
+  if (data.name === 'offers') {
     try {
       const customer = JSON.stringify(data.data.selected_customer || {})
       const payment = JSON.stringify(data.data.payment || {})
@@ -543,7 +542,7 @@ ipcMain.handle('save-document', async (event, data) => {
   }
 
   //save orders table
-  if (data.tableName === 'orders') {
+  if (data.name === 'orders') {
     try {
       const customer = JSON.stringify(data.data.selected_customer || {})
       const payment = JSON.stringify(data.data.payment || {})
@@ -603,9 +602,9 @@ ipcMain.handle('save-document', async (event, data) => {
   }
 })
 
-ipcMain.handle('get-document', async (data, tableName) => {
+ipcMain.handle('get-document', async (data, name) => {
   try {
-    const rows = db.prepare(`SELECT * FROM ${tableName}`).all()
+    const rows = db.prepare(`SELECT * FROM ${name}`).all()
     return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)

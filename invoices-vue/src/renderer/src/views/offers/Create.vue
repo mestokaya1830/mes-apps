@@ -310,7 +310,9 @@ export default {
       this.offers.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
     setStore() {
-      this.storePreview('setOffers', this.offers)
+      if (this.offers) {
+        this.storePreview('offers', this.offers)
+      }
     }
   }
 }

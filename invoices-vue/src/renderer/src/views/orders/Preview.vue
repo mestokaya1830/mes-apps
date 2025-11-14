@@ -230,11 +230,10 @@
       <!-- Actions -->
       <ActionsButtonPreview
         v-if="ordersPreview.selected_customer"
-        tableName="orders"
-        :email="ordersPreview.selected_customer.email"
         :documentId="formattedOrderId"
+        :email="ordersPreview.selected_customer.email"
+        dataName="orders"
         :dbData="ordersPreview"
-        clearStoreName="clearOrders"
       />
     </div>
 

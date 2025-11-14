@@ -474,7 +474,7 @@ export default {
     }
   },
   mounted() {
-    // this.getStore()
+    this.getStore()
     this.getCustomers()
   },
   methods: {
@@ -517,7 +517,9 @@ export default {
       this.orders.positions[index].unit_total = (base * (1 + vat / 100)).toFixed(2)
     },
     setStore() {
-      this.storePreview('setOrders', this.orders)
+      if (this.orders) {
+        this.storePreview('orders', this.orders)
+      }
     }
   }
 }

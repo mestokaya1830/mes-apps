@@ -520,7 +520,9 @@ export default {
     },
     setStore() {
       console.time('commit')
-      this.storePreview('setInvoices', this.invoices)
+      if (this.invoices) {
+        this.storePreview('invoices', this.invoices)
+      }
       console.timeEnd('commit')
     }
   }

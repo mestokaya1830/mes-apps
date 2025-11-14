@@ -34,88 +34,29 @@ async function init() {
   }
 }
 
-// set
-async function setAuth(user) {
-  state.auth = user
+// set store
+async function setStore(store, data) {
+  state[store] = data
   try {
-    await localforage.setItem('auth', user)
+    await localforage.setItem(store, data)
   } catch (err) {
-    console.error('Failed to save auth:', err)
+    console.error('Failed to save ' + store + ':', err)
   }
 }
 
-async function setInvoices(data) {
-  state.invoices = data
+//clear store
+async function clearStore(store) {
   try {
-    await localforage.setItem('invoices', data)
+    await localforage.removeItem(store)
+    state[store] = undefined
   } catch (err) {
-    console.error('Failed to save invoices:', err)
+    console.error('Failed to clear ' + store + ':', err)
   }
 }
-async function setOffers(data) {
-  state.offers = data
-  try {
-    await localforage.setItem('offers', data)
-  } catch (err) {
-    console.error('Failed to save offers:', err)
-  }
-}
-async function setOrders(data) {
-  state.orders = data
-  try {
-    await localforage.setItem('orders', data)
-  } catch (err) {
-    console.error('Failed to save orders:', err)
-  }
-}
-
-//clear
-async function clearAuth() {
-  try {
-    await localforage.removeItem('auth')
-    state.auth = undefined
-  } catch (err) {
-    console.error('Failed to clear auth:', err)
-  }
-}
-async function clearInvoices() {
-  state._isClearing = true // Flag'i aç
-  try {
-    await localforage.removeItem('invoices')
-    state.invoices = undefined
-  } catch (err) {
-    console.error('Failed to clear invoices:', err)
-  }
-}
-async function clearOffers() {
-  state._isClearing = true // Flag'i aç
-  try {
-    await localforage.removeItem('offers')
-    state.offers = undefined
-  } catch (err) {
-    console.error('Failed to clear offers:', err)
-  }
-}
-async function clearOrders() {
-  state._isClearing = true // Flag'i aç
-  try {
-    await localforage.removeItem('orders')
-    state.orders = undefined
-  } catch (err) {
-    console.error('Failed to clear orders:', err)
-  }
-}
-
 
 export default {
   state: readonly(state),
   init,
-  setAuth,
-  setInvoices,
-  setOffers,
-  setOrders,
-  clearAuth,
-  clearInvoices,
-  clearOffers,
-  clearOrders
+  setStore,
+  clearStore
 }

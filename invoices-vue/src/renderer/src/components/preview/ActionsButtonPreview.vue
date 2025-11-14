@@ -26,26 +26,22 @@ import store from '../../store/store.js'
 export default {
   name: 'ActionsButton',
   props: {
-    dbData: {
-      type: Object,
+    documentId: {
+      type: [String, Number],
       required: true
     },
     email: {
       type: String,
       required: true
     },
-    tableName: {
-      type: String,
-      required: true
-    },
-    documentId: {
-      type: [String, Number],
-      required: true
-    },
-    clearStoreName: {
+    dbName: {
       type: String,
       required: false
     },
+    dbData: {
+      type: Object,
+      required: true
+    }
   },
   data() {
     return {}
@@ -73,11 +69,11 @@ export default {
       this.clearStore()
     },
     async saveDocument() {
-      if (this.dbData && this.documentId && this.tableName && this.email) {
+      if (this.dbData && this.documentId && this.dbName && this.email) {
         await window.api.saveDocument({
-          tableName: this.tableName,
           documentId: this.documentId,
           email: this.email,
+          name: this.dbName,
           data: JSON.parse(JSON.stringify(this.dbData))
         })
       }
@@ -93,7 +89,7 @@ export default {
     },
     async clearStore() {
       try {
-        await store[this.clearStoreName]()
+        await store.clearStore(this.dbName)
       } catch (error) {
         console.error(error)
       }
