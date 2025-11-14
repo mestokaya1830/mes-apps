@@ -24,7 +24,6 @@ export default {
       try {
         const result = await window.api.getDocument('invoices')
         this.invoiceList = result.rows
-        console.log(this.invoiceList)
       } catch (error) {
         console.error(error)
       }

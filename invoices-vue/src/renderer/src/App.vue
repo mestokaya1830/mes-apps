@@ -116,8 +116,6 @@ export default {
             }
           }
           await store.setStore(storeName, JSON.parse(JSON.stringify(this.dynamicData)))
-          // await store[storeCommit](JSON.parse(JSON.stringify(this.storeData)))
-          console.log('storeData', this.dynamicData)
         } catch (error) {
           console.error('Error storing preview:', error)
         }

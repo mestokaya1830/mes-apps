@@ -23,7 +23,6 @@ export default {
       try {
         const result = await window.api.getDocument('orders')
         this.ordersList = result.rows
-        console.log(this.ordersList)
       } catch (error) {
         console.error(error)
       }
