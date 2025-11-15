@@ -232,12 +232,29 @@
         <FooterSidePreview />
       </div>
 
+      <div class="form-section">
+        <div class="form-row">
+          <div class="form-group">
+            <select v-model="document_status" class="form-input" @change="setDocumentStatus()">
+              <option value="" disabled>Status</option>
+              <option value="0">Stornieren</option>
+              <option value="1">Aktivieren</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
+              <option value="" disabled>Bezahlungsstatus</option>
+              <option value="1">Bezahlt</option>
+              <option value="0">Unbezahlt</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <ActionsButtonPreview
         v-if="invoice.customer"
-        :documentId="formatRechnungId"
-        :email="invoice.customer.email"
-        dataName="invoices"
-        :dbData="invoice"
+        tableName="invoices"
+        :tableData="invoice"
+        sourcePage="details"
       />
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
@@ -252,7 +269,7 @@ import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
-  name: 'invoice',
+  name: 'InvoicesDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
@@ -262,9 +279,11 @@ export default {
   inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {
     return {
-      title: 'Rechnungs-Vorschau',
+      title: 'Rechnung',
       invoice: null,
-      auth: null
+      auth: null,
+      document_status: '',
+      paid_status: ''
     }
   },
   computed: {
@@ -307,7 +326,6 @@ export default {
           payment: JSON.parse(result.rows.payment),
           summary: JSON.parse(result.rows.summary)
         }
-        console.log(this.invoice)
       } catch (error) {
         console.error(error)
       }
@@ -336,6 +354,22 @@ export default {
       if (!this.invoice?.summary?.total) return 0
       const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
       return outstanding - this.calculateSkontoAmount()
+    },
+    async setDocumentStatus() {
+      const result = await window.api.documentStatus(
+        this.invoice.id,
+        'invoices',
+        this.document_status
+      )
+      if (result.success) {
+        this.$router.push('/invoices')
+      }
+    },
+    async setPaidStatus() {
+      const result = await window.api.paidStatus(this.invoice.id, 'invoices', this.paid_status)
+      if (result.success) {
+        this.$router.push('/invoices')
+      }
     }
   }
 }
@@ -621,5 +655,56 @@ export default {
   white-space: pre-wrap;
   font-size: 12px;
   color: #666;
+}
+
+/* FORM GROUPS */
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-row-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
 }
 </style>

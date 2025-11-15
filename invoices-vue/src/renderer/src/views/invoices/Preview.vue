@@ -259,10 +259,9 @@
 
       <ActionsButtonPreview
         v-if="invoicesPreview.selected_customer"
-        :documentId="formatRechnungId"
-        :email="invoicesPreview.selected_customer.email"
-        dataName="invoices"
-        :dbData="invoicesPreview"
+        tableName="invoices"
+        :tableData="invoicesPreview"
+        sourcePage="preview"
       />
     </div>
 

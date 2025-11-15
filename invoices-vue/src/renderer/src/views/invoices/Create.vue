@@ -417,7 +417,8 @@ export default {
           skonto_days: 7,
           verwendungszweck: ''
         },
-        status: 'Aktiv'
+        status: 0,
+        is_active: 1
       }
     }
   },

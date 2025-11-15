@@ -68,9 +68,9 @@ export default {
         const offers = await window.api.getDocument('offers')
         const orders = await window.api.getDocument('orders')
 
-        this.totalInvoices = invoices.rows.length
-        this.totalOffers = offers.rows.length
-        this.totalOrders = orders.rows.length
+        this.totalInvoices = invoices.success ? invoices.rows.length : 0
+        this.totalOffers = offers.success ? offers.rows.length : 0
+        this.totalOrders = orders.success ? orders.rows.length : 0
       } catch (error) {
         console.error(error)
       }

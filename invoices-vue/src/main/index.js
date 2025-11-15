@@ -458,21 +458,21 @@ ipcMain.handle('delete-customer', async (event, id) => {
   }
 })
 
-ipcMain.handle('save-document', async (event, data) => {
-  //save invoice table
-  if (data.name === 'invoices') {
+ipcMain.handle('save-document', async (event, tableName, data) => {
+  if (tableName === 'invoices') {
     try {
-      const customer = JSON.stringify(data.data.selected_customer || {})
-      const payment = JSON.stringify(data.data.payment || {})
-      const positions = JSON.stringify(data.data.positions || {})
-      const tax_options = JSON.stringify(data.data.tax_options || {})
-      const summary = JSON.stringify(data.data.summary || {})
+      const customer = JSON.stringify(data.selected_customer || {})
+      const payment = JSON.stringify(data.payment || {})
+      const positions = JSON.stringify(data.positions || {})
+      const tax_options = JSON.stringify(data.tax_options || {})
+      const summary = JSON.stringify(data.summary || {})
       const row = db
       db.prepare(
         `
     INSERT INTO invoices (
       date,
       status,
+      is_active,
       currency,
       service_date,
       customer,
@@ -480,13 +480,14 @@ ipcMain.handle('save-document', async (event, data) => {
       positions,
       tax_options,
       summary
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
   `
       ).run(
-        data.data.date,
-        data.data.status,
-        data.data.currency,
-        data.data.service_date,
+        data.date,
+        data.status,
+        data.is_active,
+        data.currency,
+        data.service_date,
         customer,
         payment,
         positions,
@@ -500,12 +501,12 @@ ipcMain.handle('save-document', async (event, data) => {
     }
   }
   //save offers table
-  if (data.name === 'offers') {
+  if (data.tableName === 'offers') {
     try {
-      const customer = JSON.stringify(data.data.selected_customer || {})
-      const payment = JSON.stringify(data.data.payment || {})
-      const positions = JSON.stringify(data.data.positions || {})
-      const summary = JSON.stringify(data.data.summary || {})
+      const customer = JSON.stringify(data.tableData.selected_customer || {})
+      const payment = JSON.stringify(data.tableData.payment || {})
+      const positions = JSON.stringify(data.tableData.positions || {})
+      const summary = JSON.stringify(data.tableData.summary || {})
       const row = db
       db.prepare(
         `
@@ -523,12 +524,12 @@ ipcMain.handle('save-document', async (event, data) => {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
   `
       ).run(
-        data.data.date,
-        data.data.status,
-        data.data.currency,
-        data.data.subject,
-        data.data.valid_until,
-        String(data.data.is_legal),
+        data.tableData.date,
+        data.tableData.status,
+        data.tableData.currency,
+        data.tableData.subject,
+        data.tableData.valid_until,
+        String(data.tableData.is_legal),
         customer,
         payment,
         positions,
@@ -542,12 +543,12 @@ ipcMain.handle('save-document', async (event, data) => {
   }
 
   //save orders table
-  if (data.name === 'orders') {
+  if (data.tableName === 'orders') {
     try {
-      const customer = JSON.stringify(data.data.selected_customer || {})
-      const payment = JSON.stringify(data.data.payment || {})
-      const positions = JSON.stringify(data.data.positions || {})
-      const summary = JSON.stringify(data.data.summary || {})
+      const customer = JSON.stringify(data.tableData.selected_customer || {})
+      const payment = JSON.stringify(data.tableData.payment || {})
+      const positions = JSON.stringify(data.tableData.positions || {})
+      const summary = JSON.stringify(data.tableData.summary || {})
       const row = db
       db.prepare(
         `
@@ -574,21 +575,21 @@ ipcMain.handle('save-document', async (event, data) => {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
       ).run(
-        data.data.date,
-        data.data.status,
-        data.data.currency,
-        String(data.data.is_legal),
-        data.data.service_period_start,
-        data.data.service_period_end,
-        data.data.validity_date,
-        data.data.delivery_date,
-        data.data.delivery_terms,
-        data.data.shipping_method,
-        data.data.customer_reference,
-        data.data.customer_notes,
-        data.data.internal_notes,
-        data.data.special_notes,
-        data.data.closing_text,
+        data.tableData.date,
+        data.tableData.status,
+        data.tableData.currency,
+        String(data.tableData.is_legal),
+        data.tableData.service_period_start,
+        data.tableData.service_period_end,
+        data.tableData.validity_date,
+        data.tableData.delivery_date,
+        data.tableData.delivery_terms,
+        data.tableData.shipping_method,
+        data.tableData.customer_reference,
+        data.tableData.customer_notes,
+        data.tableData.internal_notes,
+        data.tableData.special_notes,
+        data.tableData.closing_text,
         customer,
         payment,
         positions,
@@ -616,6 +617,25 @@ ipcMain.handle('get-document-by-id', async (data, id, tableName) => {
   try {
     const rows = db.prepare(`SELECT * FROM ${tableName} WHERE id = ?`).get(id)
     return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('set-document-status', async (data, id, tableName, value) => {
+  try {
+    db.prepare(`Update ${tableName} Set is_active = ? WHERE id = ?`).run(value, id)
+    return { success: true }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+ipcMain.handle('set-paid-status', async (data, id, tableName, value) => {
+  try {
+    db.prepare(`Update ${tableName} Set status = ? WHERE id = ?`).run(value, id)
+    return { success: true }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }

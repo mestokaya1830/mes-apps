@@ -1,7 +1,7 @@
 <template lang="">
   <div>
     <div class="action-buttons">
-      <button class="btn btn-primary" @click="saveDocument">
+      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveDocument">
         <span class="nav-icon">💾</span>
         <span>Speichern</span>
       </button>
@@ -26,20 +26,16 @@ import store from '../../store/store.js'
 export default {
   name: 'ActionsButton',
   props: {
-    documentId: {
-      type: [String, Number],
-      required: true
-    },
-    email: {
-      type: String,
-      required: true
-    },
-    dbName: {
+    tableName: {
       type: String,
       required: false
     },
-    dbData: {
+    tableData: {
       type: Object,
+      required: true
+    },
+    sourcePage: {
+      type: String,
       required: true
     }
   },
@@ -69,15 +65,16 @@ export default {
       this.clearStore()
     },
     async saveDocument() {
-      if (this.dbData && this.documentId && this.dbName && this.email) {
-        await window.api.saveDocument({
-          documentId: this.documentId,
-          email: this.email,
-          name: this.dbName,
-          data: JSON.parse(JSON.stringify(this.dbData))
-        })
+      if (this.tableName && this.tableData) {
+        const result = await window.api.saveDocument(
+          this.tableName,
+          JSON.parse(JSON.stringify(this.tableData))
+        )
+        if (result.success) {
+          this.clearStore()
+          this.$router.push(`/${this.sourcePage}`)
+        }
       }
-      this.clearStore()
     },
     printDocument() {
       window.print()
@@ -89,7 +86,7 @@ export default {
     },
     async clearStore() {
       try {
-        await store.clearStore(this.dbName)
+        await store.clearStore(this.tableName)
       } catch (error) {
         console.error(error)
       }

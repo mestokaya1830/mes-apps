@@ -1,14 +1,22 @@
 <template>
   <div class="editor-panel">
-
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>
         <h1 class="title">{{ title }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
       </div>
-       <router-link to="/invoices/create" class="add-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <router-link to="/invoices/create" class="add-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -25,37 +33,52 @@
             {{ invoice.id }}
           </div>
           <div class="customer-info">
-            <h3 class="customer-name">{{ invoice.title || 'Unbenannte Rechnung' }}</h3>
-            <span class="customer-type-badge">{{ invoice.status || 'Offen' }}</span>
+            <h3 class="customer-name">{{ formatRechnungId(invoice.id) }}</h3>
+            <span class="customer-type-badge">{{ invoice.customer.company_name }}</span>
           </div>
-          <div class="status-badge" :class="invoice.paid ? 'active' : 'inactive'">
-            {{ invoice.paid ? 'Bezahlt' : 'Unbezahlt' }}
+          <div class="status-badge" :class="invoice.is_active ? 'active' : 'inactive'">
+            {{ invoice.is_active ? 'Aktiv' : 'Storniert' }}
+          </div>
+
+          <div class="status-badge" :class="invoice.status ? 'paid' : 'unpaid'">
+            {{ invoice.status ? 'Bezahlt' : 'Unbezahlt' }}
           </div>
         </div>
 
         <!-- Card Actions -->
         <div class="card-actions">
           <router-link :to="'/invoices/details/' + invoice.id" class="action-btn details-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
             Details
           </router-link>
-          <button class="action-btn delete-btn" @click="deleteInvoice(invoice.id)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            </svg>
-            Löschen
-          </button>
         </div>
       </div>
     </div>
 
     <!-- Empty State -->
     <div v-if="!invoiceList || invoiceList.length === 0" class="empty-state">
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="64"
+        height="64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
         <circle cx="9" cy="7" r="4"></circle>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -64,7 +87,6 @@
       <h3>Keine Rechnungen</h3>
       <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </div>
-
   </div>
 </template>
 
@@ -83,20 +105,20 @@ export default {
     async getInvoiceList() {
       try {
         const result = await window.api.getDocument('invoices')
-        this.invoiceList = result.rows
+        this.invoiceList = result.rows.map((item) => ({
+          ...item,
+          customer: JSON.parse(item.customer),
+          summary: JSON.parse(item.summary)
+        }))
+        console.log(this.invoiceList)
       } catch (error) {
         console.error(error)
       }
     },
-    async deleteInvoice(id) {
-      if (confirm('Sind Sie sicher, dass Sie diese Rechnung löschen möchten?')) {
-        try {
-          const result = await window.api.deleteDocument('invoices', id)
-          if (result.success) this.getInvoiceList()
-        } catch (error) {
-          console.error(error)
-        }
-      }
+    formatRechnungId(id) {
+      if (!id) return ''
+      const year = new Date().getFullYear()
+      return `RE-${year}-${String(id).padStart(5, '0')}`
     }
   }
 }
@@ -167,14 +189,14 @@ export default {
   background: white;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
 }
 
 .customer-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -236,12 +258,22 @@ export default {
 
 .status-badge.active {
   background: #c6f6d5;
-  color: #22543d;
+  color: #000;
+}
+.status-badge.inactive {
+  background: #742a2a;
+  color: #fff;
 }
 
-.status-badge.inactive {
-  background: #fed7d7;
-  color: #742a2a;
+.status-badge.paid {
+  background: #c6f6d5;
+  color: #000;
+  top: 30px;
+}
+.status-badge.unpaid {
+  background: #742a2a;
+  color: #fff;
+  top: 30px;
 }
 
 .card-actions {

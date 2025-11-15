@@ -281,10 +281,9 @@
       <!-- Action Buttons -->
       <ActionsButtonPreview
         v-if="offersPreview.selected_customer"
-        :documentId="offersPreview.id"
-        :email="offersPreview.selected_customer.email"
-        dataName="offers"
-        :dbData="offersPreview"
+        tableName="offers"
+        :tableData="offersPreview"
+        sourcePage="preview"
       />
     </div>
 

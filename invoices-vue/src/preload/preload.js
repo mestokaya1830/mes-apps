@@ -15,7 +15,13 @@ contextBridge.exposeInMainWorld('api', {
   addCustomer: async (id) => ipcRenderer.invoke('add-customer', id),
   updateCustomer: async (data) => ipcRenderer.invoke('update-customer', data),
   deleteCustomer: async (data) => ipcRenderer.invoke('delete-customer', data),
-  saveDocument: async (data) => ipcRenderer.invoke('save-document', data),
+  saveDocument: async (id, tableName, data) =>
+    ipcRenderer.invoke('save-document', id, tableName, data),
   getDocument: async (data, tableName) => ipcRenderer.invoke('get-document', data, tableName),
-  getDocumentById: async (data, id, tableName) => ipcRenderer.invoke('get-document-by-id', data, id, tableName),
+  getDocumentById: async (data, id, tableName) =>
+    ipcRenderer.invoke('get-document-by-id', data, id, tableName),
+  documentStatus: async (id, tableName, value) =>
+    ipcRenderer.invoke('set-document-status', id, tableName, value),
+  paidStatus: async (id, tableName, value) =>
+    ipcRenderer.invoke('set-paid-status', id, tableName, value)
 })

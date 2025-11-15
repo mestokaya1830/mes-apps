@@ -230,10 +230,9 @@
       <!-- Actions -->
       <ActionsButtonPreview
         v-if="orders.customer"
-        :documentId="formattedOrderId"
-        :email="orders.customer.email"
-        dataName="orders"
-        :dbData="orders"
+        tableName="orders"
+        :tableData="orders"
+        sourcePage="details"
       />
     </div>
 
@@ -304,7 +303,7 @@ export default {
         const result = await window.api.getDocumentById(id, 'orders')
         this.orders = {
           ...result.rows,
-          customer: JSON.parse(result.rows.selected_customer),
+          customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions),
           payment: JSON.parse(result.rows.payment),
           summary: JSON.parse(result.rows.summary)
