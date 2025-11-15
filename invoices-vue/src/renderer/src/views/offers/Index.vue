@@ -25,8 +25,8 @@
             {{ item.id }}
           </div>
           <div class="customer-info">
-            <h3 class="customer-name">{{ item.title || 'Unbenanntes Angebot' }}</h3>
-            <span class="customer-type-badge">{{ item.status || 'Offen' }}</span>
+            <h3 class="customer-name">{{ formatAngebotsId(item.id) }}</h3>
+            <span class="customer-type-badge">{{ item.customer.company_name }}</span>
           </div>
           <div class="status-badge" :class="item.accepted ? 'active' : 'inactive'">
             {{ item.accepted ? 'Akzeptiert' : 'Nicht akzeptiert' }}
@@ -83,7 +83,10 @@ export default {
     async getOffersList() {
       try {
         const result = await window.api.getDocument('offers')
-        this.offersList = result.rows
+        this.offersList = result.rows.map((item) => ({
+          ...item,
+          customer: JSON.parse(item.customer)
+        }))
       } catch (error) {
         console.error(error)
       }
@@ -97,6 +100,10 @@ export default {
           console.error(error)
         }
       }
+    },
+    formatAngebotsId(id) {
+      if (!id) return ''
+      return `ANG-${String(id).padStart(6, '0')}`
     }
   }
 }

@@ -500,23 +500,25 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
       return { success: false, message: err.message }
     }
   }
+
   //save offers table
-  if (data.tableName === 'offers') {
+  if (tableName === 'offers') {
+    console.log(data)
     try {
-      const customer = JSON.stringify(data.tableData.selected_customer || {})
-      const payment = JSON.stringify(data.tableData.payment || {})
-      const positions = JSON.stringify(data.tableData.positions || {})
-      const summary = JSON.stringify(data.tableData.summary || {})
+      const customer = JSON.stringify(data.selected_customer || {})
+      const payment = JSON.stringify(data.payment || {})
+      const positions = JSON.stringify(data.positions || {})
+      const summary = JSON.stringify(data.summary || {})
       const row = db
       db.prepare(
         `
     INSERT INTO offers (
       date,
-      status,
-      currency,
       subject,
-      valid_until,
       is_legal,
+      is_active,
+      valid_until,
+      currency,
       customer,
       payment,
       positions,
@@ -524,12 +526,12 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
   `
       ).run(
-        data.tableData.date,
-        data.tableData.status,
-        data.tableData.currency,
-        data.tableData.subject,
-        data.tableData.valid_until,
-        String(data.tableData.is_legal),
+        data.date,
+        data.subject,
+        data.is_legal,
+        data.is_active,
+        data.valid_until,
+        data.currency,
         customer,
         payment,
         positions,
@@ -543,20 +545,20 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
   }
 
   //save orders table
-  if (data.tableName === 'orders') {
+  if (tableName === 'orders') {
     try {
-      const customer = JSON.stringify(data.tableData.selected_customer || {})
-      const payment = JSON.stringify(data.tableData.payment || {})
-      const positions = JSON.stringify(data.tableData.positions || {})
-      const summary = JSON.stringify(data.tableData.summary || {})
+      const customer = JSON.stringify(data.selected_customer || {})
+      const payment = JSON.stringify(data.payment || {})
+      const positions = JSON.stringify(data.positions || {})
+      const summary = JSON.stringify(data.summary || {})
       const row = db
       db.prepare(
         `
     INSERT INTO orders (
       date,
-      status,
-      currency,
       is_legal,
+      is_active,
+      currency,
       service_period_start,
       service_period_end,
       validity_date,
@@ -568,28 +570,28 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
       internal_notes,
       special_notes,
       closing_text,
-      selected_customer,
+      customer,
       positions,
       payment,
       summary
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
       ).run(
-        data.tableData.date,
-        data.tableData.status,
-        data.tableData.currency,
-        String(data.tableData.is_legal),
-        data.tableData.service_period_start,
-        data.tableData.service_period_end,
-        data.tableData.validity_date,
-        data.tableData.delivery_date,
-        data.tableData.delivery_terms,
-        data.tableData.shipping_method,
-        data.tableData.customer_reference,
-        data.tableData.customer_notes,
-        data.tableData.internal_notes,
-        data.tableData.special_notes,
-        data.tableData.closing_text,
+        data.date,
+        data.is_legal,
+        data.is_active,
+        data.currency,
+        data.service_period_start,
+        data.service_period_end,
+        data.validity_date,
+        data.delivery_date,
+        data.delivery_terms,
+        data.shipping_method,
+        data.customer_reference,
+        data.customer_notes,
+        data.internal_notes,
+        data.special_notes,
+        data.closing_text,
         customer,
         payment,
         positions,
@@ -632,6 +634,7 @@ ipcMain.handle('set-document-status', async (data, id, tableName, value) => {
     return { success: false, message: err.message }
   }
 })
+
 ipcMain.handle('set-paid-status', async (data, id, tableName, value) => {
   try {
     db.prepare(`Update ${tableName} Set status = ? WHERE id = ?`).run(value, id)

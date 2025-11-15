@@ -250,9 +250,9 @@ export default {
         id: 1,
         date: '',
         valid_until: '',
-        is_legal: false,
+        is_legal: 0,
+        is_active: 1,
         subject: '',
-        status: 'Aktiv',
         currency: 'EUR.de-DE',
         selected_customer: {},
         positions: [],
@@ -311,6 +311,7 @@ export default {
     },
     setStore() {
       if (this.offers) {
+        this.offers.is_legal = Number(this.offers.is_legal)
         this.storePreview('offers', this.offers)
       }
     }
@@ -500,7 +501,8 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
-.stars{
+.stars {
   color: darkred;
-  font-size: 16px;}
+  font-size: 16px;
+}
 </style>

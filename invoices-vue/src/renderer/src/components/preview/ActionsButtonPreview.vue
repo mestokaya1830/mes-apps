@@ -72,7 +72,7 @@ export default {
         )
         if (result.success) {
           this.clearStore()
-          this.$router.push(`/${this.sourcePage}`)
+          this.$router.push(`/${this.tableName}`)
         }
       }
     },

@@ -25,8 +25,8 @@
             {{ item.id }}
           </div>
           <div class="customer-info">
-            <h3 class="customer-name">{{ item.title || 'Unbenannter Auftrag' }}</h3>
-            <span class="customer-type-badge">{{ item.status || 'Offen' }}</span>
+            <h3 class="customer-name">{{ formatOrderId(item.id) }}</h3>
+            <span class="customer-type-badge">{{ item.customer.company_name }}</span>
           </div>
           <div class="status-badge" :class="item.completed ? 'active' : 'inactive'">
             {{ item.completed ? 'Abgeschlossen' : 'Offen' }}
@@ -83,7 +83,10 @@ export default {
     async getOrdersList() {
       try {
         const result = await window.api.getDocument('orders')
-        this.ordersList = result.rows
+        this.ordersList = result.rows.map((item) => ({
+          ...item,
+          customer: JSON.parse(item.customer)
+        }))
       } catch (error) {
         console.error(error)
       }
@@ -97,7 +100,12 @@ export default {
           console.error(error)
         }
       }
-    }
+    },
+     formatOrderId(id) {
+      if (!id) return ''
+      const year = new Date().getFullYear()
+      return `AUF-${year}-${String(id).padStart(5, '0')}`
+    },
   }
 }
 </script>

@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Auftrags-Nr.:</span>
-              <span class="meta-value">{{ formattedOrderId }}</span>
+              <span class="meta-value">{{ formatOrderId }}</span>
             </div>
 
             <div class="meta-row">
@@ -267,7 +267,7 @@ export default {
   },
   computed: {
     // Format order ID like AUF-2025-00001
-    formattedOrderId() {
+    formatOrderId() {
       if (!this.ordersPreview.id) return ''
       const year = new Date().getFullYear()
       return `AUF-${year}-${String(this.ordersPreview.id).padStart(5, '0')}`

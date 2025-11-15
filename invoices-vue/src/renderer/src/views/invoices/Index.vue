@@ -261,7 +261,7 @@ export default {
   color: #000;
 }
 .status-badge.inactive {
-  background: #742a2a;
+  background: #dc2626;
   color: #fff;
 }
 
@@ -271,7 +271,7 @@ export default {
   top: 30px;
 }
 .status-badge.unpaid {
-  background: #742a2a;
+  background: #dc2626;
   color: #fff;
   top: 30px;
 }

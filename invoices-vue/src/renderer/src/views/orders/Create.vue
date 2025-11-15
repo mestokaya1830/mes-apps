@@ -447,9 +447,9 @@ export default {
       orders: {
         id: '1',
         date: '',
-        status: 'Aktiv',
         currency: 'EUR.de-DE',
-        is_legal: false,
+        is_legal: 0,
+        is_active: 1,
         service_period_start: '',
         service_period_end: '',
         validity_date: '',
@@ -518,6 +518,7 @@ export default {
     },
     setStore() {
       if (this.orders) {
+        this.orders.is_legal = Number(this.orders.is_legal)
         this.storePreview('orders', this.orders)
       }
     }
