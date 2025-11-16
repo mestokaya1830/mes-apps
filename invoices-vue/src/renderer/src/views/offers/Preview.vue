@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Angebots-Nr.:</span>
-              <span class="meta-value">{{ formatAngebotsId }}</span>
+              <span class="meta-value">{{ formatOfferId }}</span>
             </div>
 
             <div class="meta-row">
@@ -312,7 +312,7 @@ export default {
     }
   },
   computed: {
-    formatAngebotsId() {
+    formatOfferId() {
       if (!this.offersPreview || !this.offersPreview.id) return ''
       return `ANG-${String(this.offersPreview.id).padStart(6, '0')}`
     }

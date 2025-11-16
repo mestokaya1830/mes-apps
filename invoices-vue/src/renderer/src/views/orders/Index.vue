@@ -16,13 +16,16 @@
       </router-link>
     </div>
 
+    <div>
+      <input v-model="search_box" type="search" @input="searchOrder()" placeholder="Suce..." />
+    </div>
     <!-- Orders Grid -->
     <div class="customer-grid">
       <div v-for="item in ordersList" :key="item.id" class="customer-card">
         <!-- Card Header -->
         <div class="card-header">
           <div class="customer-avatar">
-            {{ item.id }}
+            {{ getInitials(item.customer.first_name, item.customer.last_name) }}
           </div>
           <div class="customer-info">
             <h3 class="customer-name">{{ formatOrderId(item.id) }}</h3>
@@ -73,7 +76,9 @@ export default {
   data() {
     return {
       title: 'Aufträge',
-      ordersList: []
+      ordersList: [],
+      search: [],
+      search_box: ''
     }
   },
   mounted() {
@@ -84,6 +89,10 @@ export default {
       try {
         const result = await window.api.getDocument('orders')
         this.ordersList = result.rows.map((item) => ({
+          ...item,
+          customer: JSON.parse(item.customer)
+        }))
+        this.search = result.rows.map((item) => ({
           ...item,
           customer: JSON.parse(item.customer)
         }))
@@ -106,6 +115,23 @@ export default {
       const year = new Date().getFullYear()
       return `AUF-${year}-${String(id).padStart(5, '0')}`
     },
+    getInitials(firstName, lastName) {
+      const first = firstName ? firstName.charAt(0).toUpperCase() : ''
+      const last = lastName ? lastName.charAt(0).toUpperCase() : ''
+      return first + last || '??'
+    },
+    searchOrder() {
+      if (this.search_box && this.search_box.trim() !== '') {
+        this.ordersList = this.search.filter(
+          (item) =>
+            item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            this.formatOrderId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
+        )
+      } else {
+        this.ordersList = this.search
+      }
+    }
   }
 }
 </script>

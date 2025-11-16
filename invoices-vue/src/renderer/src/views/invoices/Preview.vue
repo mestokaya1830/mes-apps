@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatRechnungId }}</span>
+              <span class="meta-value">{{ formatInvoiceId }}</span>
             </div>
 
             <div class="meta-row">
@@ -295,7 +295,7 @@ export default {
     }
   },
   computed: {
-    formatRechnungId() {
+    formatInvoiceId() {
       if (!this.invoicesPreview || !this.invoicesPreview.id) return ''
       const year = new Date().getFullYear()
       return `RE-${year}-${String(this.invoicesPreview.id).padStart(5, '0')}`

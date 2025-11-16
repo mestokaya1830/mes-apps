@@ -4,7 +4,7 @@
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>
-        <h1 class="title">{{ title }}</h1>
+        <h1 class="title">{{ title }} {{ offersList.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Angebote</p>
       </div>
       <router-link to="/offers/create" class="add-btn">
@@ -16,16 +16,19 @@
       </router-link>
     </div>
 
+    <div>
+      <input v-model="search_box" type="search" @input="searchOffer()" placeholder="Suce..." />
+    </div>
     <!-- Offers Grid -->
     <div class="customer-grid">
       <div v-for="item in offersList" :key="item.id" class="customer-card">
         <!-- Card Header -->
         <div class="card-header">
           <div class="customer-avatar">
-            {{ item.id }}
+            {{ getInitials(item.customer.first_name, item.customer.last_name) }}
           </div>
           <div class="customer-info">
-            <h3 class="customer-name">{{ formatAngebotsId(item.id) }}</h3>
+            <h3 class="customer-name">{{ formatOfferId(item.id) }}</h3>
             <span class="customer-type-badge">{{ item.customer.company_name }}</span>
           </div>
           <div class="status-badge" :class="item.accepted ? 'active' : 'inactive'">
@@ -73,7 +76,9 @@ export default {
   data() {
     return {
       title: 'Angebote',
-      offersList: []
+      offersList: [],
+      search: [],
+      search_box: ''
     }
   },
   mounted() {
@@ -84,6 +89,10 @@ export default {
       try {
         const result = await window.api.getDocument('offers')
         this.offersList = result.rows.map((item) => ({
+          ...item,
+          customer: JSON.parse(item.customer)
+        }))
+        this.search = result.rows.map((item) => ({
           ...item,
           customer: JSON.parse(item.customer)
         }))
@@ -101,16 +110,32 @@ export default {
         }
       }
     },
-    formatAngebotsId(id) {
+    formatOfferId(id) {
       if (!id) return ''
       return `ANG-${String(id).padStart(6, '0')}`
+    },
+     getInitials(firstName, lastName) {
+      const first = firstName ? firstName.charAt(0).toUpperCase() : ''
+      const last = lastName ? lastName.charAt(0).toUpperCase() : ''
+      return first + last || '??'
+    },
+    searchOffer() {
+      if (this.search_box && this.search_box.trim() !== '') {
+        this.offersList = this.search.filter(
+          (item) =>
+            item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            this.formatOfferId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
+        )
+      } else {
+        this.offersList = this.search
+      }
     }
   }
 }
 </script>
 
 <style scoped>
-/* Kunden / Rechnungen CSS aynen uygulanıyor */
 
 .editor-panel {
   width: 100%;

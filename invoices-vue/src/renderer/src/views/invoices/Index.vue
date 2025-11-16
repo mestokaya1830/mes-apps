@@ -3,7 +3,7 @@
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>
-        <h1 class="title">{{ title }}</h1>
+        <h1 class="title">{{ title }} {{ invoiceList.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
       </div>
       <router-link to="/invoices/create" class="add-btn">
@@ -24,30 +24,33 @@
       </router-link>
     </div>
 
+    <div>
+      <input v-model="search_box" type="search" @input="searchInvoice()" placeholder="Suce..." />
+    </div>
     <!-- Invoice Grid -->
     <div class="customer-grid">
-      <div v-for="invoice in invoiceList" :key="invoice.id" class="customer-card">
+      <div v-for="item in invoiceList" :key="item.id" class="customer-card">
         <!-- Card Header -->
         <div class="card-header">
           <div class="customer-avatar">
-            {{ invoice.id }}
+            {{ getInitials(item.customer.first_name, item.customer.last_name) }}
           </div>
           <div class="customer-info">
-            <h3 class="customer-name">{{ formatRechnungId(invoice.id) }}</h3>
-            <span class="customer-type-badge">{{ invoice.customer.company_name }}</span>
+            <h3 class="customer-name">{{ formatInvoiceId(item.id) }}</h3>
+            <span class="customer-type-badge">{{ item.customer.company_name }}</span>
           </div>
-          <div class="status-badge" :class="invoice.is_active ? 'active' : 'inactive'">
-            {{ invoice.is_active ? 'Aktiv' : 'Storniert' }}
+          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+            {{ item.is_active ? 'Aktiv' : 'Storniert' }}
           </div>
 
-          <div class="status-badge" :class="invoice.status ? 'paid' : 'unpaid'">
-            {{ invoice.status ? 'Bezahlt' : 'Unbezahlt' }}
+          <div class="status-badge" :class="item.status ? 'paid' : 'unpaid'">
+            {{ item.status ? 'Bezahlt' : 'Unbezahlt' }}
           </div>
         </div>
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/invoices/details/' + invoice.id" class="action-btn details-btn">
+          <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -95,7 +98,9 @@ export default {
   data() {
     return {
       title: 'Rechnungen',
-      invoiceList: []
+      invoiceList: [],
+      search: [],
+      search_box: ''
     }
   },
   mounted() {
@@ -110,15 +115,37 @@ export default {
           customer: JSON.parse(item.customer),
           summary: JSON.parse(item.summary)
         }))
+        this.search = result.rows.map((item) => ({
+          ...item,
+          customer: JSON.parse(item.customer),
+          summary: JSON.parse(item.summary)
+        }))
         console.log(this.invoiceList)
       } catch (error) {
         console.error(error)
       }
     },
-    formatRechnungId(id) {
+    formatInvoiceId(id) {
       if (!id) return ''
       const year = new Date().getFullYear()
       return `RE-${year}-${String(id).padStart(5, '0')}`
+    },
+    getInitials(firstName, lastName) {
+      const first = firstName ? firstName.charAt(0).toUpperCase() : ''
+      const last = lastName ? lastName.charAt(0).toUpperCase() : ''
+      return first + last || '??'
+    },
+    searchInvoice() {
+      if (this.search_box && this.search_box.trim() !== '') {
+        this.invoiceList = this.search.filter(
+          (item) =>
+            item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            this.formatInvoiceId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
+        )
+      } else {
+        this.invoiceList = this.search
+      }
     }
   }
 }

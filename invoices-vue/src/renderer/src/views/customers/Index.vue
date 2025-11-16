@@ -3,11 +3,20 @@
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>
-        <h1 class="title">{{ title }}</h1>
+        <h1 class="title">{{ title }} {{ customers.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Kunden</p>
       </div>
-       <router-link to="/customers/create" class="add-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <router-link to="/customers/create" class="add-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -15,6 +24,9 @@
       </router-link>
     </div>
 
+    <div>
+      <input v-model="search_box" type="search" @input="searchCustomer()" placeholder="Suce..." />
+    </div>
     <!-- Customer Cards -->
     <div class="customer-grid">
       <div v-for="item in customers" :key="item.id" class="customer-card">
@@ -30,19 +42,41 @@
             {{ item.is_active ? 'Active' : 'Inactive' }}
           </div>
         </div>
-        
+
         <div class="card-actions">
           <router-link :to="'/customers/details/' + item.id" class="action-btn details-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
             Details
           </router-link>
           <button class="action-btn delete-btn" @click="deleteCustomer(item.id)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              ></path>
             </svg>
             Löschen
           </button>
@@ -52,7 +86,17 @@
 
     <!-- Empty State -->
     <div v-if="customers.length === 0" class="empty-state">
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="64"
+        height="64"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
         <circle cx="9" cy="7" r="4"></circle>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -70,7 +114,9 @@ export default {
   data() {
     return {
       title: 'Kunden',
-      customers: []
+      customers: [],
+      search: [],
+      search_box: ''
     }
   },
   mounted() {
@@ -81,6 +127,7 @@ export default {
       try {
         const result = await window.api.getCustomers()
         this.customers = result.customers
+        this.search = result.customers
       } catch (error) {
         console.error(error)
       }
@@ -101,6 +148,17 @@ export default {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
+    },
+    searchCustomer() {
+      if (this.search_box && this.search_box.trim() !== '') {
+        this.customers = this.search.filter(
+          (item) =>
+            item.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            item.last_name.toLowerCase().includes(this.search_box.toLowerCase())
+        )
+      } else {
+        this.customers = this.search
+      }
     }
   }
 }
