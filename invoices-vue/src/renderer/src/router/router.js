@@ -71,12 +71,6 @@ const routes = [
     component: () => import('../views/invoices/Details.vue'),
     meta: { title: 'Offer Details', auth: true }
   },
-  {
-    path: '/invoices/preview',
-    name: 'invoices-preview',
-    component: () => import('../views/invoices/Preview.vue'),
-    meta: { title: 'Invoice Preview', auth: true }
-  },
 
   //orrders
 
@@ -160,6 +154,36 @@ const routes = [
     name: 'About',
     component: () => import('../views/About.vue'),
     meta: { title: 'About' }
+  },
+
+  //reports
+
+  {
+    path: '/reports/invoices',
+    name: 'reports-invoices',
+    component: () => import('../views/reports/InvoicesReport.vue'),
+    meta: { title: 'Reports Invoices', auth: true }
+  },
+  {
+    path: '/reports/offers',
+    name: 'reports-offers',
+    component: () => import('../views/reports/OffersReport.vue'),
+    meta: { title: 'Reports Offers', auth: true }
+  },
+  {
+    path: '/reports/orders',
+    name: 'reports-orders',
+    component: () => import('../views/reports/OrdersReport.vue'),
+    meta: { title: 'Reports Orders', auth: true }
+  },
+
+  //not found
+
+  {
+    path: '/:catchAll(.*)',
+    name: 'NotFound',
+    component: () => import('../views/NotFound.vue'),
+    meta: { title: 'Not Found' }
   }
 ]
 
