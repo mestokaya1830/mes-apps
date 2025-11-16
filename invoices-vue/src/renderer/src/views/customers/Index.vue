@@ -26,6 +26,9 @@
 
     <div>
       <input v-model="search_box" type="search" @input="searchCustomer()" placeholder="Suce..." />
+      <input v-model="date_box_start" type="date" @input="dateFilter()" />
+      <input v-model="date_box_end" type="date" @input="dateFilter()" />
+      <div @click="sorting('id')">&#8645;</div>
     </div>
     <!-- Customer Cards -->
     <div class="customer-grid">
@@ -116,7 +119,10 @@ export default {
       title: 'Kunden',
       customers: [],
       search: [],
-      search_box: ''
+      search_box: '',
+      date_box_start: '',
+      date_box_end: '',
+      isSort: true
     }
   },
   mounted() {
@@ -159,6 +165,25 @@ export default {
       } else {
         this.customers = this.search
       }
+    },
+    dateFilter() {
+      if (this.date_box_start && this.date_box_end) {
+        this.customers = this.search.filter(
+          (item) => item.date >= this.date_box_start && item.date <= this.date_box_end
+        )
+      } else if (this.date_box_start && !this.date_box_end) {
+        this.customers = this.search.filter((item) => item.date == this.date_box_start)
+      } else {
+        this.customers = this.search
+      }
+    },
+    sorting(key) {
+      if (!key) return
+      this.customers.sort((a, b) => {
+        const res = a[key] > b[key] ? 1 : -1
+        return this.isSort ? res : -res
+      })
+      this.isSort = !this.isSort
     }
   }
 }

@@ -372,32 +372,3 @@ export default {
 // Freiberufler (Serbest meslek sahibi: doktor, avukat, danışman vb.)
 // Genossenschaft (Kooperatif / eG)
 // Verein (Dernek – kar amacı gütmeyen)
-
-
- filterAsDate() {
-      if (this.dateBox === 'all') {
-        this.leaguesLength = this.search.length
-        this.timeBox = 'all'
-        return this.leagues = _.groupBy(this.search, 'leagueid')
-      } else {
-        const temp = this.search.filter(item => moment(item.startdate).format('YYYY-MM-DD') === this.dateBox)
-        this.leagues = _.groupBy(temp, 'leagueid')
-        this.leaguesLength = temp.length
-      }
-    },
-    filterAsTime() {
-      if (this.dateBox === 'all') {
-        this.leaguesLength = this.search.length
-        this.timeBox = 'all'
-        return this.leagues = _.groupBy(this.search, 'leagueid')
-      } else {
-        let temp = this.search.filter(item => moment(item.startdate).format('YYYY-MM-DD') === this.dateBox)
-        this.leagues = _.groupBy(temp, 'leagueid')
-        this.leaguesLength = temp.length
-      }
-    },
-    searchFilter () {
-      let searchArray = this.search.filter(item => item.HomeTeam.toLowerCase().includes(this.searchBox.toLowerCase()) || item.AwayTeam.toLowerCase().includes(this.searchBox.toLowerCase()) || item.fixtureid.toString().slice(-3).includes(this.searchBox))
-      this.leagues = _.groupBy(searchArray, 'leagueid')
-      this.leaguesLength = searchArray.length
-    },

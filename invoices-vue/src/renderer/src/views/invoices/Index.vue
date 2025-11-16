@@ -24,8 +24,11 @@
       </router-link>
     </div>
 
-    <div>
-      <input v-model="search_box" type="search" @input="searchInvoice()" placeholder="Suce..." />
+    <div class="filter-container">
+      <input v-model="search_box" type="search" @input="searchFilter()" placeholder="Suce..." />
+      <input v-model="date_box_start" type="date" @input="dateFilter()" />
+      <input v-model="date_box_end" type="date" @input="dateFilter()" />
+      <div @click="sorting('id')">&#8645;</div>
     </div>
     <!-- Invoice Grid -->
     <div class="customer-grid">
@@ -95,12 +98,16 @@
 
 <script>
 export default {
+  name: 'Invoices',
   data() {
     return {
       title: 'Rechnungen',
       invoiceList: [],
       search: [],
-      search_box: ''
+      search_box: '',
+      date_box_start: '',
+      date_box_end: '',
+      isSort: true
     }
   },
   mounted() {
@@ -146,6 +153,25 @@ export default {
       } else {
         this.invoiceList = this.search
       }
+    },
+    dateFilter() {
+      if (this.date_box_start && this.date_box_end) {
+        this.invoiceList = this.search.filter(
+          (item) => item.date >= this.date_box_start && item.date <= this.date_box_end
+        )
+      } else if (this.date_box_start && !this.date_box_end) {
+        this.invoiceList = this.search.filter((item) => item.date == this.date_box_start)
+      } else {
+        this.invoiceList = this.search
+      }
+    },
+    sorting(key) {
+      if (!key) return
+      this.invoiceList.sort((a, b) => {
+        const res = a[key] > b[key] ? 1 : -1
+        return this.isSort ? res : -res
+      })
+      this.isSort = !this.isSort
     }
   }
 }
@@ -367,5 +393,11 @@ export default {
 .empty-state p {
   margin: 0;
   font-size: 14px;
+}
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 </style>
