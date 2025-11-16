@@ -21,7 +21,7 @@
       <input v-model="date_box_start" type="date" @input="dateFilter()" />
       <input v-model="date_box_end" type="date" @input="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
-       <router-link to="/reports/offers" class="preview-btn" @click="setStore">
+       <router-link to="/reports/offers" class="preview-btn">
         👁️ Report</router-link>
     </div>
     <!-- Offers Grid -->
