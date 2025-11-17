@@ -124,12 +124,7 @@ export default {
           customer: JSON.parse(item.customer),
           summary: JSON.parse(item.summary)
         }))
-        this.search = result.rows.map((item) => ({
-          ...item,
-          customer: JSON.parse(item.customer),
-          summary: JSON.parse(item.summary)
-        }))
-        console.log(this.invoiceList)
+        this.search = this.invoiceList
       } catch (error) {
         console.error(error)
       }
@@ -144,12 +139,14 @@ export default {
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    searchInvoice() {
+    searchFilter() {
+      console.log(this.search)
       if (this.search_box && this.search_box.trim() !== '') {
         this.invoiceList = this.search.filter(
           (item) =>
             item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
             item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
+            item.customer.company_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
             this.formatInvoiceId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
         )
       } else {
