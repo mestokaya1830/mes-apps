@@ -17,12 +17,8 @@ process.on('exit', () => db.close())
 
 export default db
 
-try {
-  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all()
-  console.log(
-    'Tablolar:',
-    tables.map((r) => r.name)
-  )
-} catch (err) {
-  console.error(err.message)
-}
+// try {
+//   db.prepare('DELETE FROM customers').run() // veya DROP TABLE users için: 'DROP TABLE users'
+// } catch (err) {
+//   console.error(err.message)
+// }

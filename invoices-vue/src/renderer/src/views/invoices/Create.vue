@@ -523,6 +523,7 @@ export default {
       console.time('commit')
       if (this.invoices) {
         this.storePreview('invoices', this.invoices)
+        console.log('invoices', this.invoices)
       }
       console.timeEnd('commit')
     }
@@ -530,6 +531,29 @@ export default {
 }
 </script>
 
+getUnitTotal(quantity, price, index) {
+//   const position = this.invoices.positions[index]
+//   if (!position) return
+
+//   const qty = Math.max(quantity, 0)
+//   const unitPrice = Math.max(price, 0)
+//   const base = qty * unitPrice
+//   const vat = position.vat || 0
+
+//   if (
+//     this.invoices.tax_options.is_reverse_charge ||
+//     this.invoices.tax_options.is_small_company ||
+//     this.invoices.tax_options.is_eu_delivery
+//   ) {
+//     position.vat = 0
+//     position.vat_unit = 0
+//     position.unit_total = parseFloat(base.toFixed(2))
+//   } else {
+//     const vatAmount = base * (vat / 100)
+//     position.vat_unit = parseFloat(vatAmount.toFixed(2))
+//     position.unit_total = parseFloat((base + vatAmount).toFixed(2))
+//   }
+// }
 <style>
 /* EDITOR PANEL */
 .editor-panel {

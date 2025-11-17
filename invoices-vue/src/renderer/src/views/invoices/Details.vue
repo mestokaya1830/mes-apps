@@ -149,7 +149,6 @@
               - {{ formatCurrency(invoice.payment.paid_amount, invoice.currency) }}
             </span>
           </div>
-
           <div
             v-if="invoice.summary && invoice.summary.outstanding > 0"
             class="total-row outstanding"

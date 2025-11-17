@@ -71,7 +71,12 @@ const routes = [
     component: () => import('../views/invoices/Details.vue'),
     meta: { title: 'Offer Details', auth: true }
   },
-
+  {
+    path: '/invoices/preview',
+    name: 'invoices-preview',
+    component: () => import('../views/invoices/Preview.vue'),
+    meta: { title: 'Rechnungen Vorschau', auth: true }
+  },
   //orrders
 
   {

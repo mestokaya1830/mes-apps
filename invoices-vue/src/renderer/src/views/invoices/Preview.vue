@@ -326,6 +326,7 @@ export default {
     getInvoicesPreview() {
       if (store.state.invoices) {
         this.invoicesPreview = store.state.invoices
+        console.log(this.invoicesPreview)
       }
     },
     getAuth() {

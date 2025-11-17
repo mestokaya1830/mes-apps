@@ -12,12 +12,14 @@
 import store from './store/store.js'
 import TitleBar from './components/preview/TitleBarPreview.vue'
 import SideBar from './components/preview/SideBarPreview.vue'
+
 export default {
   components: {
     TitleBar,
     SideBar
   },
   provide() {
+    const self = this
     return {
       formatCustomerId(value) {
         if (!value) return ''
@@ -37,7 +39,7 @@ export default {
           return error.message || ''
         }
       },
-      formatValidDays: (baseDate, validDays) => {
+      formatValidDays(baseDate, validDays) {
         if (!baseDate || !validDays) return ''
         const d = new Date(baseDate)
         d.setDate(d.getDate() + Number(validDays))
@@ -48,12 +50,10 @@ export default {
         })
       },
       formatCurrency(value, currency) {
-        if (!currency) return '0,00 €' // Default değer
+        if (!currency) return '0,00 €'
         const num = parseFloat(value) || 0
-        return new Intl.NumberFormat(currency.substr(4), {
-          style: 'currency',
-          currency: currency.substr(0, 3)
-        }).format(num)
+        const [curr, locale] = currency.split('.')
+        return new Intl.NumberFormat(locale, { style: 'currency', currency: curr }).format(num)
       },
       formatNumber(value) {
         return new Intl.NumberFormat('de-DE').format(value || 0)
@@ -66,59 +66,78 @@ export default {
 
         if (start > end) {
           alert('❌ Das Startdatum darf nicht nach dem Enddatum liegen.')
-          pos.service_period_end = '' // ← Reactive veri güncelleniyor
+          pos.service_period_end = ''
         }
       },
-      storePreview: this.storePreview
+      storePreview: self.storePreview
     }
   },
 
   data() {
-    return {
-      dynamicData: null
-    }
+    return {}
   },
-  computed: {
-    subTotal() {
-      if (!this.dynamicData) return 0
-      return this.dynamicData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
-    },
-    vatAmount() {
-      if (!this.dynamicData) return 0
-      return this.dynamicData.positions.reduce(
-        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-        0
-      )
-    },
-    total() {
-      return this.subTotal + this.vatAmount // Parantez kaldırıldı
-    },
-    outstanding() {
-      if (!this.dynamicData) return 0
-      if (this.dynamicData.payment.paid_amount) {
-        return this.total - this.dynamicData.payment.paid_amount // Parantez kaldırıldı
-      }
-      return 0
-    }
-  },
+
+  // computed: {
+  //   subTotal() {
+  //     return this.dynamicData?.positions?.reduce((sum, p) => sum + p.quantity * p.price, 0) || 0
+  //   },
+  //   vatAmount() {
+  //     return (
+  //       this.dynamicData?.positions?.reduce(
+  //         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+  //         0
+  //       ) || 0
+  //     )
+  //   },
+  //   total() {
+  //     return this.subTotal + this.vatAmount
+  //   },
+  //   outstanding() {
+  //     if (!this.dynamicData) return 0
+  //     const paid = this.dynamicData.payment?.paid_amount || 0
+  //     return this.total - paid
+  //   }
+  // },
+
   methods: {
     async storePreview(storeName, storeData) {
-      if (storeData && store) {
-        try {
-          this.dynamicData = {
-            ...storeData,
-            summary: {
-              subtotal: this.subTotal,
-              vat_amount: this.vatAmount,
-              total: this.total,
-              paid_amount: storeData.payment.paid_amount || 0,
-              outstanding: this.outstanding || 0
-            }
+      if (!storeData || !store) return
+
+      try {
+        // const positions = (storeData.positions || []).map((item) => {
+        //   const qty = Number(item.quantity || 0)
+        //   const price = Number(item.price || 0)
+        //   const vat = Number(item.vat || 0)
+        //   const vatUnit = Number(((price * vat) / 100).toFixed(2))
+        //   const unitTotal = Number((price + vatUnit).toFixed(2)) * qty
+        //   return { ...item, price, vat, vat_unit: vatUnit, unit_total: unitTotal }
+        // })
+
+        const subtotal = storeData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+        const vatAmount = storeData.positions.reduce(
+          (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+          0
+        )
+        const total = subtotal + vatAmount
+        const paidAmount = storeData.payment?.paid_amount || 0
+        const outstanding = total - paidAmount
+
+        const data = {
+          ...storeData,
+          summary: {
+            subtotal,
+            vat_amount: vatAmount,
+            total,
+            paid_amount: paidAmount,
+            outstanding
           }
-          await store.setStore(storeName, JSON.parse(JSON.stringify(this.dynamicData)))
-        } catch (error) {
-          console.error('Error storing preview:', error)
         }
+
+        if (data) {
+          await store.setStore(storeName, JSON.parse(JSON.stringify(data)))
+        }
+      } catch (error) {
+        console.error('Error storing preview:', error)
       }
     }
   }
