@@ -100,10 +100,7 @@ export default {
           ...item,
           customer: JSON.parse(item.customer)
         }))
-        this.search = result.rows.map((item) => ({
-          ...item,
-          customer: JSON.parse(item.customer)
-        }))
+        this.search = this.ordersList
       } catch (error) {
         console.error(error)
       }

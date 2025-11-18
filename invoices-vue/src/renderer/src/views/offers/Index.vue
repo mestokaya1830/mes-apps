@@ -18,8 +18,8 @@
 
     <div class="filter-container">
       <input v-model="search_box" type="search" @input="searchOffer()" placeholder="Suce..." />
-      <input v-model="date_box_start" type="date" @input="dateFilter()" />
-      <input v-model="date_box_end" type="date" @input="dateFilter()" />
+      <input v-model="date_box_start" type="date" @change="dateFilter()" />
+      <input v-model="date_box_end" type="date" @change="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
        <router-link to="/reports/offers" class="preview-btn">
         👁️ Report</router-link>
@@ -100,10 +100,7 @@ export default {
           ...item,
           customer: JSON.parse(item.customer)
         }))
-        this.search = result.rows.map((item) => ({
-          ...item,
-          customer: JSON.parse(item.customer)
-        }))
+        this.search = this.offersList
       } catch (error) {
         console.error(error)
       }

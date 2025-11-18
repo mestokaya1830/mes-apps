@@ -644,3 +644,16 @@ ipcMain.handle('set-paid-status', async (data, id, tableName, value) => {
     return { success: false, message: err.message }
   }
 })
+
+ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
+  try {
+    console.log(startDate, endDate)
+    const rows = db
+      .prepare(`SELECT * FROM ${tableName} WHERE date BETWEEN ? AND ?`)
+      .all(startDate, endDate)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
