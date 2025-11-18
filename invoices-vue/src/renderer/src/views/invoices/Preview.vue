@@ -362,7 +362,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 /* PREVIEW PANEL */
 .preview-panel {
   width: 80%;

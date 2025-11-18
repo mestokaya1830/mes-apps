@@ -50,10 +50,12 @@ export default {
         })
       },
       formatCurrency(value, currency) {
-        if (!currency) return '0,00 €'
-        const num = parseFloat(value) || 0
-        const [curr, locale] = currency.split('.')
-        return new Intl.NumberFormat(locale, { style: 'currency', currency: curr }).format(num)
+        if (currency == undefined) {
+          currency = 'EUR.de-DE'
+          const num = parseFloat(value) || 0
+          const [curr, locale] = currency.split('.')
+          return new Intl.NumberFormat(locale, { style: 'currency', currency: curr }).format(num)
+        }
       },
       formatNumber(value) {
         return new Intl.NumberFormat('de-DE').format(value || 0)
@@ -77,42 +79,10 @@ export default {
     return {}
   },
 
-  // computed: {
-  //   subTotal() {
-  //     return this.dynamicData?.positions?.reduce((sum, p) => sum + p.quantity * p.price, 0) || 0
-  //   },
-  //   vatAmount() {
-  //     return (
-  //       this.dynamicData?.positions?.reduce(
-  //         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-  //         0
-  //       ) || 0
-  //     )
-  //   },
-  //   total() {
-  //     return this.subTotal + this.vatAmount
-  //   },
-  //   outstanding() {
-  //     if (!this.dynamicData) return 0
-  //     const paid = this.dynamicData.payment?.paid_amount || 0
-  //     return this.total - paid
-  //   }
-  // },
-
   methods: {
     async storePreview(storeName, storeData) {
       if (!storeData || !store) return
-
       try {
-        // const positions = (storeData.positions || []).map((item) => {
-        //   const qty = Number(item.quantity || 0)
-        //   const price = Number(item.price || 0)
-        //   const vat = Number(item.vat || 0)
-        //   const vatUnit = Number(((price * vat) / 100).toFixed(2))
-        //   const unitTotal = Number((price + vatUnit).toFixed(2)) * qty
-        //   return { ...item, price, vat, vat_unit: vatUnit, unit_total: unitTotal }
-        // })
-
         const subtotal = storeData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
         const vatAmount = storeData.positions.reduce(
           (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
