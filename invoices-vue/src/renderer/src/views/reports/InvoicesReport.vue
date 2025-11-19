@@ -32,7 +32,7 @@
         <option value="prognose">Umsatzprognose</option>
       </select>
 
-      <div class="report-container">
+      <div class="report-container printable">
         <div class="report-header">
           <div>
             <h2>Umsatzbericht</h2>
@@ -235,7 +235,7 @@ export default {
         this.reportSummary.average = this.reportSummary.total / this.reports.length
       }
     },
-    printReport() {
+    async printReport() {
       window.print()
     }
   }
@@ -596,106 +596,21 @@ export default {
 
 /* PRINT STYLES */
 @media print {
-  body {
-    background: white;
-    padding: 0;
+  body * {
+    visibility: hidden;
   }
-
-  .editor-panel {
-    box-shadow: none;
-    padding: 20px;
-    max-width: 100%;
+  .printable,
+  .printable * {
+    visibility: visible;
+    -webkit-print-color-adjust: exact; /* Chrome, Safari */
+    print-color-adjust: exact; /* Firefox */
   }
-
-  /* Formları gizle - sadece raporu yazdır */
-  .form-section,
-  .form-input:not(.search-input),
-  h1,
-  .btn-export {
-    display: none !important;
+  .printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #fff; /* istediğin arka plan */
   }
-
-  .report-container {
-    margin-top: 0;
-  }
-
-  .report-header {
-    page-break-after: avoid;
-  }
-
-  /* Özet kartları yazdırma için optimize et */
-  .summary-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-    page-break-inside: avoid;
-  }
-
-  .summary-card {
-    padding: 15px;
-    box-shadow: none;
-    border: 1px solid #ddd;
-    page-break-inside: avoid;
-  }
-
-  /* Grafik bölümü */
-  .chart-section {
-    page-break-inside: avoid;
-    margin-bottom: 20px;
-  }
-
-  /* Tablo optimizasyonu */
-  .table-section {
-    page-break-inside: avoid;
-  }
-
-  .search-input {
-    display: none;
-  }
-
-  .report-table {
-    font-size: 10px;
-    page-break-inside: auto;
-  }
-
-  .report-table thead {
-    display: table-header-group;
-    background: #f3f4f6 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .report-table tbody tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
-  }
-
-  .report-table tfoot {
-    display: table-footer-group;
-  }
-
-  /* Status badges için renkler */
-  .status-badge {
-    border: 1px solid #ccc;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Tax breakdown */
-  .tax-breakdown {
-    page-break-before: avoid;
-    page-break-inside: avoid;
-    margin-top: 20px;
-  }
-
-  /* Bar chart yazdırma */
-  .bar-chart {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* Sayfa numarası ekle */
   @page {
     margin: 1.5cm;
     @bottom-right {
