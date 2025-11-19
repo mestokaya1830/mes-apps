@@ -526,6 +526,8 @@ export default {
 
 /* Summary Section */
 .summary-section {
+  display: flex;
+  flex-direction: column;
   margin-left: auto;
   width: 300px;
   margin-bottom: 40px;

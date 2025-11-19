@@ -52,10 +52,10 @@ export default {
       formatCurrency(value, currency) {
         if (currency == undefined) {
           currency = 'EUR.de-DE'
-          const num = parseFloat(value) || 0
-          const [curr, locale] = currency.split('.')
-          return new Intl.NumberFormat(locale, { style: 'currency', currency: curr }).format(num)
         }
+        const num = parseFloat(value) || 0
+        const [curr, locale] = currency.split('.')
+        return new Intl.NumberFormat(locale, { style: 'currency', currency: curr }).format(num)
       },
       formatNumber(value) {
         return new Intl.NumberFormat('de-DE').format(value || 0)
