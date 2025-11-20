@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="editor-panel">
-      <h1>{{ title }}</h1>
+      <h1>{{ title }} <h2 v-if="reportsLength">{{ reportsLength }}</h2> </h1>
       <select v-model="report_static_date" class="form-input" @change="getStaticDate">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>
@@ -25,7 +25,7 @@
       <div v-if="is_ready" class="report-container printable">
         <div class="report-header">
           <div>
-            <h2>Umsatzbericht</h2>
+            <h2>{{ title }}</h2>
             <p class="report-period">Zeitraum: {{ period.start }} - {{ period.end }}</p>
           </div>
           <button class="btn-export" @click="printReport">🖨️ Drucken</button>
@@ -146,7 +146,8 @@ export default {
         end: ''
       },
       reportSummary: {},
-      is_ready: false
+      is_ready: false,
+      reportsLength: 0
     }
   },
 
@@ -220,6 +221,7 @@ export default {
         })
         this.reportSummary.average = this.reportSummary.total / this.reports.length
       }
+      this.reportsLength = this.reports.length
     },
     async printReport() {
       window.print()

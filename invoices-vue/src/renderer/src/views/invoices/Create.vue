@@ -18,13 +18,13 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
-            <input v-model="invoices.date" type="date" class="form-input" required />
-          </div>
-          <div class="form-group">
             <label class="form-label">Leistungsdatum <span class="stars">*</span></label>
             <input v-model="invoices.service_date" type="date" class="form-input" />
             <small class="form-hint">Datum der Leistungserbringung</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
+            <input v-model="invoices.date" type="date" class="form-input" required />
           </div>
         </div>
         <div class="form-group">
@@ -408,6 +408,7 @@ export default {
           is_eu_delivery: false
         },
         payment: {
+          payment_date: '',
           paid_amount: 0,
           payment_terms: 14,
           payment_conditions: '',
@@ -522,8 +523,10 @@ export default {
     setStore() {
       console.time('commit')
       if (this.invoices) {
+        const d = new Date(this.invoices.date)
+        d.setDate(d.getDate() + this.invoices.payment.payment_terms)
+        this.invoices.payment.payment_date = d.toISOString().split('T')[0]
         this.storePreview('invoices', this.invoices)
-        console.log('invoices', this.invoices)
       }
       console.timeEnd('commit')
     }
@@ -531,29 +534,6 @@ export default {
 }
 </script>
 
-getUnitTotal(quantity, price, index) {
-//   const position = this.invoices.positions[index]
-//   if (!position) return
-
-//   const qty = Math.max(quantity, 0)
-//   const unitPrice = Math.max(price, 0)
-//   const base = qty * unitPrice
-//   const vat = position.vat || 0
-
-//   if (
-//     this.invoices.tax_options.is_reverse_charge ||
-//     this.invoices.tax_options.is_small_company ||
-//     this.invoices.tax_options.is_eu_delivery
-//   ) {
-//     position.vat = 0
-//     position.vat_unit = 0
-//     position.unit_total = parseFloat(base.toFixed(2))
-//   } else {
-//     const vatAmount = base * (vat / 100)
-//     position.vat_unit = parseFloat(vatAmount.toFixed(2))
-//     position.unit_total = parseFloat((base + vatAmount).toFixed(2))
-//   }
-// }
 <style>
 /* EDITOR PANEL */
 .editor-panel {
@@ -737,7 +717,8 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
-.stars{
+.stars {
   color: darkred;
-  font-size: 16px;}
+  font-size: 16px;
+}
 </style>
