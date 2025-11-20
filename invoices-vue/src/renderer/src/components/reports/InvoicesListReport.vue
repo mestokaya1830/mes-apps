@@ -68,7 +68,7 @@
               <div class="card-icon">⚠️</div>
               <div class="card-content">
                 <p class="card-label">Überfällig</p>
-                <h3 class="card-value">{{ overdueInvoices }}</h3>
+                <h3 class="card-value">{{ overdueInvoicesLength }}</h3>
                 <p class="card-detail">8% der Rechnungen</p>
               </div>
             </div>
@@ -139,7 +139,6 @@
                 <th class="sortable">Rechnungsnr. <span class="sort-icon">▼</span></th>
                 <th class="sortable">Datum <span class="sort-icon">▼</span></th>
                 <th>Kunde</th>
-                <th class="sortable">Fälligkeitsdatum <span class="sort-icon">▼</span></th>
                 <th class="center">MwSt</th>
                 <th class="sortable amount">Netto <span class="sort-icon">▼</span></th>
                 <th class="sortable amount">MwSt-Betrag <span class="sort-icon">▼</span></th>
@@ -154,15 +153,20 @@
                 <td>
                   <span class="invoice-number">{{ formatInvoiceId(item.id) }}</span>
                 </td>
-                <td>{{ item.date }}</td>
-                <td><span class="customer-name">{{ item.customer.company_name }}</span></td>
-                <td>{{ item.due_date }}</td>
+                <td>{{ formatDate(item.date) }}</td>
+                <td>
+                  <span class="customer-name">{{ item.customer.company_name }}</span>
+                </td>
                 <td class="center">19%</td>
                 <td class="amount">{{ formatCurrency(item.summary.subtotal) }}</td>
                 <td class="amount">{{ formatCurrency(item.summary.vat_amount) }}</td>
                 <td class="amount">{{ formatCurrency(item.summary.total) }}</td>
-                <td><span class="status-badge paid">{{ item.status }}</span></td>
-                <td>{{ item.payment_date }}</td>
+                <td>
+                  <span class="status-badge paid">{{ item.status }}</span>
+                </td>
+                <td :class="getPaymentClass(item.payment)">
+                  {{ formatDate(item.payment.payment_date) }}
+                </td>
                 <!-- <td>
                   <div class="action-buttons">
                     <button class="action-btn">👁️</button>
@@ -195,6 +199,7 @@ export default {
       },
       reportSummary: {},
       is_ready: false,
+      is_paid: false,
       reportsLength: 0
     }
   },
@@ -208,12 +213,17 @@ export default {
       if (!this.reports) return 0
       return this.reports.filter((item) => item.status == 0).length
     },
+    overdueInvoicesLength() {
+      if (!this.reports) return 0
+      const d = new Date()
+      const today = d.toISOString().slice(0, 10)
+      return this.reports.filter((item) => item.payment_date > today).length
+    },
     overdueInvoices() {
       if (!this.reports) return 0
       const d = new Date()
       const today = d.toISOString().slice(0, 10)
-      console.log(this.reports.payment)
-      return this.reports.filter((item) => item.payment_date > today).length
+      return this.reports.filter((item) => item.payment_date > today)
     }
   },
   methods: {
@@ -264,7 +274,16 @@ export default {
           this.date_box_end
         )
         if (result.success) {
-          this.reports = result.rows
+          this.reports = result.rows.map((row) => ({
+            ...row,
+            customer: JSON.parse(row.customer),
+            payment: JSON.parse(row.payment),
+            positions: JSON.parse(row.positions),
+            summary: JSON.parse(row.summary),
+            tax_options: JSON.parse(row.tax_options)
+          }))
+          this.period.start = this.date_box_start
+          this.period.end = this.date_box_end
           this.is_ready = true
           this.reportSummaryFunction()
         }
@@ -288,6 +307,16 @@ export default {
       }
       this.reportsLength = this.reports.length
     },
+    getPaymentClass(item) {
+      const d = new Date()
+      const today = d.toISOString().slice(0, 10)
+      console.log(item.is_paid)
+      if (item.is_paid)
+        return 'paid' // Yeşil
+      else if (item.payment_date.trim() < today)
+        return 'overdue' // Kırmızı
+      else return 'pending' // Sarı
+    },
     async printReport() {
       window.print()
     }
@@ -296,6 +325,15 @@ export default {
 </script>
 
 <style>
+.paid {
+  color: green;
+}
+.overdue {
+  color: red;
+}
+.pading {
+  color: yellow;
+}
 .editor-panel {
   max-width: 1400px;
   background: white;
