@@ -419,13 +419,38 @@ const insertCustomer = db.prepare(`
 `)
 
 const firstNames = [
-  'Anna','Lukas','Mia','Jonas','Lea','Paul','Sophie','Niklas','Klara','Felix'
+  'Anna',
+  'Lukas',
+  'Mia',
+  'Jonas',
+  'Lea',
+  'Paul',
+  'Sophie',
+  'Niklas',
+  'Klara',
+  'Felix'
 ]
 const lastNames = [
-  'Müller','Schmidt','Becker','Fischer','Weber','Wagner','Koch','Richter','Klein'
+  'Müller',
+  'Schmidt',
+  'Becker',
+  'Fischer',
+  'Weber',
+  'Wagner',
+  'Koch',
+  'Richter',
+  'Klein'
 ]
 const cities = [
-  'Berlin','Hamburg','München','Köln','Düsseldorf','Leipzig','Frankfurt','Stuttgart','Bremen'
+  'Berlin',
+  'Hamburg',
+  'München',
+  'Köln',
+  'Düsseldorf',
+  'Leipzig',
+  'Frankfurt',
+  'Stuttgart',
+  'Bremen'
 ]
 
 const rand = (arr) => arr[Math.floor(Math.random() * arr.length)]
@@ -492,19 +517,7 @@ for (let i = 1; i <= 100; i++) {
     .toISOString()
     .split('T')[0]
 
-  const payment = {
-    paid_amount: isPaid ? rand([100, 200, 300, 400]) : 0,
-    payment_terms,
-    payment_conditions: 'Zahlbar innerhalb von 14 Tagen.',
-    payment_reference: `RE-${1000 + i}`,
-    payment_date,
-    is_paid: isPaid,
-    has_skonto: false,
-    skonto_percentage: 2,
-    skonto_days: 7,
-    verwendungszweck: `Rechnung ${1000 + i}`
-  }
-
+  // hesaplanacak tutarlar
   const qty = randQty()
   const price = randPrice()
   const vat = isSmallCompany ? 0 : 19
@@ -527,18 +540,40 @@ for (let i = 1; i <= 100; i++) {
     }
   ]
 
+  const total = Number((qty * unit_total).toFixed(2))
+  const vat_amount = Number((qty * vat_unit).toFixed(2))
+  const subtotal = Number((qty * price).toFixed(2))
+
+  // paid_amount üretimi: önce rastgele seç, sonra total'ı aşmaması için clamp et
+  const randomPaid = isPaid ? rand([50, 100, 150, 200, 300, 400]) : 0
+  const paid_amount = Number(Math.min(randomPaid, total).toFixed(2))
+
+  const payment = {
+    paid_amount, // kesinlikle total'ı aşmaz
+    payment_terms,
+    payment_conditions: 'Zahlbar innerhalb von 14 Tagen.',
+    payment_reference: `RE-${1000 + i}`,
+    payment_date,
+    is_paid: isPaid,
+    has_skonto: false,
+    skonto_percentage: 2,
+    skonto_days: 7,
+    verwendungszweck: `Rechnung ${1000 + i}`
+  }
+
   const tax_options = {
     is_small_company: isSmallCompany,
     is_reverse_charge: false,
     is_eu_delivery: false
   }
 
+  // summary: paid_amount buradan alınıyor, outstanding = total - paid_amount
   const summary = {
-    subtotal: Number((qty * price).toFixed(2)),
-    vat_amount: Number(qty * vat_unit).toFixed(2),
-    total: Number((qty * unit_total).toFixed(2)),
-    paid_amount: payment.paid_amount,
-    outstanding: Number(qty * price + vat_unit - payment.paid_amount).toFixed(2)
+    subtotal,
+    vat_amount,
+    total,
+    paid_amount: paid_amount,
+    outstanding: Number((total - paid_amount).toFixed(2))
   }
 
   insertInvoice.run({
@@ -553,3 +588,4 @@ for (let i = 1; i <= 100; i++) {
     summary: JSON.stringify(summary)
   })
 }
+

@@ -131,51 +131,71 @@
           <button class="filter-tab">Überfällig <span class="tab-count">2</span></button>
         </div> -->
 
-        <!-- Table -->
-        <div class="table-container">
+         <!-- Table -->
+        <div class="table-section">
+          <h3>Detaillierte Rechnungsliste</h3>
           <table class="report-table">
             <thead>
               <tr>
-                <th class="sortable">Rechnungsnr. <span class="sort-icon">▼</span></th>
-                <th class="sortable">Datum <span class="sort-icon">▼</span></th>
+                <th>Rechnungsnr.</th>
+                <th>Datum</th>
                 <th>Kunde</th>
-                <th class="center">MwSt</th>
-                <th class="sortable amount">Netto <span class="sort-icon">▼</span></th>
-                <th class="sortable amount">MwSt-Betrag <span class="sort-icon">▼</span></th>
-                <th class="sortable amount">Brutto <span class="sort-icon">▼</span></th>
+                <th>Nettobetrag</th>
+                <th>MwSt</th>
+                <th>Bruttobetrag</th>
+                <th>Teilweise bezahlt</th>
+                <th>Offener Betrag</th>
+                <th>Fälligkeit</th>
+                <th>Zahlungsstatus</th>
                 <th>Status</th>
-                <th>Zahlungsdatum</th>
-                <!-- <th>Aktionen</th> -->
               </tr>
             </thead>
-            <tbody>
+            <tbody v-if="reports">
               <tr v-for="item in reports" :key="item.id">
                 <td>
-                  <span class="invoice-number">{{ formatInvoiceId(item.id) }}</span>
+                  <strong>{{ formatInvoiceId(item.id) }}</strong>
                 </td>
                 <td>{{ formatDate(item.date) }}</td>
-                <td>
-                  <span class="customer-name">{{ item.customer.company_name }}</span>
-                </td>
-                <td class="center">19%</td>
+                <td>{{ item.customer.company_name }}</td>
                 <td class="amount">{{ formatCurrency(item.summary.subtotal) }}</td>
                 <td class="amount">{{ formatCurrency(item.summary.vat_amount) }}</td>
-                <td class="amount">{{ formatCurrency(item.summary.total) }}</td>
+                <td class="amount">
+                  <strong>{{ formatCurrency(item.summary.total) }}</strong>
+                </td>
+                <td class="amount">
+                  <strong>{{ formatCurrency(item.summary.paid_amount) }}</strong>
+                </td>
+                <td class="amount">
+                  <strong>{{ formatCurrency(item.summary.outstanding) }}</strong>
+                </td>
                 <td>
-                  <span class="status-badge paid">{{ item.status }}</span>
+                  <span class="status-badge overdue">{{ getDaysOverdue(item.payment) }}</span>
                 </td>
-                <td :class="getPaymentClass(item.payment)">
-                  {{ formatDate(item.payment.payment_date) }}
+                <td>
+                  <span :class="getPaymentClass(item.payment)">{{
+                    formatDate(item.payment.payment_date)
+                  }}</span>
                 </td>
-                <!-- <td>
-                  <div class="action-buttons">
-                    <button class="action-btn">👁️</button>
-                    <button class="action-btn">✏️</button>
-                    <button class="action-btn">📧</button>
-                  </div>
-                </td> -->
+                <td>
+                  <span class="status-badge paid">{{ item.is_active }}</span>
+                </td>
               </tr>
             </tbody>
+            <tfoot v-if="reportSummary">
+              <tr class="total-row">
+                <td colspan="3"><strong>SUMME</strong></td>
+                <td class="amount">
+                  <strong>{{ formatCurrency(reportSummary.total) }}</strong>
+                </td>
+                <td class="amount">
+                  <strong>{{ formatCurrency(reportSummary.paid_amount) }}</strong>
+                </td>
+                <td class="amount">
+                  <strong>{{ formatCurrency(reportSummary.outstanding) }}</strong>
+                </td>
+                <td class="amount" colspan="2"></td>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
@@ -316,6 +336,12 @@ export default {
       else if (item.payment_date.trim() < today)
         return 'overdue' // Kırmızı
       else return 'pending' // Sarı
+    },
+    getDaysOverdue(item) {
+      const today = new Date()
+      const paymentDate = new Date(item.payment_date)
+      const diffTime = paymentDate - today
+      return Math.floor(diffTime / (1000 * 60 * 60 * 24))
     },
     async printReport() {
       window.print()

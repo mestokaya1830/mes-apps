@@ -413,12 +413,12 @@ export default {
           payment_terms: 14,
           payment_conditions: '',
           payment_reference: '',
+          is_paid: false,
           has_skonto: false,
           skonto_percentage: 2,
           skonto_days: 7,
           verwendungszweck: ''
         },
-        status: 0,
         is_active: 1
       }
     }

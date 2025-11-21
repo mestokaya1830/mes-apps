@@ -471,7 +471,6 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
         `
     INSERT INTO invoices (
       date,
-      status,
       is_active,
       currency,
       service_date,
@@ -480,11 +479,10 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
       positions,
       tax_options,
       summary
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
       ).run(
         data.date,
-        data.status,
         data.is_active,
         data.currency,
         data.service_date,

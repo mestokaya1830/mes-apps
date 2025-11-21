@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="editor-panel">
-      <h1>{{ title }} <h2 v-if="reportsLength">{{ reportsLength }}</h2> </h1>
+      <h1>
+        {{ title }}
+        <h2 v-if="reportsLength">{{ reportsLength }}</h2>
+      </h1>
       <select v-model="report_static_date" class="form-input" @change="getStaticDate">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>
@@ -34,38 +37,54 @@
         <div class="summary-section">
           <!-- Summary Cards -->
           <div class="summary-cards">
+            <!-- PÜNKTLICH BEZAHLT -->
             <div class="summary-card">
               <div class="card-icon">✅</div>
               <div class="card-content">
                 <p class="card-label">Pünktlich Bezahlt</p>
-                <h3 class="card-value">€38.200,00</h3>
-                <p class="card-detail">18 Rechnungen (75%)</p>
+                <h3 class="card-value">
+                  {{ formatCurrency(invoiceStats.paid.amount) }}
+                </h3>
+                <p class="card-detail">
+                  {{ invoiceStats.paid.count }} Rechnungen ({{ invoiceStats.paid.percent }}%)
+                </p>
               </div>
             </div>
 
+            <!-- FÄLLIG (AUSSTEHEND) -->
             <div class="summary-card">
               <div class="card-icon">⏳</div>
               <div class="card-content">
                 <p class="card-label">Ausstehend (fällig)</p>
-                <h3 class="card-value">€4.850,00</h3>
-                <p class="card-detail">4 Rechnungen (17%)</p>
+                <h3 class="card-value">
+                  {{ formatCurrency(invoiceStats.pending.amount) }}
+                </h3>
+                <p class="card-detail">
+                  {{ invoiceStats.pending.count }} Rechnungen ({{ invoiceStats.pending.percent }}%)
+                </p>
               </div>
             </div>
 
+            <!-- ÜBERFÄLLIG -->
             <div class="summary-card">
               <div class="card-icon">⚠️</div>
               <div class="card-content">
                 <p class="card-label">Überfällig</p>
-                <h3 class="card-value">€2.800,00</h3>
-                <p class="card-detail">2 Rechnungen (8%)</p>
+                <h3 class="card-value">
+                  {{ formatCurrency(invoiceStats.overdue.amount) }}
+                </h3>
+                <p class="card-detail">
+                  {{ invoiceStats.overdue.count }} Rechnungen ({{ invoiceStats.overdue.percent }}%)
+                </p>
               </div>
             </div>
 
+            <!-- Ø ZAHLUNGSZIEL -->
             <div class="summary-card">
               <div class="card-icon">📊</div>
               <div class="card-content">
                 <p class="card-label">Zahlungsziel Ø</p>
-                <h3 class="card-value">14 Tage</h3>
+                <h3 class="card-value">{{ invoiceStats.averageDays }} Tage</h3>
                 <p class="card-detail">Durchschnitt</p>
               </div>
             </div>
@@ -76,7 +95,6 @@
           </div>
         </div>
 
-        <!-- Table -->
         <!-- Donut Chart & Aging -->
         <div class="chart-row">
           <div class="donut-section">
@@ -85,7 +103,7 @@
               <div class="donut-chart">
                 <div class="donut-ring">
                   <div class="donut-hole">
-                    <div class="donut-total">24</div>
+                    <div class="donut-total">{{ paymentStats.totalInvoices }}</div>
                     <div class="donut-label">Rechnungen</div>
                   </div>
                 </div>
@@ -95,24 +113,34 @@
                   <div class="legend-color paid"></div>
                   <div class="legend-text">
                     <div class="legend-title">Bezahlt</div>
-                    <div class="legend-value">€38.200</div>
-                    <div class="legend-detail">18 Rg. (75%)</div>
+                    <div class="legend-value">{{ formatCurrency(paymentStats.paid.amount) }}</div>
+                    <div class="legend-detail">
+                      {{ paymentStats.paid.count }} Rg. ({{ paymentStats.paid.percent }}%)
+                    </div>
                   </div>
                 </div>
                 <div class="legend-item">
                   <div class="legend-color pending"></div>
                   <div class="legend-text">
                     <div class="legend-title">Ausstehend</div>
-                    <div class="legend-value">€4.850</div>
-                    <div class="legend-detail">4 Rg. (17%)</div>
+                    <div class="legend-value">
+                      {{ formatCurrency(paymentStats.pending.amount) }}
+                    </div>
+                    <div class="legend-detail">
+                      {{ paymentStats.pending.count }} Rg. ({{ paymentStats.pending.percent }}%)
+                    </div>
                   </div>
                 </div>
                 <div class="legend-item">
                   <div class="legend-color overdue"></div>
                   <div class="legend-text">
                     <div class="legend-title">Überfällig</div>
-                    <div class="legend-value">€2.800</div>
-                    <div class="legend-detail">2 Rg. (8%)</div>
+                    <div class="legend-value">
+                      {{ formatCurrency(paymentStats.overdue.amount) }}
+                    </div>
+                    <div class="legend-detail">
+                      {{ paymentStats.overdue.count }} Rg. ({{ paymentStats.overdue.percent }}%)
+                    </div>
                   </div>
                 </div>
               </div>
@@ -132,47 +160,23 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><strong>0-30 Tage</strong></td>
-                  <td class="amount">€38.200,00</td>
-                  <td>18</td>
-                  <td class="percent">83%</td>
+                <tr v-for="row in agingStats" :key="row.label">
                   <td>
-                    <div class="progress-bar">
-                      <div class="progress-fill" style="width: 83%"></div>
-                    </div>
+                    <strong>{{ row.label }}</strong>
                   </td>
-                </tr>
-                <tr>
-                  <td><strong>31-60 Tage</strong></td>
-                  <td class="amount">€4.850,00</td>
-                  <td>4</td>
-                  <td class="percent">11%</td>
+                  <td class="amount">{{ formatCurrency(row.amount) }}</td>
+                  <td>{{ row.count }}</td>
+                  <td class="percent">{{ row.percent }}%</td>
                   <td>
                     <div class="progress-bar">
-                      <div class="progress-fill warning" style="width: 11%"></div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><strong>61-90 Tage</strong></td>
-                  <td class="amount">€1.900,00</td>
-                  <td>1</td>
-                  <td class="percent">4%</td>
-                  <td>
-                    <div class="progress-bar">
-                      <div class="progress-fill danger" style="width: 4%"></div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td><strong>> 90 Tage</strong></td>
-                  <td class="amount">€900,00</td>
-                  <td>1</td>
-                  <td class="percent">2%</td>
-                  <td>
-                    <div class="progress-bar">
-                      <div class="progress-fill danger" style="width: 2%"></div>
+                      <div
+                        class="progress-fill"
+                        :class="{
+                          warning: row.percent > 10 && row.percent < 50,
+                          danger: row.percent >= 50
+                        }"
+                        :style="{ width: row.percent + '%' }"
+                      ></div>
                     </div>
                   </td>
                 </tr>
@@ -186,124 +190,79 @@
           <h3>Detaillierte Übersicht</h3>
 
           <div class="filter-tabs">
-            <button class="filter-tab active">Alle (24)</button>
-            <button class="filter-tab">Bezahlt (18)</button>
-            <button class="filter-tab">Ausstehend (4)</button>
-            <button class="filter-tab">Überfällig (2)</button>
+            <button class="filter-tab active">Alle {{ filterCounts.all }}</button>
+            <button class="filter-tab">Bezahlt ({{ filterCounts.paid }})</button>
+            <button class="filter-tab">Ausstehend ({{ filterCounts.pending }})</button>
+            <button class="filter-tab">Überfällig ({{ filterCounts.overdue }})</button>
           </div>
 
-          <input
-            type="text"
-            placeholder="Suche nach Rechnungsnummer oder Kunde..."
-            class="search-input"
-          />
-
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th>Rechnungsnr.</th>
-                <th>Kunde</th>
-                <th>Rechnungsdatum</th>
-                <th>Fälligkeitsdatum</th>
-                <th>Betrag</th>
-                <th>Status</th>
-                <th>Tage seit Fälligkeit</th>
-                <th>Zahlungsdatum</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>RE-2025-0124</strong></td>
-                <td>Müller GmbH</td>
-                <td>15.11.2025</td>
-                <td>29.11.2025</td>
-                <td class="amount">€2.499,00</td>
-                <td><span class="status-badge paid">Bezahlt</span></td>
-                <td><span class="days-badge ok">-12</span></td>
-                <td>17.11.2025</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0123</strong></td>
-                <td>Schmidt AG</td>
-                <td>12.11.2025</td>
-                <td>26.11.2025</td>
-                <td class="amount">€1.785,00</td>
-                <td><span class="status-badge pending">Ausstehend</span></td>
-                <td><span class="days-badge ok">-8</span></td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0122</strong></td>
-                <td>Weber & Co</td>
-                <td>08.11.2025</td>
-                <td>22.11.2025</td>
-                <td class="amount">€3.808,00</td>
-                <td><span class="status-badge paid">Bezahlt</span></td>
-                <td><span class="days-badge ok">-12</span></td>
-                <td>10.11.2025</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0121</strong></td>
-                <td>Fischer KG</td>
-                <td>05.11.2025</td>
-                <td>19.11.2025</td>
-                <td class="amount">€1.059,10</td>
-                <td><span class="status-badge overdue">Überfällig</span></td>
-                <td><span class="days-badge warning">+1</span></td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0120</strong></td>
-                <td>Becker GmbH</td>
-                <td>02.11.2025</td>
-                <td>16.11.2025</td>
-                <td class="amount">€2.082,50</td>
-                <td><span class="status-badge paid">Bezahlt</span></td>
-                <td><span class="days-badge ok">-12</span></td>
-                <td>04.11.2025</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0119</strong></td>
-                <td>Hoffmann Industries</td>
-                <td>28.10.2025</td>
-                <td>11.11.2025</td>
-                <td class="amount">€4.998,00</td>
-                <td><span class="status-badge paid">Bezahlt</span></td>
-                <td><span class="days-badge ok">-19</span></td>
-                <td>30.10.2025</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0115</strong></td>
-                <td>Schulz Gruppe</td>
-                <td>15.10.2025</td>
-                <td>29.10.2025</td>
-                <td class="amount">€3.065,00</td>
-                <td><span class="status-badge pending">Ausstehend</span></td>
-                <td><span class="days-badge warning">+20</span></td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0108</strong></td>
-                <td>Krause & Partner</td>
-                <td>28.09.2025</td>
-                <td>12.10.2025</td>
-                <td class="amount">€1.900,00</td>
-                <td><span class="status-badge overdue">Überfällig</span></td>
-                <td><span class="days-badge danger">+37</span></td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td><strong>RE-2025-0101</strong></td>
-                <td>Neumann GmbH</td>
-                <td>05.08.2025</td>
-                <td>19.08.2025</td>
-                <td class="amount">€900,00</td>
-                <td><span class="status-badge overdue">Überfällig</span></td>
-                <td><span class="days-badge danger">+91</span></td>
-                <td>-</td>
-              </tr>
-            </tbody>
-          </table>
+          <!-- Table -->
+          <div class="table-section">
+            <h3>Detaillierte Rechnungsliste</h3>
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Rechnungsnr.</th>
+                  <th>Datum</th>
+                  <th>Kunde</th>
+                  <th>Nettobetrag</th>
+                  <th>MwSt</th>
+                  <th>Bruttobetrag</th>
+                  <th>Teilweise bezahlt</th>
+                  <th>Offener Betrag</th>
+                  <th>Fälligkeit</th>
+                  <th>Zahlungsstatus</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody v-if="reports">
+                <tr v-for="item in reports" :key="item.id">
+                  <td>
+                    <strong>{{ formatInvoiceId(item.id) }}</strong>
+                  </td>
+                  <td>{{ formatDate(item.date) }}</td>
+                  <td>{{ item.customer.company_name }}</td>
+                  <td class="amount">{{ formatCurrency(item.summary.subtotal) }}</td>
+                  <td class="amount">{{ formatCurrency(item.summary.vat_amount) }}</td>
+                  <td class="amount">
+                    <strong>{{ formatCurrency(item.summary.total) }}</strong>
+                  </td>
+                  <td class="amount">
+                    <strong>{{ formatCurrency(item.summary.paid_amount) }}</strong>
+                  </td>
+                  <td class="amount">
+                    <strong>{{ formatCurrency(item.summary.outstanding) }}</strong>
+                  </td>
+                  <td>
+                    <span class="status-badge overdue">{{ getDaysOverdue(item.payment) }}</span>
+                  </td>
+                  <td>
+                    <span :class="getPaymentClass(item.payment)">{{
+                      formatDate(item.payment.payment_date)
+                    }}</span>
+                  </td>
+                  <td>
+                    <span class="status-badge paid">{{ item.is_active }}</span>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot v-if="reportSummary">
+                <tr class="total-row">
+                  <td colspan="3"><strong>SUMME</strong></td>
+                  <td class="amount">
+                    <strong>{{ formatCurrency(reportSummary.total) }}</strong>
+                  </td>
+                  <td class="amount">
+                    <strong>{{ formatCurrency(reportSummary.paid_amount) }}</strong>
+                  </td>
+                  <td class="amount">
+                    <strong>{{ formatCurrency(reportSummary.outstanding) }}</strong>
+                  </td>
+                  <td class="amount" colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -327,6 +286,172 @@ export default {
       reportSummary: {},
       is_ready: false,
       reportsLength: 0
+    }
+  },
+  computed: {
+    invoiceStats() {
+      if (!this.reports) return null
+
+      const today = new Date().toISOString().slice(0, 10)
+
+      let paidTotal = 0
+      let paidCount = 0
+
+      let pendingTotal = 0
+      let pendingCount = 0
+
+      let overdueTotal = 0
+      let overdueCount = 0
+
+      let paymentDays = []
+
+      this.reports.forEach((item) => {
+        const pay = item.payment
+        const total = Number(item.summary.total)
+        const outstanding = Number(item.summary.outstanding)
+
+        if (pay.is_paid) {
+          paidTotal += total
+          paidCount++
+        } else if (pay.payment_date >= today) {
+          pendingTotal += outstanding
+          pendingCount++
+        } else {
+          overdueTotal += outstanding
+          overdueCount++
+        }
+
+        paymentDays.push(pay.payment_terms)
+      })
+
+      const totalInvoices = this.reports.length
+      const avgDays =
+        paymentDays.length > 0
+          ? Math.round(paymentDays.reduce((a, b) => a + b, 0) / paymentDays.length)
+          : 0
+
+      return {
+        paid: {
+          amount: paidTotal,
+          count: paidCount,
+          percent: Math.round((paidCount / totalInvoices) * 100)
+        },
+        pending: {
+          amount: pendingTotal,
+          count: pendingCount,
+          percent: Math.round((pendingCount / totalInvoices) * 100)
+        },
+        overdue: {
+          amount: overdueTotal,
+          count: overdueCount,
+          percent: Math.round((overdueCount / totalInvoices) * 100)
+        },
+        averageDays: avgDays
+      }
+    },
+    paymentStats() {
+      if (!this.reports) return null
+
+      const today = new Date().toISOString().slice(0, 10)
+
+      const paid = []
+      const pending = []
+      const overdue = []
+
+      this.reports.forEach((inv) => {
+        const pay = inv.payment
+        const total = Number(inv.summary.total)
+        const paidAmount = Number(inv.summary.paid_amount)
+        const outstanding = total - paidAmount
+
+        if (pay.is_paid) {
+          paid.push({ total, paidAmount, outstanding })
+        } else {
+          if (pay.payment_date < today) {
+            overdue.push({ total, paidAmount, outstanding })
+          } else {
+            pending.push({ total, paidAmount, outstanding })
+          }
+        }
+      })
+
+      const sum = (arr) => arr.reduce((a, b) => a + b.total, 0)
+
+      const totalInvoices = this.reports.length
+      const totalAmount = sum(paid) + sum(pending) + sum(overdue)
+
+      return {
+        paid: {
+          count: paid.length,
+          amount: sum(paid),
+          percent: totalInvoices ? Math.round((paid.length / totalInvoices) * 100) : 0
+        },
+        pending: {
+          count: pending.length,
+          amount: sum(pending),
+          percent: totalInvoices ? Math.round((pending.length / totalInvoices) * 100) : 0
+        },
+        overdue: {
+          count: overdue.length,
+          amount: sum(overdue),
+          percent: totalInvoices ? Math.round((overdue.length / totalInvoices) * 100) : 0
+        },
+        totalInvoices,
+        totalAmount
+      }
+    },
+    agingStats() {
+      if (!this.reports) return []
+      const totalInvoices = this.reports.length
+
+      const ranges = [
+        { label: '0-30 Tage', min: 0, max: 30 },
+        { label: '31-60 Tage', min: 31, max: 60 },
+        { label: '61-90 Tage', min: 61, max: 90 },
+        { label: '> 90 Tage', min: 91, max: 9999 }
+      ]
+
+      return ranges.map((r) => {
+        const filtered = this.reports.filter((inv) => {
+          const paymentDate = new Date(inv.payment.payment_date)
+          const invoiceDate = new Date(inv.date)
+          const diffDays = Math.floor((paymentDate - invoiceDate) / (1000 * 60 * 60 * 24))
+          return diffDays >= r.min && diffDays <= r.max
+        })
+
+        const amount = filtered.reduce((sum, inv) => sum + Number(inv.summary.total), 0)
+        const count = filtered.length
+        const percent = totalInvoices ? Math.round((count / totalInvoices) * 100) : 0
+
+        return { label: r.label, amount, count, percent }
+      })
+    },
+    filterCounts() {
+      if (!this.reports) return { all: 0, paid: 0, pending: 0, overdue: 0 }
+
+      const today = new Date().toISOString().slice(0, 10)
+
+      let paid = 0,
+        pending = 0,
+        overdue = 0
+
+      this.reports.forEach((inv) => {
+        const pay = inv.payment
+        if (pay.is_paid) {
+          paid++
+        } else if (pay.payment_date < today) {
+          overdue++
+        } else {
+          pending++
+        }
+      })
+
+      return {
+        all: this.reports.length,
+        paid,
+        pending,
+        overdue
+      }
     }
   },
 
@@ -402,6 +527,21 @@ export default {
       }
       this.reportsLength = this.reports.length
     },
+    getPaymentClass(item) {
+      const d = new Date()
+      const today = d.toISOString().slice(0, 10)
+      if (item.is_paid)
+        return 'paid' // Yeşil
+      else if (item.payment_date.trim() < today)
+        return 'overdue' // Kırmızı
+      else return 'pending' // Sarı
+    },
+    getDaysOverdue(item) {
+      const today = new Date()
+      const paymentDate = new Date(item.payment_date)
+      const diffTime = paymentDate - today
+      return Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    },
     async printReport() {
       window.print()
     }
@@ -410,6 +550,15 @@ export default {
 </script>
 
 <style>
+.paid {
+  color: green;
+}
+.overdue {
+  color: red;
+}
+.pading {
+  color: yellow;
+}
 .editor-panel {
   max-width: 1400px;
   background: white;

@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="editor-panel">
-      <h1>{{ title }} <h2 v-if="reportsLength">{{ reportsLength }}</h2> </h1>
+      <h1>
+        {{ title }}
+        <h2 v-if="reportsLength">{{ reportsLength }}</h2>
+      </h1>
       <select v-model="report_static_date" class="form-input" @change="getStaticDate">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>
@@ -87,7 +90,10 @@
                 <th>Nettobetrag</th>
                 <th>MwSt</th>
                 <th>Bruttobetrag</th>
+                <th>Teilweise bezahlt</th>
                 <th>Offener Betrag</th>
+                <th>Fälligkeit</th>
+                <th>Zahlungsstatus</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -104,9 +110,22 @@
                   <strong>{{ formatCurrency(item.summary.total) }}</strong>
                 </td>
                 <td class="amount">
+                  <strong>{{ formatCurrency(item.summary.paid_amount) }}</strong>
+                </td>
+                <td class="amount">
                   <strong>{{ formatCurrency(item.summary.outstanding) }}</strong>
                 </td>
-                <td><span class="status-badge paid">Bezahlt</span></td>
+                <td>
+                  <span class="status-badge overdue">{{ getDaysOverdue(item.payment) }}</span>
+                </td>
+                <td>
+                  <span :class="getPaymentClass(item.payment)">{{
+                    formatDate(item.payment.payment_date)
+                  }}</span>
+                </td>
+                <td>
+                  <span class="status-badge paid">{{ item.is_active }}</span>
+                </td>
               </tr>
             </tbody>
             <tfoot v-if="reportSummary">
@@ -121,7 +140,7 @@
                 <td class="amount">
                   <strong>{{ formatCurrency(reportSummary.outstanding) }}</strong>
                 </td>
-                <td colspan="2"></td>
+                <td class="amount" colspan="2"></td>
               </tr>
             </tfoot>
           </table>
@@ -214,14 +233,29 @@ export default {
           outstanding: 0,
           average: 0
         }
-        this.reports.forEach((report) => {
-          this.reportSummary.total += Number(report.summary.total)
-          this.reportSummary.paid_amount += Number(report.summary.paid_amount)
-          this.reportSummary.outstanding += Number(report.summary.outstanding)
+        this.reports.forEach((item) => {
+          this.reportSummary.total += Number(item.summary.total)
+          this.reportSummary.paid_amount += Number(item.summary.paid_amount)
+          this.reportSummary.outstanding += Number(item.summary.outstanding)
         })
         this.reportSummary.average = this.reportSummary.total / this.reports.length
       }
       this.reportsLength = this.reports.length
+    },
+    getPaymentClass(item) {
+      const d = new Date()
+      const today = d.toISOString().slice(0, 10)
+      if (item.is_paid)
+        return 'paid' // Yeşil
+      else if (item.payment_date.trim() < today)
+        return 'overdue' // Kırmızı
+      else return 'pending' // Sarı
+    },
+    getDaysOverdue(item) {
+      const today = new Date()
+      const paymentDate = new Date(item.payment_date)
+      const diffTime = paymentDate - today
+      return Math.floor(diffTime / (1000 * 60 * 60 * 24))
     },
     async printReport() {
       window.print()
@@ -230,6 +264,15 @@ export default {
 }
 </script>
 <style>
+.paid {
+  color: green;
+}
+.overdue {
+  color: red;
+}
+.pading {
+  color: yellow;
+}
 .editor-panel {
   max-width: 1400px;
   background: white;

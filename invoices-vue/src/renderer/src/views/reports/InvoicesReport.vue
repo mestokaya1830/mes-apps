@@ -10,7 +10,6 @@
           <option value="Kundenbezogener">Kundenbezogener Bericht</option>
           <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
           <option value="Rechnungsliste">Rechnungsliste</option>
-          <option value="Umsatzprognose">Umsatzprognose</option>
         </select>
       </div>
 
@@ -19,7 +18,6 @@
       <CustomersReport v-if="report_type == 'Kundenbezogener'" />
       <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
       <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
-      <SalesForecast v-if="report_type == 'Umsatzprognose'" />
     </div>
   </div>
 </template>
@@ -30,7 +28,6 @@ import PaymentsReport from '../../components/reports/PaymentsReport.vue'
 import CustomersReport from '../../components/reports/CustomersReport.vue'
 import TaxReport from '../../components/reports/TaxReport.vue'
 import InvoicesListReport from '../../components/reports/InvoicesListReport.vue'
-import SalesForecast from '../../components/reports/SalesForecast.vue'
 
 export default {
   name: 'InvoicesReport',
@@ -39,8 +36,7 @@ export default {
     PaymentsReport,
     CustomersReport,
     TaxReport,
-    InvoicesListReport,
-    SalesForecast
+    InvoicesListReport
   },
   data() {
     return {

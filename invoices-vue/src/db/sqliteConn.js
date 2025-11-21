@@ -18,6 +18,12 @@ process.on('exit', () => db.close())
 export default db
 
 // try {
+//   db.prepare('DELETE FROM customers').run() // veya DROP TABLE users için: 'DROP TABLE users'
+// } catch (err) {
+//   console.error(err.message)
+// }
+
+// try {
 //   db.prepare('DELETE FROM invoices').run() // veya DROP TABLE users için: 'DROP TABLE users'
 // } catch (err) {
 //   console.error(err.message)
