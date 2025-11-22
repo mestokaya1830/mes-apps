@@ -300,7 +300,7 @@ export default {
   inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {
     return {
-      title: 'Angebot-Vorschau',
+      title: 'Angebot-Details',
       offers: null,
       auth: null
     }

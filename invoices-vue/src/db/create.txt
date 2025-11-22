@@ -131,16 +131,23 @@ db.exec(`CREATE TABLE IF NOT EXISTS orders (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );`)
 
-db.exec(`CREATE TABLE IF NOT EXISTS deliveries (
+db.exec(`
+  CREATE TABLE IF NOT EXISTS deliveries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     order_id INTEGER,
     date TEXT,
-    positions TEXT NOT NULL,
+    delivery_status TEXT DEFAULT 'pending',
+    delivered_by TEXT,
+    delivery_reference TEXT,
+    received_by TEXT,
     note TEXT,
     customer TEXT NOT NULL,
+    positions TEXT NOT NULL,  -- JSON string
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-);`)
+  );
+`);
+
 
 db.exec(`CREATE TABLE IF NOT EXISTS payments (
    id INTEGER PRIMARY KEY AUTOINCREMENT,

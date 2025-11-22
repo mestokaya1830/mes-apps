@@ -601,6 +601,44 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
       return { success: false, message: err.message }
     }
   }
+
+  //save deliveries table
+  if (tableName === 'deliveries') {
+    try {
+      const customer = JSON.stringify(data.selected_customer || {})
+      const positions = JSON.stringify(data.positions || {})
+      const row = db
+      db.prepare(
+        `
+    INSERT INTO deliveries (
+      order_id,
+      date,
+      delivery_status,
+      delivered_by,
+      delivery_reference,
+      received_by,
+      note,
+      customer,
+      positions
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `
+      ).run(
+        data.order_id,
+        data.date,
+        data.note,
+        data.delivery_status,
+        data.delivered_by,
+        data.delivery_reference,
+        data.received_by,
+        customer,
+        positions
+      )
+      return { success: true, customer: row }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
 })
 
 ipcMain.handle('get-document', async (data, tabelName) => {

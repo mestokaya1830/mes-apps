@@ -1,6 +1,5 @@
 <template>
   <div class="editor-panel">
-
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>

@@ -212,14 +212,14 @@ export default {
       customerList: 'Wähle Kunden',
       deliveries: {
         id: '1',
-        order_id: '',
         date: '',
+        order_id: '',
+        selected_customer: {},
         delivery_status: 'pending',
         delivered_by: '',
+        delivery_reference: '',
         received_by: '',
         note: '',
-        delivery_reference: '',
-        selected_customer: {},
         positions: []
       }
     }
