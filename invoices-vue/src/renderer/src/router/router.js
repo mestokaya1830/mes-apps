@@ -131,6 +131,33 @@ const routes = [
     meta: { title: 'Offers Preview', auth: true }
   },
 
+  //deliveries
+
+  {
+    path: '/deliveries',
+    name: 'deliveries',
+    component: () => import('../views/deliveries/Index.vue'),
+    meta: { title: 'deliveries', auth: true }
+  },
+  {
+    path: '/deliveries/create',
+    name: 'deliveries-create',
+    component: () => import('../views/deliveries/Create.vue'),
+    meta: { title: 'Add New Offer', auth: true }
+  },
+  {
+    path: '/deliveries/details/:id',
+    name: 'deliveries-details',
+    component: () => import('../views/deliveries/Details.vue'),
+    meta: { title: 'Deliveries Details', auth: true }
+  },
+  {
+    path: '/deliveries/preview',
+    name: 'deliveries-preview',
+    component: () => import('../views/deliveries/Preview.vue'),
+    meta: { title: 'Deliveries Preview', auth: true }
+  },
+
   //customers
 
   {

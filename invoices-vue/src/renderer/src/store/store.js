@@ -12,6 +12,7 @@ const state = reactive({
   invoices: null,
   offers: null,
   orders: null,
+  deliveries: null,
   _isClearing: false // IndexedDB temizleme işlemi için flag
 })
 
@@ -29,6 +30,9 @@ async function init() {
 
     const orders = await localforage.getItem('orders')
     if (orders) state.orders = orders
+
+    const deliveries = await localforage.getItem('deliveries')
+    if (deliveries) state.deliveries = deliveries
   } catch (err) {
     console.error('Failed to load stored data:', err)
   }

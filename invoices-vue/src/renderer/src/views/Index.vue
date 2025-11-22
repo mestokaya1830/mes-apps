@@ -43,6 +43,17 @@
           </div>
         </div>
       </div>
+
+      <!-- Deliveries Card -->
+      <div class="customer-card" @click="goTo('deliveries')" style="cursor:pointer;">
+        <div class="card-header">
+          <div class="customer-avatar">📦</div>
+          <div class="customer-info">
+            <h3 class="customer-name">Deleiveries</h3>
+            <span class="customer-type-badge">Gesamt: {{ totalDeliveries }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -54,7 +65,8 @@ export default {
       title: 'Dashboard',
       totalInvoices: 0,
       totalOffers: 0,
-      totalOrders: 0
+      totalOrders: 0,
+      totalDeliveries: 0
     }
   },
   mounted() {
@@ -66,10 +78,12 @@ export default {
         const invoices = await window.api.getDocument('invoices')
         const offers = await window.api.getDocument('offers')
         const orders = await window.api.getDocument('orders')
+        const deliveries = await window.api.getDocument('deliveries')
 
         this.totalInvoices = invoices.success ? invoices.rows.length : 0
         this.totalOffers = offers.success ? offers.rows.length : 0
         this.totalOrders = orders.success ? orders.rows.length : 0
+        this.totalDeliveries = deliveries.success ? deliveries.rows.length : 0
       } catch (error) {
         console.error(error)
       }

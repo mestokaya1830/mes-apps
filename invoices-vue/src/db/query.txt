@@ -1,3 +1,8 @@
+try {
+  db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
+} catch (err) {
+  console.error(err.message)
+}
 
 try {
   db.prepare('DROP TABLE orders').run()

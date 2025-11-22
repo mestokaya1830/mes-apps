@@ -202,7 +202,7 @@
         </div>
 
         <!-- leagal validity -->
-        <div v-if="ordersPreview.is_legal" class="pdf-footer">
+        <div v-if="ordersPreview.is_legal" class="signatures-section">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
             Rechtsgültige Unterschrift erforderlich

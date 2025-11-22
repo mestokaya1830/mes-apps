@@ -1,6 +1,6 @@
 <template>
-  <div v-if="invoicesPreview && auth">
-    <div class="preview-panel">
+  <div>
+    <div v-if="invoicesPreview && auth" class="preview-panel">
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -19,7 +19,6 @@
               {{ invoicesPreview.selected_customer.country }}
             </div>
           </div>
-
           <!-- recipient details -->
           <div class="recipient-details">
             <div class="recipient-title">Rechnungsdetails</div>
@@ -362,7 +361,7 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style>
 /* PREVIEW PANEL */
 .preview-panel {
   width: 80%;
