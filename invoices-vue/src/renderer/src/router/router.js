@@ -77,6 +77,40 @@ const routes = [
     component: () => import('../views/invoices/Preview.vue'),
     meta: { title: 'Rechnungen Vorschau', auth: true }
   },
+  {
+    path: '/invoices/payment/:id',
+    name: 'invoices-payment',
+    component: () => import('../views/invoices/Payment.vue'),
+    meta: { title: 'Rechnungen Zahlung', auth: true }
+  },
+
+  //remeinders
+
+  {
+    path: '/remeinders',
+    name: 'remeinders',
+    component: () => import('../views/remeinders/Index.vue'),
+    meta: { title: 'remeinders', auth: true }
+  },
+  {
+    path: '/remeinders/create/:id',
+    name: 'remeinders-create',
+    component: () => import('../views/remeinders/Create.vue'),
+    meta: { title: 'Add New Remeinder', auth: true }
+  },
+  {
+    path: '/remeinders/details/:id',
+    name: 'remeinders-details',
+    component: () => import('../views/remeinders/Details.vue'),
+    meta: { title: 'Remeinder Details', auth: true }
+  },
+  {
+    path: '/remeinders/preview',
+    name: 'remeinders-preview',
+    component: () => import('../views/remeinders/Preview.vue'),
+    meta: { title: 'Remeinders Vorschau', auth: true }
+  },
+
   //orrders
 
   {

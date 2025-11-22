@@ -247,6 +247,26 @@
               <option value="0">Unbezahlt</option>
             </select>
           </div>
+          <router-link :to="`/invoices/payment/${invoice.id}`">
+            <button class="btn btn-primary">
+              <span class="nav-icon">💳</span>
+              <span>Zahlung erhalten markieren</span>
+            </button>
+          </router-link>
+          <router-link :to="`/remeinders/create/${invoice.id}`">
+            <button class="btn btn-primary">
+              <span class="nav-icon">⚠️</span>
+              <span>Mahnung erstellen</span>
+            </button>
+          </router-link>
+          
+          <!-- <div class="form-group">
+            <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
+              <option value="" disabled>Bezahlungsstatus</option>
+              <option value="1">Bezahlt</option>
+              <option value="0">Unbezahlt</option>
+            </select>
+          </div> -->
         </div>
       </div>
       <ActionsButtonPreview
