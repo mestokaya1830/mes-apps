@@ -1,204 +1,160 @@
 <template>
   <div>
-    <div class="preview-panel">
-      <!-- Header -->
-      <HeaderSidePreview :title="title" />
+    <div class="preview-panel" v-if="remeindersPreview && auth">
+      <div class="printable">
+        <!-- Header -->
+        <HeaderSidePreview :title="title" />
 
-      <!-- customers -->
-      <div v-if="remeindersPreview.selected_customer" class="recipient">
-        <div class="recipient-address">
-          <div class="recipient-title">Empfänger</div>
-          <div class="company-name-subtitle">
-            {{ remeindersPreview.selected_customer.company_name }}
+        <!-- customers -->
+        <div v-if="remeindersPreview" class="recipient">
+          <div class="recipient-address">
+            <div class="recipient-title">Empfänger</div>
+            <div class="company-name-subtitle">
+              {{ remeindersPreview.selected_invoice.customer.company_name }}
+            </div>
+            <div class="meta-label">{{ remeindersPreview.selected_invoice.customer.address }}</div>
+            <div class="meta-label">
+              {{ remeindersPreview.selected_invoice.customer.postal_code }}
+              {{ remeindersPreview.selected_invoice.customer.city }}<br />
+              {{ remeindersPreview.selected_invoice.customer.country }}
+            </div>
           </div>
-          <div class="meta-label">{{ remeindersPreview.selected_customer.address }}</div>
-          <div class="meta-label">
-            {{ remeindersPreview.selected_customer.postal_code }}
-            {{ remeindersPreview.selected_customer.city }}<br />
-            {{ remeindersPreview.selected_customer.country }}
+          <!-- recipient details -->
+          <div class="recipient-details">
+            <div class="recipient-title">Rechnungsdetails</div>
+
+            <div class="meta-row">
+              <span class="meta-label">Mahnung-Nr.:</span>
+              <span class="meta-value">{{ formatRemeinderId }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Rechnung-Nr.:</span>
+              <span class="meta-value">{{ formatInvoiceId }}</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-label">Datum:</span>
+              <span class="meta-value">{{ formatDate(remeindersPreview.date) }}</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-label">Kunden-Nr.:</span>
+              <span class="meta-value">{{
+                formatCustomerId(remeindersPreview.selected_invoice.customer.id)
+              }}</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-label">USt-IdNr.:</span>
+              <span class="meta-value">{{
+                remeindersPreview.selected_invoice.customer.vat_id
+              }}</span>
+            </div>
           </div>
         </div>
-        <!-- recipient details -->
-        <div class="recipient-details">
-          <div class="recipient-title">Rechnungsdetails</div>
 
-          <div class="meta-row">
-            <span class="meta-label">Mahnung-Nr.:</span>
-            <span class="meta-value">{{ formatRemeinderId }}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Rechnung-Nr.:</span>
-            <span class="meta-value">{{ formatInvoiceId }}</span>
-          </div>
+        Subject
+        <!-- <div class="subject">{{ remeindersPreview.subject }}</div> -->
 
-          <div class="meta-row">
-            <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(remeindersPreview.date) }}</span>
-          </div>
+        <!-- Content -->
+        <div>
+          <p class="greeting">Sehr geehrte Damen und Herren,</p>
+          <p v-if="remeindersPreview?.intro_text">{{ remeindersPreview.intro_text }}</p>
+        </div>
 
-          <div class="meta-row">
-            <span class="meta-label">Kunden-Nr.:</span>
-            <span class="meta-value">{{
-              formatCustomerId(remeindersPreview.selected_customer.id)
+        <!-- remeinders Details -->
+        <div class="remeinders-details">
+          <h3>📄 Offene Rechnung(en)</h3>
+          <table class="remeinders-table">
+            <thead>
+              <tr>
+                <th>Rechnungsnummer</th>
+                <th>Rechnungsdatum</th>
+                <th>Fälligkeitsdatum</th>
+                <th>Betrag</th>
+              </tr>
+            </thead>
+            <!-- <tbody>
+              <tr v-for="item in remeindersPreview" :key="item.id">
+                <td>{{ item.id }}</td>
+                <td>{{ formatDate(item.date) }}</td>
+                <td>{{ formatDate(item.due_date) }}</td>
+                <td>{{ formatCurrency(item.amount) }}</td>
+              </tr>
+              <tr v-if="item.reminder_fee > 0">
+                <td colspan="3">Mahngebühr:</td>
+                <td>{{ formatCurrency(item.remeinder_fee) }}</td>
+              </tr>
+              <tr v-if="item.late_fee > 0">
+                <td colspan="3">Verzugszinsen:</td>
+                <td>{{ formatCurrency(item.late_fee) }}</td>
+              </tr>
+              <tr class="total-row">
+                <td colspan="3">Offener Gesamtbetrag:</td>
+                <td>{{ formatCurrency(getTotalAmount()) }}</td>
+              </tr>
+            </tbody> -->
+          </table>
+        </div>
+
+        <!-- Bank Info -->
+        <div v-if="auth" class="bank-box">
+          <div class="bank-title">🏦 Bankverbindung</div>
+          <div class="bank-info">
+            <span class="bank-label">Bank:</span>
+            <span class="bank-value">{{ auth.bank_name }}</span>
+            <span class="bank-label">IBAN:</span>
+            <span class="bank-value">{{ auth.iban }}</span>
+            <span class="bank-label">BIC:</span>
+            <span class="bank-value">{{ auth.bic }}</span>
+            <span class="bank-label">Verwen..:</span>
+            <span class="bank-value">{{
+              remeindersPreview.selected_invoice.payment.verwendungszweck
             }}</span>
-          </div>
-
-          <div
-            v-if="
-              remeindersPreview.selected_customer.country === 'Germany' &&
-              remeindersPreview.selected_customer.tax_number
-            "
-            class="meta-row"
-          >
-            <span class="meta-label">Steuer-Nr.:</span>
-            <span class="meta-value">{{ remeindersPreview.selected_customer.tax_number }}</span>
-          </div>
-
-          <div
-            v-else-if="
-              remeindersPreview.selected_customer.is_in_eu &&
-              remeindersPreview.selected_customer.vat_id
-            "
-            class="meta-row"
-          >
-            <span class="meta-label">USt-IdNr.:</span>
-            <span class="meta-value">{{ remeindersPreview.selected_customer.vat_id }}</span>
-          </div>
-
-          <div
-            v-else-if="
-              !remeindersPreview.selected_customer.is_in_eu &&
-              remeindersPreview.selected_customer.vat_id
-            "
-            class="meta-row"
-          >
-            <span class="meta-label">VAT ID:</span>
-            <span class="meta-value">{{ remeindersPreview.selected_customer.vat_id }}</span>
+            <span class="bank-value">Zahlungsziel: {{ remeindersPreview.payment_deadline }}</span>
           </div>
         </div>
+
+        <!-- Warning Box (für 2. und 3. remeindersPreview) -->
+        <div v-if="remeindersPreview?.level >= 2" class="warning-box">
+          <div v-if="remeindersPreview.level === 2">
+            <strong>⚠️ Wichtiger Hinweis:</strong><br />
+            <p>{{ remeindersPreview.warning_text }}</p>
+          </div>
+          <div v-if="remeindersPreview.level === 3">
+            <strong>🚨 Letzte remeindersPreview:</strong><br />
+            <p>{{ remeindersPreview.warning_text }}</p>
+          </div>
+        </div>
+
+        <div class="remeindersPreview-content">
+          <p v-if="remeindersPreview?.closing_text">
+            {{ remeindersPreview.closing_text }}
+          </p>
+        </div>
+
+        <!-- Closing -->
+        <div class="closing">
+          <p>Mit freundlichen Grüßen</p>
+          <br />
+          <p v-if="auth">
+            <strong>{{ auth.company_name }}</strong>
+          </p>
+        </div>
+        <!-- Contact Person -->
+        <ContactPersonPreview :contactData="auth.contact_person" />
+
+        <!-- Footer -->
+        <FooterSidePreview />
       </div>
-      <!-- Details -->
-      <div class="mahnung-details">
-        <table class="details-table">
-          <tr>
-            <td class="label">Unsere Kundennummer:</td>
-            <td class="value">{{ formatCustomerId(remeindersPreview.selected_customer.id) }}</td>
-          </tr>
-          <tr>
-            <td class="label">Datum:</td>
-            <td class="value">{{ formatDate(remeindersPreview.date) }}</td>
-          </tr>
-        </table>
-      </div>
-
-      <!-- Subject -->
-      <div class="subject">{{ remeindersPreview.subject }}</div>
-
-      <!-- Content -->
-      <div>
-        <p class="greeting">Sehr geehrte Damen und Herren,</p>
-
-        <p v-if="remeindersPreview.intro_text"></p>
-
-        <p v-if="remeindersPreview.level === 1">
-          Sollte sich Ihre Zahlung mit diesem Schreiben überschnitten haben, betrachten Sie diese
-          Mahnung bitte als gegenstandslos.
-        </p>
-      </div>
-
-      <!-- remeinders Details -->
-      <div class="remeinders-details">
-        <h3>📄 Offene Rechnung(en)</h3>
-        <table class="remeinders-table">
-          <thead>
-            <tr>
-              <th>Rechnungsnummer</th>
-              <th>Rechnungsdatum</th>
-              <th>Fälligkeitsdatum</th>
-              <th>Betrag</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in remeindersPreview" :key="item.id">
-              <td>{{ item.id }}</td>
-              <td>{{ formatDate(item.date) }}</td>
-              <td>{{ formatDate(item.due_date) }}</td>
-              <td>{{ formatCurrency(item.amount) }}</td>
-            </tr>
-            <tr v-if="item.reminder_fee > 0">
-              <td colspan="3">Mahngebühr:</td>
-              <td>{{ formatCurrency(item.reminder_fee) }}</td>
-            </tr>
-            <tr v-if="item.late_fee > 0">
-              <td colspan="3">Verzugszinsen:</td>
-              <td>{{ formatCurrency(item.late_fee) }}</td>
-            </tr>
-            <tr class="total-row">
-              <td colspan="3">Offener Gesamtbetrag:</td>
-              <td>{{ formatCurrency(getTotalAmount()) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Payment Info -->
-      <div class="payment-info">
-        <h3>💳 Zahlungsinformationen</h3>
-        <p><strong>Empfänger:</strong> {{ companyInfo.name }}</p>
-        <p><strong>IBAN:</strong> {{ companyInfo.iban }}</p>
-        <p><strong>BIC:</strong> {{ companyInfo.bic }}</p>
-        <p><strong>Bank:</strong> {{ companyInfo.bank }}</p>
-        <p>
-          <strong>Verwendungszweck:</strong>
-          {{ remeindersPreview.remeinderss.map((i) => i.number).join(', ') }}
-        </p>
-        <p><strong>Zahlungsziel:</strong> {{ getPaymentDeadline() }}</p>
-      </div>
-
-      <!-- Warning Box (für 2. und 3. remeindersPreview) -->
-      <div v-if="remeindersPreview.level >= 2" class="warning-box">
-        <p v-if="remeindersPreview.level === 2">
-          <strong>⚠️ Wichtiger Hinweis:</strong><br />
-          Sollte die Zahlung nicht innerhalb der angegebenen Frist erfolgen, sehen wir uns
-          gezwungen, weitere Maßnahmen einzuleiten. Dies kann zusätzliche Kosten verursachen.
-        </p>
-        <p v-if="remeindersPreview.level === 3">
-          <strong>🚨 Letzte remeindersPreview:</strong><br />
-          Bei Nichtzahlung innerhalb der angegebenen Frist werden wir ohne weitere Ankündigung ein
-          gerichtliches Mahnverfahren einleiten. Die entstehenden Gerichts- und Anwaltskosten gehen
-          zu Ihren Lasten.
-        </p>
-      </div>
-
-      <div class="remeindersPreview-content">
-        <p v-if="remeindersPreview.outro_text"></p>
-
-        <p v-if="remeindersPreview.level <= 2">
-          Sollten Sie Fragen zu dieser Rechnung haben oder sollte es Probleme mit der Zahlung geben,
-          kontaktieren Sie uns bitte umgehend.
-        </p>
-      </div>
-
-      <!-- Closing -->
-      <div class="closing">
-        <p>Mit freundlichen Grüßen</p>
-        <br />
-        <p>
-          <strong>{{ auth.company_name }}</strong>
-        </p>
-      </div>
-      <!-- Contact Person -->
-      <ContactPersonPreview :contactData="auth.contact_person" />
-      <!-- Footer -->
-      <FooterSidePreview />
+      <ActionsButtonPreview
+        v-if="remeindersPreview.selected_invoice.customer"
+        tableName="remeinders"
+        :tableData="remeindersPreview"
+        sourcePage="preview"
+      />
     </div>
-    <ActionsButtonPreview
-      v-if="remeindersPreview.selected_customer"
-      tableName="remeinders"
-      :tableData="remeindersPreview"
-      sourcePage="preview"
-    />
-    <router-link to="/remeinderss/create" class="back-link">
+    <router-link to="/remeinders/create" class="back-link">
       ← Zurück zur Rechnungserstellung
     </router-link>
   </div>
@@ -231,7 +187,7 @@ export default {
     formatInvoiceId() {
       if (!this.remeindersPreview || !this.remeindersPreview.id) return ''
       const year = new Date().getFullYear()
-      return `RE-${year}-${String(this.remeindersPreview.id).padStart(5, '0')}`
+      return `RE-${year}-${String(this.remeindersPreview.selected_invoice.id).padStart(5, '0')}`
     },
     formatRemeinderId() {
       if (!this.remeindersPreview || !this.remeindersPreview.id) return ''
@@ -240,11 +196,11 @@ export default {
     }
   },
   mounted() {
-    this.getRemeinders()
+    this.getRemeindersPreview()
     this.getAuth()
   },
   methods: {
-    getRemeinders() {
+    getRemeindersPreview() {
       if (store.state.remeinders) {
         this.remeindersPreview = store.state.remeinders
         console.log(this.remeindersPreview)

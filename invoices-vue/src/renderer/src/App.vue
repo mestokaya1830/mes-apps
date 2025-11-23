@@ -82,29 +82,35 @@ export default {
   methods: {
     async storePreview(storeName, storeData) {
       if (!storeData || !store) return
+
       try {
-        const subtotal = storeData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
-        const vatAmount = storeData.positions.reduce(
-          (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-          0
-        )
-        const total = subtotal + vatAmount
-        const paidAmount = storeData.payment?.paid_amount || 0
-        const outstanding = total - paidAmount
-
-        const data = {
-          ...storeData,
-          summary: {
-            subtotal,
-            vat_amount: vatAmount,
-            total,
-            paid_amount: paidAmount,
-            outstanding
+        if (storeName == 'remeinders') {
+          if (storeData) {
+            await store.setStore(storeName, JSON.parse(JSON.stringify(storeData)))
           }
-        }
+        } else {
+          const subtotal = storeData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+          const vatAmount = storeData.positions.reduce(
+            (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+            0
+          )
+          const total = subtotal + vatAmount
+          const paidAmount = storeData.payment?.paid_amount || 0
+          const outstanding = total - paidAmount
 
-        if (data) {
-          await store.setStore(storeName, JSON.parse(JSON.stringify(data)))
+          const data = {
+            ...storeData,
+            summary: {
+              subtotal,
+              vat_amount: vatAmount,
+              total,
+              paid_amount: paidAmount,
+              outstanding
+            }
+          }
+          if (data) {
+            await store.setStore(storeName, JSON.parse(JSON.stringify(data)))
+          }
         }
       } catch (error) {
         console.error('Error storing preview:', error)

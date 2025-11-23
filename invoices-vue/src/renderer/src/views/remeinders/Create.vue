@@ -4,11 +4,11 @@
       <div class="editor-header">
         <div class="editor-title">📝{{ title }}</div>
       </div>
-      <!-- 1. Subject -->
+      <!-- 1. level -->
       <div class="form-section">
-        <label class="form-label">💼 Subjekt</label>
+        <label class="form-label">💼 Betreff</label>
         <div class="form-group">
-          <select v-model="remeinders.subject" class="form-input">
+          <select v-model="remeinders.level" class="form-input">
             <option value="" disabled>Wähle Betreff</option>
             <option value="1">Zahlungserinnerung / 1. Mahnung</option>
             <option value="2">2. Mahnung</option>
@@ -19,7 +19,7 @@
           <!-- Intro Text -->
           <div class="intro-text">
             <label class="form-label">Intro Text (Mahnung)</label>
-            <textarea v-model="intro[remeinders.subject]" class="form-input"></textarea>
+            <textarea v-model="intro[remeinders.level]" class="form-input"></textarea>
           </div>
         </div>
       </div>
@@ -44,7 +44,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Mahngebühr</label>
-            <input v-model="remeinders.reminder_fee" type="number" class="form-input" />
+            <input v-model="remeinders.remeinder_fee" type="number" class="form-input" />
           </div>
           <div class="form-group">
             <label class="form-label">Verzugszinsen</label>
@@ -52,19 +52,19 @@
           </div>
         </div>
       </div>
-      <div v-if="remeinders.subject" class="form-section">
+      <div v-if="remeinders.level" class="form-section">
         <div class="form-group">
           <!-- Warning Text -->
           <label class="form-label">⚠️ Warnung</label>
           <div class="warning-text">
-            <textarea v-model="warning[remeinders.subject]" class="form-input"></textarea>
+            <textarea v-model="warning[remeinders.level]" class="form-input"></textarea>
           </div>
         </div>
         <div class="form-group">
           <!-- Closing Text -->
           <label class="form-label">📝 Endtext</label>
           <div class="closing-text">
-            <textarea v-model="closing[remeinders.subject]" class="form-input"></textarea>
+            <textarea v-model="closing[remeinders.level]" class="form-input"></textarea>
           </div>
         </div>
       </div>
@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import store from '../../store/store'
 export default {
   name: 'MahnungPreview',
   inject: ['storePreview'],
@@ -86,14 +87,14 @@ export default {
       remeinders: {
         id: '1',
         date: '2025-01-22',
-        subject: '',
+        level: '',
         payment_deadline: '',
-        reminder_fee: 0,
+        remeinder_fee: 0,
         late_fee: 0,
-        selected_invoice: null,
         intro_text: '',
         closing_text: '',
-        warning_text: ''
+        warning_text: '',
+        selected_invoice: null
       },
       intro: [
         null,
@@ -117,9 +118,17 @@ export default {
     }
   },
   mounted() {
-    this.getSelectedInvoice()
+    this.getStore()
+    if (!store.state.remeinders) {
+      this.getSelectedInvoice()
+    }
   },
   methods: {
+    getStore() {
+      if (store.state.remeinders) {
+        this.remeinders = JSON.parse(JSON.stringify(store.state.remeinders))
+      }
+    },
     async getSelectedInvoice() {
       const row = await window.api.getDocumentById(this.$route.params.id, 'invoices')
       if (row.success) {
@@ -127,23 +136,20 @@ export default {
           id: row.rows.id,
           date: row.rows.date,
           currency: row.rows.currency,
-          selected_customer: JSON.parse(row.rows.customer),
+          customer: JSON.parse(row.rows.customer),
           payment: JSON.parse(row.rows.payment),
           summary: JSON.parse(row.rows.summary)
         }
+        console.log(this.remeinders)
       }
-      // console.log(this.remeinders.selected_invoice)
     },
     setStore() {
-      console.time('commit')
       if (this.remeinders) {
-        this.remeinders.intro_text = this.intro[this.remeinders.subject]
-        this.remeinders.closing_text = this.closing[this.remeinders.subject]
-        this.remeinders.warning_text = this.warning[this.remeinders.subject]
-        console.log(this.remeinders)
-        // this.storePreview('remeinders', this.remeinders)
+        this.remeinders.intro_text = this.intro[this.remeinders.level]
+        this.remeinders.closing_text = this.closing[this.remeinders.level]
+        this.remeinders.warning_text = this.warning[this.remeinders.level]
+        this.storePreview('remeinders', this.remeinders)
       }
-      console.timeEnd('commit')
     }
   }
 }
@@ -419,8 +425,8 @@ input:not([readonly]) {
   color: #1f2937;
 }
 
-/* Subject */
-.subject {
+/* level */
+.level {
   font-size: 14px;
   font-weight: 700;
   color: #1f2937;

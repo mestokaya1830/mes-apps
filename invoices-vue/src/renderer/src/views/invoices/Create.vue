@@ -529,6 +529,7 @@ export default {
         this.storePreview('invoices', this.invoices)
       }
       console.timeEnd('commit')
+      console.log('invoices', this.invoices)
     }
   }
 }
