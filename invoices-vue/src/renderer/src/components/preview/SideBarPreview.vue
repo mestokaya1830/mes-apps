@@ -45,6 +45,12 @@
           </router-link>
         </li>
         <li class="nav-item">
+          <router-link to="/remeinders" exact-active-class="active" class="nav-link">
+            <span class="nav-icon">📦</span>
+            <span>Mahnungen</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
           <router-link to="/profile" exact-active-class="active" class="nav-link">
             <span class="nav-icon">👤</span>
             <span>Profil</span>

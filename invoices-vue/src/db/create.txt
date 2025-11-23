@@ -162,3 +162,18 @@ db.exec(`CREATE TABLE IF NOT EXISTS payments (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
 );`)
+
+db.exec(`CREATE TABLE IF NOT EXISTS remeinders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    remeinder_fee TEXT NOT NULL,
+    late_fee TEXT NOT NULL,
+    level TEXT NOT NULL,
+    intro_text TEXT NOT NULL,
+    warning_text TEXT NOT NULL,
+    closing_text TEXT NOT NULL,
+    payment_deadline TEXT NOT NULL,
+    selected_invoice TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);`)

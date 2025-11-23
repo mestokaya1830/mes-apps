@@ -24,7 +24,7 @@
       </router-link>
     </div>
 
-    <div>
+    <div class="filter-container">
       <input v-model="search_box" type="search" @input="searchCustomer()" placeholder="Suce..." />
       <input v-model="date_box_start" type="date" @input="dateFilter()" />
       <input v-model="date_box_end" type="date" @input="dateFilter()" />
@@ -400,7 +400,12 @@ export default {
   margin: 0;
   font-size: 14px;
 }
-
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
 /* Responsive */
 @media (max-width: 768px) {
   .container {

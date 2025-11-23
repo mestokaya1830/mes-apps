@@ -100,13 +100,13 @@ export default {
         null,
         'Nach unserem Buchhaltungsstand ist der Rechnungsbetrag der unten aufgeführten Rechnung noch nicht auf unserem Konto eingegangen.',
         'Trotz unserer ersten Zahlungserinnerung ist der offene Betrag noch nicht bei uns eingegangen. Wir bitten Sie dringend, die Zahlung zu veranlassen.',
-        'Trotz mehrfacher Mahnungen ist der unten aufgeführte Betrag noch immer nicht beglichen worden. Dies ist unsere <strong>letzte Mahnung</strong> vor Einleitung rechtlicher Schritte.'
+        'Trotz mehrfacher Mahnungen ist der unten aufgeführte Betrag noch immer nicht beglichen worden. Dies ist unsere letzte Mahnung vor Einleitung rechtlicher Schritte.'
       ],
 
       closing: [
         null,
-        'Wir bitten Sie höflich, den offenen Betrag <strong>innerhalb von 7 Tagen</strong> zu überweisen.',
-        'Wir fordern Sie auf, den offenen Betrag zzgl. Mahngebühr <strong>innerhalb von 5 Tagen</strong> zu begleichen.',
+        'Wir bitten Sie höflich, den offenen Betrag innerhalb von 7 Tagen zu überweisen.',
+        'Wir fordern Sie auf, den offenen Betrag zzgl.Mahngebühr innerhalb von 5 Tagen zu begleichen.',
         'Dies ist Ihre letzte Möglichkeit, den offenen Betrag innerhalb von 3 Tagen zu begleichen.'
       ],
       warning: [

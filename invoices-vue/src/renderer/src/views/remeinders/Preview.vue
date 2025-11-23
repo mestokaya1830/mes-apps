@@ -3,7 +3,7 @@
     <div class="preview-panel" v-if="remeindersPreview && auth">
       <div class="printable">
         <!-- Header -->
-        <HeaderSidePreview :title="title" />
+        <HeaderSidePreview :title="title" :auth="auth"/>
 
         <!-- customers -->
         <div v-if="remeindersPreview" class="recipient">

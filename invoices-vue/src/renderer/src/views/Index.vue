@@ -54,6 +54,26 @@
           </div>
         </div>
       </div>
+      <!-- remeinders Card -->
+      <div class="customer-card" @click="goTo('remeinders')" style="cursor:pointer;">
+        <div class="card-header">
+          <div class="customer-avatar">📦</div>
+          <div class="customer-info">
+            <h3 class="customer-name">Remeinders</h3>
+            <span class="customer-type-badge">Gesamt: {{ totalRemeinders }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- customers Card -->
+      <div class="customer-card" @click="goTo('customers')" style="cursor:pointer;">
+        <div class="card-header">
+          <div class="customer-avatar">📦</div>
+          <div class="customer-info">
+            <h3 class="customer-name">Customers</h3>
+            <span class="customer-type-badge">Gesamt: {{ totalCustomers }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -66,7 +86,9 @@ export default {
       totalInvoices: 0,
       totalOffers: 0,
       totalOrders: 0,
-      totalDeliveries: 0
+      totalDeliveries: 0,
+      totalRemeinders: 0,
+      totalCustomers: 0
     }
   },
   mounted() {
@@ -79,11 +101,15 @@ export default {
         const offers = await window.api.getDocument('offers')
         const orders = await window.api.getDocument('orders')
         const deliveries = await window.api.getDocument('deliveries')
+        const remeinders = await window.api.getDocument('remeinders')
+        const customers = await window.api.getDocument('customers')
 
         this.totalInvoices = invoices.success ? invoices.rows.length : 0
         this.totalOffers = offers.success ? offers.rows.length : 0
         this.totalOrders = orders.success ? orders.rows.length : 0
         this.totalDeliveries = deliveries.success ? deliveries.rows.length : 0
+        this.totalRemeinders = remeinders.success ? remeinders.rows.length : 0
+        this.totalCustomers = customers.success ? customers.rows.length : 0
       } catch (error) {
         console.error(error)
       }

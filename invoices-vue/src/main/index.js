@@ -639,6 +639,43 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
       return { success: false, message: err.message }
     }
   }
+
+  //save remeinders table
+  if (tableName === 'remeinders') {
+    try {
+      const selected_invoice = JSON.stringify(data.selected_invoice || {})
+      const row = db
+      db.prepare(
+        `
+    INSERT INTO remeinders (
+      date,
+      remeinder_fee,
+      late_fee,
+      level,
+      intro_text,
+      warning_text,
+      closing_text,
+      payment_deadline,
+      selected_invoice
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `
+      ).run(
+        data.date,
+        data.remeinder_fee,
+        data.late_fee,
+        data.level,
+        data.intro_text,
+        data.warning_text,
+        data.closing_text,
+        data.payment_deadline,
+        selected_invoice
+      )
+      return { success: true, customer: row }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
 })
 
 ipcMain.handle('get-document', async (data, tabelName) => {
