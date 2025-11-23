@@ -1,133 +1,118 @@
 <template>
   <div>
     <div class="editor-panel">
+      <div class="editor-header">
+        <div class="editor-title">📝{{ title }}</div>
+      </div>
       <!-- 1. Subject -->
       <div class="form-section">
-        <div class="form-section-title">💼 Subjekt</div>
+        <label class="form-label">💼 Subjekt</label>
         <div class="form-group">
-          <select v-model="remeinders.subject">
-            <option value="" disabled>Wähle Subjekt</option>
+          <select v-model="remeinders.subject" class="form-input">
+            <option value="" disabled>Wähle Betreff</option>
             <option value="1">Zahlungserinnerung / 1. Mahnung</option>
             <option value="2">2. Mahnung</option>
             <option value="3">Letzte Mahnung vor gerichtlichem Mahnverfahren</option>
           </select>
         </div>
-      </div>
-
-      <!-- 2. Intro Text -->
-      <div class="intro-text">
-        <p class="greeting">Sehr geehrte Damen und Herren,</p>
-      </div>
-
-      <!-- 3. Invoice Details -->
-      <div class="invoice-details">
-        <h3>📄 Offene Rechnung(en)</h3>
-        <table class="invoice-table">
-          <thead>
-            <tr>
-              <th>Rechnungsnummer</th>
-              <th>Rechnungsdatum</th>
-              <th>Fälligkeitsdatum</th>
-              <th>Betrag</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in mahnung.invoices" :key="item.id">
-              <td>{{ formatInvoiceId(item.id) }}</td>
-              <td>{{ formatDate(item.date) }}</td>
-              <td>{{ formatDate(item.due_date) }}</td>
-              <td>{{ formatCurrency(item.paid_amount) }}</td>
-            </tr>
-            <tr v-if="remeinders.reminder_fee > 0">
-              <td colspan="3">Mahngebühr:</td>
-              <td>{{ formatCurrency(remeinders.reminder_fee) }}</td>
-            </tr>
-            <tr v-if="remeinders.late_fee > 0">
-              <td colspan="3">Verzugszinsen:</td>
-              <td>{{ formatCurrency(remeinders.late_fee) }}</td>
-            </tr>
-            <tr class="total-row">
-              <td colspan="3">Offener Gesamtbetrag:</td>
-              <td>{{ formatCurrency(getTotalAmount()) }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="form-group">
+          <!-- Intro Text -->
+          <div class="intro-text">
+            <label class="form-label">Intro Text (Mahnung)</label>
+            <textarea v-model="intro[remeinders.subject]" class="form-input"></textarea>
+          </div>
+        </div>
       </div>
 
       <!-- 4. Payment Deadline -->
-      <div class="form-group">
-        <label>Zahlungsfrist auswählen</label>
-        <select v-model="remeinders.payment_deadline">
-          <option value="" disabled selected>Bitte auswählen</option>
-          <option value="Innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
-          <option value="Innerhalb von 5 Tagen">Innerhalb von 5 Tagen</option>
-          <option value="Innerhalb von 14 Tagen">Innerhalb von 14 Tagen</option>
-          <option value="Innerhalb von 30 Tagen">Innerhalb von 30 Tagen</option>
-          <option value="Sofort fällig / Innerhalb von 3 Tagen">
-            Sofort fällig / Innerhalb von 3 Tagen
-          </option>
-          <option value="Sofort zahlbar">Sofort zahlbar</option>
-          <option value="Nach Vereinbarung">Nach Vereinbarung</option>
-        </select>
+      <div class="form-section">
+        <div class="form-group">
+          <label class="form-label">Zahlungsfrist auswählen</label>
+          <select v-model="remeinders.payment_deadline" class="form-input">
+            <option value="" disabled selected>Bitte auswählen</option>
+            <option value="Innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
+            <option value="Innerhalb von 5 Tagen">Innerhalb von 5 Tagen</option>
+            <option value="Innerhalb von 14 Tagen">Innerhalb von 14 Tagen</option>
+            <option value="Innerhalb von 30 Tagen">Innerhalb von 30 Tagen</option>
+            <option value="Sofort fällig / Innerhalb von 3 Tagen">
+              Sofort fällig / Innerhalb von 3 Tagen
+            </option>
+            <option value="Sofort zahlbar">Sofort zahlbar</option>
+            <option value="Nach Vereinbarung">Nach Vereinbarung</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Mahngebühr</label>
+            <input v-model="remeinders.reminder_fee" type="number" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Verzugszinsen</label>
+            <input v-model="remeinders.late_fee" type="number" class="form-input" />
+          </div>
+        </div>
       </div>
-
-      <!-- 5. Warning Text -->
-      <div class="warning-text"></div>
-
-      <!-- 6. Closing Text -->
-      <div class="closing-text"></div>
+      <div v-if="remeinders.subject" class="form-section">
+        <div class="form-group">
+          <!-- Warning Text -->
+          <label class="form-label">⚠️ Warnung</label>
+          <div class="warning-text">
+            <textarea v-model="warning[remeinders.subject]" class="form-input"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <!-- Closing Text -->
+          <label class="form-label">📝 Endtext</label>
+          <div class="closing-text">
+            <textarea v-model="closing[remeinders.subject]" class="form-input"></textarea>
+          </div>
+        </div>
+      </div>
+      <!-- Preview Button -->
+      <router-link to="/remeinders/preview" class="preview-btn" @click="setStore">
+        👁️ Vorschau anzeigen
+      </router-link>
     </div>
-
-    <!-- 7. Preview Button -->
-    <router-link to="/remeinders/preview" class="preview-btn" @click="setStore">
-      👁️ Vorschau anzeigen
-    </router-link>
   </div>
 </template>
 
 <script>
 export default {
   name: 'MahnungPreview',
+  inject: ['storePreview'],
   data() {
     return {
+      title: 'Zahlungserinnerung',
       remeinders: {
         id: '1',
         date: '2025-01-22',
-        subject: 'Zahlungserinnerung',
-        level: 1,
+        subject: '',
+        payment_deadline: '',
         reminder_fee: 0,
         late_fee: 0,
         selected_invoice: null,
         intro_text: '',
         closing_text: '',
-        dead_lines: ''
+        warning_text: ''
       },
-      introOptions: [
-        null, // index 0 boş kalır → level 1 = index 1 olsun
-        'nach unserem Buchhaltungsstand ist der Rechnungsbetrag der unten aufgeführten Rechnung noch nicht auf unserem Konto eingegangen.',
-        'trotz unserer ersten Zahlungserinnerung ist der offene Betrag noch nicht bei uns eingegangen. Wir bitten Sie dringend, die Zahlung zu veranlassen.',
-        'trotz mehrfacher Mahnungen ist der unten aufgeführte Betrag noch immer nicht beglichen worden. Dies ist unsere <strong>letzte Mahnung</strong> vor Einleitung rechtlicher Schritte.'
+      intro: [
+        null,
+        'Nach unserem Buchhaltungsstand ist der Rechnungsbetrag der unten aufgeführten Rechnung noch nicht auf unserem Konto eingegangen.',
+        'Trotz unserer ersten Zahlungserinnerung ist der offene Betrag noch nicht bei uns eingegangen. Wir bitten Sie dringend, die Zahlung zu veranlassen.',
+        'Trotz mehrfacher Mahnungen ist der unten aufgeführte Betrag noch immer nicht beglichen worden. Dies ist unsere <strong>letzte Mahnung</strong> vor Einleitung rechtlicher Schritte.'
       ],
 
-      closingOptions: [
+      closing: [
         null,
         'Wir bitten Sie höflich, den offenen Betrag <strong>innerhalb von 7 Tagen</strong> zu überweisen.',
         'Wir fordern Sie auf, den offenen Betrag zzgl. Mahngebühr <strong>innerhalb von 5 Tagen</strong> zu begleichen.',
-        'Dies ist Ihre <strong>letzte Möglichkeit</strong>, den offenen Betrag innerhalb von <strong>3 Tagen</strong> zu begleichen.'
+        'Dies ist Ihre letzte Möglichkeit, den offenen Betrag innerhalb von 3 Tagen zu begleichen.'
       ],
-      warningOptions: [
-        null, // index 0 boş bırakılır (çünkü level 1 = index 1)
-        null, // level 1 -> warning yok
-        `⚠️ Wichtiger Hinweis:<br />
-      Sollte die Zahlung nicht innerhalb der angegebenen Frist erfolgen,
-      sehen wir uns gezwungen, weitere Maßnahmen einzuleiten.
-      Dies kann zusätzliche Kosten verursachen.`,
-
-        `🚨 Letzte Mahnung:<br />
-      Bei Nichtzahlung innerhalb der angegebenen Frist
-      werden wir ohne weitere Ankündigung ein gerichtliches
-      Mahnverfahren einleiten. Die entstehenden Gerichts- und
-      Anwaltskosten gehen zu Ihren Lasten.`
+      warning: [
+        null,
+        null,
+        'Sollte die Zahlung nicht innerhalb der angegebenen Frist erfolgen, sehen wir uns gezwungen, weitere Maßnahmen einzuleiten.Dies kann zusätzliche Kosten verursachen.',
+        'Bei Nichtzahlung innerhalb der angegebenen Frist werden wir ohne weitere Ankündigung ein gerichtliches Mahnverfahren einleiten. Die entstehenden Gerichts- und Anwaltskosten gehen zu Ihren Lasten.'
       ]
     }
   },
@@ -135,23 +120,121 @@ export default {
     this.getSelectedInvoice()
   },
   methods: {
-    getSelectedInvoice() {},
-
-    getTotalAmount() {
-      const invoiceTotal = this.mahnung.invoices.reduce((sum, inv) => sum + inv.amount, 0)
-      return invoiceTotal + this.mahnung.reminder_fee + this.mahnung.late_fee
+    async getSelectedInvoice() {
+      const row = await window.api.getDocumentById(this.$route.params.id, 'invoices')
+      if (row.success) {
+        this.remeinders.selected_invoice = {
+          id: row.rows.id,
+          date: row.rows.date,
+          currency: row.rows.currency,
+          selected_customer: JSON.parse(row.rows.customer),
+          payment: JSON.parse(row.rows.payment),
+          summary: JSON.parse(row.rows.summary)
+        }
+      }
+      // console.log(this.remeinders.selected_invoice)
+    },
+    setStore() {
+      console.time('commit')
+      if (this.remeinders) {
+        this.remeinders.intro_text = this.intro[this.remeinders.subject]
+        this.remeinders.closing_text = this.closing[this.remeinders.subject]
+        this.remeinders.warning_text = this.warning[this.remeinders.subject]
+        console.log(this.remeinders)
+        // this.storePreview('remeinders', this.remeinders)
+      }
+      console.timeEnd('commit')
     }
   }
 }
 </script>
 
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* EDITOR PANEL */
+.editor-panel {
+  width: 70%;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.editor-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.editor-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.editor-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* FORM GROUPS */
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.form-row-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+input:not([readonly]) {
+  background: #fff;
+}
+.stars {
+  color: darkred;
+  font-size: 16px;
+}
 .mahnung-container {
   background: #f5f5f5;
   padding: 40px 20px;

@@ -361,6 +361,7 @@ div[v-if='errorMessage'] {
   background: #f8fafc;
 }
 textarea {
+  width: 100%;
   resize: vertical;
   min-height: 100px;
 }
