@@ -680,7 +680,7 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
 
 ipcMain.handle('get-document', async (data, tabelName) => {
   try {
-    const rows = db.prepare(`SELECT * FROM ${tabelName}`).all()
+    const rows = db.prepare(`SELECT * FROM ${tabelName} WHERE is_active = 1`).all()
     return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)
