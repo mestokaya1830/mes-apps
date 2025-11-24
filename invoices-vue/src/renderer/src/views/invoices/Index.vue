@@ -61,10 +61,6 @@
           <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
             {{ item.is_active ? 'Aktiv' : 'Storniert' }}
           </div>
-
-          <div class="status-badge" :class="item.payment.is_paid ? 'paid' : 'unpaid'">
-            {{ item.payment.is_paid ? 'Bezahlt' : 'Unbezahlt' }}
-          </div>
         </div>
 
         <!-- Card Actions -->
@@ -138,7 +134,7 @@ export default {
           ...item,
           customer: JSON.parse(item.customer),
           summary: JSON.parse(item.summary),
-          payment: JSON.parse(item.payment)
+          terms: JSON.parse(item.terms)
         }))
         this.search = this.invoiceList
       } catch (error) {

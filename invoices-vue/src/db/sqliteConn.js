@@ -23,3 +23,10 @@ try {
 } catch (err) {
   console.error(err.message)
 }
+
+// try {
+//   db.prepare('DROP TABLE customers').run() // veya DROP TABLE users için: 'DROP TABLE users'
+// } catch (err) {
+//   console.error(err.message)
+// }
+
