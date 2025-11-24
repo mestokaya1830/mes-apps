@@ -194,7 +194,11 @@
           </div>
           <div class="form-group">
             <label class="form-label">Skonto Frist (Tage)</label>
-            <input v-model.number="invoices.terms.early_payment_days" type="number" class="form-input" />
+            <input
+              v-model.number="invoices.terms.early_payment_days"
+              type="number"
+              class="form-input"
+            />
           </div>
         </div>
         <div class="form-group">
@@ -354,6 +358,7 @@ export default {
         id: 1,
         is_active: 1,
         date: '',
+        due_date: '',
         service_date: '',
         currency: 'EUR.de-DE',
         terms: {
@@ -473,6 +478,9 @@ export default {
     setStore() {
       console.time('commit')
       if (this.invoices) {
+        const date = new Date(this.invoices.date)
+        date.setDate(date.getDate() + this.invoices.terms.payment_terms)
+        this.invoices.due_date = date.toISOString().split('T')[0]
         this.storePreview('invoices', this.invoices)
       }
       console.timeEnd('commit')

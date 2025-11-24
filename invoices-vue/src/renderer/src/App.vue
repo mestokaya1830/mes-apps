@@ -95,17 +95,12 @@ export default {
             0
           )
           const total = subtotal + vatAmount
-          const paidAmount = storeData.payment?.paid_amount || 0
-          const outstanding = total - paidAmount
-
           const data = {
             ...storeData,
             summary: {
               subtotal,
               vat_amount: vatAmount,
-              total,
-              paid_amount: paidAmount,
-              outstanding
+              total
             }
           }
           if (data) {

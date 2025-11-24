@@ -378,6 +378,21 @@ export default {
 
 
 
+try {
+  const rows = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
+  console.log('Tables:', rows)
+} catch (err) {
+  console.error(err.message)
+}
+
+// try {
+//   db.prepare('DROP TABLE invoices').run() // veya DROP TABLE users için: 'DROP TABLE users'
+// } catch (err) {
+//   console.error(err.message)
+// }
+
+
+
 // Rastgele tarih üretme
 const randDate = () => {
   const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')
@@ -443,10 +458,10 @@ for (let i = 1; i <= 30; i++) {
 //insert
 const insertInvoice = db.prepare(`
   INSERT INTO invoices (
-    date, service_date, currency, terms, is_active, positions,
+    date, due_date, service_date, currency, terms, is_active, positions,
     customer, tax_options, summary
   ) VALUES (
-    @date, @service_date, @currency, @terms, @is_active, @positions,
+    @date, @due_date, @service_date, @currency, @terms, @is_active, @positions,
     @customer, @tax_options, @summary
   )
 `)
@@ -464,6 +479,11 @@ for (let i = 1; i <= 100; i++) {
     early_payment: false,
     early_payment_percentage: 2,
     early_payment_days: 7
+  }
+  const dueRand = () => {
+    const date = new Date(invoiceDate)
+    date.setDate(date.getDate() + terms.payment_terms)
+    return date.toISOString().split('T')[0]
   }
 
   // POSITIONS
@@ -511,6 +531,7 @@ for (let i = 1; i <= 100; i++) {
 
   insertInvoice.run({
     date: invoiceDate,
+    due_date: dueRand(),
     service_date: serviceDate,
     currency: 'EUR.de-DE',
     terms: JSON.stringify(terms),
