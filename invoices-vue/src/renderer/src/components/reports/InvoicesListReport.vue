@@ -168,14 +168,14 @@
                 <td class="amount">
                   <strong>{{ formatCurrency(item.summary.outstanding) }}</strong>
                 </td>
-                <td>
+                <!-- <td>
                   <span class="status-badge overdue">{{ getDaysOverdue(item.payment) }}</span>
-                </td>
-                <td>
+                </td> -->
+                <!-- <td>
                   <span :class="getPaymentClass(item.payment)">{{
                     formatDate(item.payment.payment_date)
                   }}</span>
-                </td>
+                </td> -->
                 <td>
                   <span class="status-badge paid">{{ item.is_active }}</span>
                 </td>
@@ -274,7 +274,7 @@ export default {
           this.reports = result.rows.map((row) => ({
             ...row,
             customer: JSON.parse(row.customer),
-            payment: JSON.parse(row.payment),
+            terms: JSON.parse(row.terms),
             positions: JSON.parse(row.positions),
             summary: JSON.parse(row.summary),
             tax_options: JSON.parse(row.tax_options)
@@ -297,7 +297,7 @@ export default {
           this.reports = result.rows.map((row) => ({
             ...row,
             customer: JSON.parse(row.customer),
-            payment: JSON.parse(row.payment),
+            terms: JSON.parse(row.terms),
             positions: JSON.parse(row.positions),
             summary: JSON.parse(row.summary),
             tax_options: JSON.parse(row.tax_options)
@@ -337,11 +337,14 @@ export default {
         return 'overdue' // Kırmızı
       else return 'pending' // Sarı
     },
-    getDaysOverdue(item) {
+     getDaysOverdue(item) {
       const today = new Date()
-      const paymentDate = new Date(item.payment_date)
-      const diffTime = paymentDate - today
-      return Math.floor(diffTime / (1000 * 60 * 60 * 24))
+      const dueDate = new Date(item.date)
+      dueDate.setDate(dueDate.getDate() + 14) // Fatura tarihine 14 gün ekle
+      const diffTime = dueDate - today
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+
+      return diffDays
     },
     async printReport() {
       window.print()

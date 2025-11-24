@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatRechnungId }}</span>
+              <span class="meta-value">{{ formatRechnungId(invoice.id) }}</span>
             </div>
 
             <div class="meta-row">
@@ -65,9 +65,9 @@
           </div>
         </div>
 
-        <div v-if="invoice.payment.payment_reference" class="subject-line">
-          <strong>Betreff:</strong> {{ invoice.payment_reference }}
-        </div>
+        <!-- <div v-if="invoice.payment.payment_reference" class="subject-line">
+          <strong>Betreff:</strong> {{ invoice.terms.payment_reference }}
+        </div> -->
 
         <!-- Intro Text -->
         <div class="intro-text">
@@ -140,7 +140,7 @@
             }}</span>
           </div>
 
-          <div
+          <!-- <div
             v-if="invoice.payment && invoice.payment.paid_amount && invoice.payment.paid_amount > 0"
             class="total-row paid"
           >
@@ -148,7 +148,7 @@
             <span class="total-value">
               - {{ formatCurrency(invoice.payment.paid_amount, invoice.currency) }}
             </span>
-          </div>
+          </div> -->
           <div
             v-if="invoice.summary && invoice.summary.outstanding > 0"
             class="total-row outstanding"
@@ -178,21 +178,21 @@
         </div>
 
         <!-- payment -->
-        <div v-if="invoice.payment" class="payment-terms-box">
+        <div v-if="invoice.terms" class="payment-terms-box">
           <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
 
           <div class="payment-terms-content">
-            <div v-if="invoice.payment.payment_terms" class="payment-term-item">
+            <div v-if="invoice.terms.payment_terms" class="payment-term-item">
               <strong>Zahlungsziel:</strong>
-              {{ invoice.payment.payment_terms }} Tage netto (fällig bis
-              {{ calculateDueDate(invoice.date, invoice.payment.payment_terms) }})
+              {{ invoice.terms.payment_terms }} Tage netto (fällig bis
+              {{ calculateDueDate(invoice.date, invoice.terms.payment_terms) }})
             </div>
 
-            <div v-if="invoice.payment.has_skonto" class="payment-term-item skonto-highlight">
+            <div v-if="invoice.terms.early_payment_days" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
-              {{ invoice.payment.skonto_percentage }}% Skonto bei Zahlung innerhalb von
-              {{ invoice.payment.skonto_days }} Tagen (bis
-              {{ calculateDueDate(invoice.date, invoice.payment.skonto_days) }})
+              {{ invoice.terms.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
+              {{ invoice.terms.early_payment_days }} Tagen (bis
+              {{ calculateDueDate(invoice.date, invoice.terms.early_payment_days) }})
               <div class="skonto-amount">
                 Skonto-Betrag:
                 {{ formatCurrency(calculateSkontoAmount(), invoice.currency) }}
@@ -201,10 +201,10 @@
               </div>
             </div>
 
-            <div v-if="invoice.payment.payment_conditions" class="payment-term-item">
+            <div v-if="invoice.terms.payment_conditions" class="payment-term-item">
               <strong>Zusätzliche Bedingungen:</strong>
               <div class="payment-conditions-text">
-                {{ invoice.payment.payment_conditions }}
+                {{ invoice.terms.payment_conditions }}
               </div>
             </div>
           </div>
@@ -223,8 +223,6 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label">Verwen..:</span>
-            <span class="bank-value">{{ invoice.payment.verwendungszweck }}</span>
           </div>
         </div>
 
@@ -234,20 +232,20 @@
       <div class="form-section">
         <div class="form-row">
           <div class="form-group">
-            <select v-model="document_status" class="form-input" @change="setDocumentStatus()">
+            <select v-model="invoice_status" class="form-input" @change="setDocumentStatus()">
               <option value="" disabled>Status</option>
               <option value="0">Stornieren</option>
               <option value="1">Aktivieren</option>
             </select>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
               <option value="" disabled>Bezahlungsstatus</option>
               <option value="1">Bezahlt</option>
               <option value="0">Unbezahlt</option>
             </select>
-          </div>
-          <div v-if="!invoice.payment.is_paid">
+          </div> -->
+          <!-- <div v-if="!invoice.payment.is_paid">
             <router-link :to="`/invoices/payment/${invoice.id}`">
               <button class="btn btn-primary">
                 <span class="nav-icon">💳</span>
@@ -260,7 +258,7 @@
                 <span>Mahnung erstellen</span>
               </button>
             </router-link>
-          </div>
+          </div> -->
 
           <!-- <div class="form-group">
             <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
@@ -303,15 +301,7 @@ export default {
       title: 'Rechnung',
       invoice: null,
       auth: null,
-      document_status: '',
-      paid_status: ''
-    }
-  },
-  computed: {
-    formatRechnungId() {
-      if (!this.invoice || !this.invoice.id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(this.invoice.id).padStart(5, '0')}`
+      invoice_status: ''
     }
   },
   mounted() {
@@ -327,7 +317,7 @@ export default {
           ...result.rows,
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions),
-          payment: JSON.parse(result.rows.payment),
+          terms: JSON.parse(result.rows.terms),
           summary: JSON.parse(result.rows.summary)
         }
         console.log(this.invoice)
@@ -341,6 +331,11 @@ export default {
       } else {
         console.warn('No auth data in store')
       }
+    },
+     formatRechnungId(id) {
+      if (!id) return ''
+      const year = new Date().getFullYear()
+      return `RE-${year}-${String(id).padStart(5, '0')}`
     },
     calculateDueDate(invoiceDate, days) {
       if (!invoiceDate || !days) return ''
@@ -364,18 +359,18 @@ export default {
       const result = await window.api.documentStatus(
         this.invoice.id,
         'invoices',
-        this.document_status
+        this.invoice_status
       )
       if (result.success) {
         this.$router.push('/invoices')
       }
     },
-    async setPaidStatus() {
-      const result = await window.api.paidStatus(this.invoice.id, 'invoices', this.paid_status)
-      if (result.success) {
-        this.$router.push('/invoices')
-      }
-    }
+    // async setPaidStatus() {
+    //   const result = await window.api.paidStatus(this.invoice.id, 'invoices', this.paid_status)
+    //   if (result.success) {
+    //     this.$router.push('/invoices')
+    //   }
+    // }
   }
 }
 </script>

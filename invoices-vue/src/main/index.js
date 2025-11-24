@@ -461,7 +461,7 @@ ipcMain.handle('delete-customer', async (event, id) => {
 ipcMain.handle('save-document', async (event, tableName, data) => {
   if (tableName === 'invoices') {
     try {
-      const customer = JSON.stringify(data.selected_customer || {})
+      const customer = JSON.stringify(data.customer || {})
       const terms = JSON.stringify(data.terms || {})
       const positions = JSON.stringify(data.positions || {})
       const tax_options = JSON.stringify(data.tax_options || {})
@@ -503,7 +503,7 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
   if (tableName === 'offers') {
     console.log(data)
     try {
-      const customer = JSON.stringify(data.selected_customer || {})
+      const customer = JSON.stringify(data.customer || {})
       const payment = JSON.stringify(data.payment || {})
       const positions = JSON.stringify(data.positions || {})
       const summary = JSON.stringify(data.summary || {})
@@ -545,7 +545,7 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
   //save orders table
   if (tableName === 'orders') {
     try {
-      const customer = JSON.stringify(data.selected_customer || {})
+      const customer = JSON.stringify(data.customer || {})
       const payment = JSON.stringify(data.payment || {})
       const positions = JSON.stringify(data.positions || {})
       const summary = JSON.stringify(data.summary || {})
@@ -605,7 +605,7 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
   //save deliveries table
   if (tableName === 'deliveries') {
     try {
-      const customer = JSON.stringify(data.selected_customer || {})
+      const customer = JSON.stringify(data.customer || {})
       const positions = JSON.stringify(data.positions || {})
       const row = db
       db.prepare(

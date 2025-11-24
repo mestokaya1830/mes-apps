@@ -143,7 +143,7 @@ export default {
           this.reports = result.rows.map((row) => ({
             ...row,
             customer: JSON.parse(row.customer),
-            payment: JSON.parse(row.payment),
+            terms: JSON.parse(row.terms),
             positions: JSON.parse(row.positions),
             summary: JSON.parse(row.summary),
             tax_options: JSON.parse(row.tax_options)

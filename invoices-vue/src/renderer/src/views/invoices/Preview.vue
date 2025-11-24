@@ -6,17 +6,17 @@
         <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- customers -->
-        <div v-if="invoicesPreview.selected_customer" class="recipient">
+        <div v-if="invoicesPreview.customer" class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ invoicesPreview.selected_customer.company_name }}
+              {{ invoicesPreview.customer.company_name }}
             </div>
-            <div class="meta-label">{{ invoicesPreview.selected_customer.address }}</div>
+            <div class="meta-label">{{ invoicesPreview.customer.address }}</div>
             <div class="meta-label">
-              {{ invoicesPreview.selected_customer.postal_code }}
-              {{ invoicesPreview.selected_customer.city }}<br />
-              {{ invoicesPreview.selected_customer.country }}
+              {{ invoicesPreview.customer.postal_code }}
+              {{ invoicesPreview.customer.city }}<br />
+              {{ invoicesPreview.customer.country }}
             </div>
           </div>
           <!-- recipient details -->
@@ -25,7 +25,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatInvoiceId }}</span>
+              <span class="meta-value">{{ formatInvoiceId(invoicesPreview.id) }}</span>
             </div>
 
             <div class="meta-row">
@@ -41,47 +41,39 @@
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(invoicesPreview.selected_customer.id)
-              }}</span>
+              <span class="meta-value">{{ formatCustomerId(invoicesPreview.customer.id) }}</span>
             </div>
 
             <div
               v-if="
-                invoicesPreview.selected_customer.country === 'Germany' &&
-                invoicesPreview.selected_customer.tax_number
+                invoicesPreview.customer.country === 'Germany' &&
+                invoicesPreview.customer.tax_number
               "
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ invoicesPreview.selected_customer.tax_number }}</span>
+              <span class="meta-value">{{ invoicesPreview.customer.tax_number }}</span>
             </div>
 
             <div
-              v-else-if="
-                invoicesPreview.selected_customer.is_in_eu &&
-                invoicesPreview.selected_customer.vat_id
-              "
+              v-else-if="invoicesPreview.customer.is_in_eu && invoicesPreview.customer.vat_id"
               class="meta-row"
             >
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ invoicesPreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ invoicesPreview.customer.vat_id }}</span>
             </div>
 
             <div
-              v-else-if="
-                !invoicesPreview.selected_customer.is_in_eu &&
-                invoicesPreview.selected_customer.vat_id
-              "
+              v-else-if="!invoicesPreview.customer.is_in_eu && invoicesPreview.customer.vat_id"
               class="meta-row"
             >
               <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ invoicesPreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ invoicesPreview.customer.vat_id }}</span>
             </div>
           </div>
         </div>
 
-        <div v-if="invoicesPreview.payment.payment_reference" class="subject-line">
+        <div v-if="invoicesPreview.terms.payment_reference" class="subject-line">
           <strong>Betreff:</strong> {{ invoicesPreview.payment_reference }}
         </div>
 
@@ -248,8 +240,6 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label">Verwen..:</span>
-            <span class="bank-value">{{ invoicesPreview.payment.verwendungszweck }}</span>
           </div>
         </div>
 
@@ -257,7 +247,7 @@
       </div>
 
       <ActionsButtonPreview
-        v-if="invoicesPreview.selected_customer"
+        v-if="invoicesPreview.customer"
         tableName="invoices"
         :tableData="invoicesPreview"
         sourcePage="preview"
@@ -293,30 +283,6 @@ export default {
       auth: null
     }
   },
-  computed: {
-    formatInvoiceId() {
-      if (!this.invoicesPreview || !this.invoicesPreview.id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(this.invoicesPreview.id).padStart(5, '0')}`
-    },
-    logoSrc() {
-      const logo = this.auth.logo
-      if (!logo) return null
-      if (typeof logo === 'string') {
-        if (logo.startsWith('data:image')) return logo
-        return `data:image/png;base64,${logo}`
-      }
-      try {
-        let binary = ''
-        const bytes = new Uint8Array(Object.values(logo))
-        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
-        return `data:image/png;base64,${window.btoa(binary)}`
-      } catch (error) {
-        console.error(error)
-        return null
-      }
-    }
-  },
   mounted() {
     this.getInvoicesPreview()
     this.getAuth()
@@ -325,7 +291,7 @@ export default {
     getInvoicesPreview() {
       if (store.state.invoices) {
         this.invoicesPreview = store.state.invoices
-        console.log(this.invoicesPreview)
+        console.log('preview', this.invoicesPreview)
       }
     },
     getAuth() {
@@ -334,6 +300,11 @@ export default {
       } else {
         console.warn('No auth data in store')
       }
+    },
+     formatInvoiceId(id) {
+      if (!id) return ''
+      const year = new Date().getFullYear()
+      return `RE-${year}-${String(id).padStart(5, '0')}`
     },
     calculateDueDate(invoiceDate, days) {
       if (!invoiceDate || !days) return ''

@@ -472,14 +472,10 @@ export default {
     },
     setStore() {
       console.time('commit')
-      // if (this.invoices) {
-      //   const d = new Date(this.invoices.date)
-      //   d.setDate(d.getDate() + this.invoices.terms.payment_terms)
-      //   this.invoices.terms.payment_date = d.toISOString().split('T')[0]
-      //   this.storePreview('invoices', this.invoices)
-      // }
+      if (this.invoices) {
+        this.storePreview('invoices', this.invoices)
+      }
       console.timeEnd('commit')
-      console.log('invoices', this.invoices)
     }
   }
 }
