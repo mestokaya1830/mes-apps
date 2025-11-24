@@ -25,12 +25,26 @@
     </div>
 
     <div class="filter-container">
+      <div class="form-group">
+        <select
+          v-model="categiries_filter"
+          class="form-input"
+          @change="categoriesFilter"
+        >
+          <option value="" disabled>Kategorrie</option>
+          <option value="all">Alles</option>
+          <option value="active">Aktiv</option>
+          <option value="canceled">Storniert</option>
+          <option value="paid">Bezahlt</option>
+          <option value="not_paid">Unbezahlt</option>
+          <option value="partially_paid">Teilweise bezahlt</option>
+        </select>
+      </div>
       <input v-model="search_box" type="search" @input="searchFilter()" placeholder="Suce..." />
       <input v-model="date_box_start" type="date" @input="dateFilter()" />
       <input v-model="date_box_end" type="date" @input="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
-      <router-link to="/reports/invoices" class="preview-btn">
-        👁️ Report</router-link>
+      <router-link to="/reports/invoices" class="preview-btn"> 👁️ Report</router-link>
     </div>
     <!-- Invoice Grid -->
     <div class="customer-grid">
@@ -38,7 +52,7 @@
         <!-- Card Header -->
         <div class="card-header">
           <div class="customer-avatar">
-            {{ getInitials(item.customer.first_name, item.customer.last_name) }}
+            {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
           </div>
           <div class="customer-info">
             <h3 class="customer-name">{{ formatInvoiceId(item.id) }}</h3>
@@ -48,8 +62,8 @@
             {{ item.is_active ? 'Aktiv' : 'Storniert' }}
           </div>
 
-          <div class="status-badge" :class="item.status ? 'paid' : 'unpaid'">
-            {{ item.status ? 'Bezahlt' : 'Unbezahlt' }}
+          <div class="status-badge" :class="item.payment.is_paid ? 'paid' : 'unpaid'">
+            {{ item.payment.is_paid ? 'Bezahlt' : 'Unbezahlt' }}
           </div>
         </div>
 
@@ -109,6 +123,7 @@ export default {
       search_box: '',
       date_box_start: '',
       date_box_end: '',
+      categiries_filter: '',
       isSort: true
     }
   },
@@ -122,7 +137,8 @@ export default {
         this.invoiceList = result.rows.map((item) => ({
           ...item,
           customer: JSON.parse(item.customer),
-          summary: JSON.parse(item.summary)
+          summary: JSON.parse(item.summary),
+          payment: JSON.parse(item.payment)
         }))
         this.search = this.invoiceList
       } catch (error) {
@@ -134,10 +150,19 @@ export default {
       const year = new Date().getFullYear()
       return `RE-${year}-${String(id).padStart(5, '0')}`
     },
-    getInitials(firstName, lastName) {
+    avatarStyle(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
+    },
+    async categoriesFilter() {
+      try {
+        console.log(this.categiries_filter)
+        // const result = await window.api.documentFilter('invoices', 'categories')
+        // this.search = result.rows
+      } catch (error) {
+        console.error(error)
+      }
     },
     searchFilter() {
       console.log(this.search)

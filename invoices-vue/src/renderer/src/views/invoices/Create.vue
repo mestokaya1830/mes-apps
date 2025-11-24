@@ -27,15 +27,6 @@
             <input v-model="invoices.date" type="date" class="form-input" required />
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">payment_reference / Betreff</label>
-          <input
-            v-model="invoices.payment.payment_reference"
-            type="text"
-            class="form-input"
-            placeholder="z.B. Webentwicklung Projekt XYZ"
-          />
-        </div>
       </div>
 
       <div v-if="customers" class="form-section">
@@ -49,20 +40,15 @@
             </option>
           </select>
         </div>
-        <div v-if="invoices.selected_customer.id" class="customer-details">
+        <div v-if="invoices.customer?.id" class="customer-details">
           <div class="form-group">
             <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-            <input
-              v-model="invoices.selected_customer.id"
-              type="text"
-              class="form-input"
-              readonly
-            />
+            <input v-model="invoices.customer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Firmname <span class="stars">*</span></label>
             <input
-              v-model="invoices.selected_customer.company_name"
+              v-model="invoices.customer.company_name"
               type="text"
               class="form-input"
               readonly
@@ -72,7 +58,7 @@
             <div class="form-group">
               <label class="form-label">Vorname <span class="stars">*</span></label>
               <input
-                v-model="invoices.selected_customer.first_name"
+                v-model="invoices.customer.first_name"
                 type="text"
                 class="form-input"
                 readonly
@@ -81,7 +67,7 @@
             <div class="form-group">
               <label class="form-label">Nachname <span class="stars">*</span></label>
               <input
-                v-model="invoices.selected_customer.last_name"
+                v-model="invoices.customer.last_name"
                 type="text"
                 class="form-input"
                 readonly
@@ -90,18 +76,13 @@
           </div>
           <div class="form-group">
             <label class="form-label">Adresse <span class="stars">*</span></label>
-            <input
-              v-model="invoices.selected_customer.address"
-              type="text"
-              class="form-input"
-              readonly
-            />
+            <input v-model="invoices.customer.address" type="text" class="form-input" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">PLZ <span class="stars">*</span></label>
               <input
-                v-model="invoices.selected_customer.postal_code"
+                v-model="invoices.customer.postal_code"
                 type="text"
                 class="form-input"
                 readonly
@@ -109,12 +90,7 @@
             </div>
             <div class="form-group">
               <label class="form-label">Stadt <span class="stars">*</span></label>
-              <input
-                v-model="invoices.selected_customer.city"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="invoices.customer.city" type="text" class="form-input" readonly />
             </div>
           </div>
         </div>
@@ -180,44 +156,23 @@
         <div class="form-section-title">💳 Zahlungsinformationen</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Bereits bezahlt (Anzahlung)</label>
-            <input
-              v-model.number="invoices.payment.paid_amount"
-              type="number"
-              step="0.01"
-              class="form-input"
-              @input="calculateOutstanding"
-            />
-            <small class="form-hint">Bereits geleistete Anzahlungen</small>
-          </div>
-          <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage) *</label>
             <input
-              v-model.number="invoices.payment.payment_terms"
+              v-model.number="invoices.terms.payment_terms"
               type="number"
               class="form-input"
               required
             />
             <small class="form-hint"
-              >Zahlbar innerhalb {{ invoices.payment.payment_terms }} Tagen netto</small
+              >Zahlbar innerhalb {{ invoices.terms.payment_terms }} Tagen netto</small
             >
           </div>
-        </div>
-        <div class="form-section">
-          <label class="form-label">💬 Verwendungszweck</label>
-          <input
-            v-model="invoices.payment.verwendungszweck"
-            type="text"
-            class="form-input"
-            required
-            placeholder="Bitte geben Sie den Verwendungszweck an (z.B. Rechnungsnummer RE-2025-00001)"
-          />
         </div>
         <div class="form-option">
           <label for="skonto-checkbox" class="switch">
             <input
               id="skonto-checkbox"
-              v-model="invoices.payment.has_skonto"
+              v-model="invoices.terms.early_payment"
               type="checkbox"
               class="switch-checkbox"
             />
@@ -227,11 +182,11 @@
             <strong>Skonto gewähren</strong>
           </div>
         </div>
-        <div v-if="invoices.payment.has_skonto" class="form-row">
+        <div v-if="invoices.terms.early_payment" class="form-row">
           <div class="form-group">
             <label class="form-label">Skonto (%)</label>
             <input
-              v-model.number="invoices.payment.skonto_percentage"
+              v-model.number="invoices.terms.early_payment_percentage"
               type="number"
               step="0.1"
               class="form-input"
@@ -239,13 +194,13 @@
           </div>
           <div class="form-group">
             <label class="form-label">Skonto Frist (Tage)</label>
-            <input v-model.number="invoices.payment.skonto_days" type="number" class="form-input" />
+            <input v-model.number="invoices.terms.early_payment_days" type="number" class="form-input" />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Zusätzliche Zahlungsbedingungen</label>
           <textarea
-            v-model="invoices.payment.payment_conditions"
+            v-model="invoices.terms.payment_conditions"
             class="form-input"
             rows="3"
             placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
@@ -397,29 +352,24 @@ export default {
       customerList: 'Wähle Kunden',
       invoices: {
         id: 1,
+        is_active: 1,
         date: '',
         service_date: '',
-        selected_customer: {},
         currency: 'EUR.de-DE',
+        terms: {
+          payment_terms: 14,
+          payment_conditions: '',
+          early_payment: false,
+          early_payment_percentage: 2,
+          early_payment_days: 7
+        },
         positions: [],
+        customer: {},
         tax_options: {
           is_small_company: false,
           is_reverse_charge: false,
           is_eu_delivery: false
-        },
-        payment: {
-          payment_date: '',
-          paid_amount: 0,
-          payment_terms: 14,
-          payment_conditions: '',
-          payment_reference: '',
-          is_paid: false,
-          has_skonto: false,
-          skonto_percentage: 2,
-          skonto_days: 7,
-          verwendungszweck: ''
-        },
-        is_active: 1
+        }
       }
     }
   },
@@ -440,7 +390,7 @@ export default {
     },
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.invoices.selected_customer = customer
+      if (customer) this.invoices.customer = customer
     },
     getStore() {
       if (store.state.invoices) {
@@ -448,7 +398,7 @@ export default {
       }
     },
     getSelectedCustomer(value) {
-      this.invoices.selected_customer = value
+      this.invoices.customer = value
     },
     checkTaxOptions(current) {
       if (current) {
@@ -522,12 +472,12 @@ export default {
     },
     setStore() {
       console.time('commit')
-      if (this.invoices) {
-        const d = new Date(this.invoices.date)
-        d.setDate(d.getDate() + this.invoices.payment.payment_terms)
-        this.invoices.payment.payment_date = d.toISOString().split('T')[0]
-        this.storePreview('invoices', this.invoices)
-      }
+      // if (this.invoices) {
+      //   const d = new Date(this.invoices.date)
+      //   d.setDate(d.getDate() + this.invoices.terms.payment_terms)
+      //   this.invoices.terms.payment_date = d.toISOString().split('T')[0]
+      //   this.storePreview('invoices', this.invoices)
+      // }
       console.timeEnd('commit')
       console.log('invoices', this.invoices)
     }

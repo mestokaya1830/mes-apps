@@ -20,6 +20,8 @@ contextBridge.exposeInMainWorld('api', {
   getDocument: async (data, tableName) => ipcRenderer.invoke('get-document', data, tableName),
   getDocumentById: async (data, id, tableName) =>
     ipcRenderer.invoke('get-document-by-id', data, id, tableName),
+  documentFilter: async (data, value, tableName) =>
+    ipcRenderer.invoke('document-filter', data, value, tableName),
   documentStatus: async (id, tableName, value) =>
     ipcRenderer.invoke('set-document-status', id, tableName, value),
   paidStatus: async (id, tableName, value) =>

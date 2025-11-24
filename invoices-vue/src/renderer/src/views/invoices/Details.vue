@@ -247,19 +247,21 @@
               <option value="0">Unbezahlt</option>
             </select>
           </div>
-          <router-link :to="`/invoices/payment/${invoice.id}`">
-            <button class="btn btn-primary">
-              <span class="nav-icon">💳</span>
-              <span>Zahlung erhalten markieren</span>
-            </button>
-          </router-link>
-          <router-link :to="`/remeinders/create/${invoice.id}`">
-            <button class="btn btn-primary">
-              <span class="nav-icon">⚠️</span>
-              <span>Mahnung erstellen</span>
-            </button>
-          </router-link>
-          
+          <div v-if="!invoice.payment.is_paid">
+            <router-link :to="`/invoices/payment/${invoice.id}`">
+              <button class="btn btn-primary">
+                <span class="nav-icon">💳</span>
+                <span>Zahlung erhalten markieren</span>
+              </button>
+            </router-link>
+            <router-link :to="`/remeinders/create/${invoice.id}`">
+              <button class="btn btn-primary">
+                <span class="nav-icon">⚠️</span>
+                <span>Mahnung erstellen</span>
+              </button>
+            </router-link>
+          </div>
+
           <!-- <div class="form-group">
             <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
               <option value="" disabled>Bezahlungsstatus</option>
@@ -310,23 +312,6 @@ export default {
       if (!this.invoice || !this.invoice.id) return ''
       const year = new Date().getFullYear()
       return `RE-${year}-${String(this.invoice.id).padStart(5, '0')}`
-    },
-    logoSrc() {
-      const logo = this.auth.logo
-      if (!logo) return null
-      if (typeof logo === 'string') {
-        if (logo.startsWith('data:image')) return logo
-        return `data:image/png;base64,${logo}`
-      }
-      try {
-        let binary = ''
-        const bytes = new Uint8Array(Object.values(logo))
-        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
-        return `data:image/png;base64,${window.btoa(binary)}`
-      } catch (error) {
-        console.error(error)
-        return null
-      }
     }
   },
   mounted() {
@@ -345,6 +330,7 @@ export default {
           payment: JSON.parse(result.rows.payment),
           summary: JSON.parse(result.rows.summary)
         }
+        console.log(this.invoice)
       } catch (error) {
         console.error(error)
       }

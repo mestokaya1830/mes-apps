@@ -49,6 +49,7 @@ db.exec(`CREATE TABLE tokens (
 //customers
 db.exec(`CREATE TABLE IF NOT EXISTS customers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    is_active INTEGER NOT NULL DEFAULT 0,
     customer_type TEXT NOT NULL,
     company_name TEXT NOT NULL,
     first_name TEXT NOT NULL,
@@ -65,23 +66,34 @@ db.exec(`CREATE TABLE IF NOT EXISTS customers (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );`)
 
-
-
 //invoices
 
 db.exec(`CREATE TABLE IF NOT EXISTS invoices (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    date TEXT NOT NULL,
-    is_active INTEGER NOT NULL,
-    currency TEXT NOT NULL,
+    date TEXT NOT NULL DEFAULT (DATE('now')),
     service_date TEXT NOT NULL,
-    customer TEXT NOT NULL,
-    payment TEXT NOT NULL,
+    currency TEXT NOT NULL DEFAULT 'EUR',
+    is_active INTEGER NOT NULL DEFAULT 1,
     positions TEXT NOT NULL,
     tax_options TEXT NOT NULL,
+    customer TEXT NOT NULL,
+    terms TEXT NOT NULL,
     summary TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);`)
+
+//payments
+db.exec(`CREATE TABLE IF NOT EXISTS payments (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   invoice_id INTEGER NOT NULL,
+   date TEXT NOT NULL,
+   amount REAL NOT NULL,
+   method TEXT NOT NULL,
+   notes TEXT,
+   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,  //muss manuel UPDATE payments SET amount = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?;
+   FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
 );`)
 
 //offers
@@ -148,20 +160,6 @@ db.exec(`
   );
 `);
 
-
-db.exec(`CREATE TABLE IF NOT EXISTS payments (
-   id INTEGER PRIMARY KEY AUTOINCREMENT,
-    invoice_id INTEGER NOT NULL,
-    invoice_number TEXT NOT NULL,
-    customer TEXT NOT NULL,
-    payment_date TEXT NOT NULL,
-    amount REAL NOT NULL,
-    payment_method TEXT NOT NULL,
-    notes TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
-);`)
 
 db.exec(`CREATE TABLE IF NOT EXISTS remeinders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

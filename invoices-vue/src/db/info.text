@@ -375,87 +375,39 @@ export default {
 
 
 
-try {
-  const tables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all()
-  console.log(
-    'Tablolar:',
-    tables.map((r) => r.name)
-  )
-} catch (err) {
-  console.error(err.message)
+
+
+
+// Rastgele tarih üretme
+const randDate = () => {
+  const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')
+  const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')
+  return `2025-${month}-${day}`
 }
 
-// ---------- 1️⃣ CUSTOMER INSERT ----------
-const insertCustomer = db.prepare(`
-  INSERT INTO customers (
-    customer_type,
-    company_name,
-    first_name,
-    last_name,
-    email,
-    phone,
-    address,
-    postal_code,
-    city,
-    country,
-    tax_number,
-    vat_id,
-    is_active
-  ) VALUES (
-    @customer_type,
-    @company_name,
-    @first_name,
-    @last_name,
-    @email,
-    @phone,
-    @address,
-    @postal_code,
-    @city,
-    @country,
-    @tax_number,
-    @vat_id,
-    @is_active
-  )
-`)
+// Rastgele miktar ve fiyat
+const randQty = () => Math.floor(Math.random() * 9) + 1
+const randPrice = () => Number((Math.random() * 200 + 20).toFixed(2))
 
-const firstNames = [
-  'Anna',
-  'Lukas',
-  'Mia',
-  'Jonas',
-  'Lea',
-  'Paul',
-  'Sophie',
-  'Niklas',
-  'Klara',
-  'Felix'
-]
-const lastNames = [
-  'Müller',
-  'Schmidt',
-  'Becker',
-  'Fischer',
-  'Weber',
-  'Wagner',
-  'Koch',
-  'Richter',
-  'Klein'
-]
-const cities = [
-  'Berlin',
-  'Hamburg',
-  'München',
-  'Köln',
-  'Düsseldorf',
-  'Leipzig',
-  'Frankfurt',
-  'Stuttgart',
-  'Bremen'
-]
-
+// Yardımcılar
 const rand = (arr) => arr[Math.floor(Math.random() * arr.length)]
 const randEmail = (name) => `${name.toLowerCase()}${Math.floor(Math.random() * 100)}@example.com`
 const randPhone = () => `+49${Math.floor(1000000000 + Math.random() * 8999999999)}`
+
+// ---------- CUSTOMER INSERT ----------
+const insertCustomer = db.prepare(`
+  INSERT INTO customers (
+    customer_type, company_name, first_name, last_name, email, phone,
+    address, postal_code, city, country, tax_number, vat_id, is_active
+  ) VALUES (
+    @customer_type, @company_name, @first_name, @last_name, @email, @phone,
+    @address, @postal_code, @city, @country, @tax_number, @vat_id, @is_active
+  )
+`)
+
+const firstNames = ['Anna','Lukas','Mia','Jonas','Lea','Paul','Sophie','Niklas','Klara','Felix']
+const lastNames = ['Müller','Schmidt','Becker','Fischer','Weber','Wagner','Koch','Richter','Klein']
+const cities = ['Berlin','Hamburg','München','Köln','Düsseldorf','Leipzig','Frankfurt','Stuttgart','Bremen']
 
 const customerList = []
 
@@ -488,36 +440,33 @@ for (let i = 1; i <= 30; i++) {
   customerList.push(customer)
 }
 
-// ---------- 2️⃣ INVOICE INSERT ----------
+//insert
 const insertInvoice = db.prepare(`
   INSERT INTO invoices (
-    date, is_active, currency, service_date,
-    customer, payment, positions, tax_options, summary
+    date, service_date, currency, terms, is_active, positions,
+    customer, tax_options, summary
   ) VALUES (
-    @date, @is_active, @currency, @service_date,
-    @customer, @payment, @positions, @tax_options, @summary
+    @date, @service_date, @currency, @terms, @is_active, @positions,
+    @customer, @tax_options, @summary
   )
 `)
-
-const randDate = () =>
-  `2025-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`
-
-const randPrice = () => Number((Math.random() * 200 + 20).toFixed(2))
-const randQty = () => Math.floor(Math.random() * 9) + 1
 
 for (let i = 1; i <= 100; i++) {
   const customer = customerList[Math.floor(Math.random() * customerList.length)]
   const invoiceDate = randDate()
+  const serviceDate = randDate()
+  const isSmallCompany = Math.random() < 0.2
 
-  const isPaid = Math.random() < 0.3 // %30 ödenmiş
-  const isSmallCompany = Math.random() < 0.2 // %20 small company
+  // TERMS
+  const terms = {
+    payment_terms: 14,
+    payment_conditions: 'Zahlbar innerhalb von 14 Tagen.',
+    early_payment: false,
+    early_payment_percentage: 2,
+    early_payment_days: 7
+  }
 
-  const payment_terms = 14
-  const payment_date = new Date(new Date(invoiceDate).getTime() + payment_terms * 86400000)
-    .toISOString()
-    .split('T')[0]
-
-  // hesaplanacak tutarlar
+  // POSITIONS
   const qty = randQty()
   const price = randPrice()
   const vat = isSmallCompany ? 0 : 19
@@ -540,52 +489,37 @@ for (let i = 1; i <= 100; i++) {
     }
   ]
 
-  const total = Number((qty * unit_total).toFixed(2))
-  const vat_amount = Number((qty * vat_unit).toFixed(2))
   const subtotal = Number((qty * price).toFixed(2))
+  const vat_amount = Number((qty * vat_unit).toFixed(2))
+  const total = Number((qty * unit_total).toFixed(2))
 
-  // paid_amount üretimi: önce rastgele seç, sonra total'ı aşmaması için clamp et
-  const randomPaid = isPaid ? rand([50, 100, 150, 200, 300, 400]) : 0
-  const paid_amount = Number(Math.min(randomPaid, total).toFixed(2))
-
-  const payment = {
-    paid_amount, // kesinlikle total'ı aşmaz
-    payment_terms,
-    payment_conditions: 'Zahlbar innerhalb von 14 Tagen.',
-    payment_reference: `RE-${1000 + i}`,
-    payment_date,
-    is_paid: isPaid,
-    has_skonto: false,
-    skonto_percentage: 2,
-    skonto_days: 7,
-    verwendungszweck: `Rechnung ${1000 + i}`
-  }
-
+  // TAX OPTIONS
   const tax_options = {
     is_small_company: isSmallCompany,
     is_reverse_charge: false,
     is_eu_delivery: false
   }
 
-  // summary: paid_amount buradan alınıyor, outstanding = total - paid_amount
+  // SUMMARY
   const summary = {
     subtotal,
     vat_amount,
     total,
-    paid_amount: paid_amount,
-    outstanding: Number((total - paid_amount).toFixed(2))
+    paid_amount: 0, // Ödemeler ayrı tabloda tutulacak
+    outstanding: total
   }
 
   insertInvoice.run({
     date: invoiceDate,
-    is_active: 1,
+    service_date: serviceDate,
     currency: 'EUR.de-DE',
-    service_date: randDate(),
-    customer: JSON.stringify(customer),
-    payment: JSON.stringify(payment),
+    terms: JSON.stringify(terms),
+    is_active: 1,
     positions: JSON.stringify(positions),
+    customer: JSON.stringify(customer),
     tax_options: JSON.stringify(tax_options),
     summary: JSON.stringify(summary)
   })
 }
+
 

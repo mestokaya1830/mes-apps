@@ -462,7 +462,7 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
   if (tableName === 'invoices') {
     try {
       const customer = JSON.stringify(data.selected_customer || {})
-      const payment = JSON.stringify(data.payment || {})
+      const terms = JSON.stringify(data.terms || {})
       const positions = JSON.stringify(data.positions || {})
       const tax_options = JSON.stringify(data.tax_options || {})
       const summary = JSON.stringify(data.summary || {})
@@ -470,24 +470,24 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
       db.prepare(
         `
     INSERT INTO invoices (
-      date,
       is_active,
+      date,
       currency,
       service_date,
+      terms,
       customer,
-      payment,
       positions,
       tax_options,
       summary
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
       ).run(
-        data.date,
         data.is_active,
+        data.date,
         data.currency,
         data.service_date,
+        terms,
         customer,
-        payment,
         positions,
         tax_options,
         summary
