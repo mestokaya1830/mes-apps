@@ -1,22 +1,22 @@
 <template>
-  <div v-if="ordersPreview">
+  <div v-if="orderPreview">
     <div class="preview-panel">
       <div class="printable">
         <!-- Header section -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- Recipient and order details -->
-        <div v-if="ordersPreview.selected_customer" class="recipient">
+        <div v-if="orderPreview.selected_customer" class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ ordersPreview.selected_customer.company_name }}
+              {{ orderPreview.selected_customer.company_name }}
             </div>
-            <div>{{ ordersPreview.selected_customer.address }}</div>
+            <div>{{ orderPreview.selected_customer.address }}</div>
             <div>
-              {{ ordersPreview.selected_customer.postal_code }}
-              {{ ordersPreview.selected_customer.city }}<br />
-              {{ ordersPreview.selected_customer.country }}
+              {{ orderPreview.selected_customer.postal_code }}
+              {{ orderPreview.selected_customer.city }}<br />
+              {{ orderPreview.selected_customer.country }}
             </div>
           </div>
 
@@ -31,12 +31,12 @@
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(ordersPreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(orderPreview.date) }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
-                formatCustomerId(ordersPreview.selected_customer.id)
+                formatCustomerId(orderPreview.selected_customer.id)
               }}</span>
             </div>
             <div v-if="auth.tax_number" class="meta-row">
@@ -47,20 +47,20 @@
               <span class="meta-label">VAT ID:</span>
               <span class="meta-value">{{ auth.vat_id }}</span>
             </div>
-            <div v-if="ordersPreview.customer_reference" class="meta-row">
+            <div v-if="orderPreview.customer_reference" class="meta-row">
               <span class="meta-label">Kundenreferenz:</span>
-              <span class="meta-value">{{ ordersPreview.customer_reference }}</span>
+              <span class="meta-value">{{ orderPreview.customer_reference }}</span>
             </div>
 
             <!-- Service period -->
             <div
-              v-if="ordersPreview.service_period_start && ordersPreview.service_period_end"
+              v-if="orderPreview.service_period_start && orderPreview.service_period_end"
               class="meta-row"
             >
               <span class="meta-label">Service Period:</span>
               <span class="meta-value">
-                {{ formatDate(ordersPreview.service_period_start) }} -
-                {{ formatDate(ordersPreview.service_period_end) }}
+                {{ formatDate(orderPreview.service_period_start) }} -
+                {{ formatDate(orderPreview.service_period_end) }}
               </span>
             </div>
           </div>
@@ -78,8 +78,8 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody v-if="ordersPreview.positions && ordersPreview.positions.length > 0">
-            <tr v-for="(item, index) in ordersPreview.positions" :key="index">
+          <tbody v-if="orderPreview.positions && orderPreview.positions.length > 0">
+            <tr v-for="(item, index) in orderPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -96,90 +96,90 @@
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, ordersPreview.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, orderPreview.currency) }}</td>
               <td class="right">
                 {{ item.vat + '%' }}
               </td>
               <td class="right">
-                {{ formatCurrency(item.unit_total, ordersPreview.currency) }}
+                {{ formatCurrency(item.unit_total, orderPreview.currency) }}
               </td>
             </tr>
           </tbody>
         </table>
 
         <!-- summary -->
-        <div v-if="ordersPreview.summary" class="summary-section">
+        <div v-if="orderPreview.summary" class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(ordersPreview.summary.subtotal, ordersPreview.currency)
+              formatCurrency(orderPreview.summary.subtotal, orderPreview.currency)
             }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(ordersPreview.summary.vat_amount, ordersPreview.currency)
+              formatCurrency(orderPreview.summary.vat_amount, orderPreview.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(ordersPreview.summary.total, ordersPreview.currency)
+              formatCurrency(orderPreview.summary.total, orderPreview.currency)
             }}</span>
           </div>
         </div>
 
         <div class="form-section">
           <!-- Delivery date -->
-          <div v-if="ordersPreview.delivery_date" class="meta-row">
+          <div v-if="orderPreview.delivery_date" class="meta-row">
             <span class="meta-label">Delivery Date:</span>
-            <span class="meta-value">{{ formatDate(ordersPreview.delivery_date) }}</span>
+            <span class="meta-value">{{ formatDate(orderPreview.delivery_date) }}</span>
           </div>
 
           <!-- Valid until -->
-          <div v-if="ordersPreview.validity_date" class="meta-row">
+          <div v-if="orderPreview.validity_date" class="meta-row">
             <span class="meta-label">Valid Until:</span>
-            <span class="meta-value">{{ formatDate(ordersPreview.validity_date) }}</span>
+            <span class="meta-value">{{ formatDate(orderPreview.validity_date) }}</span>
           </div>
 
           <!-- Optional delivery address if different -->
-          <div v-if="ordersPreview.delivery_address" class="meta-row">
+          <div v-if="orderPreview.delivery_address" class="meta-row">
             <span class="meta-label">Delivery Address:</span>
-            <span class="meta-value">{{ ordersPreview.delivery_address }}</span>
+            <span class="meta-value">{{ orderPreview.delivery_address }}</span>
           </div>
         </div>
 
         <!-- Payment and delivery terms -->
-        <div v-if="ordersPreview" class="terms-section">
+        <div v-if="orderPreview" class="terms-section">
           <div class="section-title">Payment & Delivery Terms</div>
           <div class="terms-grid">
-            <div v-if="ordersPreview.payment?.payment_terms" class="term-item">
+            <div v-if="orderPreview.payment?.payment_terms" class="term-item">
               <span class="term-label">Payment Terms:</span>
               <span class="term-value">{{ paymentTermsText }}</span>
             </div>
-            <div v-if="ordersPreview.payment?.payment_method" class="term-item">
+            <div v-if="orderPreview.payment?.payment_method" class="term-item">
               <span class="term-label">Payment Method:</span>
-              <span class="term-value">{{ ordersPreview.payment.payment_method }}</span>
+              <span class="term-value">{{ orderPreview.payment.payment_method }}</span>
             </div>
-            <div v-if="ordersPreview.delivery_terms" class="term-item">
+            <div v-if="orderPreview.delivery_terms" class="term-item">
               <span class="term-label">Delivery Terms:</span>
-              <span class="term-value">{{ ordersPreview.delivery_terms }}</span>
+              <span class="term-value">{{ orderPreview.delivery_terms }}</span>
             </div>
-            <div v-if="ordersPreview.shipping_method" class="term-item">
+            <div v-if="orderPreview.shipping_method" class="term-item">
               <span class="term-label">Shipping Method:</span>
-              <span class="term-value">{{ ordersPreview.shipping_method }}</span>
+              <span class="term-value">{{ orderPreview.shipping_method }}</span>
             </div>
           </div>
-          <div v-if="ordersPreview.payment?.payment_conditions" class="payment-conditions">
-            {{ ordersPreview.payment.payment_conditions }}
+          <div v-if="orderPreview.payment?.payment_conditions" class="payment-conditions">
+            {{ orderPreview.payment.payment_conditions }}
           </div>
         </div>
 
         <!-- Closing text -->
         <div class="closing-text">
-          {{ ordersPreview.closing_text }}
+          {{ orderPreview.closing_text }}
           <p>Mit freundlichen Grüßen,</p>
         </div>
 
@@ -197,12 +197,12 @@
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
             <span class="bank-label">Verwendungszweck:</span>
-            <span class="bank-value">{{ ordersPreview.payment.verwendungszweck }}</span>
+            <span class="bank-value">{{ orderPreview.payment.verwendungszweck }}</span>
           </div>
         </div>
 
         <!-- leagal validity -->
-        <div v-if="ordersPreview.is_legal" class="signatures-section">
+        <div v-if="orderPreview.is_legal" class="signatures-section">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
             Rechtsgültige Unterschrift erforderlich
@@ -229,9 +229,9 @@
 
       <!-- Actions -->
       <ActionsButtonPreview
-        v-if="ordersPreview.selected_customer"
+        v-if="orderPreview.selected_customer"
         tableName="orders"
-        :tableData="ordersPreview"
+        :tableData="orderPreview"
         sourcePage="preview"
       />
     </div>
@@ -250,7 +250,7 @@ import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
-  name: 'OrdersPreviewPage',
+  name: 'OrderPreviewPage',
   components: {
     HeaderSidePreview,
     FooterSidePreview,
@@ -261,45 +261,45 @@ export default {
   data() {
     return {
       title: 'Auftragsbestätigung',
-      ordersPreview: null,
+      orderPreview: null,
       auth: null
     }
   },
   computed: {
     // Format order ID like AUF-2025-00001
     formatOrderId() {
-      if (!this.ordersPreview.id) return ''
+      if (!this.orderPreview.id) return ''
       const year = new Date().getFullYear()
-      return `AUF-${year}-${String(this.ordersPreview.id).padStart(5, '0')}`
+      return `AUF-${year}-${String(this.orderPreview.id).padStart(5, '0')}`
     },
     // Check if payment or delivery terms exist
     hasPaymentOrDeliveryTerms() {
       return (
-        (this.ordersPreview.payment &&
-          (this.ordersPreview.payment.payment_terms ||
-            this.ordersPreview.payment.payment_method ||
-            this.ordersPreview.payment.payment_conditions)) ||
-        this.ordersPreview.delivery_terms ||
-        this.ordersPreview.shipping_method
+        (this.orderPreview.payment &&
+          (this.orderPreview.payment.payment_terms ||
+            this.orderPreview.payment.payment_method ||
+            this.orderPreview.payment.payment_conditions)) ||
+        this.orderPreview.delivery_terms ||
+        this.orderPreview.shipping_method
       )
     },
     // Get readable payment terms text
     paymentTermsText() {
-      if (!this.ordersPreview.payment?.payment_terms) return ''
-      const terms = this.ordersPreview.payment.payment_terms
+      if (!this.orderPreview.payment?.payment_terms) return ''
+      const terms = this.orderPreview.payment.payment_terms
       if (terms === 'vorkasse') return 'Prepayment'
       if (terms === 0) return 'Due immediately'
       return `Due within ${terms} days`
     }
   },
   mounted() {
-    this.getOrdersPreview()
+    this.getOrderPreview()
     this.getAuth()
   },
   methods: {
-    getOrdersPreview() {
+    getOrderPreview() {
       if (store.state.orders) {
-        this.ordersPreview = store.state.orders
+        this.orderPreview = store.state.orders
       }
     },
     getAuth() {

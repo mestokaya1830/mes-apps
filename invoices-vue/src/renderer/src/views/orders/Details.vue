@@ -1,22 +1,22 @@
 <template>
-  <div v-if="orders">
+  <div v-if="order">
     <div class="preview-panel">
       <div class="printable">
         <!-- Header section -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- Recipient and order details -->
-        <div v-if="orders.customer" class="recipient">
+        <div v-if="order.customer" class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ orders.customer.company_name }}
+              {{ order.customer.company_name }}
             </div>
-            <div>{{ orders.customer.address }}</div>
+            <div>{{ order.customer.address }}</div>
             <div>
-              {{ orders.customer.postal_code }}
-              {{ orders.customer.city }}<br />
-              {{ orders.customer.country }}
+              {{ order.customer.postal_code }}
+              {{ order.customer.city }}<br />
+              {{ order.customer.country }}
             </div>
           </div>
 
@@ -31,12 +31,12 @@
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(orders.date) }}</span>
+              <span class="meta-value">{{ formatDate(order.date) }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
-                formatCustomerId(orders.customer.id)
+                formatCustomerId(order.customer.id)
               }}</span>
             </div>
             <div v-if="auth.tax_number" class="meta-row">
@@ -47,20 +47,20 @@
               <span class="meta-label">VAT ID:</span>
               <span class="meta-value">{{ auth.vat_id }}</span>
             </div>
-            <div v-if="orders.customer_reference" class="meta-row">
+            <div v-if="order.customer_reference" class="meta-row">
               <span class="meta-label">Kundenreferenz:</span>
-              <span class="meta-value">{{ orders.customer_reference }}</span>
+              <span class="meta-value">{{ order.customer_reference }}</span>
             </div>
 
             <!-- Service period -->
             <div
-              v-if="orders.service_period_start && orders.service_period_end"
+              v-if="order.service_period_start && order.service_period_end"
               class="meta-row"
             >
               <span class="meta-label">Service Period:</span>
               <span class="meta-value">
-                {{ formatDate(orders.service_period_start) }} -
-                {{ formatDate(orders.service_period_end) }}
+                {{ formatDate(order.service_period_start) }} -
+                {{ formatDate(order.service_period_end) }}
               </span>
             </div>
           </div>
@@ -78,8 +78,8 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody v-if="orders.positions && orders.positions.length > 0">
-            <tr v-for="(item, index) in orders.positions" :key="index">
+          <tbody v-if="order.positions && order.positions.length > 0">
+            <tr v-for="(item, index) in order.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -96,90 +96,90 @@
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, orders.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, order.currency) }}</td>
               <td class="right">
                 {{ item.vat + '%' }}
               </td>
               <td class="right">
-                {{ formatCurrency(item.unit_total, orders.currency) }}
+                {{ formatCurrency(item.unit_total, order.currency) }}
               </td>
             </tr>
           </tbody>
         </table>
 
         <!-- summary -->
-        <div v-if="orders.summary" class="summary-section">
+        <div v-if="order.summary" class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(orders.summary.subtotal, orders.currency)
+              formatCurrency(order.summary.subtotal, order.currency)
             }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(orders.summary.vat_amount, orders.currency)
+              formatCurrency(order.summary.vat_amount, order.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(orders.summary.total, orders.currency)
+              formatCurrency(order.summary.total, order.currency)
             }}</span>
           </div>
         </div>
 
         <div class="form-section">
           <!-- Delivery date -->
-          <div v-if="orders.delivery_date" class="meta-row">
+          <div v-if="order.delivery_date" class="meta-row">
             <span class="meta-label">Delivery Date:</span>
-            <span class="meta-value">{{ formatDate(orders.delivery_date) }}</span>
+            <span class="meta-value">{{ formatDate(order.delivery_date) }}</span>
           </div>
 
           <!-- Valid until -->
-          <div v-if="orders.validity_date" class="meta-row">
+          <div v-if="order.validity_date" class="meta-row">
             <span class="meta-label">Valid Until:</span>
-            <span class="meta-value">{{ formatDate(orders.validity_date) }}</span>
+            <span class="meta-value">{{ formatDate(order.validity_date) }}</span>
           </div>
 
           <!-- Optional delivery address if different -->
-          <div v-if="orders.delivery_address" class="meta-row">
+          <div v-if="order.delivery_address" class="meta-row">
             <span class="meta-label">Delivery Address:</span>
-            <span class="meta-value">{{ orders.delivery_address }}</span>
+            <span class="meta-value">{{ order.delivery_address }}</span>
           </div>
         </div>
 
         <!-- Payment and delivery terms -->
-        <div v-if="orders" class="terms-section">
+        <div v-if="order" class="terms-section">
           <div class="section-title">Payment & Delivery Terms</div>
           <div class="terms-grid">
-            <div v-if="orders.payment?.payment_terms" class="term-item">
+            <div v-if="order.payment?.payment_terms" class="term-item">
               <span class="term-label">Payment Terms:</span>
               <span class="term-value">{{ paymentTermsText }}</span>
             </div>
-            <div v-if="orders.payment?.payment_method" class="term-item">
+            <div v-if="order.payment?.payment_method" class="term-item">
               <span class="term-label">Payment Method:</span>
-              <span class="term-value">{{ orders.payment.payment_method }}</span>
+              <span class="term-value">{{ order.payment.payment_method }}</span>
             </div>
-            <div v-if="orders.delivery_terms" class="term-item">
+            <div v-if="order.delivery_terms" class="term-item">
               <span class="term-label">Delivery Terms:</span>
-              <span class="term-value">{{ orders.delivery_terms }}</span>
+              <span class="term-value">{{ order.delivery_terms }}</span>
             </div>
-            <div v-if="orders.shipping_method" class="term-item">
+            <div v-if="order.shipping_method" class="term-item">
               <span class="term-label">Shipping Method:</span>
-              <span class="term-value">{{ orders.shipping_method }}</span>
+              <span class="term-value">{{ order.shipping_method }}</span>
             </div>
           </div>
-          <div v-if="orders.payment?.payment_conditions" class="payment-conditions">
-            {{ orders.payment.payment_conditions }}
+          <div v-if="order.payment?.payment_conditions" class="payment-conditions">
+            {{ order.payment.payment_conditions }}
           </div>
         </div>
 
         <!-- Closing text -->
         <div class="closing-text">
-          {{ orders.closing_text }}
+          {{ order.closing_text }}
           <p>Mit freundlichen Grüßen,</p>
         </div>
 
@@ -197,12 +197,12 @@
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
             <span class="bank-label">Verwendungszweck:</span>
-            <span class="bank-value">{{ orders.payment.verwendungszweck }}</span>
+            <span class="bank-value">{{ order.payment.verwendungszweck }}</span>
           </div>
         </div>
 
         <!-- leagal validity -->
-        <div v-if="orders.is_legal" class="pdf-footer">
+        <div v-if="order.is_legal" class="pdf-footer">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
             Rechtsgültige Unterschrift erforderlich
@@ -229,14 +229,14 @@
 
       <!-- Actions -->
       <ActionsButtonPreview
-        v-if="orders.customer"
-        tableName="orders"
-        :tableData="orders"
+        v-if="order.customer"
+        tableName="order"
+        :tableData="order"
         sourcePage="details"
       />
     </div>
 
-    <router-link to="/orders" class="back-link">
+    <router-link to="/order" class="back-link">
       ← Zurück zur Auftragsliste
     </router-link>
   </div>
@@ -261,54 +261,54 @@ export default {
   data() {
     return {
       title: 'Auftrags-Vorschau',
-      orders: null,
+      order: null,
       auth: null
     }
   },
   computed: {
     // Format order ID like AUF-2025-00001
     formattedOrderId() {
-      if (!this.orders.id) return ''
+      if (!this.order.id) return ''
       const year = new Date().getFullYear()
-      return `AUF-${year}-${String(this.orders.id).padStart(5, '0')}`
+      return `AUF-${year}-${String(this.order.id).padStart(5, '0')}`
     },
     // Check if payment or delivery terms exist
     hasPaymentOrDeliveryTerms() {
       return (
-        (this.orders.payment &&
-          (this.orders.payment.payment_terms ||
-            this.orders.payment.payment_method ||
-            this.orders.payment.payment_conditions)) ||
-        this.orders.delivery_terms ||
-        this.orders.shipping_method
+        (this.order.payment &&
+          (this.order.payment.payment_terms ||
+            this.order.payment.payment_method ||
+            this.order.payment.payment_conditions)) ||
+        this.order.delivery_terms ||
+        this.order.shipping_method
       )
     },
     // Get readable payment terms text
     paymentTermsText() {
-      if (!this.orders.payment?.payment_terms) return ''
-      const terms = this.orders.payment.payment_terms
+      if (!this.order.payment?.payment_terms) return ''
+      const terms = this.order.payment.payment_terms
       if (terms === 'vorkasse') return 'Prepayment'
       if (terms === 0) return 'Due immediately'
       return `Due within ${terms} days`
     }
   },
   mounted() {
-    this.getOrders()
+    this.getOrder()
     this.getAuth()
   },
   methods: {
-    async getOrders() {
+    async getOrder() {
       const id = this.$route.params.id
       try {
-        const result = await window.api.getDocumentById(id, 'orders')
-        this.orders = {
+        const result = await window.api.getDocumentById(id, 'order')
+        this.order = {
           ...result.rows,
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions),
           payment: JSON.parse(result.rows.payment),
           summary: JSON.parse(result.rows.summary)
         }
-        console.log(this.orders)
+        console.log(this.order)
       } catch (error) {
         console.error(error)
       }

@@ -26,13 +26,9 @@
 
     <div class="filter-container">
       <div class="form-group">
-        <select
-          v-model="categiries_filter"
-          class="form-input"
-          @change="categoriesFilter"
-        >
-          <option value="" disabled>Kategorrie</option>
-          <option value="all">Alles</option>
+        <select v-model="categories_filter" class="form-input" @change="getCategory">
+          <option value="" disabled>Kategorie</option>
+          <option value="all">Alle</option>
           <option value="active">Aktiv</option>
           <option value="canceled">Storniert</option>
           <option value="paid">Bezahlt</option>
@@ -60,6 +56,10 @@
           </div>
           <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
             {{ item.is_active ? 'Aktiv' : 'Storniert' }}
+          </div>
+          <div class="status-badge total">
+            <!-- {{ item.summary.total ? formatCurrency(item.summary.total, item.currency) : '' }} -->
+            {{ formatCurrency(item.summary.total, item.currency) }}
           </div>
         </div>
 
@@ -111,6 +111,7 @@
 <script>
 export default {
   name: 'Invoices',
+  inject: ['formatCurrency'],
   data() {
     return {
       title: 'Rechnungen',
@@ -119,7 +120,7 @@ export default {
       search_box: '',
       date_box_start: '',
       date_box_end: '',
-      categiries_filter: '',
+      categories_filter: '',
       isSort: true
     }
   },
@@ -136,6 +137,7 @@ export default {
           summary: JSON.parse(item.summary),
           terms: JSON.parse(item.terms)
         }))
+        console.log(this.invoiceList)
         this.search = this.invoiceList
       } catch (error) {
         console.error(error)
@@ -151,9 +153,9 @@ export default {
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    async categoriesFilter() {
+    async getCategory() {
       try {
-        console.log(this.categiries_filter)
+        console.log(this.categories_filter)
         // const result = await window.api.documentFilter('invoices', 'categories')
         // this.search = result.rows
       } catch (error) {
@@ -161,7 +163,6 @@ export default {
       }
     },
     searchFilter() {
-      console.log(this.search)
       if (this.search_box && this.search_box.trim() !== '') {
         this.invoiceList = this.search.filter(
           (item) =>
@@ -345,6 +346,11 @@ export default {
 }
 .status-badge.unpaid {
   background: #dc2626;
+  color: #fff;
+  top: 30px;
+}
+.status-badge.total {
+  background-color: #667eea;
   color: #fff;
   top: 30px;
 }

@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
 import nodeMailer from 'nodemailer'
+import fs from 'fs'
 
 let win = null
 function createWindow() {
@@ -472,6 +473,7 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
     INSERT INTO invoices (
       is_active,
       date,
+      due_date,
       currency,
       service_date,
       terms,
@@ -479,11 +481,12 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
       positions,
       tax_options,
       summary
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
       ).run(
         data.is_active,
         data.date,
+        data.due_date,
         data.currency,
         data.service_date,
         terms,
@@ -678,9 +681,52 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
   }
 })
 
+ipcMain.handle('save-payment', async (_, data, file_name, image_file) => {
+  if (data) {
+    try {
+      const row = db
+      db.prepare(
+        `
+  INSERT INTO payments (
+    invoice_id, customer_id, invoice_date, invoice_due_date,
+    total, paid_amount, outstanding, currency, payment_date,
+    amount, payment_method, reference, notes, partial_paid, file_name
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`
+      ).run(
+        data.invoice_id,
+        data.customer_id,
+        data.invoice_date,
+        data.invoice_due_date,
+        data.total,
+        data.paid_amount,
+        data.outstanding,
+        data.currency,
+        data.payment_date,
+        data.amount,
+        data.payment_method,
+        data.reference,
+        data.notes,
+        data.partial_paid ? 1 : 0, // ✅ Boolean -> Integer
+        file_name
+      )
+      const buffer = Buffer.from(image_file.split(',')[1], 'base64')
+      // const savePath = path.join(os.homedir(), fileName);//linux home folder
+      // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
+      const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name) // inner app uploads folder
+      const imgae_result = await fs.promises.writeFile(savePath, buffer)
+      if (row && imgae_result) {
+        return { success: true, customer: row }
+      }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
+})
 ipcMain.handle('get-document', async (data, tabelName) => {
   try {
-    const rows = db.prepare(`SELECT * FROM ${tabelName} WHERE is_active = 1`).all()
+    const rows = db.prepare(`SELECT * FROM ${tabelName} WHERE is_active = 1 ORDER BY id DESC`).all()
     return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)

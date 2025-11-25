@@ -16,3 +16,16 @@ try {
 process.on('exit', () => db.close())
 
 export default db
+
+try {
+  const rows = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
+  console.log('Tables', rows)
+} catch (err) {
+  console.error(err.message)
+}
+
+// try {
+//   db.prepare('DROP TABLE payments').run()
+// } catch (err) {
+//   console.error(err.message)
+// }

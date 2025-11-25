@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="offersPreview && auth" class="preview-panel">
+    <div v-if="offerPreview && auth" class="preview-panel">
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -11,13 +11,13 @@
             <div class="recipient-address">
               <div class="section-title">Empfänger</div>
               <div class="company-name-subtitle">
-                {{ offersPreview.selected_customer.company_name }}
+                {{ offerPreview.selected_customer.company_name }}
               </div>
-              <div class="meta-label">{{ offersPreview.selected_customer.address }}</div>
+              <div class="meta-label">{{ offerPreview.selected_customer.address }}</div>
               <div class="meta-label">
-                {{ offersPreview.selected_customer.postal_code }}
-                {{ offersPreview.selected_customer.city }}<br />
-                {{ offersPreview.selected_customer.country }}
+                {{ offerPreview.selected_customer.postal_code }}
+                {{ offerPreview.selected_customer.city }}<br />
+                {{ offerPreview.selected_customer.country }}
               </div>
             </div>
           </div>
@@ -31,79 +31,79 @@
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(offersPreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
             </div>
 
             <!-- Leistungsdatum hinzugefügt -->
-            <div v-if="offersPreview.service_date" class="meta-row">
+            <div v-if="offerPreview.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(offersPreview.service_date) }}</span>
+              <span class="meta-value">{{ formatDate(offerPreview.service_date) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
-                formatCustomerId(offersPreview.selected_customer.id)
+                formatCustomerId(offerPreview.selected_customer.id)
               }}</span>
             </div>
 
             <div
               v-if="
-                offersPreview.selected_customer.country === 'Germany' &&
-                offersPreview.selected_customer.tax_number
+                offerPreview.selected_customer.country === 'Germany' &&
+                offerPreview.selected_customer.tax_number
               "
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ offersPreview.selected_customer.tax_number }}</span>
+              <span class="meta-value">{{ offerPreview.selected_customer.tax_number }}</span>
             </div>
 
             <div
               v-else-if="
-                offersPreview.selected_customer.is_in_eu && offersPreview.selected_customer.vat_id
+                offerPreview.selected_customer.is_in_eu && offerPreview.selected_customer.vat_id
               "
               class="meta-row"
             >
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ offersPreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
             </div>
 
             <div
               v-else-if="
-                !offersPreview.selected_customer.is_in_eu && offersPreview.selected_customer.vat_id
+                !offerPreview.selected_customer.is_in_eu && offerPreview.selected_customer.vat_id
               "
               class="meta-row"
             >
               <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ offersPreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
             </div>
-            <div v-if="offersPreview.valid_until" class="meta-row">
+            <div v-if="offerPreview.valid_until" class="meta-row">
               <span class="meta-label">Gültig bis:</span>
-              <span class="meta-value">{{ formatDate(offersPreview.valid_until) }}</span>
+              <span class="meta-value">{{ formatDate(offerPreview.valid_until) }}</span>
             </div>
           </div>
           <!-- <div class="offer-meta">
             <div class="meta-row">
               <span class="meta-label">Angebots-Nr.:</span>
-              <span class="meta-value">{{ offersPreview.id }}</span>
+              <span class="meta-value">{{ offerPreview.id }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(offersPreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
             </div>
-            <div v-if="offersPreview.selected_customer?.id" class="meta-row">
+            <div v-if="offerPreview.selected_customer?.id" class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ offersPreview.selected_customer.id }}</span>
+              <span class="meta-value">{{ offerPreview.selected_customer.id }}</span>
             </div>
            
             <div
-              v-if="offersPreview.service_period_start && offersPreview.service_period_end"
+              v-if="offerPreview.service_period_start && offerPreview.service_period_end"
               class="meta-row"
             >
               <span class="meta-label">Leistungszeitraum:</span>
               <span class="meta-value">
-                {{ formatDate(offersPreview.service_period_start) }} -
-                {{ formatDate(offersPreview.service_period_end) }}
+                {{ formatDate(offerPreview.service_period_start) }} -
+                {{ formatDate(offerPreview.service_period_end) }}
               </span>
             </div>
           </div> -->
@@ -111,14 +111,14 @@
 
         <!-- Document Title -->
         <div class="document-title">
-          <h1>{{ offersPreview.title || 'Angebot' }}</h1>
+          <h1>{{ offerPreview.title || 'Angebot' }}</h1>
         </div>
 
         <!-- Subject / Description -->
         <div class="form-group">
           <label class="form-label">Betreff / Beschreibung</label>
           <div class="intro-text">
-            {{ offersPreview.subject }}
+            {{ offerPreview.subject }}
           </div>
         </div>
         <!-- Intro Text -->
@@ -141,8 +141,8 @@
             </tr>
           </thead>
 
-          <tbody v-if="offersPreview.positions && offersPreview.positions.length > 0">
-            <tr v-for="(item, index) in offersPreview.positions" :key="index">
+          <tbody v-if="offerPreview.positions && offerPreview.positions.length > 0">
+            <tr v-for="(item, index) in offerPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -159,78 +159,78 @@
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, offersPreview.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, offerPreview.currency) }}</td>
               <td class="right">
-                {{ offersPreview.is_reverse_charge ? '0%' : item.vat + '%' }}
+                {{ offerPreview.is_reverse_charge ? '0%' : item.vat + '%' }}
               </td>
               <td class="right">
-                {{ formatCurrency(item.unit_total, offersPreview.currency) }}
+                {{ formatCurrency(item.unit_total, offerPreview.currency) }}
               </td>
             </tr>
           </tbody>
         </table>
 
         <!-- summary -->
-        <div v-if="offersPreview.summary" class="summary-section">
+        <div v-if="offerPreview.summary" class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(offersPreview.summary.subtotal, offersPreview.currency)
+              formatCurrency(offerPreview.summary.subtotal, offerPreview.currency)
             }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(offersPreview.summary.vat_amount, offersPreview.currency)
+              formatCurrency(offerPreview.summary.vat_amount, offerPreview.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(offersPreview.summary.total, offersPreview.currency)
+              formatCurrency(offerPreview.summary.total, offerPreview.currency)
             }}</span>
           </div>
         </div>
 
         <!-- Payment Terms -->
-        <div v-if="offersPreview.payment" class="payment-section">
+        <div v-if="offerPreview.payment" class="payment-section">
           <div class="section-heading">Zahlungsbedingungen</div>
           <div class="payment-content">
-            <p v-if="offersPreview.payment.terms">
-              Zahlbar innerhalb <strong>{{ offersPreview.payment.terms }} Tagen</strong> netto nach
+            <p v-if="offerPreview.payment.terms">
+              Zahlbar innerhalb <strong>{{ offerPreview.payment.terms }} Tagen</strong> netto nach
               Rechnungsdatum.
             </p>
-            <p v-if="offersPreview.payment.has_skonto">
+            <p v-if="offerPreview.payment.has_skonto">
               Bei Zahlung innerhalb von
-              <strong>{{ offersPreview.payment.skonto_days }} Tagen</strong> gewähren wir
-              <strong>{{ offersPreview.payment.skonto_percentage }}% Skonto</strong>.
+              <strong>{{ offerPreview.payment.skonto_days }} Tagen</strong> gewähren wir
+              <strong>{{ offerPreview.payment.skonto_percentage }}% Skonto</strong>.
             </p>
-            <p v-if="offersPreview.payment.payment_conditions">
-              {{ offersPreview.payment.payment_conditions }}
+            <p v-if="offerPreview.payment.payment_conditions">
+              {{ offerPreview.payment.payment_conditions }}
             </p>
           </div>
         </div>
 
         <!-- Bank Details -->
-        <div v-if="auth.bank || offersPreview.bank" class="bank-section">
+        <div v-if="auth.bank || offerPreview.bank" class="bank-section">
           <div class="section-heading">Bankverbindung</div>
           <div class="bank-details">
-            <div v-if="auth.bank?.bank_name || offersPreview.bank?.bank_name">
-              Kreditinstitut: {{ auth.bank?.bank_name || offersPreview.bank?.bank_name }}
+            <div v-if="auth.bank?.bank_name || offerPreview.bank?.bank_name">
+              Kreditinstitut: {{ auth.bank?.bank_name || offerPreview.bank?.bank_name }}
             </div>
-            <div v-if="auth.bank?.iban || offersPreview.bank?.iban">
-              IBAN: {{ auth.bank?.iban || offersPreview.bank?.iban }}
+            <div v-if="auth.bank?.iban || offerPreview.bank?.iban">
+              IBAN: {{ auth.bank?.iban || offerPreview.bank?.iban }}
             </div>
-            <div v-if="auth.bank?.bic || offersPreview.bank?.bic">
-              BIC: {{ auth.bank?.bic || offersPreview.bank?.bic }}
+            <div v-if="auth.bank?.bic || offerPreview.bank?.bic">
+              BIC: {{ auth.bank?.bic || offerPreview.bank?.bic }}
             </div>
           </div>
         </div>
 
         <!-- Legal Validity -->
-        <div v-if="offersPreview.is_legal_validity" class="signature-section">
+        <div v-if="offerPreview.is_legal_validity" class="signature-section">
           <div class="signature-note">
             Durch Ihre Unterschrift bestätigen Sie die Annahme dieses Angebots.
           </div>
@@ -256,7 +256,7 @@
         <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
 
         <!-- leagal validity -->
-        <div v-if="offersPreview.is_legal" class="pdf-footer">
+        <div v-if="offerPreview.is_legal" class="pdf-footer">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
             Rechtsgültige Unterschrift erforderlich
@@ -280,9 +280,9 @@
 
       <!-- Action Buttons -->
       <ActionsButtonPreview
-        v-if="offersPreview.selected_customer"
+        v-if="offerPreview.selected_customer"
         tableName="offers"
-        :tableData="offersPreview"
+        :tableData="offerPreview"
         sourcePage="preview"
       />
     </div>
@@ -297,7 +297,7 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 export default {
-  name: 'OffersPreview',
+  name: 'OfferPreview',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
@@ -307,24 +307,24 @@ export default {
   data() {
     return {
       title: 'Angebot',
-      offersPreview: null,
+      offerPreview: null,
       auth: null
     }
   },
   computed: {
     formatOfferId() {
-      if (!this.offersPreview || !this.offersPreview.id) return ''
-      return `ANG-${String(this.offersPreview.id).padStart(6, '0')}`
+      if (!this.offerPreview || !this.offerPreview.id) return ''
+      return `ANG-${String(this.offerPreview.id).padStart(6, '0')}`
     }
   },
   mounted() {
-    this.getOffersPreview()
+    this.getOfferPreview()
     this.getAuth()
   },
   methods: {
-    getOffersPreview() {
+    getOfferPreview() {
       if (store.state.offers) {
-        this.offersPreview = store.state.offers
+        this.offerPreview = store.state.offers
       }
     },
     getAuth() {

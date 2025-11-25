@@ -77,11 +77,25 @@ const routes = [
     component: () => import('../views/invoices/Preview.vue'),
     meta: { title: 'Rechnungen Vorschau', auth: true }
   },
+
+  //payments
   {
-    path: '/invoices/payment/:id',
-    name: 'invoices-payment',
-    component: () => import('../views/invoices/Payment.vue'),
-    meta: { title: 'Rechnungen Zahlung', auth: true }
+    path: '/payments',
+    name: 'payments',
+    component: () => import('../views/payments/Index.vue'),
+    meta: { title: 'payments', auth: true }
+  },
+  {
+    path: '/payments/create/:id',
+    name: 'payments-create',
+    component: () => import('../views/payments/Create.vue'),
+    meta: { title: 'Add New Offer', auth: true }
+  },
+  {
+    path: '/payments/details/:id',
+    name: 'payments-details',
+    component: () => import('../views/payments/Details.vue'),
+    meta: { title: 'Offer Details', auth: true }
   },
 
   //remeinders

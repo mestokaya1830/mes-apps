@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="offers && auth" class="preview-panel">
+    <div v-if="offer && auth" class="preview-panel">
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -11,13 +11,13 @@
             <div class="recipient-address">
               <div class="section-title">Empfänger</div>
               <div class="company-name-subtitle">
-                {{ offers.customer.company_name }}
+                {{ offer.customer.company_name }}
               </div>
-              <div class="meta-label">{{ offers.customer.address }}</div>
+              <div class="meta-label">{{ offer.customer.address }}</div>
               <div class="meta-label">
-                {{ offers.customer.postal_code }}
-                {{ offers.customer.city }}<br />
-                {{ offers.customer.country }}
+                {{ offer.customer.postal_code }}
+                {{ offer.customer.city }}<br />
+                {{ offer.customer.country }}
               </div>
             </div>
           </div>
@@ -31,73 +31,73 @@
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(offers.date) }}</span>
+              <span class="meta-value">{{ formatDate(offer.date) }}</span>
             </div>
 
             <!-- Leistungsdatum hinzugefügt -->
-            <div v-if="offers.service_date" class="meta-row">
+            <div v-if="offer.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(offers.service_date) }}</span>
+              <span class="meta-value">{{ formatDate(offer.service_date) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(offers.customer.id) }}</span>
+              <span class="meta-value">{{ formatCustomerId(offer.customer.id) }}</span>
             </div>
 
             <div
               v-if="
-                offers.customer.country === 'Germany' &&
-                offers.customer.tax_number
+                offer.customer.country === 'Germany' &&
+                offer.customer.tax_number
               "
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ offers.customer.tax_number }}</span>
+              <span class="meta-value">{{ offer.customer.tax_number }}</span>
             </div>
 
             <div
-              v-else-if="offers.customer.is_in_eu && offers.customer.vat_id"
+              v-else-if="offer.customer.is_in_eu && offer.customer.vat_id"
               class="meta-row"
             >
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ offers.customer.vat_id }}</span>
+              <span class="meta-value">{{ offer.customer.vat_id }}</span>
             </div>
 
             <div
-              v-else-if="!offers.customer.is_in_eu && offers.customer.vat_id"
+              v-else-if="!offer.customer.is_in_eu && offer.customer.vat_id"
               class="meta-row"
             >
               <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ offers.customer.vat_id }}</span>
+              <span class="meta-value">{{ offer.customer.vat_id }}</span>
             </div>
-            <div v-if="offers.valid_until" class="meta-row">
+            <div v-if="offer.valid_until" class="meta-row">
               <span class="meta-label">Gültig bis:</span>
-              <span class="meta-value">{{ formatDate(offers.valid_until) }}</span>
+              <span class="meta-value">{{ formatDate(offer.valid_until) }}</span>
             </div>
           </div>
           <!-- <div class="offer-meta">
             <div class="meta-row">
               <span class="meta-label">Angebots-Nr.:</span>
-              <span class="meta-value">{{ offers.id }}</span>
+              <span class="meta-value">{{ offer.id }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(offers.date) }}</span>
+              <span class="meta-value">{{ formatDate(offer.date) }}</span>
             </div>
-            <div v-if="offers.customer?.id" class="meta-row">
+            <div v-if="offer.customer?.id" class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ offers.customer.id }}</span>
+              <span class="meta-value">{{ offer.customer.id }}</span>
             </div>
            
             <div
-              v-if="offers.service_period_start && offers.service_period_end"
+              v-if="offer.service_period_start && offer.service_period_end"
               class="meta-row"
             >
               <span class="meta-label">Leistungszeitraum:</span>
               <span class="meta-value">
-                {{ formatDate(offers.service_period_start) }} -
-                {{ formatDate(offers.service_period_end) }}
+                {{ formatDate(offer.service_period_start) }} -
+                {{ formatDate(offer.service_period_end) }}
               </span>
             </div>
           </div> -->
@@ -105,14 +105,14 @@
 
         <!-- Document Title -->
         <div class="document-title">
-          <h1>{{ offers.title || 'Angebot' }}</h1>
+          <h1>{{ offer.title || 'Angebot' }}</h1>
         </div>
 
         <!-- Subject / Description -->
         <div class="form-group">
           <label class="form-label">Betreff / Beschreibung</label>
           <div class="intro-text">
-            {{ offers.subject }}
+            {{ offer.subject }}
           </div>
         </div>
         <!-- Intro Text -->
@@ -135,8 +135,8 @@
             </tr>
           </thead>
 
-          <tbody v-if="offers.positions && offers.positions.length > 0">
-            <tr v-for="(item, index) in offers.positions" :key="index">
+          <tbody v-if="offer.positions && offer.positions.length > 0">
+            <tr v-for="(item, index) in offer.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -153,78 +153,78 @@
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, offers.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, offer.currency) }}</td>
               <td class="right">
-                {{ offers.is_reverse_charge ? '0%' : item.vat + '%' }}
+                {{ offer.is_reverse_charge ? '0%' : item.vat + '%' }}
               </td>
               <td class="right">
-                {{ formatCurrency(item.unit_total, offers.currency) }}
+                {{ formatCurrency(item.unit_total, offer.currency) }}
               </td>
             </tr>
           </tbody>
         </table>
 
         <!-- summary -->
-        <div v-if="offers.summary" class="summary-section">
+        <div v-if="offer.summary" class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(offers.summary.subtotal, offers.currency)
+              formatCurrency(offer.summary.subtotal, offer.currency)
             }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(offers.summary.vat_amount, offers.currency)
+              formatCurrency(offer.summary.vat_amount, offer.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(offers.summary.total, offers.currency)
+              formatCurrency(offer.summary.total, offer.currency)
             }}</span>
           </div>
         </div>
 
         <!-- Payment Terms -->
-        <div v-if="offers.payment" class="payment-section">
+        <div v-if="offer.payment" class="payment-section">
           <div class="section-heading">Zahlungsbedingungen</div>
           <div class="payment-content">
-            <p v-if="offers.payment.terms">
-              Zahlbar innerhalb <strong>{{ offers.payment.terms }} Tagen</strong> netto nach
+            <p v-if="offer.payment.terms">
+              Zahlbar innerhalb <strong>{{ offer.payment.terms }} Tagen</strong> netto nach
               Rechnungsdatum.
             </p>
-            <p v-if="offers.payment.has_skonto">
+            <p v-if="offer.payment.has_skonto">
               Bei Zahlung innerhalb von
-              <strong>{{ offers.payment.skonto_days }} Tagen</strong> gewähren wir
-              <strong>{{ offers.payment.skonto_percentage }}% Skonto</strong>.
+              <strong>{{ offer.payment.skonto_days }} Tagen</strong> gewähren wir
+              <strong>{{ offer.payment.skonto_percentage }}% Skonto</strong>.
             </p>
-            <p v-if="offers.payment.payment_conditions">
-              {{ offers.payment.payment_conditions }}
+            <p v-if="offer.payment.payment_conditions">
+              {{ offer.payment.payment_conditions }}
             </p>
           </div>
         </div>
 
         <!-- Bank Details -->
-        <div v-if="auth.bank || offers.bank" class="bank-section">
+        <div v-if="auth.bank || offer.bank" class="bank-section">
           <div class="section-heading">Bankverbindung</div>
           <div class="bank-details">
-            <div v-if="auth.bank?.bank_name || offers.bank?.bank_name">
-              Kreditinstitut: {{ auth.bank?.bank_name || offers.bank?.bank_name }}
+            <div v-if="auth.bank?.bank_name || offer.bank?.bank_name">
+              Kreditinstitut: {{ auth.bank?.bank_name || offer.bank?.bank_name }}
             </div>
-            <div v-if="auth.bank?.iban || offers.bank?.iban">
-              IBAN: {{ auth.bank?.iban || offers.bank?.iban }}
+            <div v-if="auth.bank?.iban || offer.bank?.iban">
+              IBAN: {{ auth.bank?.iban || offer.bank?.iban }}
             </div>
-            <div v-if="auth.bank?.bic || offers.bank?.bic">
-              BIC: {{ auth.bank?.bic || offers.bank?.bic }}
+            <div v-if="auth.bank?.bic || offer.bank?.bic">
+              BIC: {{ auth.bank?.bic || offer.bank?.bic }}
             </div>
           </div>
         </div>
 
         <!-- Legal Validity -->
-        <div v-if="offers.is_legal_validity" class="signature-section">
+        <div v-if="offer.is_legal_validity" class="signature-section">
           <div class="signature-note">
             Durch Ihre Unterschrift bestätigen Sie die Annahme dieses Angebots.
           </div>
@@ -250,7 +250,7 @@
         <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
 
         <!-- leagal validity -->
-        <div v-if="offers.is_legal" class="pdf-footer">
+        <div v-if="offer.is_legal" class="pdf-footer">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
             Rechtsgültige Unterschrift erforderlich
@@ -274,14 +274,14 @@
 
       <!-- Action Buttons -->
       <ActionsButtonPreview
-        v-if="offers.customer"
-        tableName="offers"
-        :tableData="offers"
+        v-if="offer.customer"
+        tableName="offer"
+        :tableData="offer"
         sourcePage="details"
       />
     </div>
 
-    <router-link to="/offers" class="back-link"> ← Zurück zur Angebotsliste </router-link>
+    <router-link to="/offer" class="back-link"> ← Zurück zur Angebotsliste </router-link>
   </div>
 </template>
 
@@ -291,7 +291,7 @@ import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 export default {
-  name: 'OffersDetails',
+  name: 'OfferDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
@@ -301,33 +301,33 @@ export default {
   data() {
     return {
       title: 'Angebot-Details',
-      offers: null,
+      offer: null,
       auth: null
     }
   },
   computed: {
     formatAngebotsId() {
-      if (!this.offers || !this.offers.id) return ''
-      return `ANG-${String(this.offers.id).padStart(6, '0')}`
+      if (!this.offer || !this.offer.id) return ''
+      return `ANG-${String(this.offer.id).padStart(6, '0')}`
     }
   },
   mounted() {
-    this.getOffers()
+    this.getOffer()
     this.getAuth()
   },
   methods: {
-    async getOffers() {
+    async getOffer() {
       const id = this.$route.params.id
       try {
-        const result = await window.api.getDocumentById(id, 'offers')
-        this.offers = {
+        const result = await window.api.getDocumentById(id, 'offer')
+        this.offer = {
           ...result.rows,
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions),
           payment: JSON.parse(result.rows.payment),
           summary: JSON.parse(result.rows.summary)
         }
-        console.log(this.offers)
+        console.log(this.offer)
       } catch (error) {
         console.error(error)
       }

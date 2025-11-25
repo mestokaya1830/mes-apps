@@ -65,10 +65,6 @@
           </div>
         </div>
 
-        <!-- <div v-if="invoice.payment.payment_reference" class="subject-line">
-          <strong>Betreff:</strong> {{ invoice.terms.payment_reference }}
-        </div> -->
-
         <!-- Intro Text -->
         <div class="intro-text">
           Sehr geehrter Kunde,<br />
@@ -185,19 +181,19 @@
             <div v-if="invoice.terms.payment_terms" class="payment-term-item">
               <strong>Zahlungsziel:</strong>
               {{ invoice.terms.payment_terms }} Tage netto (fällig bis
-              {{ calculateDueDate(invoice.date, invoice.terms.payment_terms) }})
+              {{ formatDate(invoice.due_date) }})
             </div>
 
             <div v-if="invoice.terms.early_payment_days" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
               {{ invoice.terms.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
               {{ invoice.terms.early_payment_days }} Tagen (bis
-              {{ calculateDueDate(invoice.date, invoice.terms.early_payment_days) }})
+              {{ addDays(invoice.date, invoice.terms.early_payment_days) }})
               <div class="skonto-amount">
                 Skonto-Betrag:
-                {{ formatCurrency(calculateSkontoAmount(), invoice.currency) }}
+                {{ formatCurrency(calculateEarlyPayment(), invoice.currency) }}
                 = Zahlbetrag:
-                {{ formatCurrency(calculateAmountWithSkonto(), invoice.currency) }}
+                {{ formatCurrency(calculateAmountWithEarlyPayment(), invoice.currency) }}
               </div>
             </div>
 
@@ -238,6 +234,13 @@
               <option value="1">Aktivieren</option>
             </select>
           </div>
+          <router-link :to="`/payments/create/${invoice.id}`">
+            <button class="btn btn-primary">
+              <span class="nav-icon">💳</span>
+              <span>Zahlung erfassen</span>
+            </button>
+          </router-link>
+
           <!-- <div class="form-group">
             <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
               <option value="" disabled>Bezahlungsstatus</option>
@@ -295,7 +298,7 @@ export default {
     ActionsButtonPreview,
     FooterSidePreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
+  inject: ['formatCustomerId', 'formatDate', 'formatCurrency'],
   data() {
     return {
       title: 'Rechnung',
@@ -332,28 +335,28 @@ export default {
         console.warn('No auth data in store')
       }
     },
-     formatRechnungId(id) {
+    formatRechnungId(id) {
       if (!id) return ''
       const year = new Date().getFullYear()
       return `RE-${year}-${String(id).padStart(5, '0')}`
     },
-    calculateDueDate(invoiceDate, days) {
+    addDays(invoiceDate, days) {
       if (!invoiceDate || !days) return ''
       const date = new Date(invoiceDate)
       date.setDate(date.getDate() + days)
       return this.formatDate(date.toISOString().split('T')[0])
     },
-    calculateSkontoAmount() {
-      if (!this.invoice?.summary?.total || !this.invoice?.payment?.skonto_percentage) {
+    calculateEarlyPayment() {
+      if (!this.invoice?.summary?.total || !this.invoice?.terms.early_payment_percentage) {
         return 0
       }
       const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
-      return (outstanding * this.invoice.payment.skonto_percentage) / 100
+      return (outstanding * this.invoice.terms.early_payment_percentage) / 100
     },
-    calculateAmountWithSkonto() {
+    calculateAmountWithEarlyPayment() {
       if (!this.invoice?.summary?.total) return 0
       const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
-      return outstanding - this.calculateSkontoAmount()
+      return outstanding - this.calculateEarlyPayment()
     },
     async setDocumentStatus() {
       const result = await window.api.documentStatus(
@@ -364,7 +367,7 @@ export default {
       if (result.success) {
         this.$router.push('/invoices')
       }
-    },
+    }
     // async setPaidStatus() {
     //   const result = await window.api.paidStatus(this.invoice.id, 'invoices', this.paid_status)
     //   if (result.success) {
