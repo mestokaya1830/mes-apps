@@ -62,7 +62,7 @@
               <label class="form-label">Betrag (€) <span class="stars">*</span></label>
               <input
                 v-model.number="payment.amount"
-                type="number"
+                type="text"
                 step="0.01"
                 class="form-input"
                 @input="checkAmount"

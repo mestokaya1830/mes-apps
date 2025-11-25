@@ -714,10 +714,8 @@ ipcMain.handle('save-payment', async (_, data, file_name, image_file) => {
       // const savePath = path.join(os.homedir(), fileName);//linux home folder
       // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
       const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name) // inner app uploads folder
-      const imgae_result = await fs.promises.writeFile(savePath, buffer)
-      if (row && imgae_result) {
-        return { success: true, customer: row }
-      }
+      await fs.promises.writeFile(savePath, buffer)
+      return { success: true, customer: row }
     } catch (err) {
       console.error('DB error:', err.message)
       return { success: false, message: err.message }
