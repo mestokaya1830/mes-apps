@@ -110,14 +110,9 @@
 </template>
 
 <script>
-// import vSelect from 'vue-select'
-// import 'vue-select/dist/vue-select.css'
 import store from '../../store/store'
 export default {
   name: 'Invoices',
-  // components: {
-  //   vSelect
-  // },
   inject: ['formatCurrency'],
   data() {
     return {
