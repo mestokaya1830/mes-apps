@@ -29,3 +29,9 @@ try {
 // } catch (err) {
 //   console.error(err.message)
 // }
+
+// db.exec(`
+//   CREATE INDEX IF NOT EXISTS idx_invoices_id ON invoices(id);
+//   CREATE INDEX IF NOT EXISTS idx_invoices_active ON invoices(is_active);
+//   CREATE INDEX IF NOT EXISTS idx_invoices_created_at ON invoices(created_at DESC);
+// `)

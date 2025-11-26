@@ -36,7 +36,18 @@
           <option value="partially_paid">Teilweise bezahlt</option>
         </select>
       </div>
-      <input v-model="search_box" type="search" placeholder="Suce..." @input="searchFilter()" />
+
+      <div class="search-box">
+        <input
+          v-model="search_box"
+          placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
+          @input="searchFilter"
+        />
+        <span v-if="search_box && search_box.length < 4" class="hint">
+          Mindestens 2 Zeichen eingeben
+        </span>
+      </div>
+
       <input v-model="date_box_start" type="date" @input="dateFilter()" />
       <input v-model="date_box_end" type="date" @input="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
@@ -118,7 +129,6 @@ export default {
     return {
       title: 'Rechnungen',
       invoiceList: [],
-      search: [],
       search_box: '',
       date_box_start: '',
       date_box_end: '',
@@ -171,23 +181,37 @@ export default {
             summary: JSON.parse(item.summary),
             terms: JSON.parse(item.terms)
           }))
-          this.search = this.invoiceList
         }
       } catch (error) {
         console.error(error)
       }
     },
-    searchFilter() {
-      if (this.search_box && this.search_box.trim() !== '') {
-        this.invoiceList = this.search.filter(
-          (item) =>
-            item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            item.customer.company_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            this.formatInvoiceId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
-        )
-      } else {
-        this.invoiceList = this.search
+    async searchFilter() {
+      if (this.search_box && this.search_box.trim() !== '' && this.search_box.trim().length >= 4) {
+        try {
+          const result = await window.api.searchFilter(
+            'invoices',
+            this.search_box.trim().toLowerCase()
+          )
+          if (result.success) {
+            this.invoiceList = result.rows.map((item) => ({
+              ...item,
+              customer: JSON.parse(item.customer),
+              summary: JSON.parse(item.summary),
+              terms: JSON.parse(item.terms)
+            }))
+          } else {
+            this.invoiceList = []
+          }
+        } catch (error) {
+          console.error(error)
+          this.invoiceList = []
+        } finally {
+          this.isSearching = false
+        }
+      }
+      if (!this.search_box || this.search_box.trim() === '') {
+        this.getInvoiceList()
       }
     },
     async dateFilter() {

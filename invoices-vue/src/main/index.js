@@ -868,3 +868,39 @@ ipcMain.handle('date-filter', async (data, tableName, date) => {
     return { success: false, message: error.message }
   }
 })
+
+ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
+  try {
+    if (tableName !== 'invoices') {
+      return { success: false, message: 'Geçersiz tablo' }
+    }
+
+    // frontend zaten trim/lower yapıyorsa minimum güvenlik:
+    const term = String(searchTerm || '')
+
+    const numeric = /^\d+$/.test(term) ? Number(term) : null
+    const pattern = `%${term}%`
+
+    const stmt = db.prepare(`
+      SELECT *
+      FROM invoices
+      WHERE is_active = 1
+        AND (
+          id = ? OR
+          json_extract(customer, '$.first_name') LIKE ? COLLATE NOCASE OR
+          json_extract(customer, '$.last_name') LIKE ? COLLATE NOCASE OR
+          json_extract(customer, '$.company_name') LIKE ? COLLATE NOCASE OR
+          (json_extract(customer, '$.first_name') || ' ' || json_extract(customer, '$.last_name')) LIKE ? COLLATE NOCASE
+        )
+      ORDER BY created_at DESC
+      LIMIT 100
+    `)
+
+    const rows = stmt.all(numeric, pattern, pattern, pattern, pattern)
+
+    return { success: true, rows }
+  } catch (error) {
+    console.error('search-filter error:', error)
+    return { success: false, message: error.message }
+  }
+})
