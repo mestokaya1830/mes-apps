@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="editor-panel">
-     <h1>{{ title }} <h2 v-if="reportsLength">{{ reportsLength }}</h2> </h1>
+      <h1>
+        {{ title }}
+        <h2 v-if="reportsLength">{{ reportsLength }}</h2>
+      </h1>
       <select v-model="report_static_date" class="form-input" @change="getStaticDate">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>
@@ -170,7 +173,6 @@ export default {
       }
     },
     reportSummaryFunction() {
-      console.log(this.reports)
       if (this.reports) {
         this.reportSummary = {
           total: 0,

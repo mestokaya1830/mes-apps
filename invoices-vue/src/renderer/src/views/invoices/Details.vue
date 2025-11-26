@@ -6,17 +6,17 @@
         <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- customers -->
-        <div v-if="invoice.customer" class="recipient">
+        <div v-if="invoice" class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ invoice.customer.company_name }}
+              {{ invoice.company_name }}
             </div>
-            <div class="meta-label">{{ invoice.customer.address }}</div>
+            <div class="meta-label">{{ invoice.address }}</div>
             <div class="meta-label">
-              {{ invoice.customer.postal_code }}
-              {{ invoice.customer.city }}<br />
-              {{ invoice.customer.country }}
+              {{ invoice.postal_code }}
+              {{ invoice.city }}<br />
+              {{ invoice.country }}
             </div>
           </div>
 
@@ -26,12 +26,12 @@
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatRechnungId(invoice.id) }}</span>
+              <span class="meta-value">{{ formatRechnungId(invoice.invoice_id) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(invoice.date) }}</span>
+              <span class="meta-value">{{ formatDate(invoice.invoice_date) }}</span>
             </div>
 
             <!-- Service date -->
@@ -42,25 +42,25 @@
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(invoice.customer.id) }}</span>
+              <span class="meta-value">{{ formatCustomerId(invoice.customer_id) }}</span>
             </div>
 
             <div
-              v-if="invoice.customer.country === 'Germany' && invoice.customer.tax_number"
+              v-if="invoice.country === 'Germany' && invoice.tax_number"
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ invoice.customer.tax_number }}</span>
+              <span class="meta-value">{{ invoice.tax_number }}</span>
             </div>
 
-            <div v-else-if="invoice.customer.is_in_eu && invoice.customer.vat_id" class="meta-row">
+            <div v-else-if="invoice.is_in_eu && invoice.vat_id" class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ invoice.customer.vat_id }}</span>
+              <span class="meta-value">{{ invoice.vat_id }}</span>
             </div>
 
-            <div v-else-if="!invoice.customer.is_in_eu && invoice.customer.vat_id" class="meta-row">
+            <div v-else-if="!invoice.is_in_eu && invoice.vat_id" class="meta-row">
               <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ invoice.customer.vat_id }}</span>
+              <span class="meta-value">{{ invoice.vat_id }}</span>
             </div>
           </div>
         </div>
@@ -114,25 +114,25 @@
         </table>
 
         <!-- summary -->
-        <div v-if="invoice.summary" class="summary-section">
+        <div class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(invoice.summary.subtotal, invoice.currency)
+              formatCurrency(invoice.subtotal, invoice.currency)
             }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(invoice.summary.vat_amount, invoice.currency)
+              formatCurrency(invoice.vat_amount, invoice.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(invoice.summary.total, invoice.currency)
+              formatCurrency(invoice.total, invoice.currency)
             }}</span>
           </div>
 
@@ -145,7 +145,7 @@
               - {{ formatCurrency(invoice.payment.paid_amount, invoice.currency) }}
             </span>
           </div> -->
-          <div
+          <!-- <div
             v-if="invoice.summary && invoice.summary.outstanding > 0"
             class="total-row outstanding"
           >
@@ -153,20 +153,20 @@
             <span class="total-value">{{
               formatCurrency(invoice.summary.outstanding, invoice.currency)
             }}</span>
-          </div>
+          </div> -->
 
           <div class="preview-section">
-            <div v-if="invoice.tax_options.is_small_company" class="tax-note small-company">
+            <div v-if="invoice.is_small_company" class="tax-note small-company">
               ⚠️ Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
             </div>
 
-            <div v-else-if="invoice.tax_options.is_reverse_charge" class="tax-note">
+            <div v-else-if="invoice.is_reverse_charge" class="tax-note">
               ⚠️ Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span
                 >§13b UStG</span
               >)
             </div>
 
-            <div v-else-if="invoice.tax_options.is_eu_delivery" class="tax-note">
+            <div v-else-if="invoice.is_eu_delivery" class="tax-note">
               ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß
               <span>§4 Nr.1b UStG</span> (Europa içi)
             </div>
@@ -174,21 +174,21 @@
         </div>
 
         <!-- payment -->
-        <div v-if="invoice.terms" class="payment-terms-box">
+        <div  class="payment-terms-box">
           <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
 
           <div class="payment-terms-content">
-            <div v-if="invoice.terms.payment_terms" class="payment-term-item">
+            <div v-if="invoice.payment_terms" class="payment-term-item">
               <strong>Zahlungsziel:</strong>
-              {{ invoice.terms.payment_terms }} Tage netto (fällig bis
+              {{ invoice.payment_terms }} Tage netto (fällig bis
               {{ formatDate(invoice.due_date) }})
             </div>
 
-            <div v-if="invoice.terms.early_payment_days" class="payment-term-item skonto-highlight">
+            <div v-if="invoice.early_payment_days" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
-              {{ invoice.terms.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
-              {{ invoice.terms.early_payment_days }} Tagen (bis
-              {{ addDays(invoice.date, invoice.terms.early_payment_days) }})
+              {{ invoice.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
+              {{ invoice.early_payment_days }} Tagen (bis
+              {{ addDays(invoice.date, invoice.early_payment_days) }})
               <div class="skonto-amount">
                 Skonto-Betrag:
                 {{ formatCurrency(calculateEarlyPayment(), invoice.currency) }}
@@ -197,12 +197,12 @@
               </div>
             </div>
 
-            <div v-if="invoice.terms.payment_conditions" class="payment-term-item">
+            <!-- <div v-if="invoice.terms.payment_conditions" class="payment-term-item">
               <strong>Zusätzliche Bedingungen:</strong>
               <div class="payment-conditions-text">
                 {{ invoice.terms.payment_conditions }}
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
@@ -234,7 +234,7 @@
               <option value="1">Aktivieren</option>
             </select>
           </div>
-          <router-link :to="`/payments/create/${invoice.id}`">
+          <router-link :to="`/payments/create/${invoice.invoice_id}`">
             <button class="btn btn-primary">
               <span class="nav-icon">💳</span>
               <span>Zahlung erfassen</span>
@@ -317,13 +317,9 @@ export default {
       try {
         const result = await window.api.getDocumentById(id, 'invoices')
         this.invoice = {
-          ...result.rows,
-          customer: JSON.parse(result.rows.customer),
-          positions: JSON.parse(result.rows.positions),
-          terms: JSON.parse(result.rows.terms),
-          summary: JSON.parse(result.rows.summary)
+          ...result.rows[0],
+          positions: JSON.parse(result.rows[0].positions)
         }
-        console.log(this.invoice)
       } catch (error) {
         console.error(error)
       }
@@ -347,20 +343,20 @@ export default {
       return this.formatDate(date.toISOString().split('T')[0])
     },
     calculateEarlyPayment() {
-      if (!this.invoice?.summary?.total || !this.invoice?.terms.early_payment_percentage) {
+      if (!this.invoice?.total || !this.invoice?.early_payment_percentage) {
         return 0
       }
-      const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
-      return (outstanding * this.invoice.terms.early_payment_percentage) / 100
+      const outstanding = this.invoice.outstanding || this.invoice.total
+      return (outstanding * this.invoice.early_payment_percentage) / 100
     },
     calculateAmountWithEarlyPayment() {
-      if (!this.invoice?.summary?.total) return 0
-      const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
-      return outstanding - this.calculateEarlyPayment()
+      // if (!this.invoice?.summary?.total) return 0
+      // const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
+      // return outstanding - this.calculateEarlyPayment()
     },
     async setDocumentStatus() {
       const result = await window.api.documentStatus(
-        this.invoice.id,
+        this.invoice.invoice_id,
         'invoices',
         this.invoice_status
       )

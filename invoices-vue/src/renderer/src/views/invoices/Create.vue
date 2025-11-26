@@ -13,18 +13,18 @@
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-group">
           <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
-          <input v-model="invoices.id" type="text" class="form-input" readonly />
+          <input v-model="invoice.invoice_id" type="text" class="form-input" readonly />
           <small class="form-hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Leistungsdatum <span class="stars">*</span></label>
-            <input v-model="invoices.service_date" type="date" class="form-input" />
+            <input v-model="invoice.service_date" type="date" class="form-input" />
             <small class="form-hint">Datum der Leistungserbringung</small>
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
-            <input v-model="invoices.date" type="date" class="form-input" required />
+            <input v-model="invoice.invoice_date" type="date" class="form-input" required />
           </div>
         </div>
       </div>
@@ -40,57 +40,37 @@
             </option>
           </select>
         </div>
-        <div v-if="invoices.customer?.id" class="customer-details">
+        <div v-if="customer?.id" class="customer-details">
           <div class="form-group">
             <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-            <input v-model="invoices.customer.id" type="text" class="form-input" readonly />
+            <input v-model="customer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Firmname <span class="stars">*</span></label>
-            <input
-              v-model="invoices.customer.company_name"
-              type="text"
-              class="form-input"
-              readonly
-            />
+            <input v-model="customer.company_name" type="text" class="form-input" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname <span class="stars">*</span></label>
-              <input
-                v-model="invoices.customer.first_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="customer.first_name" type="text" class="form-input" readonly />
             </div>
             <div class="form-group">
               <label class="form-label">Nachname <span class="stars">*</span></label>
-              <input
-                v-model="invoices.customer.last_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="customer.last_name" type="text" class="form-input" readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Adresse <span class="stars">*</span></label>
-            <input v-model="invoices.customer.address" type="text" class="form-input" readonly />
+            <input v-model="customer.address" type="text" class="form-input" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">PLZ <span class="stars">*</span></label>
-              <input
-                v-model="invoices.customer.postal_code"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="customer.postal_code" type="text" class="form-input" readonly />
             </div>
             <div class="form-group">
               <label class="form-label">Stadt <span class="stars">*</span></label>
-              <input v-model="invoices.customer.city" type="text" class="form-input" readonly />
+              <input v-model="customer.city" type="text" class="form-input" readonly />
             </div>
           </div>
         </div>
@@ -104,7 +84,7 @@
             <label for="is_small_company" class="switch">
               <input
                 id="is_small_company"
-                v-model="invoices.tax_options.is_small_company"
+                v-model="invoice.is_small_company"
                 type="checkbox"
                 @change="checkTaxOptions('is_small_company')"
               />
@@ -119,7 +99,7 @@
             <label for="is_reverse_charge" class="switch">
               <input
                 id="is_reverse_charge"
-                v-model="invoices.tax_options.is_reverse_charge"
+                v-model="invoice.is_reverse_charge"
                 type="checkbox"
                 @change="checkTaxOptions('is_reverse_charge')"
               />
@@ -136,7 +116,7 @@
             <label for="is_eu_delivery" class="switch">
               <input
                 id="is_eu_delivery"
-                v-model="invoices.tax_options.is_eu_delivery"
+                v-model="invoice.is_eu_delivery"
                 type="checkbox"
                 @change="checkTaxOptions('is_eu_delivery')"
               />
@@ -158,13 +138,13 @@
           <div class="form-group">
             <label class="form-label">Zahlungsziel (Tage) *</label>
             <input
-              v-model.number="invoices.terms.payment_terms"
+              v-model.number="invoice.payment_terms"
               type="number"
               class="form-input"
               required
             />
             <small class="form-hint"
-              >Zahlbar innerhalb {{ invoices.terms.payment_terms }} Tagen netto</small
+              >Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto</small
             >
           </div>
         </div>
@@ -172,7 +152,7 @@
           <label for="skonto-checkbox" class="switch">
             <input
               id="skonto-checkbox"
-              v-model="invoices.terms.early_payment"
+              v-model="invoice.early_payment_discount"
               type="checkbox"
               class="switch-checkbox"
             />
@@ -182,11 +162,11 @@
             <strong>Skonto gewähren</strong>
           </div>
         </div>
-        <div v-if="invoices.terms.early_payment" class="form-row">
+        <div v-if="invoice.early_payment_discount" class="form-row">
           <div class="form-group">
             <label class="form-label">Skonto (%)</label>
             <input
-              v-model.number="invoices.terms.early_payment_percentage"
+              v-model.number="invoice.early_payment_percentage"
               type="number"
               step="0.1"
               class="form-input"
@@ -195,7 +175,7 @@
           <div class="form-group">
             <label class="form-label">Skonto Frist (Tage)</label>
             <input
-              v-model.number="invoices.terms.early_payment_days"
+              v-model.number="invoice.early_payment_days"
               type="number"
               class="form-input"
             />
@@ -204,7 +184,7 @@
         <div class="form-group">
           <label class="form-label">Zusätzliche Zahlungsbedingungen</label>
           <textarea
-            v-model="invoices.terms.payment_conditions"
+            v-model="invoice.payment_conditions"
             class="form-input"
             rows="3"
             placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
@@ -217,7 +197,7 @@
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
           <label class="form-label">Waehrung</label>
-          <select v-model="invoices.currency" class="form-input">
+          <select v-model="invoice.currency" class="form-input">
             <option selected disabled>Wähle Waehrung</option>
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
@@ -236,11 +216,11 @@
       <!-- positions -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="invoices.positions && invoices.positions.length === 0">
+        <div v-if="invoice.positions && invoice.positions.length === 0">
           Keine Positionen vorhanden
         </div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in invoices.positions" :key="index" class="position-item">
+          <div v-for="(pos, index) in invoice.positions" :key="index" class="position-item">
             <div class="positions-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -308,7 +288,7 @@
               <div class="form-group">
                 <label class="form-label">MwSt. (%)</label>
                 <select
-                  v-if="!invoices.is_reverse_charge"
+                  v-if="!invoice.is_reverse_charge"
                   v-model.number="pos.vat"
                   class="form-input"
                   @change="getUnitTotal(pos.quantity, pos.price, index)"
@@ -337,7 +317,7 @@
       </div>
 
       <!-- preview button -->
-      <router-link to="/invoices/preview" class="preview-btn" @click="setStore">
+      <router-link to="/invoice/preview" class="preview-btn" @click="setStore">
         👁️ Vorschau anzeigen
       </router-link>
     </div>
@@ -347,35 +327,15 @@
 <script>
 import store from '../../store/store.js'
 export default {
-  name: 'CreateInvoices',
+  name: 'Createinvoice',
   inject: ['storePreview', 'validateServicePeriod'],
   data() {
     return {
       title: 'Rechnung erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
-      invoices: {
-        id: 1,
-        is_active: 1,
-        date: '',
-        due_date: '',
-        service_date: '',
-        currency: 'EUR.de-DE',
-        terms: {
-          payment_terms: 14,
-          payment_conditions: '',
-          early_payment: false,
-          early_payment_percentage: 2,
-          early_payment_days: 7
-        },
-        positions: [],
-        customer: {},
-        tax_options: {
-          is_small_company: false,
-          is_reverse_charge: false,
-          is_eu_delivery: false
-        }
-      }
+      customer: null,
+      invoice: null
     }
   },
   mounted() {
@@ -395,48 +355,48 @@ export default {
     },
     getCustomerById() {
       const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.invoices.customer = customer
+      if (customer) this.customer = customer
     },
     getStore() {
-      if (store.state.invoices) {
-        this.invoices = JSON.parse(JSON.stringify(store.state.invoices))
+      if (store.state.invoice) {
+        this.invoice = JSON.parse(JSON.stringify(store.state.invoice))
       }
     },
     getSelectedCustomer(value) {
-      this.invoices.customer = value
+      this.invoice.customer = value
     },
     checkTaxOptions(current) {
       if (current) {
-        for (const item in this.invoices.tax_options) {
+        for (const item in this.invoice[current]) {
           if (item !== current) {
-            this.invoices.tax_options[item] = false
+            this.invoice[item] = false
           }
         }
         this.calculateUmsatzsteuer()
       }
     },
     calculateUmsatzsteuer() {
-      this.invoices.positions.forEach((item, index) => {
+      this.invoice.positions.forEach((item, index) => {
         const base = item.quantity * item.price
 
         if (
-          this.invoices.tax_options.is_reverse_charge ||
-          this.invoices.tax_options.is_small_company ||
-          this.invoices.tax_options.is_eu_delivery
+          this.invoice.is_reverse_charge ||
+          this.invoice.is_small_company ||
+          this.invoice.is_eu_delivery
         ) {
-          this.invoices.positions[index].vat = 0
-          this.invoices.positions[index].vat_unit = 0
-          this.invoices.positions[index].unit_total = base.toFixed(2)
+          this.invoice.positions[index].vat = 0
+          this.invoice.positions[index].vat_unit = 0
+          this.invoice.positions[index].unit_total = base.toFixed(2)
         } else {
           const vat = 19
-          this.invoices.positions[index].vat = vat
-          this.invoices.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
-          this.invoices.positions[index].unit_total = (base * (1 + vat / 100)).toFixed(2)
+          this.invoice.positions[index].vat = vat
+          this.invoice.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
+          this.invoice.positions[index].unit_total = (base * (1 + vat / 100)).toFixed(2)
         }
       })
     },
     addPosition() {
-      this.invoices.positions.push({
+      this.invoice.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
         service_period_start: '',
@@ -449,39 +409,39 @@ export default {
       })
     },
     deletePosition(index) {
-      if (this.invoices.positions.length > 0) {
-        this.invoices.positions.splice(index, 1)
+      if (this.invoice.positions.length > 0) {
+        this.invoice.positions.splice(index, 1)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
     getUnitTotal(quantity, price, index) {
-      const vat = this.invoices.positions[index].vat || 0
+      const vat = this.invoice.positions[index].vat || 0
       const base = quantity * price
       let total = 0
       if (
-        this.invoices.tax_options.is_reverse_charge ||
-        this.invoices.tax_options.is_small_company ||
-        this.invoices.tax_options.is_eu_delivery
+        this.invoice.is_reverse_charge ||
+        this.invoice.is_small_company ||
+        this.invoice.is_eu_delivery
       ) {
-        this.invoices.positions[index].vat = 0
-        this.invoices.positions[index].vat_unit = 0
-        this.invoices.positions[index].unit_total = base.toFixed(2)
+        this.invoice.positions[index].vat = 0
+        this.invoice.positions[index].vat_unit = 0
+        this.invoice.positions[index].unit_total = base.toFixed(2)
         return
       } else {
         total = base * (1 + vat / 100)
       }
 
-      this.invoices.positions[index].unit_total = total.toFixed(2)
-      this.invoices.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
+      this.invoice.positions[index].unit_total = total.toFixed(2)
+      this.invoice.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
     setStore() {
       console.time('commit')
-      if (this.invoices) {
-        const date = new Date(this.invoices.date)
-        date.setDate(date.getDate() + this.invoices.terms.payment_terms)
-        this.invoices.due_date = date.toISOString().split('T')[0]
-        this.storePreview('invoices', this.invoices)
+      if (this.invoice) {
+        const date = new Date(this.invoice.date)
+        date.setDate(date.getDate() + this.invoice.payment_terms)
+        this.invoice.due_date = date.toISOString().split('T')[0]
+        this.storePreview('invoice', this.invoice)
       }
       console.timeEnd('commit')
     }

@@ -5,7 +5,7 @@
         {{ title }}
         <h2 v-if="reportsLength">{{ reportsLength }}</h2>
       </h1>
-      <select v-model="report_static_date" class="form-input" @change="getStaticDate">
+      <select v-model="date_range" class="form-input" @change="rangeDateFilter">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>
         <option value="3">Letzte 3 Monate</option>
@@ -17,14 +17,27 @@
         <div class="form-row">
           <div class="form-group">
             <label for="">Von</label>
-            <input v-model="date_box_start" type="date" class="form-input" @change="dateFilter()" />
+            <input
+              v-model="date_box_start"
+              ref="date_box_start"
+              type="date"
+              class="form-input"
+              @change="flexDateFilter()"
+            />
           </div>
           <div class="form-group">
             <label for="">Bis</label>
-            <input v-model="date_box_end" type="date" class="form-input" @change="dateFilter()" />
+            <input
+              v-model="date_box_end"
+              ref="date_box_end"
+              type="date"
+              class="form-input"
+              @change="flexDateFilter()"
+            />
           </div>
         </div>
       </div>
+
       <div v-if="is_ready" class="report-container printable">
         <div class="report-header">
           <div>
@@ -35,14 +48,13 @@
         </div>
 
         <div class="summary-section">
-          <!-- Summary Cards -->
           <div class="summary-cards">
             <div class="summary-card">
               <div class="card-icon">📄</div>
               <div class="card-content">
                 <p class="card-label">Gesamt Rechnungen</p>
-                <h3 class="card-value">{{ reports.length }}</h3>
-                <p class="card-detail">Im Zeitraum</p>
+                <h3 class="card-value">{{ reportsLength }}</h3>
+                <p class="card-detail">Total Betrag: {{ formatCurrency(summaryTotals.total) }}</p>
               </div>
             </div>
 
@@ -50,8 +62,8 @@
               <div class="card-icon">✅</div>
               <div class="card-content">
                 <p class="card-label">Bezahlt</p>
-                <h3 class="card-value">{{ paidInvoices }}</h3>
-                <p class="card-detail">75% der Rechnungen</p>
+                <h3 class="card-value">{{ summaryTotals.paidCount }}</h3>
+                <p class="card-detail">Betrag: {{ formatCurrency(summaryTotals.paidAmount) }}</p>
               </div>
             </div>
 
@@ -59,8 +71,21 @@
               <div class="card-icon">⏳</div>
               <div class="card-content">
                 <p class="card-label">Ausstehend</p>
-                <h3 class="card-value">{{ outstandingInvoices }}</h3>
-                <p class="card-detail">17% der Rechnungen</p>
+                <h3 class="card-value">{{ summaryTotals.outstandingCount }}</h3>
+                <p class="card-detail">
+                  Betrag: {{ formatCurrency(summaryTotals.outstandingAmount) }}
+                </p>
+              </div>
+            </div>
+
+            <div class="summary-card">
+              <div class="card-icon">💳</div>
+              <div class="card-content">
+                <p class="card-label">Teilweise bezahlt</p>
+                <h3 class="card-value">{{ summaryTotals.partialPaidCount }}</h3>
+                <p class="card-detail">
+                  Betrag: {{ formatCurrency(summaryTotals.partialPaidAmount) }}
+                </p>
               </div>
             </div>
 
@@ -68,8 +93,8 @@
               <div class="card-icon">⚠️</div>
               <div class="card-content">
                 <p class="card-label">Überfällig</p>
-                <h3 class="card-value">{{ overdueInvoicesLength }}</h3>
-                <p class="card-detail">8% der Rechnungen</p>
+                <h3 class="card-value">{{ summaryTotals.overdueCount }}</h3>
+                <p class="card-detail">Betrag: {{ formatCurrency(summaryTotals.overdueAmount) }}</p>
               </div>
             </div>
           </div>
@@ -79,59 +104,6 @@
           </div>
         </div>
 
-        <!-- Table -->
-        <!-- Filters -->
-        <!-- <div class="filters-section">
-          <div class="filters-row">
-            <div class="filter-group">
-              <label class="filter-label">🔍 Suche</label>
-              <input
-                type="text"
-                class="search-input"
-                placeholder="Suche nach Rechnungsnummer, Kunde..."
-              />
-            </div>
-            <div class="filter-group">
-              <label class="filter-label">Status</label>
-              <select class="filter-select">
-                <option value="">Alle Status</option>
-                <option value="paid">Bezahlt</option>
-                <option value="unpaid">Ausstehend</option>
-                <option value="overdue">Überfällig</option>
-                <option value="draft">Entwurf</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label class="filter-label">Kunde</label>
-              <select class="filter-select">
-                <option value="">Alle Kunden</option>
-                <option value="1">Hoffmann Industries</option>
-                <option value="2">Müller GmbH</option>
-                <option value="3">Weber & Co</option>
-                <option value="4">Schmidt AG</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label class="filter-label">MwSt-Satz</label>
-              <select class="filter-select">
-                <option value="">Alle Sätze</option>
-                <option value="19">19%</option>
-                <option value="7">7%</option>
-                <option value="0">0%</option>
-              </select>
-            </div>
-          </div>
-        </div> -->
-
-        <!-- Tabs -->
-        <!-- <div class="filter-tabs">
-          <button class="filter-tab active">Alle <span class="tab-count">24</span></button>
-          <button class="filter-tab">Bezahlt <span class="tab-count">18</span></button>
-          <button class="filter-tab">Ausstehend <span class="tab-count">4</span></button>
-          <button class="filter-tab">Überfällig <span class="tab-count">2</span></button>
-        </div> -->
-
-         <!-- Table -->
         <div class="table-section">
           <h3>Detaillierte Rechnungsliste</h3>
           <table class="report-table">
@@ -163,37 +135,37 @@
                   <strong>{{ formatCurrency(item.summary.total) }}</strong>
                 </td>
                 <td class="amount">
-                  <strong>{{ formatCurrency(item.summary.paid_amount) }}</strong>
+                  <strong>{{ formatCurrency(item.summary.partial_paid) }}</strong>
                 </td>
                 <td class="amount">
                   <strong>{{ formatCurrency(item.summary.outstanding) }}</strong>
                 </td>
-                <!-- <td>
-                  <span class="status-badge overdue">{{ getDaysOverdue(item.payment) }}</span>
-                </td> -->
-                <!-- <td>
-                  <span :class="getPaymentClass(item.payment)">{{
-                    formatDate(item.payment.payment_date)
-                  }}</span>
-                </td> -->
+                <td>{{ formatDate(item.due_date) }}</td>
                 <td>
-                  <span class="status-badge paid">{{ item.is_active }}</span>
+                  <span :class="getPaymentClass(item)">{{
+                    item.is_active ? 'Paid' : 'Unpaid'
+                  }}</span>
                 </td>
+                <td>{{ item.is_active ? 'Aktiv' : 'Inaktiv' }}</td>
               </tr>
             </tbody>
-            <tfoot v-if="reportSummary">
+            <tfoot>
               <tr class="total-row">
                 <td colspan="3"><strong>SUMME</strong></td>
                 <td class="amount">
-                  <strong>{{ formatCurrency(reportSummary.total) }}</strong>
+                  <strong>{{ formatCurrency(summaryTotals.total) }}</strong>
+                </td>
+                <td class="amount"></td>
+                <td class="amount">
+                  <strong>{{ formatCurrency(summaryTotals.total) }}</strong>
                 </td>
                 <td class="amount">
-                  <strong>{{ formatCurrency(reportSummary.paid_amount) }}</strong>
+                  <strong>{{ formatCurrency(summaryTotals.partialPaidAmount) }}</strong>
                 </td>
                 <td class="amount">
-                  <strong>{{ formatCurrency(reportSummary.outstanding) }}</strong>
+                  <strong>{{ formatCurrency(summaryTotals.outstandingAmount) }}</strong>
                 </td>
-                <td class="amount" colspan="2"></td>
+                <td colspan="3"></td>
               </tr>
             </tfoot>
           </table>
@@ -202,6 +174,7 @@
     </div>
   </div>
 </template>
+
 <script>
 export default {
   name: 'InvoicesListReport',
@@ -209,144 +182,113 @@ export default {
   data() {
     return {
       title: 'Rechnungsliste',
-      reports: null,
-      report_static_date: '',
+      reports: [],
+      date_range: '',
       date_box_start: '',
       date_box_end: '',
-      period: {
-        start: '',
-        end: ''
-      },
-      reportSummary: {},
+      period: { start: '', end: '' },
       is_ready: false,
-      is_paid: false,
-      reportsLength: 0
-    }
-  },
-
-  computed: {
-    paidInvoices() {
-      if (!this.reports) return 0
-      return this.reports.filter((item) => item.status == 1).length
-    },
-    outstandingInvoices() {
-      if (!this.reports) return 0
-      return this.reports.filter((item) => item.status == 0).length
-    },
-    overdueInvoicesLength() {
-      if (!this.reports) return 0
-      const d = new Date()
-      const today = d.toISOString().slice(0, 10)
-      return this.reports.filter((item) => item.payment_date > today).length
-    },
-    overdueInvoices() {
-      if (!this.reports) return 0
-      const d = new Date()
-      const today = d.toISOString().slice(0, 10)
-      return this.reports.filter((item) => item.payment_date > today)
+      reportsLength: 0,
+      summaryTotals: {
+        total: 0,
+        paidCount: 0,
+        paidAmount: 0,
+        outstandingCount: 0,
+        outstandingAmount: 0,
+        partialPaidCount: 0,
+        partialPaidAmount: 0,
+        overdueCount: 0,
+        overdueAmount: 0
+      }
     }
   },
   methods: {
     formatInvoiceId(id) {
-      if (!id || !id) return ''
       const year = new Date().getFullYear()
       return `RE-${year}-${String(id).padStart(5, '0')}`
     },
-    async getStaticDate() {
-      if (this.report_static_date) {
-        const today = new Date()
-        const endDate = new Date(today.getFullYear(), today.getMonth() + 0, 0, 23, 59, 59) //with 23 hours
-        const startDate = new Date(
-          today.getFullYear(),
-          today.getMonth() - this.report_static_date,
-          1,
-          0,
-          0,
-          0
-        ) //with 0 hours
+    async rangeDateFilter() {
+      if (!this.date_range) return
+      const today = new Date()
+      const startDate = new Date(today.getFullYear(), today.getMonth() - this.date_range, 1)
+      const endDate = new Date(today.getFullYear(), today.getMonth() + 0, 0)
+      this.date_box_start = startDate.toISOString().slice(0, 10)
+      this.date_box_end = endDate.toISOString().slice(0, 10)
+      this.getReport()
+    },
+    flexDateFilter() {
+      if (!this.date_box_start) return this.$refs.date_box_start.focus()
+      if (!this.date_box_end) return this.$refs.date_box_end.focus()
+      if (this.date_box_start > this.date_box_end) {
+        this.date_box_end = ''
+        return this.$refs.date_box_end.focus()
+      }
+      this.getReport()
+    },
+    async getReport() {
+      if (!this.date_box_start || !this.date_box_end) return
+      const result = await window.api.documentReport(
+        'invoices',
+        this.date_box_start,
+        this.date_box_end
+      )
+      if (!result.success) return
 
-        const result = await window.api.documentReport(
-          'invoices',
-          startDate.toISOString().slice(0, 10),
-          endDate.toISOString().slice(0, 10)
-        )
-        if (result.success) {
-          this.reports = result.rows.map((row) => ({
-            ...row,
-            customer: JSON.parse(row.customer),
-            terms: JSON.parse(row.terms),
-            positions: JSON.parse(row.positions),
-            summary: JSON.parse(row.summary),
-            tax_options: JSON.parse(row.tax_options)
-          }))
-          this.period.start = startDate.toISOString().slice(0, 10)
-          this.period.end = endDate.toISOString().slice(0, 10)
-          this.is_ready = true
-          this.reportSummaryFunction()
-        }
-      }
+      this.reports = result.rows.map((row) => ({
+        ...row,
+        customer: JSON.parse(row.customer),
+        terms: JSON.parse(row.terms),
+        positions: JSON.parse(row.positions),
+        summary: JSON.parse(row.summary),
+        tax_options: JSON.parse(row.tax_options)
+      }))
+
+      this.period.start = this.date_box_start
+      this.period.end = this.date_box_end
+      this.is_ready = true
+      this.calculateSummary()
     },
-    async dateFilter() {
-      if (this.date_box_start && this.date_box_end) {
-        const result = await window.api.documentReport(
-          'invoices',
-          this.date_box_start,
-          this.date_box_end
-        )
-        if (result.success) {
-          this.reports = result.rows.map((row) => ({
-            ...row,
-            customer: JSON.parse(row.customer),
-            terms: JSON.parse(row.terms),
-            positions: JSON.parse(row.positions),
-            summary: JSON.parse(row.summary),
-            tax_options: JSON.parse(row.tax_options)
-          }))
-          this.period.start = this.date_box_start
-          this.period.end = this.date_box_end
-          this.is_ready = true
-          this.reportSummaryFunction()
-        }
+    calculateSummary() {
+      const totals = {
+        total: 0,
+        paidCount: 0,
+        paidAmount: 0,
+        outstandingCount: 0,
+        outstandingAmount: 0,
+        partialPaidCount: 0,
+        partialPaidAmount: 0,
+        overdueCount: 0,
+        overdueAmount: 0
       }
-    },
-    reportSummaryFunction() {
-      console.log(this.reports)
-      if (this.reports) {
-        this.reportSummary = {
-          total: 0,
-          paid_amount: 0,
-          outstanding: 0,
-          average: 0
-        }
-        this.reports.forEach((report) => {
-          this.reportSummary.total += Number(report.summary.total)
-          this.reportSummary.paid_amount += Number(report.summary.paid_amount)
-          this.reportSummary.outstanding += Number(report.summary.outstanding)
-        })
-        this.reportSummary.average = this.reportSummary.total / this.reports.length
-      }
+
+      const todayStr = new Date().toISOString().slice(0, 10)
+
+      this.reports.forEach((item) => {
+        const s = item.summary
+        totals.total += Number(s.total)
+        totals.paidAmount += Number(s.paid_amount)
+        totals.outstandingAmount += Number(s.outstanding)
+        totals.partialPaidAmount += Number(s.partial_paid)
+        console.log(item)
+
+        if (s.paid_amount >= s.total) totals.paidCount++
+        else if (s.partial_paid > 0) totals.partialPaidCount++
+        else totals.outstandingCount++
+
+        if (item.due_date < todayStr && s.outstanding > 0)
+          (totals.overdueCount++, (totals.overdueAmount += Number(s.outstanding)))
+      })
+
       this.reportsLength = this.reports.length
+      this.summaryTotals = totals
     },
     getPaymentClass(item) {
-      const d = new Date()
-      const today = d.toISOString().slice(0, 10)
-      console.log(item.is_paid)
-      if (item.is_paid)
-        return 'paid' // Yeşil
-      else if (item.payment_date.trim() < today)
-        return 'overdue' // Kırmızı
-      else return 'pending' // Sarı
+      const today = new Date().toISOString().slice(0, 10)
+      if (item.summary.paid_amount >= item.summary.total) return 'paid'
+      else if (item.due_date < today) return 'overdue'
+      else return 'pending'
     },
-     getDaysOverdue(item) {
-      const today = new Date()
-      const dueDate = new Date(item.date)
-      dueDate.setDate(dueDate.getDate() + 14) // Fatura tarihine 14 gün ekle
-      const diffTime = dueDate - today
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-      return diffDays
-    },
-    async printReport() {
+    printReport() {
       window.print()
     }
   }

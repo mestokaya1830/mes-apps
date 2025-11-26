@@ -399,8 +399,8 @@ ipcMain.handle('get-customer-by-id', async (event, id) => {
 
 ipcMain.handle('customer-details', async (event, id) => {
   try {
-    const row = db.prepare('SELECT * FROM customers WHERE id = ?').get(id)
-    return { success: true, customer: row }
+    const rows = db.prepare('SELECT * FROM customers WHERE customer_id = ?').get(id)
+    return { success: true, rows: rows }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -462,38 +462,49 @@ ipcMain.handle('delete-customer', async (event, id) => {
 ipcMain.handle('save-document', async (event, tableName, data) => {
   if (tableName === 'invoices') {
     try {
-      const customer = JSON.stringify(data.customer || {})
-      const terms = JSON.stringify(data.terms || {})
       const positions = JSON.stringify(data.positions || {})
-      const tax_options = JSON.stringify(data.tax_options || {})
-      const summary = JSON.stringify(data.summary || {})
       const row = db
       db.prepare(
         `
     INSERT INTO invoices (
-      is_active,
-      date,
+      invoice_customer_id,
+      invoice_is_active,
+      invoice_date,
       due_date,
-      currency,
       service_date,
-      terms,
-      customer,
+      currency,
+      payment_terms,
+      payment_conditions,
+      early_payment_discount,
+      early_payment_percentage,
+      early_payment_days,
+      is_small_company,
+      is_reverse_charge,
+      is_eu_delivery,
       positions,
-      tax_options,
-      summary
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      subtotal,
+      vat_amount,
+      total,
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `
       ).run(
-        data.is_active,
-        data.date,
+        data.invoice_is_active,
+        data.invoice_date,
         data.due_date,
         data.currency,
         data.service_date,
-        terms,
-        customer,
+        data.payment_terms,
+        data.payment_conditions,
+        data.early_payment_discount,
+        data.early_payment_percentage,
+        data.early_payment_days,
+        data.is_small_company,
+        data.is_reverse_charge,
+        data.is_eu_delivery,
         positions,
-        tax_options,
-        summary
+        data.subtotal,
+        data.vat_amount,
+        data.total
       )
       return { success: true, customer: row }
     } catch (err) {
@@ -731,10 +742,27 @@ ipcMain.handle('save-payment', async (_, data, file_name, image_file) => {
     }
   }
 })
-ipcMain.handle('get-document', async (data, tabelName) => {
+ipcMain.handle('get-document', async (data, tableName) => {
   try {
-    const rows = db.prepare(`SELECT * FROM ${tabelName} WHERE is_active = 1 ORDER BY id DESC`).all()
-    return { success: true, rows }
+    if (tableName === 'invoices') {
+      const rows = db
+        .prepare(
+          `
+          SELECT 
+            i.*,
+            c.*,
+            p.*
+          FROM invoices i
+          JOIN customers c ON c.customer_id = i.invoice_customer_id
+          LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
+          WHERE i.invoice_is_active = 1
+          ORDER BY i.invoice_created_at DESC
+          LIMIT 100;
+        `
+        )
+        .all()
+      return { success: true, rows }
+    }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -743,8 +771,23 @@ ipcMain.handle('get-document', async (data, tabelName) => {
 
 ipcMain.handle('get-document-by-id', async (data, id, tableName) => {
   try {
-    const rows = db.prepare(`SELECT * FROM ${tableName} WHERE id = ?`).get(id)
-    return { success: true, rows }
+    if (tableName === 'invoices') {
+      const rows = db
+        .prepare(
+          `
+            SELECT 
+            i.*,
+            c.*,
+            p.*
+            FROM invoices i
+            JOIN customers c ON c.customer_id = i.invoice_customer_id
+            LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
+            WHERE i.invoice_id = :id
+          `
+        )
+        .all({ id })
+      return { success: true, rows }
+    }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -765,7 +808,18 @@ ipcMain.handle('document-report', async (data, tableName, startDate, endDate) =>
   try {
     console.log(startDate, endDate)
     const rows = db
-      .prepare(`SELECT * FROM ${tableName} WHERE date BETWEEN ? AND ?`)
+      .prepare(
+        `SELECT 
+    i.*,
+    p.*
+FROM invoices i
+LEFT JOIN payments p 
+    ON p.invoice_id = i.id
+WHERE i.date BETWEEN ? AND ?
+ORDER BY i.date ASC, p.payment_date ASC;
+
+        `
+      )
       .all(startDate, endDate)
     return { success: true, rows }
   } catch (err) {

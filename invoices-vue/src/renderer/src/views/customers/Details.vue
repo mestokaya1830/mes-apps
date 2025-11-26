@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="editor-panel">
+    <div v-if="customer" class="editor-panel">
       <div class="editor-header-block">
         <div class="editor-title">
-          📝{{ title }}
+          📝{{ title }} {{ formatCustomerId(customer.customer_id) }}
           <div class="editor-subtitle">Bearbeiten Sie die Kundendaten</div>
         </div>
         <router-link to="/customers" class="add-btn">
@@ -27,7 +27,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Unternehmenstyp</label>
-            <input v-model="customer.company_type" type="text" class="form-input" />
+            <input v-model="customer.customer_type" type="text" class="form-input" />
           </div>
           <div class="form-group">
             <label class="form-label">Firmenname</label>
@@ -91,7 +91,7 @@
         </div>
         <div class="form-group">
           <label class="form-label">Erstellungsdatum</label>
-          <input v-model="customer.created_at" type="text" class="form-input" />
+          <input v-model="customer.customer_created_at" type="text" class="form-input" />
         </div>
       </div>
       <button type="submit" class="form-btn">Update</button>
@@ -101,25 +101,11 @@
 
 <script>
 export default {
+  inject: ['formatCustomerId', 'formatDate'],
   data() {
     return {
       title: 'Customer List',
-      customer: {
-        customer_type: '',
-        company_name: '',
-        first_name: '',
-        last_name: '',
-        address: '',
-        postal_code: '',
-        city: '',
-        country: '',
-        email: '',
-        phone: '',
-        tax_number: '',
-        vat_id: '',
-        is_active: '',
-        created_at: ''
-      }
+      customer: null
     }
   },
   mounted() {
@@ -128,8 +114,9 @@ export default {
   methods: {
     async customerDetails() {
       try {
+        console.log(this.$route.params.id)
         const result = await window.api.customerDetails(this.$route.params.id)
-        this.customer = result.customer
+        this.customer = result.rows
       } catch (error) {
         console.error(error)
       }

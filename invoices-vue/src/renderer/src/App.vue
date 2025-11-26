@@ -97,11 +97,9 @@ export default {
           const total = subtotal + vatAmount
           const data = {
             ...storeData,
-            summary: {
-              subtotal,
-              vat_amount: vatAmount,
-              total
-            }
+            subtotal,
+            vat_amount: vatAmount,
+            total
           }
           if (data) {
             await store.setStore(storeName, JSON.parse(JSON.stringify(data)))

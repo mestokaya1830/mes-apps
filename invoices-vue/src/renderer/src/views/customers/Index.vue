@@ -32,7 +32,7 @@
     </div>
     <!-- Customer Cards -->
     <div class="customer-grid">
-      <div v-for="item in customers" :key="item.id" class="customer-card">
+      <div v-for="item in customers" :key="item.customer_id" class="customer-card">
         <div class="card-header">
           <div class="customer-avatar">
             {{ getInitials(item.first_name, item.last_name) }}
@@ -47,7 +47,7 @@
         </div>
 
         <div class="card-actions">
-          <router-link :to="'/customers/details/' + item.id" class="action-btn details-btn">
+          <router-link :to="'/customers/details/' + item.customer_id" class="action-btn details-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -64,7 +64,7 @@
             </svg>
             Details
           </router-link>
-          <button class="action-btn delete-btn" @click="deleteCustomer(item.id)">
+          <button class="action-btn delete-btn" @click="deleteCustomer(item.customer_id)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -133,7 +133,7 @@ export default {
       try {
         const result = await window.api.getCustomers()
         this.customers = result.customers
-        this.search = result.customers
+        console.log(this.customers)
       } catch (error) {
         console.error(error)
       }

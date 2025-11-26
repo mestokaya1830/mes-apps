@@ -110,7 +110,7 @@
                 type="file"
                 class="form-input"
                 accept=".pdf,image/*"
-                @change="handleFileUpload"
+                @change="loadImage"
               />
               <small class="form-hint">PDF, JPG, PNG</small>
             </div>
@@ -122,19 +122,7 @@
 
           <div class="form-group">
             <label class="form-label">Notizen (optional)</label>
-            <textarea
-              v-model="payment.notes"
-              class="form-input"
-              rows="3"
-              placeholder="z.B. Teilzahlung, verspätete Zahlung, etc."
-            ></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>
-              <input v-model="payment.partial_paid" type="checkbox" />
-              Teilzahlung
-            </label>
+            <textarea v-model="payment.notes" class="form-input" rows="3"></textarea>
           </div>
         </div>
 
@@ -166,7 +154,7 @@
 
         <!-- Aktionen -->
         <button class="preview-btn" @click="saveDocument">✅ Zahlung erfassen</button>
-        <button class="btn btn-secondary" @click="handleCancel">❌ Abbrechen</button>
+        <button class="btn btn-secondary" @click="formReset">❌ Abbrechen</button>
       </div>
     </div>
   </div>
@@ -184,8 +172,8 @@ export default {
         reference: '',
         notes: '',
         partial_paid: 0,
-        file_name: '',
-        is_active: 0
+        is_paid: 0,
+        file_name: ''
       },
       invoice: null,
       remainingAmount: 0,
@@ -214,11 +202,20 @@ export default {
       } catch (error) {
         console.error(error)
       }
+      console.log(this.invoice)
+    },
+    formatRechnungId(id) {
+      if (!id) return ''
+      const year = new Date().getFullYear()
+      return `RE-${year}-${String(id).padStart(5, '0')}`
     },
     checkAmount() {
       if (this.payment.amount > this.invoice.invoice_outstanding) {
         this.payment.amount = this.invoice.invoice_outstanding
         alert('Zahlung kann den offenen Betrag nicht überschreiten.')
+      }
+      if (this.payment.amount < this.invoice.invoice_outstanding) {
+        this.payment.partial_paid = true
       }
       this.updateSummary()
     },
@@ -228,12 +225,7 @@ export default {
       const total = this.invoice.invoice_total || 0
       this.remainingAmount = Math.max(total - (alreadyPaid + currentPayment), 0)
     },
-    formatRechnungId(id) {
-      if (!id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(id).padStart(5, '0')}`
-    },
-    handleCancel() {
+    formReset() {
       this.payment.payment_date = ''
       this.payment.amount = 0
       this.payment.payment_method = 'Überweisung'
@@ -241,7 +233,7 @@ export default {
       this.payment.notes = ''
       this.payment.partial_paid = false
     },
-    handleFileUpload(event) {
+    loadImage(event) {
       const file = event.target.files[0]
       if (!file) return
 
