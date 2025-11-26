@@ -13,35 +13,44 @@
         <!-- Rechnung auswählen (readonly) -->
         <div class="form-section">
           <div class="form-section-title">📄 Ausgewählte Rechnung</div>
-          <div v-if="payment" class="customer-details" style="margin-top: 16px">
+          <div v-if="invoice" class="customer-details" style="margin-top: 16px">
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Rechnung-Nr.:</label>
-                <label class="form-input">{{ formatRechnungId(payment.invoice_id) }}</label>
+                <label class="form-input">{{ formatRechnungId(invoice.invoice_id) }}</label>
               </div>
               <div class="form-group">
                 <label class="form-label">Kunden-Nr.:</label>
-                <label class="form-input">{{ formatCustomerId(payment.customer_id) }}</label>
+                <label class="form-input">{{
+                  formatCustomerId(invoice.invoice_customer_id)
+                }}</label>
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Rechnungsdatum</label>
-                <label class="form-input">{{ formatDate(payment.invoice_date) }}</label>
+                <label class="form-input">{{ formatDate(invoice.invoice_date) }}</label>
               </div>
               <div class="form-group">
                 <label class="form-label">Fälligkeitsdatum</label>
-                <label class="form-input">{{ formatDate(payment.invoice_due_date) }}</label>
+                <label class="form-input">{{ formatDate(invoice.invoice_due_date) }}</label>
               </div>
             </div>
 
             <div class="form-group">
               <label class="form-input">
-                <div>Gesamtsumme: {{ formatCurrency(payment.total, payment.currency) }}</div>
-                <div>Teilbezahlt: {{ formatCurrency(payment.paid_amount, payment.currency) }}</div>
                 <div>
-                  Offener Betrag: {{ formatCurrency(payment.outstanding, payment.currency) }}
+                  Gesamtsumme:
+                  {{ formatCurrency(invoice.invoice_total, invoice.invoice_currency) }}
+                </div>
+                <div>
+                  Teilbezahlt:
+                  {{ formatCurrency(invoice.invoice_paid_amount, invoice.invoice_currency) }}
+                </div>
+                <div>
+                  Offener Betrag:
+                  {{ formatCurrency(invoice.invoice_outstanding, invoice.invoice_currency) }}
                 </div>
               </label>
             </div>
@@ -62,7 +71,7 @@
               <label class="form-label">Betrag (€) <span class="stars">*</span></label>
               <input
                 v-model.number="payment.amount"
-                type="text"
+                type="number"
                 step="0.01"
                 class="form-input"
                 @input="checkAmount"
@@ -123,30 +132,41 @@
 
           <div class="form-group">
             <label>
-              <input v-model="payment.partial_paid" type="checkbox" @change="updateSummary" />
+              <input v-model="payment.partial_paid" type="checkbox" />
               Teilzahlung
             </label>
           </div>
         </div>
 
         <!-- Zahlungsübersicht -->
-        <div class="form-section" v-if="payment.total || payment.paid_amount">
+        <div v-if="invoice" class="form-section">
           <div class="form-section-title">📊 Zahlungsübersicht</div>
           <div class="form-group">
-            <div>Gesamtbetrag: {{ formatCurrency(payment.total, payment.currency) }}</div>
-            <div>Bisher gezahlt: {{ formatCurrency(payment.paid_amount, payment.currency) }}</div>
-            <div>Aktuelle Zahlung: {{ formatCurrency(payment.amount, payment.currency) }}</div>
             <div>
-              Verbleibender Betrag: {{ formatCurrency(checkRemainingAmount, payment.currency) }}
+              Gesamtbetrag: {{ formatCurrency(invoice.invoice_total, invoice.invoice_currency) }}
+            </div>
+            <div>
+              Bisher gezahlt:
+              {{ formatCurrency(invoice.invoice_paid_amount, invoice.invoice_currency) }}
+            </div>
+            <div>
+              Aktuelle Zahlung: {{ formatCurrency(payment.amount, invoice.invoice_currency) }}
+            </div>
+            <div>
+              Verbleibender Betrag: {{ formatCurrency(remainingAmount, invoice.invoice_currency) }}
+            </div>
+            <div>
+              Status:
+              <span v-if="remainingAmount === invoice.invoice_total">Nicht bezahlt</span>
+              <span v-else-if="remainingAmount > 0">Teilweise bezahlt</span>
+              <span v-else>Vollständig bezahlt</span>
             </div>
           </div>
         </div>
 
         <!-- Aktionen -->
-        <button @click="saveDocument" class="preview-btn">✅ Zahlung erfassen</button>
-        <button @click="handleCancel" class="btn btn-secondary" style="margin-left: 8px">
-          ❌ Abbrechen
-        </button>
+        <button class="preview-btn" @click="saveDocument">✅ Zahlung erfassen</button>
+        <button class="btn btn-secondary" @click="handleCancel">❌ Abbrechen</button>
       </div>
     </div>
   </div>
@@ -158,29 +178,18 @@ export default {
   data() {
     return {
       payment: {
-        invoice_id: null,
-        customer_id: null,
-        invoice_date: null,
-        invoice_due_date: null,
-        total: 0,
-        paid_amount: 0,
-        outstanding: 0,
-        currency: 'EUR',
         payment_date: '',
         amount: 0,
         payment_method: 'Überweisung',
         reference: '',
         notes: '',
-        partial_paid: false,
-        file_name: ''
+        partial_paid: 0,
+        file_name: '',
+        is_active: 0
       },
+      invoice: null,
       remainingAmount: 0,
       selectedImage: ''
-    }
-  },
-  computed: {
-    checkRemainingAmount() {
-      return Math.max(this.payment.outstanding - this.payment.amount, 0)
     }
   },
   mounted() {
@@ -193,44 +202,37 @@ export default {
         const result = await window.api.getDocumentById(id, 'invoices')
         if (!result.rows) return
         this.invoice = {
-          ...result.rows,
-          customer: JSON.parse(result.rows.customer),
-          terms: JSON.parse(result.rows.terms),
-          summary: JSON.parse(result.rows.summary)
+          invoice_id: result.rows.id,
+          invoice_customer_id: JSON.parse(result.rows.customer).id,
+          invoice_date: result.rows.date,
+          invoice_due_date: result.rows.due_date,
+          invoice_currency: result.rows.currency,
+          invoice_total: JSON.parse(result.rows.summary).total,
+          invoice_paid_amount: JSON.parse(result.rows.summary).paid_amount,
+          invoice_outstanding: JSON.parse(result.rows.summary).outstanding
         }
-        this.payment.invoice_id = this.invoice.id
-        this.payment.customer_id = this.invoice.customer.id
-        this.payment.invoice_date = this.invoice.date
-        this.payment.invoice_due_date = this.invoice.due_date
-        this.payment.total = this.invoice.summary.total
-        this.payment.paid_amount = this.invoice.summary.paid_amount
-        this.payment.outstanding =
-          (this.invoice.summary.total || 0) - (this.invoice.summary.paid_amount || 0)
-        this.payment.currency = this.invoice.currency
-        this.updateSummary()
       } catch (error) {
         console.error(error)
       }
     },
     checkAmount() {
-      if (this.payment.amount > this.payment.outstanding) {
-        this.payment.amount = this.payment.outstanding
+      if (this.payment.amount > this.invoice.invoice_outstanding) {
+        this.payment.amount = this.invoice.invoice_outstanding
         alert('Zahlung kann den offenen Betrag nicht überschreiten.')
       }
-      this.payment.paid_amount = this.payment.total
+      this.updateSummary()
     },
     updateSummary() {
-      const alreadyPaid = this.payment.paid_amount || 0
+      const alreadyPaid = this.invoice.invoice_paid_amount || 0
       const currentPayment = this.payment.amount || 0
-      const total = this.payment.total || 0
-      this.remainingAmount = total - (alreadyPaid + currentPayment)
+      const total = this.invoice.invoice_total || 0
+      this.remainingAmount = Math.max(total - (alreadyPaid + currentPayment), 0)
     },
     formatRechnungId(id) {
       if (!id) return ''
       const year = new Date().getFullYear()
       return `RE-${year}-${String(id).padStart(5, '0')}`
     },
-
     handleCancel() {
       this.payment.payment_date = ''
       this.payment.amount = 0
@@ -238,7 +240,6 @@ export default {
       this.payment.reference = ''
       this.payment.notes = ''
       this.payment.partial_paid = false
-      this.updateSummary()
     },
     handleFileUpload(event) {
       const file = event.target.files[0]
@@ -255,7 +256,7 @@ export default {
           now.getDate().toString().padStart(2, '0') +
           now.getHours().toString().padStart(2, '0') +
           now.getMinutes().toString().padStart(2, '0')
-        this.payment.file_name = `${this.invoice.id}-${dateStr}.${file.name.split('.')[1]}`
+        this.payment.file_name = `${this.invoice.invoice_id}-${dateStr}.${file.name.split('.')[1]}`
       }
       reader.readAsDataURL(file)
     },
@@ -264,12 +265,16 @@ export default {
         alert('Bitte Zahlungsdatum und Betrag eingeben.')
         return
       }
+      this.payment = {
+        invoice_id: this.invoice.invoice_id,
+        invoice_customer_id: this.invoice.invoice_customer_id,
+        ...this.payment
+      }
       const result = await window.api.savePayment(
         JSON.parse(JSON.stringify(this.payment)),
         this.payment.file_name,
         this.selectedImage
       )
-      console.log(this.payment)
       if (result.success) {
         this.$router.push('/invoices')
       }

@@ -368,12 +368,6 @@ export default {
         this.$router.push('/invoices')
       }
     }
-    // async setPaidStatus() {
-    //   const result = await window.api.paidStatus(this.invoice.id, 'invoices', this.paid_status)
-    //   if (result.success) {
-    //     this.$router.push('/invoices')
-    //   }
-    // }
   }
 }
 </script>

@@ -20,12 +20,12 @@ contextBridge.exposeInMainWorld('api', {
   getDocument: async (data, tableName) => ipcRenderer.invoke('get-document', data, tableName),
   getDocumentById: async (data, id, tableName) =>
     ipcRenderer.invoke('get-document-by-id', data, id, tableName),
-  documentFilter: async (data, value, tableName) =>
-    ipcRenderer.invoke('document-filter', data, value, tableName),
+  categoryFilter: async (data, tableName, category) =>
+    ipcRenderer.invoke('category-filter', data, tableName, category),
+  dateFilter: async (data, tableName, date) =>
+    ipcRenderer.invoke('date-filter', data, tableName, date),
   documentStatus: async (id, tableName, value) =>
     ipcRenderer.invoke('set-document-status', id, tableName, value),
-  paidStatus: async (id, tableName, value) =>
-    ipcRenderer.invoke('set-paid-status', id, tableName, value),
   documentReport: async (data, tableName, startDate, endDate) =>
     ipcRenderer.invoke('document-report', data, tableName, startDate, endDate),
   savePayment: (data, fileName, image_file) =>

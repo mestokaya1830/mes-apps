@@ -14,6 +14,7 @@ const state = reactive({
   orders: null,
   deliveries: null,
   remeinders: null,
+  date_filter: null,
   _isClearing: false // IndexedDB temizleme işlemi için flag
 })
 
@@ -37,6 +38,9 @@ async function init() {
 
     const remeinders = await localforage.getItem('remeinders')
     if (remeinders) state.remeinders = remeinders
+
+    const date_filter = await localforage.getItem('date_filter')
+    if (date_filter) state.date_filter = date_filter
   } catch (err) {
     console.error('Failed to load stored data:', err)
   }

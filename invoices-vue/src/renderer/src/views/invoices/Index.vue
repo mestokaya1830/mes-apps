@@ -26,7 +26,7 @@
 
     <div class="filter-container">
       <div class="form-group">
-        <select v-model="categories_filter" class="form-input" @change="getCategory">
+        <select v-model="categories_filter" class="select-input" @change="getCategory">
           <option value="" disabled>Kategorie</option>
           <option value="all">Alle</option>
           <option value="active">Aktiv</option>
@@ -36,7 +36,7 @@
           <option value="partially_paid">Teilweise bezahlt</option>
         </select>
       </div>
-      <input v-model="search_box" type="search" @input="searchFilter()" placeholder="Suce..." />
+      <input v-model="search_box" type="search" placeholder="Suce..." @input="searchFilter()" />
       <input v-model="date_box_start" type="date" @input="dateFilter()" />
       <input v-model="date_box_end" type="date" @input="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
@@ -65,6 +65,7 @@
 
         <!-- Card Actions -->
         <div class="card-actions">
+          <!-- <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn"> -->
           <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -109,8 +110,14 @@
 </template>
 
 <script>
+// import vSelect from 'vue-select'
+// import 'vue-select/dist/vue-select.css'
+import store from '../../store/store'
 export default {
   name: 'Invoices',
+  // components: {
+  //   vSelect
+  // },
   inject: ['formatCurrency'],
   data() {
     return {
@@ -121,11 +128,18 @@ export default {
       date_box_start: '',
       date_box_end: '',
       categories_filter: '',
+      invoice_length: 0,
       isSort: true
     }
   },
   mounted() {
-    this.getInvoiceList()
+    if (store.state.date_filter) {
+      this.date_box_start = store.state.date_filter.start
+      this.date_box_end = store.state.date_filter.end
+      this.dateFilter()
+    } else {
+      this.getInvoiceList()
+    }
   },
   methods: {
     async getInvoiceList() {
@@ -137,8 +151,6 @@ export default {
           summary: JSON.parse(item.summary),
           terms: JSON.parse(item.terms)
         }))
-        console.log(this.invoiceList)
-        this.search = this.invoiceList
       } catch (error) {
         console.error(error)
       }
@@ -155,9 +167,17 @@ export default {
     },
     async getCategory() {
       try {
-        console.log(this.categories_filter)
-        // const result = await window.api.documentFilter('invoices', 'categories')
-        // this.search = result.rows
+        this.clearDate()
+        const result = await window.api.categoryFilter('invoices', this.categories_filter)
+        if (result.success) {
+          this.invoiceList = result.rows.map((item) => ({
+            ...item,
+            customer: JSON.parse(item.customer),
+            summary: JSON.parse(item.summary),
+            terms: JSON.parse(item.terms)
+          }))
+          this.search = this.invoiceList
+        }
       } catch (error) {
         console.error(error)
       }
@@ -175,15 +195,31 @@ export default {
         this.invoiceList = this.search
       }
     },
-    dateFilter() {
-      if (this.date_box_start && this.date_box_end) {
-        this.invoiceList = this.search.filter(
-          (item) => item.date >= this.date_box_start && item.date <= this.date_box_end
-        )
-      } else if (this.date_box_start && !this.date_box_end) {
-        this.invoiceList = this.search.filter((item) => item.date == this.date_box_start)
-      } else {
-        this.invoiceList = this.search
+    async dateFilter() {
+      try {
+        if (!this.date_box_start) {
+          alert('Bitte Datum auswählen!')
+        } else if (!this.date_box_end) {
+          this.date_box_end = new Date().toISOString().slice(0, 10)
+        } else if (this.date_box_start > this.date_box_end) {
+          alert('Datum ist ungültig!')
+        }
+        if (this.date_box_start && this.date_box_end) {
+          const date = {
+            start: this.date_box_start,
+            end: this.date_box_end
+          }
+          const result = await window.api.dateFilter('invoices', date)
+          this.invoiceList = result.rows.map((item) => ({
+            ...item,
+            customer: JSON.parse(item.customer),
+            summary: JSON.parse(item.summary),
+            terms: JSON.parse(item.terms)
+          }))
+          await store.setStore('date_filter', JSON.parse(JSON.stringify(date)))
+        }
+      } catch (error) {
+        console.error(error)
       }
     },
     sorting(key) {
@@ -193,6 +229,15 @@ export default {
         return this.isSort ? res : -res
       })
       this.isSort = !this.isSort
+    },
+    async clearDate() {
+      try {
+        this.date_box_start = ''
+        this.date_box_end = ''
+        await store.clearStore('date_filter')
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }

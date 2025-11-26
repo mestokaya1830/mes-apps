@@ -688,34 +688,43 @@ ipcMain.handle('save-payment', async (_, data, file_name, image_file) => {
       db.prepare(
         `
   INSERT INTO payments (
-    invoice_id, customer_id, invoice_date, invoice_due_date,
-    total, paid_amount, outstanding, currency, payment_date,
-    amount, payment_method, reference, notes, partial_paid, file_name
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    payment_date,
+    amount,
+    payment_method,
+    reference,
+    notes,
+    partial_paid,
+    file_name,
+    is_active,
+    invoice_id,
+    invoice_customer_id
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
       ).run(
-        data.invoice_id,
-        data.customer_id,
-        data.invoice_date,
-        data.invoice_due_date,
-        data.total,
-        data.paid_amount,
-        data.outstanding,
-        data.currency,
         data.payment_date,
         data.amount,
         data.payment_method,
         data.reference,
         data.notes,
         data.partial_paid ? 1 : 0, // ✅ Boolean -> Integer
-        file_name
+        file_name,
+        data.is_active,
+        data.invoice_id,
+        data.invoice_customer_id
       )
-      const buffer = Buffer.from(image_file.split(',')[1], 'base64')
-      // const savePath = path.join(os.homedir(), fileName);//linux home folder
-      // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
-      const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name) // inner app uploads folder
-      await fs.promises.writeFile(savePath, buffer)
+      if (image_file) {
+        const base64Data = image_file.includes(',') ? image_file.split(',')[1] : image_file
+        const buffer = Buffer.from(base64Data, 'base64')
+        const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name)
+        await fs.promises.writeFile(savePath, buffer)
+      }
       return { success: true, customer: row }
+      // const buffer = Buffer.from(image_file.split(',')[1], 'base64')
+      // // const savePath = path.join(os.homedir(), fileName);//linux home folder
+      // // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
+      // const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name) // inner app uploads folder
+      // await fs.promises.writeFile(savePath, buffer)
+      // return { success: true, customer: row }
     } catch (err) {
       console.error('DB error:', err.message)
       return { success: false, message: err.message }
@@ -752,16 +761,6 @@ ipcMain.handle('set-document-status', async (data, id, tableName, value) => {
   }
 })
 
-ipcMain.handle('set-paid-status', async (data, id, tableName, value) => {
-  try {
-    db.prepare(`Update ${tableName} Set status = ? WHERE id = ?`).run(value, id)
-    return { success: true }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
 ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
   try {
     console.log(startDate, endDate)
@@ -772,5 +771,100 @@ ipcMain.handle('document-report', async (data, tableName, startDate, endDate) =>
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('category-filter', async (event, tableName, category) => {
+  try {
+    let query = ''
+    let rows = []
+
+    if (tableName === 'invoices') {
+      switch (category) {
+        case 'all':
+          query = `SELECT * FROM invoices ORDER BY id DESC`
+          rows = db.prepare(query).all()
+          break
+
+        case 'active':
+          query = `SELECT * FROM invoices WHERE is_active = 1 ORDER BY id DESC`
+          rows = db.prepare(query).all()
+          break
+
+        case 'canceled':
+          query = `SELECT * FROM invoices WHERE is_active = 0 ORDER BY id DESC`
+          rows = db.prepare(query).all()
+          break
+
+        case 'paid':
+          query = `
+            SELECT i.*
+            FROM invoices i
+            INNER JOIN (
+                SELECT invoice_id, SUM(amount) as total_paid
+                FROM payments
+                GROUP BY invoice_id
+            ) p_sum ON i.id = p_sum.invoice_id
+            WHERE i.is_active = 1
+              AND p_sum.total_paid >= CAST(json_extract(i.summary, '$.total') AS INTEGER)
+            ORDER BY i.id DESC;
+          `
+          rows = db.prepare(query).all()
+          break
+
+        case 'not_paid':
+          query = `
+            SELECT i.*
+            FROM invoices i
+            LEFT JOIN payments p ON i.id = p.invoice_id
+            WHERE p.id IS NULL AND i.is_active = 1
+            ORDER BY i.id DESC;
+          `
+          rows = db.prepare(query).all()
+          break
+
+        case 'partially_paid':
+          query = `
+            SELECT i.*
+          FROM invoices i
+          INNER JOIN (
+              SELECT invoice_id, SUM(amount) AS total_paid
+              FROM payments
+              GROUP BY invoice_id
+          ) p_sum ON i.id = p_sum.invoice_id
+          WHERE i.is_active = 1
+            AND total_paid > 0
+            AND total_paid < CAST(json_extract(i.summary, '$.total') AS INTEGER)
+          ORDER BY i.id DESC;
+          `
+          rows = db.prepare(query).all()
+          break
+
+        default:
+          query = `SELECT * FROM invoices WHERE is_active = 1 ORDER BY id DESC`
+          rows = db.prepare(query).all()
+      }
+
+      return { success: true, rows }
+    }
+
+    return { success: false, message: 'Invalid table name' }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('date-filter', async (data, tableName, date) => {
+  try {
+    if (date) {
+      const rows = db
+        .prepare(`SELECT * FROM ${tableName} WHERE date BETWEEN ? AND ?`)
+        .all(date.start, date.end)
+      return { success: true, rows }
+    }
+  } catch (error) {
+    console.error('dateFilter error:', error)
+    return { success: false, message: error.message }
   }
 })
