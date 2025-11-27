@@ -22,8 +22,8 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('get-document-by-id', data, id, tableName),
   savePayment: (data, fileName, image_file) =>
     ipcRenderer.invoke('save-payment', data, fileName, image_file),
-  documentStatus: async (id, tableName, value) =>
-    ipcRenderer.invoke('set-document-status', id, tableName, value),
+  setInvoiceStatus: async (id, value) =>
+    ipcRenderer.invoke('set-invoice-status', id, value),
   categoryFilter: async (data, tableName, category) =>
     ipcRenderer.invoke('category-filter', data, tableName, category),
   dateFilter: async (data, tableName, date) =>

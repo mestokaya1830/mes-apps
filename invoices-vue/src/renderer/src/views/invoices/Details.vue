@@ -45,10 +45,7 @@
               <span class="meta-value">{{ formatCustomerId(invoice.customer_id) }}</span>
             </div>
 
-            <div
-              v-if="invoice.country === 'Germany' && invoice.tax_number"
-              class="meta-row"
-            >
+            <div v-if="invoice.country === 'Germany' && invoice.tax_number" class="meta-row">
               <span class="meta-label">Steuer-Nr.:</span>
               <span class="meta-value">{{ invoice.tax_number }}</span>
             </div>
@@ -131,9 +128,7 @@
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{
-              formatCurrency(invoice.total, invoice.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(invoice.total, invoice.currency) }}</span>
           </div>
 
           <!-- <div
@@ -174,14 +169,13 @@
         </div>
 
         <!-- payment -->
-        <div  class="payment-terms-box">
+        <div class="payment-terms-box">
           <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
 
           <div class="payment-terms-content">
             <div v-if="invoice.payment_terms" class="payment-term-item">
               <strong>Zahlungsziel:</strong>
-              {{ invoice.payment_terms }} Tage netto (fällig bis
-              {{ formatDate(invoice.due_date) }})
+              {{ invoice.payment_terms }} Tage netto (fällig bis {{ formatDate(invoice.due_date) }})
             </div>
 
             <div v-if="invoice.early_payment_days" class="payment-term-item skonto-highlight">
@@ -228,7 +222,7 @@
       <div class="form-section">
         <div class="form-row">
           <div class="form-group">
-            <select v-model="invoice_status" class="form-input" @change="setDocumentStatus()">
+            <select v-model="invoice_status" class="form-input" @change="setInvoiceStatus()">
               <option value="" disabled>Status</option>
               <option value="0">Stornieren</option>
               <option value="1">Aktivieren</option>
@@ -354,12 +348,8 @@ export default {
       // const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
       // return outstanding - this.calculateEarlyPayment()
     },
-    async setDocumentStatus() {
-      const result = await window.api.documentStatus(
-        this.invoice.invoice_id,
-        'invoices',
-        this.invoice_status
-      )
+    async setInvoiceStatus() {
+      const result = await window.api.setInvoiceStatus(this.invoice.invoice_id, this.invoice_status)
       if (result.success) {
         this.$router.push('/invoices')
       }

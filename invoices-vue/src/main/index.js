@@ -378,8 +378,9 @@ ipcMain.handle('get-user', async () => {
 })
 
 ipcMain.handle('get-customers', async () => {
+  let limit = 100
   try {
-    const rows = db.prepare('SELECT * FROM customers').all()
+    const rows = db.prepare('SELECT * FROM customers LIMIT ?').all(limit)
     return { success: true, customers: rows }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -424,7 +425,7 @@ ipcMain.handle('update-customer', async (event, data) => {
   try {
     const row = db
       .prepare(
-        'UPDATE customers SET customer_type = ?, company_name = ?, first_name = ?, last_name = ?, address = ?, postal_code = ?, city = ?, country = ?, email = ?, phone = ?, tax_number = ?, vat_id = ?, is_active = ?  WHERE id = ?'
+        'UPDATE customers SET customer_type = ?, company_name = ?, first_name = ?, last_name = ?, address = ?, postal_code = ?, city = ?, country = ?, email = ?, phone = ?, tax_number = ?, vat_id = ?, customer_is_active = ?  WHERE customer_id = ?'
       )
       .run(
         customer.customer_type,
@@ -451,7 +452,7 @@ ipcMain.handle('update-customer', async (event, data) => {
 
 ipcMain.handle('delete-customer', async (event, id) => {
   try {
-    const row = db.prepare('DELETE FROM customers WHERE id = ?').run(id)
+    const row = db.prepare('DELETE FROM customers WHERE customer_id = ?').run(id)
     return { success: true, customer: row }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -743,6 +744,7 @@ ipcMain.handle('save-payment', async (_, data, file_name, image_file) => {
   }
 })
 ipcMain.handle('get-document', async (data, tableName) => {
+  let limit = 100
   try {
     if (tableName === 'invoices') {
       const rows = db
@@ -757,10 +759,10 @@ ipcMain.handle('get-document', async (data, tableName) => {
           LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
           WHERE i.invoice_is_active = 1
           ORDER BY i.invoice_created_at DESC
-          LIMIT 100;
+          LIMIT ?;
         `
         )
-        .all()
+        .all(limit)
       return { success: true, rows }
     }
   } catch (err) {
@@ -794,9 +796,10 @@ ipcMain.handle('get-document-by-id', async (data, id, tableName) => {
   }
 })
 
-ipcMain.handle('set-document-status', async (data, id, tableName, value) => {
+ipcMain.handle('set-invoice-status', async (_, id, value) => {
+  console.log(id, value)
   try {
-    db.prepare(`Update ${tableName} Set is_active = ? WHERE id = ?`).run(value, id)
+    db.prepare(`Update invoices Set invoice_is_active = ? WHERE invoice_id = ?`).run(value, id)
     return { success: true }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -832,71 +835,80 @@ ipcMain.handle('category-filter', async (event, tableName, category) => {
   try {
     let query = ''
     let rows = []
+    let limit = 100
 
     if (tableName === 'invoices') {
       switch (category) {
         case 'all':
-          query = `SELECT * FROM invoices ORDER BY id DESC`
-          rows = db.prepare(query).all()
+          query = `SELECT * FROM invoices ORDER BY invoice_id DESC LIMIT ?`
+          rows = db.prepare(query).all(limit)
           break
 
         case 'active':
-          query = `SELECT * FROM invoices WHERE is_active = 1 ORDER BY id DESC`
-          rows = db.prepare(query).all()
+          query = `SELECT * FROM invoices WHERE invoice_is_active = 1 ORDER BY invoice_id DESC LIMIT ?`
+          rows = db.prepare(query).all(limit)
           break
 
         case 'canceled':
-          query = `SELECT * FROM invoices WHERE is_active = 0 ORDER BY id DESC`
-          rows = db.prepare(query).all()
+          query = `SELECT * FROM invoices WHERE invoice_is_active = 0 ORDER BY invoice_id DESC LIMIT ?`
+          rows = db.prepare(query).all(limit)
           break
 
-        case 'paid':
+        case 'is_paid':
           query = `
-            SELECT i.*
+            SELECT 
+                i.*,
+                c.*,
+                p.*
             FROM invoices i
-            INNER JOIN (
-                SELECT invoice_id, SUM(amount) as total_paid
-                FROM payments
-                GROUP BY invoice_id
-            ) p_sum ON i.id = p_sum.invoice_id
-            WHERE i.is_active = 1
-              AND p_sum.total_paid >= CAST(json_extract(i.summary, '$.total') AS INTEGER)
-            ORDER BY i.id DESC;
+            JOIN customers c ON c.customer_id = i.invoice_customer_id
+            LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
+            WHERE i.invoice_is_active = 1
+              AND p.is_paid = 1
+            ORDER BY i.invoice_created_at DESC
+            LIMIT ?
           `
-          rows = db.prepare(query).all()
+          rows = db.prepare(query).all(limit)
           break
 
-        case 'not_paid':
+        case 'is_not_paid':
           query = `
-            SELECT i.*
+            SELECT 
+                i.*,
+                c.*,
+                p.*
             FROM invoices i
-            LEFT JOIN payments p ON i.id = p.invoice_id
-            WHERE p.id IS NULL AND i.is_active = 1
-            ORDER BY i.id DESC;
+            JOIN customers c ON c.customer_id = i.invoice_customer_id
+            LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
+            WHERE i.invoice_is_active = 1
+              AND (p.is_paid = 0 OR p.payment_id IS NULL)
+            ORDER BY i.invoice_created_at DESC
+            LIMIT ?
           `
-          rows = db.prepare(query).all()
+          rows = db.prepare(query).all(limit)
           break
 
-        case 'partially_paid':
+        case 'is_partially_paid':
           query = `
-            SELECT i.*
-          FROM invoices i
-          INNER JOIN (
-              SELECT invoice_id, SUM(amount) AS total_paid
-              FROM payments
-              GROUP BY invoice_id
-          ) p_sum ON i.id = p_sum.invoice_id
-          WHERE i.is_active = 1
-            AND total_paid > 0
-            AND total_paid < CAST(json_extract(i.summary, '$.total') AS INTEGER)
-          ORDER BY i.id DESC;
-          `
-          rows = db.prepare(query).all()
+              SELECT 
+                  i.*,
+                  c.*,
+                  p.*
+              FROM invoices i
+              JOIN customers c ON c.customer_id = i.invoice_customer_id
+              LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
+              WHERE i.invoice_is_active = 1
+                AND p.is_partially_paid = 1
+                AND (p.is_paid = 0 OR p.is_paid IS NULL)
+              ORDER BY i.invoice_created_at DESC
+              LIMIT ?
+            `
+          rows = db.prepare(query).all(limit)
           break
 
         default:
-          query = `SELECT * FROM invoices WHERE is_active = 1 ORDER BY id DESC`
-          rows = db.prepare(query).all()
+          query = `SELECT * FROM invoices WHERE invoice_is_active = 1 ORDER BY invoice_id DESC LIMIT ?`
+          rows = db.prepare(query).all(limit)
       }
 
       return { success: true, rows }

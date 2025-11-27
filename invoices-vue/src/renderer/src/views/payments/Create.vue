@@ -171,7 +171,7 @@ export default {
         payment_method: 'Überweisung',
         reference: '',
         notes: '',
-        partial_paid: 0,
+        is_partially_paid: 0,
         is_paid: 0,
         file_name: ''
       },
@@ -215,7 +215,7 @@ export default {
         alert('Zahlung kann den offenen Betrag nicht überschreiten.')
       }
       if (this.payment.amount < this.invoice.invoice_outstanding) {
-        this.payment.partial_paid = true
+        this.payment.is_partially_paid = true
       }
       this.updateSummary()
     },
@@ -231,7 +231,7 @@ export default {
       this.payment.payment_method = 'Überweisung'
       this.payment.reference = ''
       this.payment.notes = ''
-      this.payment.partial_paid = false
+      this.payment.is_partially_paid = false
     },
     loadImage(event) {
       const file = event.target.files[0]

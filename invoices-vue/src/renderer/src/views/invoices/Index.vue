@@ -31,9 +31,9 @@
           <option value="all">Alle</option>
           <option value="active">Aktiv</option>
           <option value="canceled">Storniert</option>
-          <option value="paid">Bezahlt</option>
-          <option value="not_paid">Unbezahlt</option>
-          <option value="partially_paid">Teilweise bezahlt</option>
+          <option value="is_paid">Bezahlt</option>
+          <option value="is_not_paid">Unbezahlt</option>
+          <option value="is_partially_paid">Teilweise bezahlt</option>
         </select>
       </div>
 
@@ -150,8 +150,9 @@ export default {
     async getInvoiceList() {
       try {
         const result = await window.api.getDocument('invoices')
-        console.log(result)
+        if (!result.success) return
         this.invoiceList = result.rows
+        console.log(this.invoiceList)
       } catch (error) {
         console.error(error)
       }
@@ -171,12 +172,7 @@ export default {
         this.clearDate()
         const result = await window.api.categoryFilter('invoices', this.categories_filter)
         if (result.success) {
-          this.invoiceList = result.rows.map((item) => ({
-            ...item,
-            customer: JSON.parse(item.customer),
-            summary: JSON.parse(item.summary),
-            terms: JSON.parse(item.terms)
-          }))
+          this.invoiceList = result.rows
         }
       } catch (error) {
         console.error(error)
