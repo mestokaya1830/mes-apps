@@ -186,12 +186,7 @@ export default {
             this.search_box.trim().toLowerCase()
           )
           if (result.success) {
-            this.invoiceList = result.rows.map((item) => ({
-              ...item,
-              customer: JSON.parse(item.customer),
-              summary: JSON.parse(item.summary),
-              terms: JSON.parse(item.terms)
-            }))
+            this.invoiceList = result.rows
           } else {
             this.invoiceList = []
           }

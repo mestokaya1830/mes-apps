@@ -936,37 +936,46 @@ ipcMain.handle('date-filter', async (data, tableName, date) => {
 })
 
 ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
-  try {
-    if (tableName !== 'invoices') {
-      return { success: false, message: 'Geçersiz tablo' }
-    }
+  const limit = 100
 
-    // frontend zaten trim/lower yapıyorsa minimum güvenlik:
-    const term = String(searchTerm || '')
-
-    const numeric = /^\d+$/.test(term) ? Number(term) : null
-    const pattern = `%${term}%`
-
-    const stmt = db.prepare(`
-      SELECT *
-      FROM invoices
-      WHERE is_active = 1
-        AND (
-          id = ? OR
-          json_extract(customer, '$.first_name') LIKE ? COLLATE NOCASE OR
-          json_extract(customer, '$.last_name') LIKE ? COLLATE NOCASE OR
-          json_extract(customer, '$.company_name') LIKE ? COLLATE NOCASE OR
-          (json_extract(customer, '$.first_name') || ' ' || json_extract(customer, '$.last_name')) LIKE ? COLLATE NOCASE
-        )
-      ORDER BY created_at DESC
-      LIMIT 100
-    `)
-
-    const rows = stmt.all(numeric, pattern, pattern, pattern, pattern)
-
-    return { success: true, rows }
-  } catch (error) {
-    console.error('search-filter error:', error)
-    return { success: false, message: error.message }
+  if (tableName !== 'invoices') {
+    return { success: false, message: 'Geçersiz tablo' }
   }
+
+  const isNumeric = /^\d+$/.test(searchTerm)
+  const pattern = `${searchTerm}%`
+
+  let query, params
+
+  if (isNumeric) {
+    query = `
+      SELECT i.*, c.*
+      FROM invoices i
+      JOIN customers c ON c.customer_id = i.invoice_customer_id
+      WHERE i.invoice_is_active = 1
+        AND i.invoice_id = ?
+      ORDER BY i.invoice_created_at DESC
+      LIMIT ?
+    `
+    params = [Number(searchTerm), limit]
+  } else {
+    query = `
+      SELECT i.*, c.*
+      FROM invoices i
+      JOIN customers c ON c.customer_id = i.invoice_customer_id
+      WHERE i.invoice_is_active = 1
+        AND (
+          c.first_name LIKE ? COLLATE NOCASE OR
+          c.last_name LIKE ? COLLATE NOCASE OR
+          c.company_name LIKE ? COLLATE NOCASE
+        )
+      ORDER BY i.invoice_created_at DESC
+      LIMIT ?
+    `
+    params = [pattern, pattern, pattern, limit]
+  }
+
+  const rows = db.prepare(query).all(...params)
+
+  return { success: true, rows }
 })
