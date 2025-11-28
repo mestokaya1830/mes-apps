@@ -25,6 +25,10 @@ export default {
         if (!value) return ''
         return `KU-${String(value).padStart(5, '0')}`
       },
+      formatInvoiceId(value) {
+        if (!value) return ''
+        return `RE-${String(value).padStart(5, '0')}`
+      },
       formatDate(value) {
         if (!value) return ''
         try {
@@ -70,43 +74,6 @@ export default {
           alert('❌ Das Startdatum darf nicht nach dem Enddatum liegen.')
           pos.service_period_end = ''
         }
-      },
-      storePreview: self.storePreview
-    }
-  },
-
-  data() {
-    return {}
-  },
-
-  methods: {
-    async storePreview(storeName, storeData) {
-      if (!storeData || !store) return
-
-      try {
-        if (storeName == 'remeinders') {
-          if (storeData) {
-            await store.setStore(storeName, JSON.parse(JSON.stringify(storeData)))
-          }
-        } else {
-          const subtotal = storeData.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
-          const vatAmount = storeData.positions.reduce(
-            (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
-            0
-          )
-          const total = subtotal + vatAmount
-          const data = {
-            ...storeData,
-            subtotal,
-            vat_amount: vatAmount,
-            total
-          }
-          if (data) {
-            await store.setStore(storeName, JSON.parse(JSON.stringify(data)))
-          }
-        }
-      } catch (error) {
-        console.error('Error storing preview:', error)
       }
     }
   }

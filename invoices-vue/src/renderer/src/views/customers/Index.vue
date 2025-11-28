@@ -26,7 +26,13 @@
       </div>
 
       <div class="filter-container">
-        <input v-model="search_box" type="search" placeholder="Suce..." @input="searchCustomer()" />
+        <input
+          v-model="search_box"
+          type="search"
+          class="form-input"
+          placeholder="Suce..."
+          @input="searchCustomer()"
+        />
         <div @click="sorting('id')">&#8645;</div>
       </div>
       <!-- Customer Cards -->
@@ -47,6 +53,31 @@
           </div>
 
           <div class="card-actions">
+            <router-link
+              :to="{
+                path: '/invoices/create',
+                query: { id: item.id }
+              }"
+              class="action-btn details-btn"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 8V21H3V3h12l6 5z"></path>
+                <line x1="3" y1="7" x2="21" y2="7"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="17" x2="21" y2="17"></line>
+              </svg>
+              Rechnung erstellen
+            </router-link>
             <router-link :to="'/customers/details/' + item.id" class="action-btn details-btn">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -142,15 +173,15 @@ export default {
       if (confirm('Sind Sie sicher, dass Sie diesen Kunden löschen möchten? ✅')) {
         try {
           const result = await window.api.deleteCustomerById(id)
-          if (result.success) {
-            this.getCustomers()
-          }
+          if (!result.success) return
+          this.getCustomers()
         } catch (error) {
           console.error(error)
         }
       }
     },
     setAvatar(firstName, lastName) {
+      if (!firstName && !lastName) return
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'

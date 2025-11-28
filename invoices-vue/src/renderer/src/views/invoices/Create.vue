@@ -13,33 +13,36 @@
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-group">
           <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
-          <input v-model="invoice.invoice_id" type="text" class="form-input" readonly />
+          <input v-model="id" type="text" class="form-input" readonly />
           <small class="form-hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Leistungsdatum <span class="stars">*</span></label>
-            <input v-model="invoice.service_date" type="date" class="form-input" />
+            <input
+              ref="invoice_service_date"
+              v-model="invoice.service_date"
+              type="date"
+              class="form-input"
+              required
+            />
             <small class="form-hint">Datum der Leistungserbringung</small>
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
-            <input v-model="invoice.invoice_date" type="date" class="form-input" required />
+            <input
+              ref="invoice_date"
+              v-model="invoice.date"
+              type="date"
+              class="form-input"
+              required
+            />
           </div>
         </div>
       </div>
 
-      <div v-if="customers" class="form-section">
-        <div class="form-section-title">👤 Kunde</div>
-        <div class="form-group">
-          <label class="form-label">Kundendaten</label>
-          <select v-model="customerList" class="form-input" @change="getCustomerById">
-            <option selected disabled>Wähle Kunden</option>
-            <option v-for="item in customers" :key="item.id" :value="item.id">
-              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
-            </option>
-          </select>
-        </div>
+      <div v-if="customer" class="form-section">
+        <div class="form-section-title">👤 Kundendaten</div>
         <div v-if="customer?.id" class="customer-details">
           <div class="form-group">
             <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
@@ -131,74 +134,12 @@
           </div>
         </div>
       </div>
-
-      <div class="form-section">
-        <div class="form-section-title">💳 Zahlungsinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Zahlungsziel (Tage) *</label>
-            <input
-              v-model.number="invoice.payment_terms"
-              type="number"
-              class="form-input"
-              required
-            />
-            <small class="form-hint"
-              >Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto</small
-            >
-          </div>
-        </div>
-        <div class="form-option">
-          <label for="skonto-checkbox" class="switch">
-            <input
-              id="skonto-checkbox"
-              v-model="invoice.early_payment_discount"
-              type="checkbox"
-              class="switch-checkbox"
-            />
-            <span class="slider round"></span>
-          </label>
-          <div class="option-text">
-            <strong>Skonto gewähren</strong>
-          </div>
-        </div>
-        <div v-if="invoice.early_payment_discount" class="form-row">
-          <div class="form-group">
-            <label class="form-label">Skonto (%)</label>
-            <input
-              v-model.number="invoice.early_payment_percentage"
-              type="number"
-              step="0.1"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Skonto Frist (Tage)</label>
-            <input
-              v-model.number="invoice.early_payment_days"
-              type="number"
-              class="form-input"
-            />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Zusätzliche Zahlungsbedingungen</label>
-          <textarea
-            v-model="invoice.payment_conditions"
-            class="form-input"
-            rows="3"
-            placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
-          ></textarea>
-        </div>
-      </div>
-
       <!-- currency -->
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
           <label class="form-label">Waehrung</label>
           <select v-model="invoice.currency" class="form-input">
-            <option selected disabled>Wähle Waehrung</option>
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
             <option value="GBP.en-GB">GBP</option>
@@ -272,7 +213,7 @@
                   v-model.number="pos.quantity"
                   type="number"
                   class="form-input"
-                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                  @input="setUnitTotal(pos.quantity, pos.price, index)"
                 />
               </div>
               <div class="form-group">
@@ -282,7 +223,7 @@
                   type="number"
                   class="form-input"
                   step="0.01"
-                  @input="getUnitTotal(pos.quantity, pos.price, index)"
+                  @input="setUnitTotal(pos.quantity, pos.price, index)"
                 />
               </div>
               <div class="form-group">
@@ -291,7 +232,7 @@
                   v-if="!invoice.is_reverse_charge"
                   v-model.number="pos.vat"
                   class="form-input"
-                  @change="getUnitTotal(pos.quantity, pos.price, index)"
+                  @change="setUnitTotal(pos.quantity, pos.price, index)"
                 >
                   <option :value="0">0</option>
                   <option :value="7">7</option>
@@ -316,10 +257,93 @@
         <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
       </div>
 
+      <div class="form-section">
+        <div class="form-section-title">💳 Zahlungsinformationen</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Zahlungsziel (Tage) *</label>
+            <input
+              v-model.number="invoice.payment_terms"
+              type="number"
+              class="form-input"
+              required
+            />
+            <small class="form-hint"
+              >Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto</small
+            >
+          </div>
+        </div>
+        <div class="form-option">
+          <label for="skonto-checkbox" class="switch">
+            <input
+              id="skonto-checkbox"
+              v-model="early_payment_input"
+              type="checkbox"
+              class="switch-checkbox"
+            />
+            <span class="slider round"></span>
+          </label>
+          <div class="option-text">
+            <strong>Skonto gewähren</strong>
+          </div>
+        </div>
+        <div v-if="early_payment_input" class="form-row">
+          <div class="form-group">
+            <label class="form-label">Skonto (%)</label>
+            <input
+              v-model.number="invoice.early_payment_percentage"
+              type="number"
+              step="0.1"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Skonto Frist (Tage)</label>
+            <input v-model.number="invoice.early_payment_days" type="number" class="form-input" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Zusätzliche Zahlungsbedingungen</label>
+          <textarea
+            v-model="invoice.payment_conditions"
+            class="form-input"
+            rows="3"
+            placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
+          ></textarea>
+        </div>
+        <div class="positions-total summary">
+          <div class="positions-total-item">
+            <label class="form-label">Net Total(€)</label>
+            <div class="form-result-item">
+              {{ summary.net_total }}
+            </div>
+          </div>
+          <div class="positions-total-item">
+            <label class="form-label">Vat Total(€)</label>
+            <div class="form-result-item">
+              {{ summary.vat_total }}
+            </div>
+          </div>
+          <div class="positions-total-item">
+            <label class="form-label">Brutto Total (€)</label>
+            <div class="form-result-item">{{ summary.gross_total }}</div>
+          </div>
+          <div class="positions-total-item">
+            <label class="form-label">Rabatt(€)</label>
+            <div class="form-result-item">
+              {{ summary.discount }}
+            </div>
+          </div>
+          <div class="positions-total-item">
+            <label class="form-label">Endpreis(€)</label>
+            <div class="form-result-item">
+              {{ summary.total_after_discount }}
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- preview button -->
-      <router-link to="/invoice/preview" class="preview-btn" @click="setStore">
-        👁️ Vorschau anzeigen
-      </router-link>
+      <button class="preview-btn" @click="setStore">👁️ Vorschau anzeigen</button>
     </div>
   </div>
 </template>
@@ -328,54 +352,88 @@
 import store from '../../store/store.js'
 export default {
   name: 'Createinvoice',
-  inject: ['storePreview', 'validateServicePeriod'],
+  inject: ['validateServicePeriod'],
   data() {
     return {
       title: 'Rechnung erstellen',
-      customers: [],
-      customerList: 'Wähle Kunden',
       customer: null,
-      invoice: null
+      id: 1, //will come from db
+      early_payment_input: false,
+      invoice: {
+        customer_id: 1,
+        is_active: 1,
+        date: '',
+        due_date: '',
+        service_date: '',
+        currency: 'EUR.de-DE',
+        payment_terms: 14,
+        payment_conditions: 'z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss.',
+        early_payment_days: 7,
+        early_payment_percentage: 2,
+        early_payment_discount: 0,
+        is_small_company: false,
+        is_reverse_charge: false,
+        is_eu_delivery: false,
+        positions: [],
+        net_total: 0,
+        vat_total: 0,
+        gross_total: 0,
+        total_after_discount: 0
+      }
+    }
+  },
+  computed: {
+    summary() {
+      const net_total = this.invoice.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
+      const vat_total = this.invoice.positions.reduce(
+        (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
+        0
+      )
+      const gross_total = net_total + vat_total
+
+      let discount = 0
+      if (this.early_payment_input) {
+        discount = (gross_total * this.invoice.early_payment_percentage) / 100
+      }
+      return {
+        net_total,
+        vat_total,
+        gross_total,
+        discount,
+        total_after_discount: gross_total - discount
+      }
     }
   },
   mounted() {
-    this.getCustomers()
+    this.getCustomer()
     this.getStore()
   },
   methods: {
-    async getCustomers() {
-      try {
-        const response = await window.api.getCustomers()
-        if (response.success) {
-          this.customers = response.customers
-        }
-      } catch (error) {
-        console.error('Error fetching customers:', error)
-      }
-    },
-    getCustomerById() {
-      const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.customer = customer
-    },
     getStore() {
-      if (store.state.invoice) {
-        this.invoice = JSON.parse(JSON.stringify(store.state.invoice))
-      }
+      if (!store.state.invoice) return
+      this.invoice = JSON.parse(JSON.stringify(store.state.invoice))
     },
-    getSelectedCustomer(value) {
-      this.invoice.customer = value
+    async getCustomer() {
+      if (!this.$route.query.id) return
+      try {
+        const result = await window.api.getCustomerById(this.$route.query.id)
+        if (!result.success) return
+        this.customer = result.rows
+      } catch (error) {
+        console.error(error)
+      }
     },
     checkTaxOptions(current) {
-      if (current) {
-        for (const item in this.invoice[current]) {
-          if (item !== current) {
-            this.invoice[item] = false
-          }
+      if (!current) return
+      for (const item in this.invoice[current]) {
+        if (item !== current) {
+          this.invoice[item] = false
         }
-        this.calculateUmsatzsteuer()
       }
+      this.calculateVatAsCompanyType()
     },
-    calculateUmsatzsteuer() {
+    calculateVatAsCompanyType() {
+      if (!this.invoice.positions) return
       this.invoice.positions.forEach((item, index) => {
         const base = item.quantity * item.price
 
@@ -396,6 +454,7 @@ export default {
       })
     },
     addPosition() {
+      if (!this.invoice.positions) return
       this.invoice.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
@@ -409,13 +468,14 @@ export default {
       })
     },
     deletePosition(index) {
+      if (!this.invoice.positions) return
       if (this.invoice.positions.length > 0) {
         this.invoice.positions.splice(index, 1)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
-    getUnitTotal(quantity, price, index) {
+    setUnitTotal(quantity, price, index) {
       const vat = this.invoice.positions[index].vat || 0
       const base = quantity * price
       let total = 0
@@ -435,14 +495,48 @@ export default {
       this.invoice.positions[index].unit_total = total.toFixed(2)
       this.invoice.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
-    setStore() {
-      console.time('commit')
-      if (this.invoice) {
-        const date = new Date(this.invoice.date)
-        date.setDate(date.getDate() + this.invoice.payment_terms)
-        this.invoice.due_date = date.toISOString().split('T')[0]
-        this.storePreview('invoice', this.invoice)
+    setDueDate() {
+      if (!this.invoice.date) return
+      const date = new Date(this.invoice.date)
+      date.setDate(date.getDate() + this.invoice.payment_terms)
+      this.invoice.due_date = date.toISOString().split('T')[0]
+    },
+    checkServiceDateInput() {
+      if (!this.invoice.service_date) {
+        this.$refs.invoice_service_date.focus()
+        return false
       }
+
+      if (!this.invoice.date) {
+        this.$refs.invoice_date.focus()
+        return false
+      }
+
+      if (this.invoice.service_date > this.invoice.date) {
+        const confirm = window.confirm(
+          'Hinweis: Leistungsdatum liegt nach dem Rechnungsdatum. Dies ist nur bei Abschlagsrechnungen zulässig. Möchten Sie trotzdem fortfahren?'
+        )
+        if (!confirm) {
+          this.$refs.invoice_service_date.focus()
+          return false
+        }
+      }
+
+      return true
+    },
+    async setStore() {
+      if (!this.invoice) return
+      console.time('commit')
+      this.setDueDate()
+      this.invoice.customer_id = this.customer.id
+      this.invoice.net_total = this.summary.net_total
+      this.invoice.vat_total = this.summary.vat_total
+      this.invoice.gross_total = this.summary.gross_total
+      this.invoice.discount = this.summary.discount
+      this.invoice.total_after_discount = this.summary.total_after_discount
+      if (!this.checkServiceDateInput()) return
+      await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
+      this.$router.push('/invoices/preview')
       console.timeEnd('commit')
     }
   }
@@ -566,6 +660,11 @@ input:not([readonly]) {
 .positions-total {
   display: flex;
   justify-content: flex-end;
+  margin-top: 12px;
+}
+.positions-total.summary {
+  display: flex;
+  justify-content: space-between;
   margin-top: 12px;
 }
 

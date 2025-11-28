@@ -158,11 +158,10 @@ export default {
   },
   methods: {
     async saveCustomer() {
+      if (!this.customer) return
       this.showSuccess = false
       this.errorMessage = ''
-
       try {
-        console.log(this.customer)
         const data = JSON.parse(JSON.stringify(this.customer))
         const result = await window.api.addCustomer(data)
         if (result.success) {
@@ -367,7 +366,7 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(26px);
 }
-.stars{
+.stars {
   color: darkred;
   font-size: 16px;
 }

@@ -127,9 +127,8 @@ export default {
           this.$route.params.id,
           JSON.parse(JSON.stringify(this.customer))
         )
-        if (result.success) {
-          this.$router.push('/customers')
-        }
+        if (!result.success) return
+        this.$router.push('/customers')
       } catch (error) {
         console.error(error)
       }

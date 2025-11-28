@@ -9,11 +9,11 @@ localforage.config({
 
 const state = reactive({
   auth: null,
-  invoices: null,
-  offers: null,
-  orders: null,
-  deliveries: null,
-  remeinders: null,
+  invoice: null,
+  offer: null,
+  order: null,
+  deliverie: null,
+  remeinder: null,
   date_filter: null,
   _isClearing: false // IndexedDB temizleme işlemi için flag
 })
@@ -24,20 +24,20 @@ async function init() {
     const authStored = await localforage.getItem('auth')
     if (authStored) state.auth = authStored
 
-    const invoices = await localforage.getItem('invoices')
-    if (invoices) state.invoices = invoices
+    const invoice = await localforage.getItem('invoice')
+    if (invoice) state.invoice = invoice
 
-    const offers = await localforage.getItem('offers')
-    if (offers) state.offers = offers
+    const offer = await localforage.getItem('offer')
+    if (offer) state.offer = offer
 
-    const orders = await localforage.getItem('orders')
-    if (orders) state.orders = orders
+    const order = await localforage.getItem('order')
+    if (order) state.order = order
 
-    const deliveries = await localforage.getItem('deliveries')
-    if (deliveries) state.deliveries = deliveries
+    const deliverie = await localforage.getItem('deliverie')
+    if (deliverie) state.deliverie = deliverie
 
-    const remeinders = await localforage.getItem('remeinders')
-    if (remeinders) state.remeinders = remeinders
+    const remeinder = await localforage.getItem('remeinder')
+    if (remeinder) state.remeinder = remeinder
 
     const date_filter = await localforage.getItem('date_filter')
     if (date_filter) state.date_filter = date_filter

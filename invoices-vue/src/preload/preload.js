@@ -27,8 +27,7 @@ contextBridge.exposeInMainWorld('api', {
   searchCustomer: async (data, term) => ipcRenderer.invoke('search-customer', data, term),
 
   //invoice
-  saveDocument: async (id, tableName, data) =>
-    ipcRenderer.invoke('save-document', id, tableName, data),
+  addInvoice: async (data, id) => ipcRenderer.invoke('add-invoice', data, id),
   getDocument: async (data, tableName) => ipcRenderer.invoke('get-document', data, tableName),
   getDocumentById: async (data, id, tableName) =>
     ipcRenderer.invoke('get-document-by-id', data, id, tableName),

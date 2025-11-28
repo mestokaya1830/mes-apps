@@ -6,7 +6,7 @@
         <h1 class="title">{{ title }} {{ invoiceList.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
       </div>
-      <router-link to="/invoices/create" class="add-btn">
+      <router-link to="/customers" class="add-btn">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -41,7 +41,7 @@
         <input
           v-model="search_box"
           placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
-          @input="searchFilter"
+          @input="searchInvoice"
         />
         <span v-if="search_box && search_box.length < 4" class="hint">
           Mindestens 2 Zeichen eingeben
@@ -149,7 +149,7 @@ export default {
   methods: {
     async getInvoiceList() {
       try {
-        const result = await window.api.getDocument('invoices')
+        const result = await window.api.getInvoice('invoices')
         if (!result.success) return
         this.invoiceList = result.rows
         console.log(this.invoiceList)
@@ -179,26 +179,17 @@ export default {
       }
     },
     async searchFilter() {
-      if (this.search_box && this.search_box.trim() !== '' && this.search_box.trim().length >= 4) {
-        try {
-          const result = await window.api.searchFilter(
-            'invoices',
-            this.search_box.trim().toLowerCase()
-          )
-          if (result.success) {
-            this.invoiceList = result.rows
-          } else {
-            this.invoiceList = []
-          }
-        } catch (error) {
-          console.error(error)
-          this.invoiceList = []
-        } finally {
-          this.isSearching = false
-        }
-      }
-      if (!this.search_box || this.search_box.trim() === '') {
+      const term = this.search_box?.trim()
+      if (!term) {
         this.getInvoiceList()
+        return
+      }
+      if (term.length < 4) {
+        return
+      }
+      const result = await window.api.searchInvoice(term)
+      if (result?.success) {
+        this.invoiceList = result.rows
       }
     },
     async dateFilter() {

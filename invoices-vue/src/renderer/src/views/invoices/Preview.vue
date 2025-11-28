@@ -46,8 +46,7 @@
 
             <div
               v-if="
-                invoicePreview.customer.country === 'Germany' &&
-                invoicePreview.customer.tax_number
+                invoicePreview.customer.country === 'Germany' && invoicePreview.customer.tax_number
               "
               class="meta-row"
             >
@@ -202,7 +201,10 @@
               {{ formatDate(invoicePreview.due_date) }})
             </div>
 
-            <div v-if="invoicePreview.terms.early_payment_days" class="payment-term-item skonto-highlight">
+            <div
+              v-if="invoicePreview.terms.early_payment_days"
+              class="payment-term-item skonto-highlight"
+            >
               <strong>💰 Skonto:</strong>
               {{ invoicePreview.terms.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
               {{ invoicePreview.terms.early_payment_days }} Tagen (bis
@@ -244,8 +246,7 @@
       </div>
 
       <ActionsButtonPreview
-        v-if="invoicePreview.customer"
-        tableName="invoices"
+        v-if="invoicePreview"
         :tableData="invoicePreview"
         sourcePage="preview"
       />
@@ -259,10 +260,10 @@
 
 <script>
 import store from '../../store/store.js'
-import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
+import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
+import ActionsButtonPreview from '../../components/invoices/ActionsButtonPreview.vue'
+import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
 
 export default {
   name: 'InvoicePreview',
@@ -272,7 +273,7 @@ export default {
     ActionsButtonPreview,
     FooterSidePreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatCurrency'],
+  inject: ['formatCustomerId', 'formatDate', 'formatCurrency', 'formatInvoiceId'],
   data() {
     return {
       title: 'Rechnungbestätigung',
@@ -286,45 +287,13 @@ export default {
   },
   methods: {
     getInvoicePreview() {
-      if (store.state.invoices) {
-        this.invoicePreview = store.state.invoices
-        console.log('preview', this.invoicePreview)
-      }
+      if (!store.state.invoice) return
+      this.invoicePreview = store.state.invoice
+      console.log('preview', this.invoicePreview)
     },
     getAuth() {
-      if (store.state.auth) {
-        this.auth = store.state.auth
-      } else {
-        console.warn('No auth data in store')
-      }
-    },
-     formatInvoiceId(id) {
-      if (!id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(id).padStart(5, '0')}`
-    },
-    addDays(invoiceDate, days) {
-      if (!invoiceDate || !days) return ''
-      const date = new Date(invoiceDate)
-      date.setDate(date.getDate() + days)
-      return this.formatDate(date.toISOString().split('T')[0])
-    },
-    calculateEarlyPayment() {
-      if (
-        !this.invoicePreview?.summary?.total ||
-        !this.invoicePreview?.terms?.early_payment_percentage
-      ) {
-        return 0
-      }
-      const outstanding =
-        this.invoicePreview.summary.outstanding || this.invoicePreview.summary.total
-      return (outstanding * this.invoicePreview.terms.early_payment_percentage) / 100
-    },
-    calculateAmountWithEarlyPayment() {
-      if (!this.invoicePreview?.summary?.total) return 0
-      const outstanding =
-        this.invoicePreview.summary.outstanding || this.invoicePreview.summary.total
-      return outstanding - this.calculateEarlyPayment()
+      if (!store.state.auth) return
+      this.auth = store.state.auth
     }
   }
 }
@@ -613,5 +582,4 @@ export default {
   font-size: 12px;
   color: #666;
 }
-
 </style>

@@ -66,7 +66,7 @@ export default {
     },
     async saveDocument() {
       if (this.tableName && this.tableData) {
-        const result = await window.api.saveDocument(
+        const result = await window.api.addInvoice(
           this.tableName,
           JSON.parse(JSON.stringify(this.tableData))
         )
