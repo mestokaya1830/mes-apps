@@ -1,59 +1,71 @@
-
-
-
-
 companies: [
-        { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
-        // Şahıs işletmesi – en yaygın küçük işletme türü (Kleinunternehmer §19 UStG)
-        { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },
-        // Serbest meslek (doktor, mimar, mühendis, yazar vb.) – KDV bazen muaf
-        { value: 'Gbr', label: 'GbR (Gesellschaft bürgerlichen Rechts)', is_small_company: true },
-        // Adi ortaklık – serbest meslek sahipleri veya küçük işletmeler
-        { value: 'Ug', label: 'UG (haftungsbeschränkt)', is_small_company: true },
-        // Mini GmbH – düşük sermaye ile limited şirket
-        {
-          value: 'GmbH',
-          label: 'GmbH (Gesellschaft mit beschränkter Haftung)',
-          is_small_company: false
-        },
-        // Limited şirket – genelde KDV yükümlüsü
-        { value: 'Ohg', label: 'OHG (Offene Handelsgesellschaft)', is_small_company: false },
-        // Ticari ortaklık – küçük sayılmaz
-        { value: 'Kg', label: 'KG (Kommanditgesellschaft)', is_small_company: false },
-        // Komandit ortaklık – orta veya büyük ölçekli işletmeler
-        { value: 'GmbH_co_KG', label: 'GmbH & Co. KG', is_small_company: false },
-        // GmbH'nin komandit ortak olduğu özel ortaklık türü
-        { value: 'Partg', label: 'PartG (Partnerschaftsgesellschaft)', is_small_company: false },
-        // Profesyonel meslekler (avukat, doktor, diş hekimi, mimar vb.) için ortaklık
-        {
-          value: 'Partgmbb',
-          label: 'PartGmbB (Partnerschaftsgesellschaft mit beschränkter Berufshaftung)',
-          is_small_company: false
-        },
-        // Sınırlı mesleki sorumluluklu ortaklık
-        { value: 'Ek', label: 'e.K. (eingetragener Kaufmann)', is_small_company: true },
-        // Tescilli tacir – genelde küçük veya orta işletmeler
-        { value: 'Ev', label: 'e.V. (eingetragener Verein)', is_small_company: false },
-        // Dernek – kâr amacı gütmeyen organizasyonlar
-        { value: 'GgmbH', label: 'gGmbH (gemeinnützige GmbH)', is_small_company: false },
-        // Kar amacı gütmeyen limited şirket – özel vergi durumu (§4 UStG)
-        { value: 'Stiftung', label: 'Stiftung', is_small_company: false },
-        // Vakıf – genellikle kamu yararına çalışan kuruluşlar
-        { value: 'Ag', label: 'AG (Aktiengesellschaft)', is_small_company: false },
-        // Anonim şirket – büyük ölçekli işletmeler
-        { value: 'Se', label: 'SE (Societas Europaea)', is_small_company: false }
-        // Avrupa şirketi – uluslararası düzeyde faaliyet gösteren büyük firmalar
-      ]
+  { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
+  // Şahıs işletmesi – en yaygın küçük işletme türü (Kleinunternehmer §19 UStG)
+  { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },
+  // Serbest meslek (doktor, mimar, mühendis, yazar vb.) – KDV bazen muaf
+  { value: 'Gbr', label: 'GbR (Gesellschaft bürgerlichen Rechts)', is_small_company: true },
+  // Adi ortaklık – serbest meslek sahipleri veya küçük işletmeler
+  { value: 'Ug', label: 'UG (haftungsbeschränkt)', is_small_company: true },
+  // Mini GmbH – düşük sermaye ile limited şirket
+  {
+    value: 'GmbH',
+    label: 'GmbH (Gesellschaft mit beschränkter Haftung)',
+    is_small_company: false
+  },
+  // Limited şirket – genelde KDV yükümlüsü
+  { value: 'Ohg', label: 'OHG (Offene Handelsgesellschaft)', is_small_company: false },
+  // Ticari ortaklık – küçük sayılmaz
+  { value: 'Kg', label: 'KG (Kommanditgesellschaft)', is_small_company: false },
+  // Komandit ortaklık – orta veya büyük ölçekli işletmeler
+  { value: 'GmbH_co_KG', label: 'GmbH & Co. KG', is_small_company: false },
+  // GmbH'nin komandit ortak olduğu özel ortaklık türü
+  { value: 'Partg', label: 'PartG (Partnerschaftsgesellschaft)', is_small_company: false },
+  // Profesyonel meslekler (avukat, doktor, diş hekimi, mimar vb.) için ortaklık
+  {
+    value: 'Partgmbb',
+    label: 'PartGmbB (Partnerschaftsgesellschaft mit beschränkter Berufshaftung)',
+    is_small_company: false
+  },
+  // Sınırlı mesleki sorumluluklu ortaklık
+  { value: 'Ek', label: 'e.K. (eingetragener Kaufmann)', is_small_company: true },
+  // Tescilli tacir – genelde küçük veya orta işletmeler
+  { value: 'Ev', label: 'e.V. (eingetragener Verein)', is_small_company: false },
+  // Dernek – kâr amacı gütmeyen organizasyonlar
+  { value: 'GgmbH', label: 'gGmbH (gemeinnützige GmbH)', is_small_company: false },
+  // Kar amacı gütmeyen limited şirket – özel vergi durumu (§4 UStG)
+  { value: 'Stiftung', label: 'Stiftung', is_small_company: false },
+  // Vakıf – genellikle kamu yararına çalışan kuruluşlar
+  { value: 'Ag', label: 'AG (Aktiengesellschaft)', is_small_company: false },
+  // Anonim şirket – büyük ölçekli işletmeler
+  { value: 'Se', label: 'SE (Societas Europaea)', is_small_company: false }
+  // Avrupa şirketi – uluslararası düzeyde faaliyet gösteren büyük firmalar
+]
 
 
+
+
+const randDate = () => {
+  const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')
+  const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')
+  return `2025-${month}-${day}`
+}
+
+// Rastgele miktar ve fiyat
+const randQty = () => Math.floor(Math.random() * 9) + 1
+const randPrice = () => Number((Math.random() * 200 + 20).toFixed(2))
+
+// Yardımcılar
+const rand = (arr) => arr[Math.floor(Math.random() * arr.length)]
+const randEmail = (name) => `${name.toLowerCase()}${Math.floor(Math.random() * 100)}@example.com`
+const randPhone = () => `+49${Math.floor(1000000000 + Math.random() * 8999999999)}`
 
 // ---------- CUSTOMER INSERT ----------
 const insertCustomer = db.prepare(`
   INSERT INTO customers (
-    company_type, company_name, first_name, last_name, email, phone,
+    company_type, company_name, first_name, last_name, full_name, email, phone,
     address, postal_code, city, country, tax_number, vat_id, is_active
   ) VALUES (
-    @company_type, @company_name, @first_name, @last_name, @email, @phone,
+    @company_type, @company_name, @first_name, @last_name, @full_name, @email, @phone,
     @address, @postal_code, @city, @country, @tax_number, @vat_id, @is_active
   )
 `)
@@ -67,6 +79,7 @@ const companies = ['Einzelunternehmen', 'GmbH', 'OHG', 'KG', 'GmbH_co_KG', 'Part
 for (let i = 1; i <= 30; i++) {
   const first_name = rand(firstNames)
   const last_name = rand(lastNames)
+  const full_name = `${first_name} ${last_name}`
   const city = rand(cities)
   const postal_code = `${Math.floor(10000 + Math.random() * 89999)}`
   const street = `Musterstraße ${Math.floor(Math.random() * 80) + 1}`
@@ -80,6 +93,7 @@ for (let i = 1; i <= 30; i++) {
     company_name: `${rand(lastNames)} & Partner`,
     first_name,
     last_name,
+    full_name,
     email: randEmail(first_name),
     phone: randPhone(),
     address: street,
@@ -93,30 +107,9 @@ for (let i = 1; i <= 30; i++) {
    insertCustomer.run(customer)
 }
 
-
-
 ------------------------------------------------------------------------------------
 
-// invoices
-const randDate = () => {
-  const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')
-  const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')
-  return `2025-${month}-${day}`
-}
-
-// Rastgele miktar ve fiyat
-const randQty = () => Math.floor(Math.random() * 9) + 1
-const randPrice = () => Number((Math.random() * 200 + 20).toFixed(2))
-
-
-// Yardımcılar
-const rand = (arr) => arr[Math.floor(Math.random() * arr.length)]
-const randEmail = (name) => `${name.toLowerCase()}${Math.floor(Math.random() * 100)}@example.com`
-const randPhone = () => `+49${Math.floor(1000000000 + Math.random() * 8999999999)}`
-
-
-
-//insert
+// invoice
 const insertInvoice = db.prepare(`
   INSERT INTO invoices (
     customer_id,

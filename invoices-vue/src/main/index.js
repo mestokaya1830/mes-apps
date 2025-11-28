@@ -393,10 +393,10 @@ ipcMain.handle('add-customer', async (event, data) => {
         `
       INSERT INTO customers (
         company_type, company_name,
-        first_name, last_name, email, phone,
+        first_name, last_name, full_name, email, phone,
         address, postal_code, city, country,
         tax_number, vat_id, is_active
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
       )
       .run(
@@ -404,6 +404,7 @@ ipcMain.handle('add-customer', async (event, data) => {
         data.company_name ?? '',
         data.first_name,
         data.last_name,
+        data.first_name + ' ' + data.last_name,
         data.email,
         data.phone,
         data.address ?? '',
@@ -506,6 +507,7 @@ ipcMain.handle('search-customer', async (data, term) => {
            OR company_name LIKE '%${term}%' 
            OR first_name LIKE '%${term}%' 
            OR last_name LIKE '%${term}%' 
+           OR full_name LIKE '%${term}%' 
            ORDER BY id DESC LIMIT ?`
         )
         .all(limit)

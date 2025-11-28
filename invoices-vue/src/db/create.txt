@@ -52,6 +52,7 @@ db.exec(`CREATE TABLE IF NOT EXISTS customers (
     company_name TEXT NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
+    full_name TEXT NOT NULL,
     email TEXT NOT NULL,
     phone TEXT NOT NULL,
     address TEXT NOT NULL,

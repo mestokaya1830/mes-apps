@@ -138,6 +138,7 @@ export default {
       }
     },
     async deleteCustomer(id) {
+      if (!id) return
       if (confirm('Sind Sie sicher, dass Sie diesen Kunden löschen möchten? ✅')) {
         try {
           const result = await window.api.deleteCustomerById(id)
@@ -161,9 +162,6 @@ export default {
         return
       }
       if (term.length < 4) {
-        return
-      }
-      if (term.length > 4 && this.customers.length === 0) {
         return
       }
       const result = await window.api.searchCustomer(term)
