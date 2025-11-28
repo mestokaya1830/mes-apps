@@ -24,7 +24,8 @@ contextBridge.exposeInMainWorld('api', {
   getCustomerById: async (data, id) => ipcRenderer.invoke('get-customer-by-id', data, id),
   updateCustomerById: async (data, id) => ipcRenderer.invoke('update-customer-by-id', id, data),
   deleteCustomerById: async (data) => ipcRenderer.invoke('delete-customer-by-id', data),
-  
+  searchCustomer: async (data, term) => ipcRenderer.invoke('search-customer', data, term),
+
   //invoice
   saveDocument: async (id, tableName, data) =>
     ipcRenderer.invoke('save-document', id, tableName, data),
@@ -33,14 +34,12 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('get-document-by-id', data, id, tableName),
   savePayment: (data, fileName, image_file) =>
     ipcRenderer.invoke('save-payment', data, fileName, image_file),
-  setInvoiceStatus: async (id, value) =>
-    ipcRenderer.invoke('set-invoice-status', id, value),
+  setInvoiceStatus: async (id, value) => ipcRenderer.invoke('set-invoice-status', id, value),
   categoryFilter: async (data, tableName, category) =>
     ipcRenderer.invoke('category-filter', data, tableName, category),
   dateFilter: async (data, tableName, date) =>
     ipcRenderer.invoke('date-filter', data, tableName, date),
-  searchFilter: async (data, tableName, value) =>
-    ipcRenderer.invoke('search-filter', data, tableName, value),
+
   documentReport: async (data, tableName, startDate, endDate) =>
-    ipcRenderer.invoke('document-report', data, tableName, startDate, endDate),
+    ipcRenderer.invoke('document-report', data, tableName, startDate, endDate)
 })

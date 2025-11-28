@@ -26,9 +26,7 @@
       </div>
 
       <div class="filter-container">
-        <input v-model="search_box" type="search" @input="searchCustomer()" placeholder="Suce..." />
-        <input v-model="date_box_start" type="date" @input="dateFilter()" />
-        <input v-model="date_box_end" type="date" @input="dateFilter()" />
+        <input v-model="search_box" type="search" placeholder="Suce..." @input="searchCustomer()" />
         <div @click="sorting('id')">&#8645;</div>
       </div>
       <!-- Customer Cards -->
@@ -36,10 +34,11 @@
         <div v-for="item in customers" :key="item.id" class="customer-card">
           <div class="card-header">
             <div class="customer-avatar">
-              {{ getInitials(item.first_name, item.last_name) }}
+              {{ setAvatar(item.first_name, item.last_name) }}
             </div>
             <div class="customer-info">
               <h3 class="customer-name">{{ item.first_name }} {{ item.last_name }}</h3>
+              <label>{{ formatCustomerId(item.id) }}</label>
               <span class="customer-type-badge">{{ item.company_type || 'Standard' }}</span>
             </div>
             <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
@@ -116,13 +115,12 @@
 <script>
 export default {
   name: 'Customers',
+  inject: ['formatCustomerId'],
   data() {
     return {
       title: 'Kunden',
       customers: [],
       search_box: '',
-      date_box_start: '',
-      date_box_end: '',
       isSort: true
     }
   },
@@ -151,18 +149,28 @@ export default {
         }
       }
     },
-    getInitials(firstName, lastName) {
+    setAvatar(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    searchCustomer() {
-      if (this.search_box && this.search_box.trim() !== '') {
-      } else {
-        this.customers = this.search
+    async searchCustomer() {
+      const term = this.search_box?.trim()
+      if (!term) {
+        this.getCustomers()
+        return
+      }
+      if (term.length < 4) {
+        return
+      }
+      if (term.length > 4 && this.customers.length === 0) {
+        return
+      }
+      const result = await window.api.searchCustomer(term)
+      if (result?.success) {
+        this.customers = result.rows
       }
     },
-    dateFilter() {},
     sorting(key) {
       if (!key) return
       this.customers.sort((a, b) => {

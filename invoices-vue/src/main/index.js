@@ -5,6 +5,7 @@ import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
 import nodeMailer from 'nodemailer'
 import fs from 'fs'
+import { start } from 'repl'
 
 let win = null
 function createWindow() {
@@ -170,8 +171,6 @@ ipcMain.handle('register', async (event, image, data) => {
     console.log(error)
   }
 })
-
-
 
 //user and login
 ipcMain.handle('login', async (event, data) => {
@@ -424,7 +423,7 @@ ipcMain.handle('add-customer', async (event, data) => {
 })
 
 ipcMain.handle('get-customers', async () => {
-  let limit = 100
+  let limit = 50
   try {
     const rows = db
       .prepare(
@@ -493,6 +492,56 @@ ipcMain.handle('delete-customer-by-id', async (event, id) => {
   }
 })
 
+ipcMain.handle('search-customer', async (data, term) => {
+  if (!term) {
+    return { success: false, message: 'No data provided' }
+  }
+  let limit = 50
+  if (isNaN(term) && !term.includes('-')) {
+    try {
+      const rows = db
+        .prepare(
+          `SELECT id, company_name, first_name, last_name, is_active FROM customers
+           WHERE company_type LIKE '%${term}%' 
+           OR company_name LIKE '%${term}%' 
+           OR first_name LIKE '%${term}%' 
+           OR last_name LIKE '%${term}%' 
+           ORDER BY id DESC LIMIT ?`
+        )
+        .all(limit)
+      return { success: true, rows }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  } else {
+    try {
+      if (term.includes('-')) {
+        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+        const rows = db
+          .prepare(
+            `SELECT id, company_name, first_name, last_name, is_active FROM customers 
+            WHERE id BETWEEN ? AND ? AND is_active = 1
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(start, end, limit)
+        return { success: true, rows }
+      } else {
+        const rows = db
+          .prepare(
+            `SELECT id, company_name, first_name, last_name, is_active FROM customers 
+            WHERE id = CAST(? AS UNSIGNED) AND is_active = 1
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(term, limit)
+        return { success: true, rows }
+      }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
+})
 //invoices
 ipcMain.handle('add-invoice', async (event, data) => {
   if (!data) {
@@ -841,7 +890,7 @@ ipcMain.handle('get-dashboard', async () => {
 })
 
 ipcMain.handle('get-document', async (event, data, tableName) => {
-  let limit = 100
+  let limit = 50
   try {
     if (tableName === 'invoices') {
       const rows = db
@@ -940,7 +989,7 @@ ipcMain.handle('category-filter', async (event, tableName, category) => {
   try {
     let query = ''
     let rows = []
-    let limit = 100
+    let limit = 50
 
     if (tableName === 'invoices') {
       switch (category) {
@@ -1027,7 +1076,7 @@ ipcMain.handle('category-filter', async (event, tableName, category) => {
 })
 
 ipcMain.handle('date-filter', async (event, data, tableName, date) => {
-  let limit = 100
+  let limit = 50
   try {
     if (tableName === 'invoices') {
       const rows = db
