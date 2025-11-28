@@ -249,7 +249,7 @@
                 <span>Zahlung erhalten markieren</span>
               </button>
             </router-link>
-            <router-link :to="`/remeinders/create/${invoice.id}`">
+            <router-link :to="`/remainders/create/${invoice.id}`">
               <button class="btn btn-primary">
                 <span class="nav-icon">⚠️</span>
                 <span>Mahnung erstellen</span>

@@ -54,11 +54,26 @@ try {
   console.error(err.message)
 }
 
-
-
+-------------------------------------------------------------------------------------
+//add column
 try {
-  db.exec('ALTER TABLE users DROP COLUMN invoice_categories')
-  db.close()
+  db.exec('ALTER TABLE customers ADD COLUMN column_name type_name;')
+} catch (err) {
+  console.error(err.message)
+}
+
+-------------------------------------------------------------------------------------
+//rename column
+try {
+  db.exec('ALTER TABLE customers RENAME COLUMN old_column_name TO new_column_name;')
+} catch (err) {
+  console.error(err.message)
+}
+
+-------------------------------------------------------------------------------------
+//drop column
+try {
+  db.exec('ALTER TABLE customers DROP COLUMN column_name')
 } catch (err) {
   console.error(err.message)
 }

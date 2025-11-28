@@ -98,31 +98,31 @@ const routes = [
     meta: { title: 'Offer Details', auth: true }
   },
 
-  //remeinders
+  //remainders
 
   {
-    path: '/remeinders',
-    name: 'remeinders',
-    component: () => import('../views/remeinders/Index.vue'),
-    meta: { title: 'remeinders', auth: true }
+    path: '/remainders',
+    name: 'remainders',
+    component: () => import('../views/remainders/Index.vue'),
+    meta: { title: 'remainders', auth: true }
   },
   {
-    path: '/remeinders/create/:id',
-    name: 'remeinders-create',
-    component: () => import('../views/remeinders/Create.vue'),
+    path: '/remainders/create/:id',
+    name: 'remainders-create',
+    component: () => import('../views/remainders/Create.vue'),
     meta: { title: 'Add New Remeinder', auth: true }
   },
   {
-    path: '/remeinders/details/:id',
-    name: 'remeinders-details',
-    component: () => import('../views/remeinders/Details.vue'),
+    path: '/remainders/details/:id',
+    name: 'remainders-details',
+    component: () => import('../views/remainders/Details.vue'),
     meta: { title: 'Remeinder Details', auth: true }
   },
   {
-    path: '/remeinders/preview',
-    name: 'remeinders-preview',
-    component: () => import('../views/remeinders/Preview.vue'),
-    meta: { title: 'Remeinders Vorschau', auth: true }
+    path: '/remainders/preview',
+    name: 'remainders-preview',
+    component: () => import('../views/remainders/Preview.vue'),
+    meta: { title: 'remainders Vorschau', auth: true }
   },
 
   //orrders

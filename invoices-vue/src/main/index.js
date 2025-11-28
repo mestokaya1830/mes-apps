@@ -47,7 +47,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron')
-  app.on('browser-window-created', (_, window) => {
+  app.on('browser-window-created', (event, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
@@ -62,6 +62,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
+//window control
 ipcMain.handle('control-window', (event, data) => {
   if (!win) return
   switch (data) {
@@ -77,6 +78,7 @@ ipcMain.handle('control-window', (event, data) => {
   }
 })
 
+//register and login
 ipcMain.handle('register', async (event, image, data) => {
   try {
     if (data) {
@@ -254,24 +256,6 @@ ipcMain.handle('check-register', async () => {
   }
 })
 
-ipcMain.handle('login', async (event, data) => {
-  const { email, password } = data
-  try {
-    const row = db
-      .prepare('SELECT * FROM users WHERE email = ? AND password = ?')
-      .get(email, password)
-
-    if (row) {
-      return { success: true, user: row }
-    } else {
-      return { success: false, message: 'Invalid email or password' }
-    }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
 ipcMain.handle('email-verfication', async (event, data) => {
   const { email } = data
   const expiresAt = new Date(Date.now() + 60000 * 1)
@@ -340,6 +324,25 @@ ipcMain.handle('email-verfication', async (event, data) => {
   // })
 })
 
+//user
+ipcMain.handle('login', async (event, data) => {
+  const { email, password } = data
+  try {
+    const row = db
+      .prepare('SELECT * FROM users WHERE email = ? AND password = ?')
+      .get(email, password)
+
+    if (row) {
+      return { success: true, user: row }
+    } else {
+      return { success: false, message: 'Invalid email or password' }
+    }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 ipcMain.handle('reset-password', async (event, data) => {
   try {
     db.prepare("DELETE FROM tokens WHERE replace(expires_at, 'T', ' ') < datetime('now')").run()
@@ -377,118 +380,149 @@ ipcMain.handle('get-user', async () => {
   }
 })
 
+//customers
+ipcMain.handle('add-customer', async (event, data) => {
+  console.log(data)
+  if (!data) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const info = db
+      .prepare(
+        `
+      INSERT INTO customers (
+        company_type, company_name,
+        first_name, last_name, email, phone,
+        address, postal_code, city, country,
+        tax_number, vat_id, is_active
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `
+      )
+      .run(
+        data.company_type ?? '',
+        data.company_name ?? '',
+        data.first_name,
+        data.last_name,
+        data.email,
+        data.phone,
+        data.address ?? '',
+        data.postal_code ?? '',
+        data.city ?? '',
+        data.country ?? '',
+        data.tax_number ?? '',
+        data.vat_id ?? '',
+        data.is_active ?? 1
+      )
+
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 ipcMain.handle('get-customers', async () => {
   let limit = 100
   try {
-    const rows = db.prepare('SELECT * FROM customers LIMIT ?').all(limit)
-    return { success: true, customers: rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('get-customer-by-id', async (event, id) => {
-  try {
-    const row = db.prepare('SELECT * FROM customers WHERE id = ?').get(id)
-    return { success: true, customer: row }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('customer-details', async (event, id) => {
-  try {
-    const rows = db.prepare('SELECT * FROM customers WHERE customer_id = ?').get(id)
-    return { success: true, rows: rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('add-customer', async (event, data) => {
-  try {
-    const row = db
-      .prepare('INSERT INTO customers (first_name, last_name, email, phone) VALUES (?,?,?,?)')
-      .run(data.first_name, data.last_name, data.email, data.phone)
-    return { success: true, customer: row }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('update-customer', async (event, data) => {
-  const { id, customer } = data
-  try {
-    const row = db
+    const rows = db
       .prepare(
-        'UPDATE customers SET customer_type = ?, company_name = ?, first_name = ?, last_name = ?, address = ?, postal_code = ?, city = ?, country = ?, email = ?, phone = ?, tax_number = ?, vat_id = ?, customer_is_active = ?  WHERE customer_id = ?'
+        'SELECT id, company_type, company_name, first_name, last_name, is_active FROM customers ORDER BY id DESC LIMIT ?'
+      )
+      .all(limit)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-customer-by-id', async (data, id) => {
+  try {
+    const rows = db.prepare('SELECT * FROM customers WHERE id = ? AND is_active = 1').get(id)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('update-customer-by-id', async (event, data, id) => {
+  if (!data && !id) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const info = db
+      .prepare(
+        'UPDATE customers SET company_type = ?, company_name = ?, first_name = ?, last_name = ?, address = ?, postal_code = ?, city = ?, country = ?, email = ?, phone = ?, tax_number = ?, vat_id = ?, is_active = ?  WHERE id = ?'
       )
       .run(
-        customer.customer_type,
-        customer.company_name,
-        customer.first_name,
-        customer.last_name,
-        customer.address,
-        customer.postal_code,
-        customer.city,
-        customer.country,
-        customer.email,
-        customer.phone,
-        customer.tax_number,
-        customer.vat_id,
-        customer.is_active,
+        data.company_type,
+        data.company_name,
+        data.first_name,
+        data.last_name,
+        data.address,
+        data.postal_code,
+        data.city,
+        data.country,
+        data.email,
+        data.phone,
+        data.tax_number,
+        data.vat_id,
+        data.is_active,
         id
       )
-    return { success: true, customer: row }
+    return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
   }
 })
 
-ipcMain.handle('delete-customer', async (event, id) => {
+ipcMain.handle('delete-customer-by-id', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
   try {
-    const row = db.prepare('DELETE FROM customers WHERE customer_id = ?').run(id)
-    return { success: true, customer: row }
+    const info = db.prepare('DELETE FROM customers WHERE id = ?').run(id)
+    return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
   }
 })
 
-ipcMain.handle('save-document', async (event, tableName, data) => {
-  if (tableName === 'invoices') {
-    try {
-      const positions = JSON.stringify(data.positions || {})
-      const row = db
-      db.prepare(
+//invoices
+ipcMain.handle('add-invoice', async (event, data) => {
+  if (!data) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const info = db
+      .prepare(
         `
-    INSERT INTO invoices (
-      invoice_customer_id,
-      invoice_is_active,
-      invoice_date,
-      due_date,
-      service_date,
-      currency,
-      payment_terms,
-      payment_conditions,
-      early_payment_discount,
-      early_payment_percentage,
-      early_payment_days,
-      is_small_company,
-      is_reverse_charge,
-      is_eu_delivery,
-      positions,
-      subtotal,
-      vat_amount,
-      total,
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `
-      ).run(
+          INSERT INTO invoices (
+            invoice_customer_id,
+            invoice_is_active,
+            invoice_date,
+            due_date,
+            service_date,
+            currency,
+            payment_terms,
+            payment_conditions,
+            early_payment_discount,
+            early_payment_percentage,
+            early_payment_days,
+            is_small_company,
+            is_reverse_charge,
+            is_eu_delivery,
+            positions,
+            subtotal,
+            vat_amount,
+            total,
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `
+      )
+      .run(
         data.invoice_is_active,
         data.invoice_date,
         data.due_date,
@@ -502,141 +536,173 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
         data.is_small_company,
         data.is_reverse_charge,
         data.is_eu_delivery,
-        positions,
+        JSON.stringify(data.positions || []),
         data.subtotal,
         data.vat_amount,
         data.total
       )
-      return { success: true, customer: row }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
-    }
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+//offers
+ipcMain.handle('add-offer', async (event, data) => {
+  if (!data) {
+    return { success: false, message: 'No data provided' }
   }
 
-  //save offers table
-  if (tableName === 'offers') {
-    console.log(data)
-    try {
-      const customer = JSON.stringify(data.customer || {})
-      const payment = JSON.stringify(data.payment || {})
-      const positions = JSON.stringify(data.positions || {})
-      const summary = JSON.stringify(data.summary || {})
-      const row = db
-      db.prepare(
+  try {
+    const info = db
+      .prepare(
         `
-    INSERT INTO offers (
-      date,
-      subject,
-      is_legal,
-      is_active,
-      valid_until,
-      currency,
-      customer,
-      payment,
-      positions,
-      summary
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)
-  `
-      ).run(
-        data.date,
-        data.subject,
-        data.is_legal,
-        data.is_active,
-        data.valid_until,
-        data.currency,
-        customer,
-        payment,
-        positions,
-        summary
+          INSERT INTO offers (
+            customer_id,
+            is_active,
+            offer_date,
+            subject,
+            is_legal,
+            valid_until,
+            currency,
+            payment_terms,
+            positions,
+            total_net,
+            total_vat,
+            total_gross
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `
       )
-      return { success: true, customer: row }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
-    }
-  }
+      .run(
+        data.customer_id,
+        data.is_active ?? 1,
+        data.offer_date,
+        data.subject,
+        data.is_legal ?? 1,
+        data.valid_until,
+        data.currency ?? 'EUR',
+        data.payment_terms ?? '',
+        JSON.stringify(data.positions || []),
+        data.total_net ?? 0,
+        data.total_vat ?? 0,
+        data.total_gross ?? 0
+      )
 
-  //save orders table
-  if (tableName === 'orders') {
-    try {
-      const customer = JSON.stringify(data.customer || {})
-      const payment = JSON.stringify(data.payment || {})
-      const positions = JSON.stringify(data.positions || {})
-      const summary = JSON.stringify(data.summary || {})
-      const row = db
-      db.prepare(
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+//orders
+ipcMain.handle('add-order', async (event, data) => {
+  if (!data) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const info = db
+      .prepare(
         `
-    INSERT INTO orders (
-      date,
-      is_legal,
-      is_active,
-      currency,
-      service_period_start,
-      service_period_end,
-      validity_date,
-      delivery_date,
-      delivery_terms,
-      shipping_method,
-      customer_reference,
-      customer_notes,
-      internal_notes,
-      special_notes,
-      closing_text,
-      customer,
-      positions,
-      payment,
-      summary
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `
-      ).run(
+      INSERT INTO orders (
+        order_number,
+        date,
+        is_legal,
+        is_active,
+        service_period_start,
+        service_period_end,
+        validity_date,
+        delivery_date,
+        delivery_address,
+        customer_id,
+        company_name,
+        first_name,
+        last_name,
+        address,
+        postal_code,
+        city,
+        country,
+        email,
+        customer_reference,
+        payment_terms,
+        payment_method,
+        payment_conditions,
+        payment_purpose,
+        paid_amount,
+        delivery_terms,
+        shipping_method,
+        customer_notes,
+        internal_notes,
+        special_notes,
+        closing_text,
+        positions_json
+      )
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `
+      )
+      .run(
+        data.order_number,
         data.date,
         data.is_legal,
         data.is_active,
-        data.currency,
         data.service_period_start,
         data.service_period_end,
         data.validity_date,
         data.delivery_date,
+        data.delivery_address,
+        data.selected_customer.id,
+        data.selected_customer.company_name,
+        data.selected_customer.first_name,
+        data.selected_customer.last_name,
+        data.selected_customer.address,
+        data.selected_customer.postal_code,
+        data.selected_customer.city,
+        data.selected_customer.country,
+        data.selected_customer.email,
+        data.customer_reference,
+        data.payment.payment_terms,
+        data.payment.payment_method,
+        data.payment.payment_conditions,
+        data.payment.payment_purpose,
+        data.payment.paid_amount,
         data.delivery_terms,
         data.shipping_method,
-        data.customer_reference,
         data.customer_notes,
         data.internal_notes,
         data.special_notes,
         data.closing_text,
-        customer,
-        payment,
-        positions,
-        summary
+        JSON.stringify(data.positions) // 🔥 burada JSON string'e çeviriyoruz
       )
-      return { success: true, customer: row }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
-    }
-  }
 
-  //save deliveries table
-  if (tableName === 'deliveries') {
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('Error saving order:', err)
+    return { success: false, message: err.message }
+  }
+})
+
+//deliveries
+ipcMain.handle('add-delivery', async (event, data) => {
+  if (data) {
     try {
       const customer = JSON.stringify(data.customer || {})
       const positions = JSON.stringify(data.positions || {})
-      const row = db
+
       db.prepare(
         `
-    INSERT INTO deliveries (
-      order_id,
-      date,
-      delivery_status,
-      delivered_by,
-      delivery_reference,
-      received_by,
-      note,
-      customer,
-      positions
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `
+          INSERT INTO deliveries (
+            order_id,
+            date,
+            delivery_status,
+            delivered_by,
+            delivery_reference,
+            received_by,
+            note,
+            customer,
+            positions
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `
       ).run(
         data.order_id,
         data.date,
@@ -648,33 +714,37 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
         customer,
         positions
       )
-      return { success: true, customer: row }
+      return { success: true }
     } catch (err) {
       console.error('DB error:', err.message)
       return { success: false, message: err.message }
     }
   }
+})
 
-  //save remeinders table
-  if (tableName === 'remeinders') {
-    try {
-      const selected_invoice = JSON.stringify(data.selected_invoice || {})
-      const row = db
-      db.prepare(
+//reminders
+ipcMain.handle('add-reminder', async (event, data) => {
+  if (!data) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const info = db
+      .prepare(
         `
-    INSERT INTO remeinders (
-      date,
-      remeinder_fee,
-      late_fee,
-      level,
-      intro_text,
-      warning_text,
-      closing_text,
-      payment_deadline,
-      selected_invoice
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `
-      ).run(
+          INSERT INTO reminders (
+            date,
+            remeinder_fee,
+            late_fee,
+            level,
+            intro_text,
+            warning_text,
+            closing_text,
+            payment_deadline,
+            invoice
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `
+      )
+      .run(
         data.date,
         data.remeinder_fee,
         data.late_fee,
@@ -683,36 +753,39 @@ ipcMain.handle('save-document', async (event, tableName, data) => {
         data.warning_text,
         data.closing_text,
         data.payment_deadline,
-        selected_invoice
+        JSON.stringify(data.invoice || {})
       )
-      return { success: true, customer: row }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
-    }
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
   }
 })
 
-ipcMain.handle('save-payment', async (_, data, file_name, image_file) => {
-  if (data) {
-    try {
-      const row = db
-      db.prepare(
+//add payment
+ipcMain.handle('add-payment', async (data, file_name, image_file) => {
+  if (!data) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const info = db
+      .prepare(
         `
-  INSERT INTO payments (
-    payment_date,
-    amount,
-    payment_method,
-    reference,
-    notes,
-    partial_paid,
-    file_name,
-    is_active,
-    invoice_id,
-    invoice_customer_id
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-`
-      ).run(
+          INSERT INTO payments (
+            payment_date,
+            amount,
+            payment_method,
+            reference,
+            notes,
+            partial_paid,
+            file_name,
+            is_active,
+            invoice_id,
+            invoice_customer_id
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `
+      )
+      .run(
         data.payment_date,
         data.amount,
         data.payment_method,
@@ -724,41 +797,72 @@ ipcMain.handle('save-payment', async (_, data, file_name, image_file) => {
         data.invoice_id,
         data.invoice_customer_id
       )
-      if (image_file) {
-        const base64Data = image_file.includes(',') ? image_file.split(',')[1] : image_file
-        const buffer = Buffer.from(base64Data, 'base64')
-        const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name)
-        await fs.promises.writeFile(savePath, buffer)
-      }
-      return { success: true, customer: row }
-      // const buffer = Buffer.from(image_file.split(',')[1], 'base64')
-      // // const savePath = path.join(os.homedir(), fileName);//linux home folder
-      // // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
-      // const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name) // inner app uploads folder
-      // await fs.promises.writeFile(savePath, buffer)
-      // return { success: true, customer: row }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
+    if (image_file) {
+      const base64Data = image_file.includes(',') ? image_file.split(',')[1] : image_file
+      const buffer = Buffer.from(base64Data, 'base64')
+      const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name)
+      await fs.promises.writeFile(savePath, buffer)
     }
+    return { success: true, lastInsertId: info.lastInsertRowid }
+    // const buffer = Buffer.from(image_file.split(',')[1], 'base64')
+    // // const savePath = path.join(os.homedir(), fileName);//linux home folder
+    // // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
+    // const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name) // inner app uploads folder
+    // await fs.promises.writeFile(savePath, buffer)
+    // return { success: true, customer: row }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
   }
 })
-ipcMain.handle('get-document', async (data, tableName) => {
+
+//dashbords
+ipcMain.handle('get-dashboard', async () => {
+  try {
+    const rows = db.transaction(() => {
+      return {
+        customers: db.prepare('SELECT COUNT(*) AS count FROM customers').get().count,
+        invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices').get().count,
+        offers: db.prepare('SELECT COUNT(*) AS count FROM offers').get().count,
+        orders: db.prepare('SELECT COUNT(*) AS count FROM orders').get().count,
+        deliveries: db.prepare('SELECT COUNT(*) AS count FROM deliveries').get().count,
+        reminders: db.prepare('SELECT COUNT(*) AS count FROM remeinders').get().count,
+        payments: db.prepare('SELECT COUNT(*) AS count FROM payments').get().count
+      }
+    })()
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-document', async (event, data, tableName) => {
   let limit = 100
   try {
     if (tableName === 'invoices') {
       const rows = db
         .prepare(
           `
-          SELECT 
-            i.*,
-            c.*,
-            p.*
+         SELECT
+              i.id,
+              i.total,
+              i.created_at,
+              c.id,
+              c.company_name,
+              c.first_name,
+              c.last_name,
+              COALESCE(SUM(p.amount), 0) AS total_paid,
+              (i.total - COALESCE(SUM(p.amount), 0)) AS remaining_amount
           FROM invoices i
-          JOIN customers c ON c.customer_id = i.invoice_customer_id
-          LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
-          WHERE i.invoice_is_active = 1
-          ORDER BY i.invoice_created_at DESC
+          JOIN customers c
+              ON c.id = i.customer_id
+          LEFT JOIN payments p
+              ON p.invoice_id = i.id
+          WHERE i.is_active = 1
+          GROUP BY i.id
+          ORDER BY i.created_at DESC
           LIMIT ?;
         `
         )
@@ -771,7 +875,7 @@ ipcMain.handle('get-document', async (data, tableName) => {
   }
 })
 
-ipcMain.handle('get-document-by-id', async (data, id, tableName) => {
+ipcMain.handle('get-document-by-id', async (event, data, id, tableName) => {
   try {
     if (tableName === 'invoices') {
       const rows = db
@@ -796,7 +900,7 @@ ipcMain.handle('get-document-by-id', async (data, id, tableName) => {
   }
 })
 
-ipcMain.handle('set-invoice-status', async (_, id, value) => {
+ipcMain.handle('set-invoice-status', async (event, id, value) => {
   console.log(id, value)
   try {
     db.prepare(`Update invoices Set invoice_is_active = ? WHERE invoice_id = ?`).run(value, id)
@@ -813,14 +917,13 @@ ipcMain.handle('document-report', async (data, tableName, startDate, endDate) =>
     const rows = db
       .prepare(
         `SELECT 
-    i.*,
-    p.*
-FROM invoices i
-LEFT JOIN payments p 
-    ON p.invoice_id = i.id
-WHERE i.date BETWEEN ? AND ?
-ORDER BY i.date ASC, p.payment_date ASC;
-
+          i.*,
+          p.*
+        FROM invoices i
+        LEFT JOIN payments p 
+            ON p.invoice_id = i.id
+        WHERE i.date BETWEEN ? AND ?
+        ORDER BY i.date ASC, p.payment_date ASC;
         `
       )
       .all(startDate, endDate)
@@ -865,7 +968,7 @@ ipcMain.handle('category-filter', async (event, tableName, category) => {
             LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
             WHERE i.invoice_is_active = 1
               AND p.is_paid = 1
-            ORDER BY i.invoice_created_at DESC
+            ORDER BY i.invoice_id DESC
             LIMIT ?
           `
           rows = db.prepare(query).all(limit)
@@ -882,7 +985,7 @@ ipcMain.handle('category-filter', async (event, tableName, category) => {
             LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
             WHERE i.invoice_is_active = 1
               AND (p.is_paid = 0 OR p.payment_id IS NULL)
-            ORDER BY i.invoice_created_at DESC
+            ORDER BY i.invoice_id DESC
             LIMIT ?
           `
           rows = db.prepare(query).all(limit)
@@ -900,7 +1003,7 @@ ipcMain.handle('category-filter', async (event, tableName, category) => {
               WHERE i.invoice_is_active = 1
                 AND p.is_partially_paid = 1
                 AND (p.is_paid = 0 OR p.is_paid IS NULL)
-              ORDER BY i.invoice_created_at DESC
+              ORDER BY i.invoice_id DESC
               LIMIT ?
             `
           rows = db.prepare(query).all(limit)
@@ -921,12 +1024,24 @@ ipcMain.handle('category-filter', async (event, tableName, category) => {
   }
 })
 
-ipcMain.handle('date-filter', async (data, tableName, date) => {
+ipcMain.handle('date-filter', async (event, data, tableName, date) => {
+  let limit = 100
   try {
-    if (date) {
+    if (tableName === 'invoices') {
       const rows = db
-        .prepare(`SELECT * FROM ${tableName} WHERE date BETWEEN ? AND ?`)
-        .all(date.start, date.end)
+        .prepare(
+          `SELECT 
+            i.*,
+            c.*,
+            p.*
+          FROM invoices i
+          JOIN customers c ON c.customer_id = i.invoice_customer_id
+          LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
+          WHERE i.invoice_is_active = 1 AND i.invoice_date BETWEEN ? AND ?
+          ORDER BY i.invoice_id DESC
+          LIMIT ?;`
+        )
+        .all(date.start, date.end, limit)
       return { success: true, rows }
     }
   } catch (error) {
@@ -937,18 +1052,13 @@ ipcMain.handle('date-filter', async (data, tableName, date) => {
 
 ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
   const limit = 100
+  if (tableName === 'invoices') {
+    const isNumeric = /^\d+$/.test(searchTerm)
+    const pattern = `${searchTerm}%`
+    let query, params
 
-  if (tableName !== 'invoices') {
-    return { success: false, message: 'Geçersiz tablo' }
-  }
-
-  const isNumeric = /^\d+$/.test(searchTerm)
-  const pattern = `${searchTerm}%`
-
-  let query, params
-
-  if (isNumeric) {
-    query = `
+    if (isNumeric) {
+      query = `
       SELECT i.*, c.*
       FROM invoices i
       JOIN customers c ON c.customer_id = i.invoice_customer_id
@@ -957,9 +1067,9 @@ ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
       ORDER BY i.invoice_created_at DESC
       LIMIT ?
     `
-    params = [Number(searchTerm), limit]
-  } else {
-    query = `
+      params = [Number(searchTerm), limit]
+    } else {
+      query = `
       SELECT i.*, c.*
       FROM invoices i
       JOIN customers c ON c.customer_id = i.invoice_customer_id
@@ -972,10 +1082,11 @@ ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
       ORDER BY i.invoice_created_at DESC
       LIMIT ?
     `
-    params = [pattern, pattern, pattern, limit]
+      params = [pattern, pattern, pattern, limit]
+    }
+
+    const rows = db.prepare(query).all(...params)
+
+    return { success: true, rows }
   }
-
-  const rows = db.prepare(query).all(...params)
-
-  return { success: true, rows }
 })

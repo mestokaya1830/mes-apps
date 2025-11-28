@@ -48,25 +48,25 @@
         </span>
       </div>
 
-      <input v-model="date_box_start" type="date" @input="dateFilter()" />
-      <input v-model="date_box_end" type="date" @input="dateFilter()" />
+      <input ref="date_box_start" v-model="date_box_start" type="date" @input="dateFilter()" />
+      <input ref="date_box_end" v-model="date_box_end" type="date" @input="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
       <router-link to="/reports/invoices" class="preview-btn"> 👁️ Report</router-link>
     </div>
     <!-- Invoice Grid -->
     <div class="customer-grid">
-      <div v-for="item in invoiceList" :key="item.invoice_id" class="customer-card">
+      <div v-for="item in invoiceList" :key="item.id" class="customer-card">
         <!-- Card Header -->
         <div class="card-header">
           <div class="customer-avatar">
             {{ avatarStyle(item.first_name, item.last_name) }}
           </div>
           <div class="customer-info">
-            <h3 class="customer-name">{{ formatInvoiceId(item.invoice_id) }}</h3>
+            <h3 class="customer-name">{{ formatInvoiceId(item.id) }}</h3>
             <span class="customer-type-badge">{{ item.company_name }}</span>
           </div>
-          <div class="status-badge" :class="item.invoice_is_active ? 'active' : 'inactive'">
-            {{ item.invoice_is_active ? 'Aktiv' : 'Storniert' }}
+          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+            {{ item.is_active ? 'Aktiv' : 'Storniert' }}
           </div>
           <div class="status-badge total">
             <!-- {{ item.summary.total ? formatCurrency(item.summary.total, item.currency) : '' }} -->
@@ -77,7 +77,7 @@
         <!-- Card Actions -->
         <div class="card-actions">
           <!-- <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn"> -->
-          <router-link :to="'/invoices/details/' + item.invoice_id" class="action-btn details-btn">
+          <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -203,12 +203,11 @@ export default {
     },
     async dateFilter() {
       try {
-        if (!this.date_box_start) {
-          alert('Bitte Datum auswählen!')
-        } else if (!this.date_box_end) {
-          this.date_box_end = new Date().toISOString().slice(0, 10)
-        } else if (this.date_box_start > this.date_box_end) {
-          alert('Datum ist ungültig!')
+        if (!this.date_box_start) return this.$refs.date_box_start.focus()
+        if (!this.date_box_end) return this.$refs.date_box_end.focus()
+        if (this.date_box_start > this.date_box_end) {
+          this.date_box_end = ''
+          return this.$refs.date_box_end.focus()
         }
         if (this.date_box_start && this.date_box_end) {
           const date = {
@@ -216,13 +215,9 @@ export default {
             end: this.date_box_end
           }
           const result = await window.api.dateFilter('invoices', date)
-          this.invoiceList = result.rows.map((item) => ({
-            ...item,
-            customer: JSON.parse(item.customer),
-            summary: JSON.parse(item.summary),
-            terms: JSON.parse(item.terms)
-          }))
-          await store.setStore('date_filter', JSON.parse(JSON.stringify(date)))
+          this.invoiceList = result.rows
+          console.log(this.invoiceList)
+          await store.setStore('date_filter', JSON.parse(JSON.stringify(date))) //for back from details page
         }
       } catch (error) {
         console.error(error)

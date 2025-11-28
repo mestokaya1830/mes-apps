@@ -17,12 +17,12 @@
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Rechnung-Nr.:</label>
-                <label class="form-input">{{ formatRechnungId(invoice.invoice_id) }}</label>
+                <label class="form-input">{{ formatRechnungId(invoice.id) }}</label>
               </div>
               <div class="form-group">
                 <label class="form-label">Kunden-Nr.:</label>
                 <label class="form-input">{{
-                  formatCustomerId(invoice.invoice_customer_id)
+                  formatCustomerId(invoice.customer_id)
                 }}</label>
               </div>
             </div>
@@ -30,11 +30,11 @@
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Rechnungsdatum</label>
-                <label class="form-input">{{ formatDate(invoice.invoice_date) }}</label>
+                <label class="form-input">{{ formatDate(invoice.date) }}</label>
               </div>
               <div class="form-group">
                 <label class="form-label">Fälligkeitsdatum</label>
-                <label class="form-input">{{ formatDate(invoice.invoice_due_date) }}</label>
+                <label class="form-input">{{ formatDate(invoice.due_date) }}</label>
               </div>
             </div>
 
@@ -42,15 +42,15 @@
               <label class="form-input">
                 <div>
                   Gesamtsumme:
-                  {{ formatCurrency(invoice.invoice_total, invoice.invoice_currency) }}
+                  {{ formatCurrency(invoice.total, invoice.currency) }}
                 </div>
                 <div>
                   Teilbezahlt:
-                  {{ formatCurrency(invoice.invoice_paid_amount, invoice.invoice_currency) }}
+                  {{ formatCurrency(invoice.paid_amount, invoice.currency) }}
                 </div>
                 <div>
                   Offener Betrag:
-                  {{ formatCurrency(invoice.invoice_outstanding, invoice.invoice_currency) }}
+                  {{ formatCurrency((invoice.total - invoice.paid_amount), invoice.currency) }}
                 </div>
               </label>
             </div>
@@ -127,7 +127,7 @@
         </div>
 
         <!-- Zahlungsübersicht -->
-        <div v-if="invoice" class="form-section">
+        <!-- <div v-if="invoice" class="form-section">
           <div class="form-section-title">📊 Zahlungsübersicht</div>
           <div class="form-group">
             <div>
@@ -150,7 +150,7 @@
               <span v-else>Vollständig bezahlt</span>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- Aktionen -->
         <button class="preview-btn" @click="saveDocument">✅ Zahlung erfassen</button>
@@ -190,15 +190,15 @@ export default {
         const result = await window.api.getDocumentById(id, 'invoices')
         if (!result.rows) return
         this.invoice = {
-          invoice_id: result.rows.id,
-          invoice_customer_id: JSON.parse(result.rows.customer).id,
-          invoice_date: result.rows.date,
-          invoice_due_date: result.rows.due_date,
-          invoice_currency: result.rows.currency,
-          invoice_total: JSON.parse(result.rows.summary).total,
-          invoice_paid_amount: JSON.parse(result.rows.summary).paid_amount,
-          invoice_outstanding: JSON.parse(result.rows.summary).outstanding
+          id: result.rows[0].invoice_id,
+          customer_id: result.rows[0].invoice_customer_id,
+          date: result.rows[0].invoice_date,
+          due_date: result.rows[0].due_date,
+          currency: result.rows[0].currency,
+          paid_amount: result.rows[0].amount,
+          total: result.rows[0].total 
         }
+        console.log(this.invoice)
       } catch (error) {
         console.error(error)
       }

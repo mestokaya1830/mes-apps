@@ -3,7 +3,7 @@
     <div v-if="customer" class="editor-panel">
       <div class="editor-header-block">
         <div class="editor-title">
-          📝{{ title }} {{ formatCustomerId(customer.customer_id) }}
+          📝{{ title }} {{ formatCustomerId(customer.id) }}
           <div class="editor-subtitle">Bearbeiten Sie die Kundendaten</div>
         </div>
         <router-link to="/customers" class="add-btn">
@@ -27,7 +27,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Unternehmenstyp</label>
-            <input v-model="customer.customer_type" type="text" class="form-input" />
+            <input v-model="customer.company_type" type="text" class="form-input" />
           </div>
           <div class="form-group">
             <label class="form-label">Firmenname</label>
@@ -91,10 +91,10 @@
         </div>
         <div class="form-group">
           <label class="form-label">Erstellungsdatum</label>
-          <input v-model="customer.customer_created_at" type="text" class="form-input" />
+          <input v-model="customer.created_at" type="text" class="form-input" />
         </div>
       </div>
-      <button type="submit" class="form-btn">Update</button>
+      <button type="button" class="form-btn" @click="updateCustomer">Aktualisierung</button>
     </div>
   </div>
 </template>
@@ -109,13 +109,13 @@ export default {
     }
   },
   mounted() {
-    this.customerDetails()
+    this.getCustomer()
   },
   methods: {
-    async customerDetails() {
+    async getCustomer() {
       try {
-        console.log(this.$route.params.id)
-        const result = await window.api.customerDetails(this.$route.params.id)
+        const result = await window.api.getCustomerById(this.$route.params.id)
+        if (!result.success) return
         this.customer = result.rows
       } catch (error) {
         console.error(error)
@@ -123,13 +123,12 @@ export default {
     },
     async updateCustomer() {
       try {
-        const data = {
-          id: this.$route.params.id,
-          customer: JSON.parse(JSON.stringify(this.customer))
-        }
-        const result = await window.api.updateCustomer(data)
+        const result = await window.api.updateCustomerById(
+          this.$route.params.id,
+          JSON.parse(JSON.stringify(this.customer))
+        )
         if (result.success) {
-          this.$router.push('/customers/index')
+          this.$router.push('/customers')
         }
       } catch (error) {
         console.error(error)

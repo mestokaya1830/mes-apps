@@ -24,15 +24,12 @@ try {
   console.error(err.message)
 }
 
+// db.exec('PRAGMA foreign_keys = ON;')//default off
+
 // try {
-//   db.prepare('DROP TABLE payments').run()
+//   db.prepare('DROP TABLE orders').run()
 // } catch (err) {
 //   console.error(err.message)
 // }
 
-// db.exec(`
-//   CREATE INDEX IF NOT EXISTS idx_invoices_id ON invoices(invoice_id);
-//   CREATE INDEX IF NOT EXISTS idx_invoices_active ON invoices(invoice_is_active);
-//   CREATE INDEX IF NOT EXISTS idx_invoices_created_at ON invoices(invoice_created_at DESC);
-// `)
 

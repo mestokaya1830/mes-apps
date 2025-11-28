@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 contextBridge.exposeInMainWorld('api', {
   controlWindow: (data) => ipcRenderer.invoke('control-window', data),
+
   checkRegister: async (data) => ipcRenderer.invoke('check-register', data),
   register: async (image, data) => ipcRenderer.invoke('register', image, data),
   login: async (data) => ipcRenderer.invoke('login', data),
@@ -9,12 +10,15 @@ contextBridge.exposeInMainWorld('api', {
   resetPassword: async (data) => ipcRenderer.invoke('reset-password', data),
   getUser: async (data) => ipcRenderer.invoke('get-user', data),
   updateUser: async (image, data) => ipcRenderer.invoke('update-user', image, data),
+
+  getDashboard: async (data) => ipcRenderer.invoke('get-dashboard', data),
+
+  addCustomer: async (data) => ipcRenderer.invoke('add-customer', data),
   getCustomers: async (data) => ipcRenderer.invoke('get-customers', data),
-  getCustomerById: async (data) => ipcRenderer.invoke('get-customer-by-id', data),
-  customerDetails: async (id) => ipcRenderer.invoke('customer-details', id),
-  addCustomer: async (id) => ipcRenderer.invoke('add-customer', id),
-  updateCustomer: async (data) => ipcRenderer.invoke('update-customer', data),
-  deleteCustomer: async (data) => ipcRenderer.invoke('delete-customer', data),
+  getCustomerById: async (data, id) => ipcRenderer.invoke('get-customer-by-id', data, id),
+  updateCustomerById: async (data, id) => ipcRenderer.invoke('update-customer-by-id', id, data),
+  deleteCustomerById: async (data) => ipcRenderer.invoke('delete-customer-by-id', data),
+  
   saveDocument: async (id, tableName, data) =>
     ipcRenderer.invoke('save-document', id, tableName, data),
   getDocument: async (data, tableName) => ipcRenderer.invoke('get-document', data, tableName),

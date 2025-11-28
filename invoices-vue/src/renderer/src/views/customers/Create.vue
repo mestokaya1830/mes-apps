@@ -25,9 +25,9 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Unternehmenstyp <span class="stars">*</span></label>
-            <select v-model="customer.customer_type" class="form-input">
+            <select v-model="customer.company_type" class="form-input">
               <option disabled value="">Wähle Unternehmenstyp</option>
-              <option v-for="item in companies" :key="item.value" :value="item">
+              <option v-for="item in companies" :key="item.value" :value="item.value">
                 {{ item.label }}
               </option>
             </select>
@@ -97,10 +97,7 @@
           <p class="font-medium">❌ Error: {{ errorMessage }}</p>
         </div>
         <div class="flex justify-center pt-6">
-          <button type="submit" :disabled="isSubmitting" class="form-btn">
-            <span v-if="isSubmitting">Saving...</span>
-            <span v-else>Save Customer</span>
-          </button>
+          <button type="button" @click="saveCustomer" class="form-btn">Speichern</button>
         </div>
       </div>
     </div>
@@ -109,7 +106,7 @@
 
 <script>
 export default {
-  name: 'Kundenregistrierungsformular',
+  name: 'CustomerRegistrationForm',
   data() {
     return {
       title: 'Kundenregistrierungsformular',
@@ -117,7 +114,7 @@ export default {
       showSuccess: false,
       errorMessage: '',
       customer: {
-        customer_type: '',
+        company_type: '',
         company_name: '',
         first_name: '',
         last_name: '',
@@ -177,15 +174,18 @@ export default {
   },
   methods: {
     async saveCustomer() {
-      this.isSubmitting = true
       this.showSuccess = false
       this.errorMessage = ''
 
       try {
+        console.log(this.customer)
         const data = JSON.parse(JSON.stringify(this.customer))
         const result = await window.api.addCustomer(data)
         if (result.success) {
           this.showSuccess = true
+          setTimeout(() => {
+            this.$router.push('/customers')
+          }, 1000)
         }
       } catch (error) {
         this.errorMessage = error.message

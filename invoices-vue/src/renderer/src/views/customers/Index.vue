@@ -1,112 +1,114 @@
 <template>
-  <div class="editor-panel">
-    <!-- Header Section -->
-    <div class="editor-header-block">
-      <div>
-        <h1 class="title">{{ title }} {{ customers.length }}</h1>
-        <p class="subtitle">Verwalten Sie alle Ihre Kunden</p>
+  <div>
+    <div v-if="customers" class="list-panel">
+      <!-- Header Section -->
+      <div class="editor-header-block">
+        <div>
+          <h1 class="title">{{ title }} {{ customers.length }}</h1>
+          <p class="subtitle">Verwalten Sie alle Ihre Kunden</p>
+        </div>
+        <router-link to="/customers/create" class="add-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Neue Kunden erstellen</span>
+        </router-link>
       </div>
-      <router-link to="/customers/create" class="add-btn">
+
+      <div class="filter-container">
+        <input v-model="search_box" type="search" @input="searchCustomer()" placeholder="Suce..." />
+        <input v-model="date_box_start" type="date" @input="dateFilter()" />
+        <input v-model="date_box_end" type="date" @input="dateFilter()" />
+        <div @click="sorting('id')">&#8645;</div>
+      </div>
+      <!-- Customer Cards -->
+      <div class="customer-grid">
+        <div v-for="item in customers" :key="item.id" class="customer-card">
+          <div class="card-header">
+            <div class="customer-avatar">
+              {{ getInitials(item.first_name, item.last_name) }}
+            </div>
+            <div class="customer-info">
+              <h3 class="customer-name">{{ item.first_name }} {{ item.last_name }}</h3>
+              <span class="customer-type-badge">{{ item.company_type || 'Standard' }}</span>
+            </div>
+            <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+              {{ item.is_active ? 'Active' : 'Inactive' }}
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <router-link :to="'/customers/details/' + item.id" class="action-btn details-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Details
+            </router-link>
+            <button class="action-btn delete-btn" @click="deleteCustomer(item.id)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                ></path>
+              </svg>
+              Löschen
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-if="customers.length === 0" class="empty-state">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="64"
+          height="64"
+          viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
+          stroke-width="1.5"
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
         </svg>
-        <span>Neue Kunden erstellen</span>
-      </router-link>
-    </div>
-
-    <div class="filter-container">
-      <input v-model="search_box" type="search" @input="searchCustomer()" placeholder="Suce..." />
-      <input v-model="date_box_start" type="date" @input="dateFilter()" />
-      <input v-model="date_box_end" type="date" @input="dateFilter()" />
-      <div @click="sorting('id')">&#8645;</div>
-    </div>
-    <!-- Customer Cards -->
-    <div class="customer-grid">
-      <div v-for="item in customers" :key="item.customer_id" class="customer-card">
-        <div class="card-header">
-          <div class="customer-avatar">
-            {{ getInitials(item.first_name, item.last_name) }}
-          </div>
-          <div class="customer-info">
-            <h3 class="customer-name">{{ item.first_name }} {{ item.last_name }}</h3>
-            <span class="customer-type-badge">{{ item.customer_type || 'Standard' }}</span>
-          </div>
-          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
-            {{ item.is_active ? 'Active' : 'Inactive' }}
-          </div>
-        </div>
-
-        <div class="card-actions">
-          <router-link :to="'/customers/details/' + item.customer_id" class="action-btn details-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            Details
-          </router-link>
-          <button class="action-btn delete-btn" @click="deleteCustomer(item.customer_id)">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path
-                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-              ></path>
-            </svg>
-            Löschen
-          </button>
-        </div>
+        <h3>Keine Kunden</h3>
+        <p>Füge Kunden hinzu, um sie zu verwalten.</p>
       </div>
-    </div>
-
-    <!-- Empty State -->
-    <div v-if="customers.length === 0" class="empty-state">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
-      <h3>Keine Kunden</h3>
-      <p>Füge Kunden hinzu, um sie zu verwalten.</p>
     </div>
   </div>
 </template>
@@ -118,7 +120,6 @@ export default {
     return {
       title: 'Kunden',
       customers: [],
-      search: [],
       search_box: '',
       date_box_start: '',
       date_box_end: '',
@@ -132,16 +133,16 @@ export default {
     async getCustomers() {
       try {
         const result = await window.api.getCustomers()
-        this.customers = result.customers
-        console.log(this.customers)
+        if (!result.success) return
+        this.customers = result.rows
       } catch (error) {
         console.error(error)
       }
     },
     async deleteCustomer(id) {
-      if (confirm('Are you sure you want to delete this customer?')) {
+      if (confirm('Sind Sie sicher, dass Sie diesen Kunden löschen möchten? ✅')) {
         try {
-          const result = await window.api.deleteCustomer(id)
+          const result = await window.api.deleteCustomerById(id)
           if (result.success) {
             this.getCustomers()
           }
@@ -157,26 +158,11 @@ export default {
     },
     searchCustomer() {
       if (this.search_box && this.search_box.trim() !== '') {
-        this.customers = this.search.filter(
-          (item) =>
-            item.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            item.last_name.toLowerCase().includes(this.search_box.toLowerCase())
-        )
       } else {
         this.customers = this.search
       }
     },
-    dateFilter() {
-      if (this.date_box_start && this.date_box_end) {
-        this.customers = this.search.filter(
-          (item) => item.date >= this.date_box_start && item.date <= this.date_box_end
-        )
-      } else if (this.date_box_start && !this.date_box_end) {
-        this.customers = this.search.filter((item) => item.date == this.date_box_start)
-      } else {
-        this.customers = this.search
-      }
-    },
+    dateFilter() {},
     sorting(key) {
       if (!key) return
       this.customers.sort((a, b) => {
@@ -190,14 +176,14 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  max-width: 100%;
+.list-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   margin: 0 auto;
   padding: 40px 24px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
-  /* min-height: 100vh; */
 }
-
 /* Header */
 .editor-header-block {
   display: flex;

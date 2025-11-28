@@ -1,6 +1,5 @@
 <template>
   <div class="editor-panel">
-
     <!-- Header -->
     <div class="editor-header-block">
       <div>
@@ -10,67 +9,68 @@
     </div>
 
     <!-- Dashboard Cards -->
-    <div class="customer-grid">
+    <div v-if="tablesCount" class="customer-grid">
+      <!-- customers Card -->
+      <div class="customer-card" @click="goTo('customers')" style="cursor: pointer">
+        <div class="card-header">
+          <div class="customer-avatar">📦</div>
+          <div class="customer-info">
+            <h3 class="customer-name">Customers</h3>
+            <span class="customer-type-badge">Gesamt: {{ tablesCount.customers }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Rechnungen Card -->
-      <div class="customer-card" @click="goTo('invoices')" style="cursor:pointer;">
+      <div class="customer-card" @click="goTo('invoices')" style="cursor: pointer">
         <div class="card-header">
           <div class="customer-avatar">💶</div>
           <div class="customer-info">
             <h3 class="customer-name">Rechnungen</h3>
-            <span class="customer-type-badge">Gesamt: {{ totalInvoices }}</span>
+            <span class="customer-type-badge">Gesamt: {{ tablesCount.invoices }}</span>
           </div>
         </div>
       </div>
 
       <!-- Angebote Card -->
-      <div class="customer-card" @click="goTo('offers')" style="cursor:pointer;">
+      <div class="customer-card" @click="goTo('offers')" style="cursor: pointer">
         <div class="card-header">
           <div class="customer-avatar">📄</div>
           <div class="customer-info">
             <h3 class="customer-name">Angebote</h3>
-            <span class="customer-type-badge">Gesamt: {{ totalOffers }}</span>
+            <span class="customer-type-badge">Gesamt: {{ tablesCount.offers }}</span>
           </div>
         </div>
       </div>
 
       <!-- Aufträge Card -->
-      <div class="customer-card" @click="goTo('orders')" style="cursor:pointer;">
+      <div class="customer-card" @click="goTo('orders')" style="cursor: pointer">
         <div class="card-header">
           <div class="customer-avatar">📦</div>
           <div class="customer-info">
             <h3 class="customer-name">Aufträge</h3>
-            <span class="customer-type-badge">Gesamt: {{ totalOrders }}</span>
+            <span class="customer-type-badge">Gesamt: {{ tablesCount.orders }}</span>
           </div>
         </div>
       </div>
 
       <!-- Deliveries Card -->
-      <div class="customer-card" @click="goTo('deliveries')" style="cursor:pointer;">
+      <div class="customer-card" @click="goTo('deliveries')" style="cursor: pointer">
         <div class="card-header">
           <div class="customer-avatar">📦</div>
           <div class="customer-info">
             <h3 class="customer-name">Deleiveries</h3>
-            <span class="customer-type-badge">Gesamt: {{ totalDeliveries }}</span>
+            <span class="customer-type-badge">Gesamt: {{ tablesCount.deliveries }}</span>
           </div>
         </div>
       </div>
       <!-- remeinders Card -->
-      <div class="customer-card" @click="goTo('remeinders')" style="cursor:pointer;">
+      <div class="customer-card" @click="goTo('remeinders')" style="cursor: pointer">
         <div class="card-header">
           <div class="customer-avatar">📦</div>
           <div class="customer-info">
-            <h3 class="customer-name">Remeinders</h3>
-            <span class="customer-type-badge">Gesamt: {{ totalRemeinders }}</span>
-          </div>
-        </div>
-      </div>
-      <!-- customers Card -->
-      <div class="customer-card" @click="goTo('customers')" style="cursor:pointer;">
-        <div class="card-header">
-          <div class="customer-avatar">📦</div>
-          <div class="customer-info">
-            <h3 class="customer-name">Customers</h3>
-            <span class="customer-type-badge">Gesamt: {{ totalCustomers }}</span>
+            <h3 class="customer-name">Reminders</h3>
+            <span class="customer-type-badge">Gesamt: {{ tablesCount.remeinders }}</span>
           </div>
         </div>
       </div>
@@ -83,33 +83,18 @@ export default {
   data() {
     return {
       title: 'Dashboard',
-      totalInvoices: 0,
-      totalOffers: 0,
-      totalOrders: 0,
-      totalDeliveries: 0,
-      totalRemeinders: 0,
-      totalCustomers: 0
+      tablesCount: null
     }
   },
   mounted() {
-    this.loadDashboardData()
+    this.getDashboard()
   },
   methods: {
-    async loadDashboardData() {
+    async getDashboard() {
       try {
-        const invoices = await window.api.getDocument('invoices')
-        const offers = await window.api.getDocument('offers')
-        const orders = await window.api.getDocument('orders')
-        const deliveries = await window.api.getDocument('deliveries')
-        const remeinders = await window.api.getDocument('remeinders')
-        const customers = await window.api.getDocument('customers')
-
-        this.totalInvoices = invoices.success ? invoices.rows.length : 0
-        this.totalOffers = offers.success ? offers.rows.length : 0
-        this.totalOrders = orders.success ? orders.rows.length : 0
-        this.totalDeliveries = deliveries.success ? deliveries.rows.length : 0
-        this.totalRemeinders = remeinders.success ? remeinders.rows.length : 0
-        this.totalCustomers = customers.success ? customers.rows.length : 0
+        const result = await window.api.getDashboard()
+        if (!result.success) return
+        this.tablesCount = result.rows
       } catch (error) {
         console.error(error)
       }
@@ -166,7 +151,7 @@ export default {
   background: white;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
   display: flex;
@@ -176,7 +161,7 @@ export default {
 
 .customer-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -243,7 +228,7 @@ export default {
   border-radius: 16px;
   background: white;
   border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
@@ -252,7 +237,7 @@ export default {
 
 .customer-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 /* TAM EKRAN (>1600px): alt alta, tam genişlik */
@@ -262,8 +247,7 @@ export default {
   }
 
   .customer-card {
-    width: 100%;  /* Tam genişlik */
+    width: 100%; /* Tam genişlik */
   }
 }
-
 </style>
