@@ -91,8 +91,9 @@ db.exec(`CREATE TABLE IF NOT EXISTS invoices (
     is_eu_delivery INTEGER NOT NULL,
     positions TEXT NOT NULL,
     net_total INTEGER NOT NULL,
-    vat_amount INTEGER NOT NULL,
-    total INTEGER NOT NULL,
+    vat_total INTEGER NOT NULL,
+    gross_total INTEGER NOT NULL,
+    total_after_discount INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );`)

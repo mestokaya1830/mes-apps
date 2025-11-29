@@ -61,24 +61,20 @@ export default {
       this.clearStore()
     },
     async saveInvoice() {
-      if (this.tableName && this.tableData) {
-        const result = await window.api.addInvoice(
-          this.tableName,
-          JSON.parse(JSON.stringify(this.tableData))
-        )
-        if (result.success) {
-          this.clearStore()
-          this.$router.push(`/${this.tableName}`)
-        }
+      if (this.tableData) {
+        const result = await window.api.addInvoice(JSON.parse(JSON.stringify(this.tableData)))
+        if (!result.success) return
+        this.clearStore()
+        this.$router.push('/invoices')
       }
     },
     printDocument() {
-      window.print()
       this.clearStore()
+      window.print()
     },
     sendEmail() {
-      console.log(this.email)
       this.clearStore()
+      console.log(this.email)
     },
     async clearStore() {
       try {

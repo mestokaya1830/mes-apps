@@ -546,6 +546,7 @@ ipcMain.handle('search-customer', async (data, term) => {
 })
 //invoices
 ipcMain.handle('add-invoice', async (event, data) => {
+  console.log(data)
   if (!data) {
     return { success: false, message: 'No data provided' }
   }
@@ -554,9 +555,9 @@ ipcMain.handle('add-invoice', async (event, data) => {
       .prepare(
         `
           INSERT INTO invoices (
-            invoice_customer_id,
-            invoice_is_active,
-            invoice_date,
+            customer_id,
+            is_active,
+            date,
             due_date,
             service_date,
             currency,
@@ -570,15 +571,16 @@ ipcMain.handle('add-invoice', async (event, data) => {
             is_reverse_charge,
             is_eu_delivery,
             positions,
-            subtotal,
-            vat_amount,
-            total,
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            net_total,
+            vat_total,
+            gross_total
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
       )
       .run(
-        data.invoice_is_active,
-        data.invoice_date,
+        data.customer_id,
+        data.is_active,
+        data.date,
         data.due_date,
         data.currency,
         data.service_date,
@@ -588,13 +590,13 @@ ipcMain.handle('add-invoice', async (event, data) => {
         data.early_payment_percentage,
         data.early_payment_days,
         data.total_after_discount,
-        data.is_small_company,
-        data.is_reverse_charge,
-        data.is_eu_delivery,
+        data.is_small_company ? 1 : 0,
+        data.is_reverse_charge ? 1 : 0,
+        data.is_eu_delivery ? 1 : 0,
         JSON.stringify(data.positions || []),
-        data.subtotal,
-        data.vat_amount,
-        data.total
+        data.net_total,
+        data.vat_total,
+        data.gross_total
       )
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {

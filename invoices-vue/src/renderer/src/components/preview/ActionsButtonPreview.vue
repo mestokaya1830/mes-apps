@@ -65,14 +65,15 @@ export default {
       this.clearStore()
     },
     async saveDocument() {
-      if (this.tableName && this.tableData) {
+      if (this.tableData) {
+        // console.log(this.tableData)
         const result = await window.api.addInvoice(
           this.tableName,
           JSON.parse(JSON.stringify(this.tableData))
         )
         if (result.success) {
-          this.clearStore()
-          this.$router.push(`/${this.tableName}`)
+          // this.clearStore()
+          this.$router.push('/invoices')
         }
       }
     },

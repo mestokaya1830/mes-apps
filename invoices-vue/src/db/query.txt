@@ -1,15 +1,18 @@
+//get all tables--------------------------------------------------------------
 try {
   db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
 } catch (err) {
   console.error(err.message)
 }
 
+//drop table-----------------------------------------------------------------
 try {
   db.prepare('DROP TABLE orders').run()
 } catch (err) {
   console.error(err.message)
 }
 
+//delete table-------------------------------------------------------------
 try {
   db.prepare('DELETE FROM users').run() // veya DROP TABLE users için: 'DROP TABLE users'
 } catch (err) {
@@ -17,12 +20,14 @@ try {
 }
 
 
+//insert into table---------------------------------------------------------------------------
 try {
   db.prepare('INSERT INTO users (email, password) VALUES (?, ?)').run('mesto@outlook.com', '909090')
 } catch (err) {
   console.error(err.message)
 }
 
+//get table data--------------------------------------------------------------------------
 try {
   const users = db.prepare('SELECT * FROM users').all()
   console.log('Users:', users)
@@ -31,6 +36,7 @@ try {
 }
 
 
+//get table data by email-------------------------------------------------------
 try {
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get('mesto@outlook.com')
   console.log('User:', user)
@@ -39,6 +45,7 @@ try {
 }
 
 
+//update table--------------------------------------------------------------------
 try {
   const user = db.prepare('UPDATE users SET email = ? WHERE id = ?').run('mesto@outlook.com', 1)
   console.log('User:', user)
@@ -47,13 +54,14 @@ try {
 }
 
 
+//get table fields
 try {
-  const user = db.prepare('DELETE FROM users WHERE id = ?').run(1)
-  console.log('User:', user)
+  const result = db.prepare(`PRAGMA table_info(invoices);`).all()
+  const fields = result.map(r => r.name)
+  console.log(fields)
 } catch (err) {
   console.error(err.message)
 }
-
 -------------------------------------------------------------------------------------
 //add column
 try {
