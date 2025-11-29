@@ -13,7 +13,7 @@
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-group">
           <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
-          <input v-model="id" type="text" class="form-input" readonly />
+          <input v-model="invoice.id" type="text" class="form-input" readonly />
           <small class="form-hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
@@ -311,7 +311,7 @@
             placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
           ></textarea>
         </div>
-        <div class="positions-total summary">
+        <div v-if="invoice.positions" class="positions-total summary">
           <div class="positions-total-item">
             <label class="form-label">Net Total(€)</label>
             <div class="form-result-item">
@@ -331,7 +331,7 @@
           <div class="positions-total-item">
             <label class="form-label">Rabatt(€)</label>
             <div class="form-result-item">
-              {{ summary.discount }}
+              {{ summary.early_payment_discount }}
             </div>
           </div>
           <div class="positions-total-item">
@@ -357,9 +357,9 @@ export default {
     return {
       title: 'Rechnung erstellen',
       customer: null,
-      id: 1, //will come from db
       early_payment_input: false,
       invoice: {
+        id: 1, //will come from db
         customer_id: 1,
         is_active: 1,
         date: '',
@@ -384,6 +384,7 @@ export default {
   },
   computed: {
     summary() {
+      if (!this.invoice.positions) return
       const net_total = this.invoice.positions.reduce((sum, p) => sum + p.quantity * p.price, 0)
       const vat_total = this.invoice.positions.reduce(
         (sum, p) => sum + (p.quantity * p.price * p.vat) / 100,
@@ -391,16 +392,16 @@ export default {
       )
       const gross_total = net_total + vat_total
 
-      let discount = 0
+      let early_payment_discount = 0
       if (this.early_payment_input) {
-        discount = (gross_total * this.invoice.early_payment_percentage) / 100
+        early_payment_discount = (gross_total * this.invoice.early_payment_percentage) / 100
       }
       return {
         net_total,
         vat_total,
         gross_total,
-        discount,
-        total_after_discount: gross_total - discount
+        early_payment_discount,
+        total_after_discount: gross_total - early_payment_discount
       }
     }
   },
@@ -409,9 +410,17 @@ export default {
     this.getStore()
   },
   methods: {
-    getStore() {
+    async getStore() {
+      // await store.clearStore('invoice')
+      if (this.$route.query.id) return
       if (!store.state.invoice) return
-      this.invoice = JSON.parse(JSON.stringify(store.state.invoice))
+      this.invoice = {
+        ...JSON.parse(JSON.stringify(store.state.invoice.invoice))
+      }
+      this.customer = {
+        ...JSON.parse(JSON.stringify(store.state.invoice.customer))
+      }
+      console.log('create', store.state.invoice)
     },
     async getCustomer() {
       if (!this.$route.query.id) return
@@ -529,13 +538,20 @@ export default {
       console.time('commit')
       this.setDueDate()
       this.invoice.customer_id = this.customer.id
+        ? this.customer.id
+        : store.state.invoice.customer_id
       this.invoice.net_total = this.summary.net_total
       this.invoice.vat_total = this.summary.vat_total
       this.invoice.gross_total = this.summary.gross_total
-      this.invoice.discount = this.summary.discount
+      this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.total_after_discount = this.summary.total_after_discount
+
+      const data = {
+        invoice: this.invoice,
+        customer: this.customer
+      }
       if (!this.checkServiceDateInput()) return
-      await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
+      await store.setStore('invoice', JSON.parse(JSON.stringify(data)))
       this.$router.push('/invoices/preview')
       console.timeEnd('commit')
     }
