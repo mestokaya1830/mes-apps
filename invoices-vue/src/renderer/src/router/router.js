@@ -13,7 +13,6 @@ const routes = [
   },
 
   //user
-
   {
     path: '/login',
     name: 'Login',
@@ -27,16 +26,16 @@ const routes = [
     meta: { title: 'Register' }
   },
   {
-    path: '/email-verfication',
-    name: 'email-verfication',
-    component: () => import('../views/auth/Email-Verfication.vue'),
-    meta: { title: 'Email Verfication' }
-  },
-  {
     path: '/reset-password',
     name: 'reset-password',
     component: () => import('../views/auth/Reset-Password.vue'),
     meta: { title: 'Reset Password' }
+  },
+  {
+    path: '/email-verfication',
+    name: 'email-verfication',
+    component: () => import('../views/auth/Email-Verfication.vue'),
+    meta: { title: 'Email Verfication' }
   },
   {
     path: '/profile',
@@ -51,8 +50,33 @@ const routes = [
     meta: { title: 'Edit User', auth: true }
   },
 
-  //invoices
+  //customers
+  {
+    path: '/customers',
+    name: 'customers',
+    component: () => import('../views/customers/Index.vue'),
+    meta: { title: 'Customers', auth: true }
+  },
+  {
+    path: '/customers/create',
+    name: 'customers-create',
+    component: () => import('../views/customers/Create.vue'),
+    meta: { title: 'Add New Customer', auth: true }
+  },
+  {
+    path: '/customers/details/:id',
+    name: 'customers-details',
+    component: () => import('../views/customers/Details.vue'),
+    meta: { title: 'Customer Details', auth: true }
+  },
+  {
+    path: '/customers/edit/:id',
+    name: 'customers-edit',
+    component: () => import('../views/customers/Edit.vue'),
+    meta: { title: 'Customer Edit', auth: true }
+  },
 
+  //invoices
   {
     path: '/invoices',
     name: 'invoices',
@@ -204,27 +228,6 @@ const routes = [
     name: 'deliveries-preview',
     component: () => import('../views/deliveries/Preview.vue'),
     meta: { title: 'Deliveries Preview', auth: true }
-  },
-
-  //customers
-
-  {
-    path: '/customers',
-    name: 'customers',
-    component: () => import('../views/customers/Index.vue'),
-    meta: { title: 'Customers', auth: true }
-  },
-  {
-    path: '/customers/create',
-    name: 'customers-create',
-    component: () => import('../views/customers/Create.vue'),
-    meta: { title: 'Add New Customer', auth: true }
-  },
-  {
-    path: '/customers/details/:id',
-    name: 'customers-details',
-    component: () => import('../views/customers/Details.vue'),
-    meta: { title: 'Customer Details', auth: true }
   },
 
   //about

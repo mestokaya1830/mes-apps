@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="editor-panel">
+    <div v-if="invoice" class="editor-panel">
       <div class="editor-header">
         <div class="editor-title">📝{{ title }}</div>
         <div class="editor-subtitle">
@@ -41,39 +41,54 @@
         </div>
       </div>
 
-      <div v-if="customer" class="form-section">
+      <div v-if="invoice.customer" class="form-section">
         <div class="form-section-title">👤 Kundendaten</div>
-        <div v-if="customer?.id" class="customer-details">
+        <div v-if="invoice.customer?.id" class="customer-details">
           <div class="form-group">
             <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-            <input v-model="customer.id" type="text" class="form-input" readonly />
+            <input v-model="invoice.customer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Firmname <span class="stars">*</span></label>
-            <input v-model="customer.company_name" type="text" class="form-input" readonly />
+            <input
+              v-model="invoice.customer.company_name"
+              type="text"
+              class="form-input"
+              readonly
+            />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname <span class="stars">*</span></label>
-              <input v-model="customer.first_name" type="text" class="form-input" readonly />
+              <input
+                v-model="invoice.customer.first_name"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Nachname <span class="stars">*</span></label>
-              <input v-model="customer.last_name" type="text" class="form-input" readonly />
+              <input v-model="invoice.customer.last_name" type="text" class="form-input" readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Adresse <span class="stars">*</span></label>
-            <input v-model="customer.address" type="text" class="form-input" readonly />
+            <input v-model="invoice.customer.address" type="text" class="form-input" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">PLZ <span class="stars">*</span></label>
-              <input v-model="customer.postal_code" type="text" class="form-input" readonly />
+              <input
+                v-model="invoice.customer.postal_code"
+                type="text"
+                class="form-input"
+                readonly
+              />
             </div>
             <div class="form-group">
               <label class="form-label">Stadt <span class="stars">*</span></label>
-              <input v-model="customer.city" type="text" class="form-input" readonly />
+              <input v-model="invoice.customer.city" type="text" class="form-input" readonly />
             </div>
           </div>
         </div>
@@ -352,15 +367,14 @@
 import store from '../../store/store.js'
 export default {
   name: 'Createinvoice',
-  inject: ['validateServicePeriod'],
+  inject: ['formatInvoiceId', 'validateServicePeriod'],
   data() {
     return {
       title: 'Rechnung erstellen',
-      customer: null,
       early_payment_input: false,
       invoice: {
-        id: 1, //will come from db
-        customer_id: 1,
+        id: 0, //will come from db
+        customer: null,
         is_active: 1,
         date: '',
         due_date: '',
@@ -414,12 +428,7 @@ export default {
       // await store.clearStore('invoice')
       if (this.$route.query.id) return
       if (!store.state.invoice) return
-      this.invoice = {
-        ...JSON.parse(JSON.stringify(store.state.invoice.invoice))
-      }
-      this.customer = {
-        ...JSON.parse(JSON.stringify(store.state.invoice.customer))
-      }
+
       console.log('create', store.state.invoice)
     },
     async getCustomer() {
@@ -427,7 +436,8 @@ export default {
       try {
         const result = await window.api.getCustomerById(this.$route.query.id)
         if (!result.success) return
-        this.customer = result.rows
+        this.invoice.id = result.data.invoice_id.id
+        this.invoice.customer = result.data.rows
       } catch (error) {
         console.error(error)
       }
@@ -537,21 +547,15 @@ export default {
       if (!this.invoice) return
       console.time('commit')
       this.setDueDate()
-      this.invoice.customer_id = this.customer.id
-        ? this.customer.id
-        : store.state.invoice.customer_id
       this.invoice.net_total = this.summary.net_total
       this.invoice.vat_total = this.summary.vat_total
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.total_after_discount = this.summary.total_after_discount
-
-      const data = {
-        invoice: this.invoice,
-        customer: this.customer
-      }
+      const data = JSON.parse(JSON.stringify(this.invoice))
       if (!this.checkServiceDateInput()) return
-      await store.setStore('invoice', JSON.parse(JSON.stringify(data)))
+
+      await store.setStore('invoice', data)
       this.$router.push('/invoices/preview')
       console.timeEnd('commit')
     }

@@ -10,13 +10,13 @@
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ invoice.company_name }}
+              {{ invoice.customer.company_name }}
             </div>
-            <div class="meta-label">{{ invoice.address }}</div>
+            <div class="meta-label">{{ invoice.customer.address }}</div>
             <div class="meta-label">
-              {{ invoice.postal_code }}
-              {{ invoice.city }}<br />
-              {{ invoice.country }}
+              {{ invoice.customer.postal_code }}
+              {{ invoice.customer.city }}<br />
+              {{ invoice.customer.country }}
             </div>
           </div>
 
@@ -26,18 +26,18 @@
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatRechnungId(invoice.invoice_id) }}</span>
+              <span class="meta-value">{{ formatInvoiceId(invoice.id) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(invoice.invoice_date) }}</span>
+              <span class="meta-value">{{ formatDate(invoice.date) }}</span>
             </div>
 
             <!-- Service date -->
             <div v-if="invoice.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(invoice.service_date) }}</span>
+              <span class="meta-value">{{ formatDate(invoice.date) }}</span>
             </div>
 
             <div class="meta-row">
@@ -115,20 +115,22 @@
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(invoice.subtotal, invoice.currency)
+              formatCurrency(invoice.net_total, invoice.currency)
             }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(invoice.vat_amount, invoice.currency)
+              formatCurrency(invoice.vat_total, invoice.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{ formatCurrency(invoice.total, invoice.currency) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoice.gross_total, invoice.currency)
+            }}</span>
           </div>
 
           <!-- <div
@@ -181,25 +183,27 @@
             <div v-if="invoice.early_payment_days" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
               {{ invoice.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
-              {{ invoice.early_payment_days }} Tagen (bis
-              {{ addDays(invoice.date, invoice.early_payment_days) }})
+              {{ invoice.early_payment_days }} Tagen (bis {{ invoice.due_date }})
               <div class="skonto-amount">
-                Skonto-Betrag:
-                {{ formatCurrency(calculateEarlyPayment(), invoice.currency) }}
-                = Zahlbetrag:
-                {{ formatCurrency(calculateAmountWithEarlyPayment(), invoice.currency) }}
+                <span
+                  >Skonto-Betrag:
+                  {{ formatCurrency(invoice.early_payment_discount, invoice.currency) }}</span
+                >
+                <span
+                  >Zahlbetrag:
+                  {{ formatCurrency(invoice.total_after_discount, invoice.currency) }}</span
+                >
               </div>
             </div>
 
-            <!-- <div v-if="invoice.terms.payment_conditions" class="payment-term-item">
+            <div v-if="invoice.payment_conditions" class="payment-term-item">
               <strong>Zusätzliche Bedingungen:</strong>
               <div class="payment-conditions-text">
-                {{ invoice.terms.payment_conditions }}
+                {{ invoice.payment_conditions }}
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
-
         <!-- Contact Person -->
         <ContactPersonPreview :contactData="auth.contact_person" />
 
@@ -266,12 +270,7 @@
           </div> -->
         </div>
       </div>
-      <ActionsButtonPreview
-        v-if="invoice.customer"
-        tableName="invoices"
-        :tableData="invoice"
-        sourcePage="details"
-      />
+      <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
   </div>
@@ -292,7 +291,7 @@ export default {
     ActionsButtonPreview,
     FooterSidePreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatCurrency'],
+  inject: ['formatInvoiceId', 'formatCustomerId', 'formatDate', 'formatCurrency'],
   data() {
     return {
       title: 'Rechnung',
@@ -307,12 +306,15 @@ export default {
   },
   methods: {
     async getInvoice() {
-      const id = this.$route.params.id
+      if (!this.$route.params.id) return
       try {
-        const result = await window.api.getDocumentById(id, 'invoices')
+        const id = this.$route.params.id
+        const result = await window.api.getInvoiceById(id)
+        if (!result.success) return
         this.invoice = {
-          ...result.rows[0],
-          positions: JSON.parse(result.rows[0].positions)
+          ...result.rows,
+          customer: JSON.parse(result.rows.customer),
+          positions: JSON.parse(result.rows.positions)
         }
       } catch (error) {
         console.error(error)
@@ -349,7 +351,7 @@ export default {
       // return outstanding - this.calculateEarlyPayment()
     },
     async setInvoiceStatus() {
-      const result = await window.api.setInvoiceStatus(this.invoice.invoice_id, this.invoice_status)
+      const result = await window.api.setInvoiceStatus(this.invoice.id, this.invoice_status)
       if (result.success) {
         this.$router.push('/invoices')
       }

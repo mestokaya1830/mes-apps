@@ -28,9 +28,8 @@ contextBridge.exposeInMainWorld('api', {
 
   //invoice
   addInvoice: async (data) => ipcRenderer.invoke('add-invoice', data),
-  getDocument: async (data, tableName) => ipcRenderer.invoke('get-document', data, tableName),
-  getDocumentById: async (data, id, tableName) =>
-    ipcRenderer.invoke('get-document-by-id', data, id, tableName),
+  getInvoices: async (data) => ipcRenderer.invoke('get-invoices', data),
+  getInvoiceById: async (data, id) => ipcRenderer.invoke('get-invoice-by-id', data, id),
   savePayment: (data, fileName, image_file) =>
     ipcRenderer.invoke('save-payment', data, fileName, image_file),
   setInvoiceStatus: async (id, value) => ipcRenderer.invoke('set-invoice-status', id, value),

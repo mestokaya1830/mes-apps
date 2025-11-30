@@ -3,98 +3,29 @@
     <div v-if="customer" class="editor-panel">
       <div class="editor-header-block">
         <div class="editor-title">
-          📝{{ title }} {{ formatCustomerId(customer.id) }}
-          <div class="editor-subtitle">Bearbeiten Sie die Kundendaten</div>
-        </div>
-        <router-link to="/customers" class="add-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M15 6l-6 6 6 6" />
-          </svg>
-        </router-link>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">🏢 Unternehmensinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Unternehmenstyp</label>
-            <input v-model="customer.company_type" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Firmenname</label>
-            <input v-model="customer.company_name" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Vorname</label>
-            <input v-model="customer.first_name" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nachname</label>
-            <input v-model="customer.last_name" type="text" class="form-input" />
-          </div>
+          📝 {{ title }} {{ formatCustomerId(customer.id) }}
         </div>
       </div>
-      <div class="form-section">
-        <div class="form-section-title">📍 Adressdaten</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Adresse</label>
-            <input v-model="customer.address" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Postleitzahl</label>
-            <input v-model="customer.postal_code" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stadt</label>
-            <input v-model="customer.city" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Land</label>
-            <input v-model="customer.country" type="text" class="form-input" />
-          </div>
-        </div>
+
+      <div class="customer-info">
+        <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
+        <p><strong>Firmenname:</strong> {{ customer.company_name }}</p>
+        <p><strong>Vorname:</strong> {{ customer.first_name }}</p>
+        <p><strong>Nachname:</strong> {{ customer.last_name }}</p>
+        <p><strong>Email:</strong> {{ customer.email }}</p>
+        <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
+        <p><strong>Adresse:</strong> {{ customer.address }}</p>
+        <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
+
+        <p><strong>Gesamt Rechnungen:</strong> {{ customer.total_invoices }}</p>
+        <p><strong>Bezahlt:</strong> {{ customer.total_paid }}</p>
+        <p><strong>Unbezahlt:</strong> {{ customer.total_unpaid }}</p>
+        <p><strong>Überfällig:</strong> {{ customer.overdue }}</p>
+        <p><strong>Früh bezahlt:</strong> {{ customer.early_paid }}</p>
+        <p><strong>Bestellungen:</strong> {{ customer.total_orders }}</p>
+        <p><strong>Angebote:</strong> {{ customer.total_offers }}</p>
+        <p><strong>Erinnerungen:</strong> {{ customer.total_reminders }}</p>
       </div>
-      <div class="form-section">
-        <div class="form-section-title">📞 Kontaktdaten</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">E-Mail</label>
-            <input v-model="customer.email" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Telefonnummer</label>
-            <input v-model="customer.phone" type="text" class="form-input" />
-          </div>
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">💼 Steuerinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Steuernummer</label>
-            <input v-model="customer.tax_number" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">USt-IdNr.</label>
-            <input v-model="customer.vat_id" type="text" class="form-input" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Erstellungsdatum</label>
-          <input v-model="customer.created_at" type="text" class="form-input" />
-        </div>
-      </div>
-      <button type="button" class="form-btn" @click="updateCustomer">Aktualisierung</button>
     </div>
   </div>
 </template>
@@ -104,7 +35,7 @@ export default {
   inject: ['formatCustomerId', 'formatDate'],
   data() {
     return {
-      title: 'Customer List',
+      title: 'Kunden Details',
       customer: null
     }
   },
@@ -117,18 +48,7 @@ export default {
         const result = await window.api.getCustomerById(this.$route.params.id)
         if (!result.success) return
         this.customer = result.rows
-      } catch (error) {
-        console.error(error)
-      }
-    },
-    async updateCustomer() {
-      try {
-        const result = await window.api.updateCustomerById(
-          this.$route.params.id,
-          JSON.parse(JSON.stringify(this.customer))
-        )
-        if (!result.success) return
-        this.$router.push('/customers')
+        console.log(this.customer)
       } catch (error) {
         console.error(error)
       }

@@ -67,14 +67,13 @@ export default {
     async saveDocument() {
       if (this.tableData) {
         // console.log(this.tableData)
-        const result = await window.api.addInvoice(
-          this.tableName,
-          JSON.parse(JSON.stringify(this.tableData))
-        )
-        if (result.success) {
-          // this.clearStore()
-          this.$router.push('/invoices')
-        }
+        const data = JSON.parse(JSON.stringify(this.tableData))
+        console.log(data)
+        // const result = await window.api.addInvoice(data)
+        // if (result.success) {
+        //   this.clearStore()
+        //   this.$router.push('/invoices')
+        // }
       }
     },
     printDocument() {

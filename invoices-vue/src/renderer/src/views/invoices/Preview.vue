@@ -25,23 +25,25 @@
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatInvoiceId(invoicePreview.invoice.id) }}</span>
+              <span class="meta-value">{{ formatInvoiceId(invoicePreview.id) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(invoicePreview.invoice.date) }}</span>
+              <span class="meta-value">{{ formatDate(invoicePreview.date) }}</span>
             </div>
 
             <!-- Service date -->
             <div v-if="invoicePreview.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(invoicePreview.invoice.service_date) }}</span>
+              <span class="meta-value">{{ formatDate(invoicePreview.service_date) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(invoicePreview.customer.id) }}</span>
+              <span class="meta-value">{{
+                formatCustomerId(invoicePreview.customer.id)
+              }}</span>
             </div>
 
             <div
@@ -92,8 +94,8 @@
             </tr>
           </thead>
 
-          <tbody v-if="invoicePreview.invoice.positions">
-            <tr v-for="(item, index) in invoicePreview.invoice.positions" :key="index">
+          <tbody v-if="invoicePreview.positions">
+            <tr v-for="(item, index) in invoicePreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
                 <div class="position-title">{{ item.title }}</div>
@@ -110,12 +112,12 @@
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
-              <td class="right">{{ formatCurrency(item.price, invoicePreview.invoice.currency) }}</td>
+              <td class="right">{{ formatCurrency(item.price, invoicePreview.currency) }}</td>
               <td class="right">
                 {{ invoicePreview.is_reverse_charge ? '0%' : item.vat + '%' }}
               </td>
               <td class="right">
-                {{ formatCurrency(item.unit_total, invoicePreview.invoice.currency) }}
+                {{ formatCurrency(item.unit_total, invoicePreview.currency) }}
               </td>
             </tr>
           </tbody>
@@ -126,50 +128,48 @@
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.invoice.net_total, invoicePreview.invoice.currency)
+              formatCurrency(invoicePreview.net_total, invoicePreview.currency)
             }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.invoice.vat_total, invoicePreview.invoice.currency)
+              formatCurrency(invoicePreview.vat_total, invoicePreview.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.invoice.gross_total, invoicePreview.invoice.currency)
+              formatCurrency(invoicePreview.gross_total, invoicePreview.currency)
             }}</span>
           </div>
 
           <div class="total-row paid">
             <span class="total-label">✓ Bereits bezahlt:</span>
-            <span class="total-value">
-              - {{ formatCurrency(0, invoicePreview.invoice.currency) }}
-            </span>
+            <span class="total-value"> - {{ formatCurrency(0, invoicePreview.currency) }} </span>
           </div>
 
           <div class="total-row outstanding">
             <span class="total-label">⚠️ Offener Betrag:</span>
             <span class="total-value">{{
-              formatCurrency(invoicePreview.invoice.gross_total, invoicePreview.invoice.currency)
+              formatCurrency(invoicePreview.gross_total, invoicePreview.currency)
             }}</span>
           </div>
 
           <div class="preview-section">
-            <div v-if="invoicePreview.invoice.is_small_company" class="tax-note small-company">
+            <div v-if="invoicePreview.is_small_company" class="tax-note small-company">
               ⚠️ Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
             </div>
 
-            <div v-else-if="invoicePreview.invoice.is_reverse_charge" class="tax-note">
+            <div v-else-if="invoicePreview.is_reverse_charge" class="tax-note">
               ⚠️ Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span
                 >§13b UStG</span
               >)
             </div>
 
-            <div v-else-if="invoicePreview.invoice.is_eu_delivery" class="tax-note">
+            <div v-else-if="invoicePreview.is_eu_delivery" class="tax-note">
               ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß
               <span>§4 Nr.1b UStG</span> (Europa içi)
             </div>
@@ -181,31 +181,39 @@
           <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
 
           <div class="payment-terms-content">
-            <div v-if="invoicePreview.invoice.payment_terms" class="payment-term-item">
+            <div v-if="invoicePreview.payment_terms" class="payment-term-item">
               <strong>Zahlungsziel:</strong>
-              {{ invoicePreview.invoice.payment_terms }} Tage netto (fällig bis
-              {{ formatDate(invoicePreview.invoice.due_date) }})
+              {{ invoicePreview.payment_terms }} Tage netto (fällig bis
+              {{ formatDate(invoicePreview.due_date) }})
             </div>
 
             <div
-              v-if="invoicePreview.invoice.early_payment_days"
+              v-if="invoicePreview.early_payment_days"
               class="payment-term-item skonto-highlight"
             >
               <strong>💰 Skonto:</strong>
-              {{ invoicePreview.invoice.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
-              {{ invoicePreview.invoice.early_payment_days }} Tagen (bis
-              {{ invoicePreview.invoice.due_date }})
+              {{ invoicePreview.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
+              {{ invoicePreview.early_payment_days }} Tagen (bis {{ invoicePreview.due_date }})
               <div class="skonto-amount">
-                <span>Skonto-Betrag: {{ formatCurrency(invoicePreview.invoice.early_payment_discount, invoicePreview.invoice.currency) }}</span>
-                <span>Zahlbetrag: {{ formatCurrency(invoicePreview.invoice.total_after_discount, invoicePreview.invoice.currency) }}</span>
-              
+                <span
+                  >Skonto-Betrag:
+                  {{
+                    formatCurrency(invoicePreview.early_payment_discount, invoicePreview.currency)
+                  }}</span
+                >
+                <span
+                  >Zahlbetrag:
+                  {{
+                    formatCurrency(invoicePreview.total_after_discount, invoicePreview.currency)
+                  }}</span
+                >
               </div>
             </div>
 
-            <div v-if="invoicePreview.invoice.payment_conditions" class="payment-term-item">
+            <div v-if="invoicePreview.payment_conditions" class="payment-term-item">
               <strong>Zusätzliche Bedingungen:</strong>
               <div class="payment-conditions-text">
-                {{ invoicePreview.invoice.payment_conditions }}
+                {{ invoicePreview.payment_conditions }}
               </div>
             </div>
           </div>
@@ -230,7 +238,11 @@
         <FooterSidePreview />
       </div>
 
-      <ActionsButtonPreview v-if="invoicePreview" :tableData="tableData" sourcePage="preview" />
+      <ActionsButtonPreview
+        v-if="invoicePreview"
+        :tableData="invoicePreview"
+        sourcePage="preview"
+      />
     </div>
 
     <router-link to="/invoices/create" class="back-link">
@@ -259,7 +271,6 @@ export default {
     return {
       title: 'Rechnungbestätigung',
       invoicePreview: null,
-      tableData: null,
       auth: null
     }
   },
@@ -271,8 +282,6 @@ export default {
     getInvoicePreview() {
       if (!store.state.invoice) return
       this.invoicePreview = store.state.invoice
-      this.tableData = store.state.invoice.invoice
-      // console.log('preview', this.tableData)
     },
     getAuth() {
       if (!store.state.auth) return

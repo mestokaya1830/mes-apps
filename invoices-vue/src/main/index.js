@@ -5,7 +5,6 @@ import icon from '../../resources/icon.png?asset'
 import db from '../db/sqliteConn.js'
 import nodeMailer from 'nodemailer'
 import fs from 'fs'
-import { start } from 'repl'
 
 let win = null
 function createWindow() {
@@ -381,9 +380,30 @@ ipcMain.handle('update-user', async (event, image, data) => {
   }
 })
 
+//dashbords
+ipcMain.handle('get-dashboard', async () => {
+  try {
+    const rows = db.transaction(() => {
+      return {
+        customers: db.prepare('SELECT COUNT(*) AS count FROM customers WHERE is_active = 1').get().count,
+        invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1').get().count,
+        offers: db.prepare('SELECT COUNT(*) AS count FROM offers WHERE is_active = 1').get().count,
+        orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count,
+        deliveries: db.prepare('SELECT COUNT(*) AS count FROM deliveries WHERE is_active = 1').get().count,
+        reminders: db.prepare('SELECT COUNT(*) AS count FROM remeinders').get().count,
+        payments: db.prepare('SELECT COUNT(*) AS count FROM payments WHERE is_paid = 1').get().count
+      }
+    })()
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 //customers
 ipcMain.handle('add-customer', async (event, data) => {
-  console.log(data)
   if (!data) {
     return { success: false, message: 'No data provided' }
   }
@@ -424,13 +444,16 @@ ipcMain.handle('add-customer', async (event, data) => {
 })
 
 ipcMain.handle('get-customers', async () => {
-  let limit = 50
   try {
+    const limit = 50
     const rows = db
       .prepare(
-        'SELECT id, company_type, company_name, first_name, last_name, is_active FROM customers ORDER BY id DESC LIMIT ?'
+        `
+        SELECT id, company_type, company_name, first_name, last_name, is_active FROM customers LIMIT ?
+      `
       )
       .all(limit)
+
     return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -439,9 +462,48 @@ ipcMain.handle('get-customers', async () => {
 })
 
 ipcMain.handle('get-customer-by-id', async (data, id) => {
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
   try {
-    const rows = db.prepare('SELECT * FROM customers WHERE id = ? AND is_active = 1').get(id)
-    return { success: true, rows }
+    const rows = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
+    const invoice_id = db.prepare(`SELECT id FROM invoices ORDER BY id DESC LIMIT 1;`).get()
+
+    const data = {
+      rows,
+      invoice_id
+    }
+    return { success: true, data }
+    // const rows = db
+    //   .prepare(
+    //     `
+    //    SELECT
+    //       c.*,
+
+    //       -- Invoice count
+    //       COALESCE((SELECT COUNT(*) FROM invoices i WHERE i.customer_id = c.id AND i.is_active = 1), 0) AS total_invoices,
+
+    //       -- Payments aggregate
+    //       COALESCE((SELECT COUNT(*) FROM payments p WHERE p.customer_id = c.id AND p.is_paid = 1), 0) AS total_paid,
+    //       COALESCE((SELECT COUNT(*) FROM payments p WHERE p.customer_id = c.id AND p.is_paid = 0), 0) AS total_unpaid,
+    //       COALESCE((SELECT COUNT(*) FROM payments p
+    //                 JOIN invoices i ON i.id = p.invoice_id
+    //                 WHERE p.customer_id = c.id AND p.is_paid = 0 AND i.due_date < DATE('now')), 0) AS overdue,
+    //       COALESCE((SELECT COUNT(*) FROM payments p
+    //                 JOIN invoices i ON i.id = p.invoice_id
+    //                 WHERE p.customer_id = c.id AND p.is_paid = 1 AND p.date < i.due_date), 0) AS early_paid,
+
+    //       -- Orders / Offers / Reminders
+    //       COALESCE((SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id AND o.is_active = 1), 0) AS total_orders,
+    //       COALESCE((SELECT COUNT(*) FROM offers ofr WHERE ofr.customer_id = c.id AND ofr.is_active = 1), 0) AS total_offers,
+    //       COALESCE((SELECT COUNT(*) FROM reminders r WHERE r.customer_id = c.id AND r.is_active = 1), 0) AS total_reminders
+
+    //     FROM customers c
+    //     WHERE c.id = ?
+
+    //   `
+    //   )
+    //   .get(id)
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -493,21 +555,21 @@ ipcMain.handle('delete-customer-by-id', async (event, id) => {
   }
 })
 
-ipcMain.handle('search-customer', async (data, term) => {
+ipcMain.handle('search-customer', async (term) => {
   if (!term) {
     return { success: false, message: 'No data provided' }
   }
-  let limit = 50
   if (isNaN(term) && !term.includes('-')) {
     try {
+      let limit = 50
       const rows = db
         .prepare(
           `SELECT id, company_name, first_name, last_name, is_active FROM customers
-           WHERE company_type LIKE '%${term}%' 
+           WHERE company_type LIKE '${term}%' 
            OR company_name LIKE '%${term}%' 
-           OR first_name LIKE '%${term}%' 
-           OR last_name LIKE '%${term}%' 
-           OR full_name LIKE '%${term}%' 
+           OR first_name LIKE '${term}%' 
+           OR last_name LIKE '${term}%' 
+           OR full_name LIKE '${term}%' 
            ORDER BY id DESC LIMIT ?`
         )
         .all(limit)
@@ -544,9 +606,9 @@ ipcMain.handle('search-customer', async (data, term) => {
     }
   }
 })
+
 //invoices
 ipcMain.handle('add-invoice', async (event, data) => {
-  console.log(data)
   if (!data) {
     return { success: false, message: 'No data provided' }
   }
@@ -555,7 +617,7 @@ ipcMain.handle('add-invoice', async (event, data) => {
       .prepare(
         `
           INSERT INTO invoices (
-            customer_id,
+            customer,
             is_active,
             date,
             due_date,
@@ -578,12 +640,12 @@ ipcMain.handle('add-invoice', async (event, data) => {
         `
       )
       .run(
-        data.customer_id,
+        JSON.stringify(data.customer) || null,
         data.is_active,
         data.date,
         data.due_date,
-        data.currency,
         data.service_date,
+        data.currency,
         data.payment_terms,
         data.payment_conditions,
         data.early_payment_discount,
@@ -605,6 +667,60 @@ ipcMain.handle('add-invoice', async (event, data) => {
   }
 })
 
+ipcMain.handle('get-invoices', async () => {
+  try {
+    const limit = 50
+    const rows = db
+      .prepare(
+        `
+          SELECT *
+          FROM invoices
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+      )
+      .all(limit)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-invoice-by-id', async (data, id) => {
+  if (!id) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const rows = db
+      .prepare(
+        `
+          SELECT *
+          FROM invoices
+          WHERE id = ?
+        `
+      )
+      .get(id)
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+ipcMain.handle('set-invoice-status', async (event, id, value) => {
+  if (!id) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    db.prepare(`Update invoices Set is_active = ? WHERE id = ?`).run(value, id)
+    return { success: true }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
 //offers
 ipcMain.handle('add-offer', async (event, data) => {
   if (!data) {
@@ -873,27 +989,7 @@ ipcMain.handle('add-payment', async (data, file_name, image_file) => {
   }
 })
 
-//dashbords
-ipcMain.handle('get-dashboard', async () => {
-  try {
-    const rows = db.transaction(() => {
-      return {
-        customers: db.prepare('SELECT COUNT(*) AS count FROM customers').get().count,
-        invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices').get().count,
-        offers: db.prepare('SELECT COUNT(*) AS count FROM offers').get().count,
-        orders: db.prepare('SELECT COUNT(*) AS count FROM orders').get().count,
-        deliveries: db.prepare('SELECT COUNT(*) AS count FROM deliveries').get().count,
-        reminders: db.prepare('SELECT COUNT(*) AS count FROM remeinders').get().count,
-        payments: db.prepare('SELECT COUNT(*) AS count FROM payments').get().count
-      }
-    })()
 
-    return { success: true, rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
 
 ipcMain.handle('get-document', async (event, data, tableName) => {
   let limit = 50
@@ -957,16 +1053,7 @@ ipcMain.handle('get-document-by-id', async (event, data, id, tableName) => {
   }
 })
 
-ipcMain.handle('set-invoice-status', async (event, id, value) => {
-  console.log(id, value)
-  try {
-    db.prepare(`Update invoices Set invoice_is_active = ? WHERE invoice_id = ?`).run(value, id)
-    return { success: true }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
+
 
 ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
   try {
@@ -1147,3 +1234,4 @@ ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
     return { success: true, rows }
   }
 })
+

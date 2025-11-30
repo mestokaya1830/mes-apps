@@ -32,10 +32,10 @@ try {
 //   console.error(err.message)
 // }
 
-try {
-  const result = db.prepare(`PRAGMA table_info(invoices);`).all()
-  const fields = result.map((r) => r.name)
-  console.log(fields)
-} catch (err) {
-  console.error(err.message)
-}
+// try {
+//   const result = db.prepare(`PRAGMA table_info(invoices);`).all()
+//   const fields = result.map((r) => r.name)
+//   console.log(fields)
+// } catch (err) {
+//   console.error(err.message)
+// }

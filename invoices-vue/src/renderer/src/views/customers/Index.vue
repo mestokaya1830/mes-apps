@@ -164,6 +164,7 @@ export default {
         const result = await window.api.getCustomers()
         if (!result.success) return
         this.customers = result.rows
+        console.log(this.customers)
       } catch (error) {
         console.error(error)
       }

@@ -85,3 +85,17 @@ try {
 } catch (err) {
   console.error(err.message)
 }
+
+//index list
+const indexes = db.prepare('PRAGMA index_list(customers);').all()
+console.log(indexes)
+
+//remove index
+db.exec(`
+  DROP INDEX IF EXISTS idx_customers_email;
+`)
+
+//create index
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_cutomers_is_active ON customers(is_active);
+`)

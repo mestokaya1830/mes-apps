@@ -3,7 +3,7 @@
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>
-        <h1 class="title">{{ title }} {{ invoiceList.length }}</h1>
+        <h1 class="title">{{ title }} {{ invoices.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
       </div>
       <router-link to="/customers" class="add-btn">
@@ -54,23 +54,22 @@
       <router-link to="/reports/invoices" class="preview-btn"> 👁️ Report</router-link>
     </div>
     <!-- Invoice Grid -->
-    <div class="customer-grid">
-      <div v-for="item in invoiceList" :key="item.id" class="customer-card">
+    <div v-if="invoices" class="customer-grid">
+      <div v-for="item in invoices" :key="item.id" class="customer-card">
         <!-- Card Header -->
         <div class="card-header">
           <div class="customer-avatar">
-            {{ avatarStyle(item.first_name, item.last_name) }}
+            {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
           </div>
           <div class="customer-info">
             <h3 class="customer-name">{{ formatInvoiceId(item.id) }}</h3>
-            <span class="customer-type-badge">{{ item.company_name }}</span>
+            <span class="customer-type-badge">{{ item.customer.company_name }}</span>
           </div>
           <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
             {{ item.is_active ? 'Aktiv' : 'Storniert' }}
           </div>
           <div class="status-badge total">
-            <!-- {{ item.summary.total ? formatCurrency(item.summary.total, item.currency) : '' }} -->
-            {{ formatCurrency(item.total, item.currency) }}
+            {{ formatCurrency(item.gross_total, item.currency) }}
           </div>
         </div>
 
@@ -98,7 +97,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="!invoiceList || invoiceList.length === 0" class="empty-state">
+    <div v-if="!invoices || invoices.length === 0" class="empty-state">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="64"
@@ -124,11 +123,11 @@
 import store from '../../store/store'
 export default {
   name: 'Invoices',
-  inject: ['formatCurrency'],
+  inject: ['formatInvoiceId', 'formatCustomerId', 'formatDate', 'formatCurrency'],
   data() {
     return {
       title: 'Rechnungen',
-      invoiceList: [],
+      invoices: [],
       search_box: '',
       date_box_start: '',
       date_box_end: '',
@@ -143,24 +142,21 @@ export default {
       this.date_box_end = store.state.date_filter.end
       this.dateFilter()
     } else {
-      this.getInvoiceList()
+      this.getInvoices()
     }
   },
   methods: {
-    async getInvoiceList() {
+    async getInvoices() {
       try {
-        const result = await window.api.getInvoice('invoices')
+        const result = await window.api.getInvoices()
         if (!result.success) return
-        this.invoiceList = result.rows
-        console.log(this.invoiceList)
+        this.invoices = result.rows.map((row) => ({
+          ...row,
+          customer: row.customer ? JSON.parse(row.customer) : null
+        }))
       } catch (error) {
         console.error(error)
       }
-    },
-    formatInvoiceId(id) {
-      if (!id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(id).padStart(5, '0')}`
     },
     avatarStyle(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
@@ -172,7 +168,7 @@ export default {
         this.clearDate()
         const result = await window.api.categoryFilter('invoices', this.categories_filter)
         if (result.success) {
-          this.invoiceList = result.rows
+          this.invoices = result.rows
         }
       } catch (error) {
         console.error(error)
@@ -181,7 +177,7 @@ export default {
     async searchFilter() {
       const term = this.search_box?.trim()
       if (!term) {
-        this.getInvoiceList()
+        this.getinvoices()
         return
       }
       if (term.length < 4) {
@@ -189,7 +185,7 @@ export default {
       }
       const result = await window.api.searchInvoice(term)
       if (result?.success) {
-        this.invoiceList = result.rows
+        this.invoices = result.rows
       }
     },
     async dateFilter() {
@@ -206,8 +202,8 @@ export default {
             end: this.date_box_end
           }
           const result = await window.api.dateFilter('invoices', date)
-          this.invoiceList = result.rows
-          console.log(this.invoiceList)
+          this.invoices = result.rows
+          console.log(this.invoices)
           await store.setStore('date_filter', JSON.parse(JSON.stringify(date))) //for back from details page
         }
       } catch (error) {
@@ -216,7 +212,7 @@ export default {
     },
     sorting(key) {
       if (!key) return
-      this.invoiceList.sort((a, b) => {
+      this.invoices.sort((a, b) => {
         const res = a[key] > b[key] ? 1 : -1
         return this.isSort ? res : -res
       })
