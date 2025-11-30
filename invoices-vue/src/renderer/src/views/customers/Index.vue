@@ -31,7 +31,7 @@
           type="search"
           class="form-input"
           placeholder="Suce..."
-          @input="searchCustomer()"
+          @input="searchFilter()"
         />
         <div @click="sorting('id')">&#8645;</div>
       </div>
@@ -187,19 +187,18 @@ export default {
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    async searchCustomer() {
+    async searchFilter() {
       const term = this.search_box?.trim()
       if (!term) {
         this.getCustomers()
         return
       }
-      if (term.length < 4) {
+      if (isNaN(term) && term.length < 3) {
         return
       }
-      const result = await window.api.searchCustomer(term)
-      if (result?.success) {
-        this.customers = result.rows
-      }
+      const result = await window.api.searchCustomers(term)
+    if(!result.success) return
+      this.customers = result.rows
     },
     sorting(key) {
       if (!key) return

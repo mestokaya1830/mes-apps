@@ -24,15 +24,16 @@ contextBridge.exposeInMainWorld('api', {
   getCustomerById: async (id) => ipcRenderer.invoke('get-customer-by-id', id),
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
   deleteCustomerById: async (data) => ipcRenderer.invoke('delete-customer-by-id', data),
-  searchCustomer: async (data) => ipcRenderer.invoke('search-customer', data),
+  searchCustomers: async (data) => ipcRenderer.invoke('search-customers', data),
 
   //invoice
   addInvoice: async (data) => ipcRenderer.invoke('add-invoice', data),
   getInvoices: async (data) => ipcRenderer.invoke('get-invoices', data),
   getInvoiceById: async (id) => ipcRenderer.invoke('get-invoice-by-id', id),
   setInvoiceStatus: async (data) => ipcRenderer.invoke('set-invoice-status', data),
-  invoicesCategoriesFilter: async (data) => ipcRenderer.invoke('invoices-categories-filter', data),
-  invoicesDateFilter: async (date) => ipcRenderer.invoke('invoices-date-filter', date),
+  filterInvoicesCategories: async (data) => ipcRenderer.invoke('flter-invoices-categories', data),
+  searchInvoices: async (term) => ipcRenderer.invoke('search-invoices', term),
+  filterInvoicesDate: async (date) => ipcRenderer.invoke('filter-invoices-date', date),
   savePayment: (data) => ipcRenderer.invoke('save-payment', data),
 
   documentReport: async (data) => ipcRenderer.invoke('document-report', data)

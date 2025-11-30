@@ -26,7 +26,7 @@
 
     <div class="filter-container">
       <div class="form-group">
-        <select v-model="categories_filter" class="select-input" @change="categoriesFilter">
+        <select v-model="categories_filter" class="select-input" @change="filterCategories">
           <option value="" disabled>Kategorie</option>
           <option value="all">Alle</option>
           <option value="active">Aktiv</option>
@@ -48,8 +48,8 @@
         </span>
       </div>
 
-      <input ref="date_box_start" v-model="date_box_start" type="date" @input="dateFilter()" />
-      <input ref="date_box_end" v-model="date_box_end" type="date" @input="dateFilter()" />
+      <input ref="date_box_start" v-model="date_box_start" type="date" @input="filterDate()" />
+      <input ref="date_box_end" v-model="date_box_end" type="date" @input="filterDate()" />
       <div @click="sorting('id')">&#8645;</div>
       <router-link to="/reports/invoices" class="preview-btn"> 👁️ Report</router-link>
     </div>
@@ -64,6 +64,7 @@
           <div class="customer-info">
             <h3 class="customer-name">{{ formatInvoiceId(item.id) }}</h3>
             <span class="customer-type-badge">{{ item.customer.company_name }}</span>
+            <span>{{ item.customer.first_name }} {{ item.customer.last_name }}</span>
           </div>
           <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
             {{ item.is_active ? 'Aktiv' : 'Storniert' }}
@@ -140,7 +141,7 @@ export default {
     if (store.state.date_filter) {
       this.date_box_start = store.state.date_filter.start
       this.date_box_end = store.state.date_filter.end
-      this.dateFilter()
+      this.filterDate()
     } else {
       this.getInvoices()
     }
@@ -166,35 +167,38 @@ export default {
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    async categoriesFilter() {
+    async filterCategories() {
       try {
         this.clearDate()
-        const result = await window.api.invoicesCategoriesFilter(this.categories_filter)
+        const result = await window.api.filterInvoicesCategories(this.categories_filter)
         if (!result.success) return
         this.invoices = result.rows.map((row) => ({
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
-        console.log('category', this.invoices)
       } catch (error) {
         console.error(error)
       }
     },
-    async searchFilter() {
+    async searchInvoice() {
       const term = this.search_box?.trim()
+      console.log(term)
       if (!term) {
-        this.getinvoices()
+        this.getInvoices()
         return
       }
-      if (term.length < 4) {
+      if (isNaN(term) && term.length < 3) {
         return
       }
-      const result = await window.api.searchInvoice(term)
-      if (result?.success) {
-        this.invoices = result.rows
-      }
+
+      const result = await window.api.searchInvoices(term)
+      if (!result.success) return
+      this.invoices = result.rows.map((row) => ({
+        ...row,
+        customer: row.customer ? JSON.parse(row.customer) : null
+      }))
     },
-    async dateFilter() {
+    async filterDate() {
       try {
         if (!this.date_box_start) return this.$refs.date_box_start.focus()
         if (!this.date_box_end) return this.$refs.date_box_end.focus()
@@ -207,7 +211,7 @@ export default {
             start: this.date_box_start,
             end: this.date_box_end
           }
-          const result = await window.api.invoicesDateFilter(date)
+          const result = await window.api.filterInvoicesDate(date)
           if (!result.success) return
           this.invoices = result.rows.map((row) => ({
             ...row,

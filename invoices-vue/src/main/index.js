@@ -557,13 +557,13 @@ ipcMain.handle('delete-customer-by-id', async (event, id) => {
   }
 })
 
-ipcMain.handle('search-customer', async (term) => {
+ipcMain.handle('search-customers', async (event, term) => {
   if (!term) {
     return { success: false, message: 'No data provided' }
   }
+  let limit = 50
   if (isNaN(term) && !term.includes('-')) {
     try {
-      let limit = 50
       const rows = db
         .prepare(
           `SELECT id, company_name, first_name, last_name, is_active FROM customers
@@ -582,7 +582,7 @@ ipcMain.handle('search-customer', async (term) => {
     }
   } else {
     try {
-      if (term.includes('-')) {
+      if (isNaN(term) && term.includes('-')) {
         const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
         const rows = db
           .prepare(
@@ -593,10 +593,11 @@ ipcMain.handle('search-customer', async (term) => {
           .all(start, end, limit)
         return { success: true, rows }
       } else {
+        console.log(term)
         const rows = db
           .prepare(
             `SELECT id, company_name, first_name, last_name, is_active FROM customers 
-            WHERE id = CAST(? AS UNSIGNED) AND is_active = 1
+            WHERE id + 0 LIKE ? AND is_active = 1
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, limit)
@@ -727,12 +728,12 @@ ipcMain.handle('set-invoice-status', async (event, payload) => {
   }
 })
 
-ipcMain.handle('invoices-categories-filter', async (event, payload) => {
+ipcMain.handle('flter-invoices-categories', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const { category } = payload
+    const category = payload
     let query = ''
     let rows = []
     let limit = 50
@@ -842,7 +843,66 @@ ipcMain.handle('invoices-categories-filter', async (event, payload) => {
   }
 })
 
-ipcMain.handle('invoices-date-filter', async (event, payload) => {
+ipcMain.handle('search-invoices', async (event, term) => {
+  if (!term) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    let rows = []
+    if (isNaN(term) && !term.includes('-')) {
+      console.log(term)
+      rows = db
+        .prepare(
+          `SELECT 
+            id,
+            date,
+            due_date,
+            total_after_discount,
+            is_active,
+            customer
+          FROM invoices
+          WHERE (
+                  json_extract(customer, '$.first_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.last_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.company_name') LIKE '${term}%'
+                )
+                AND is_active = 1
+          ORDER BY id DESC
+          LIMIT ?`
+        )
+        .all(limit)
+    } else {
+      if (isNaN(term) && term.includes('-')) {
+        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+
+        rows = db
+          .prepare(
+            `SELECT id, date, due_date, total_after_discount, is_active, customer
+            FROM invoices
+            WHERE id BETWEEN ? AND ? AND is_active = 1
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(start, end, limit)
+      } else {
+        rows = db
+          .prepare(
+            `SELECT id, date, due_date, total_after_discount, is_active, customer
+            FROM invoices
+            WHERE id + 0 LIKE ? AND is_active = 1
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(term, limit)
+      }
+    }
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('filter-invoices-date', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
   }
@@ -1221,46 +1281,5 @@ ipcMain.handle('document-report', async (data, tableName, startDate, endDate) =>
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
-  const limit = 100
-  if (tableName === 'invoices') {
-    const isNumeric = /^\d+$/.test(searchTerm)
-    const pattern = `${searchTerm}%`
-    let query, params
-
-    if (isNumeric) {
-      query = `
-      SELECT i.*, c.*
-      FROM invoices i
-      JOIN customers c ON c.customer_id = i.invoice_customer_id
-      WHERE i.invoice_is_active = 1
-        AND i.invoice_id = ?
-      ORDER BY i.invoice_created_at DESC
-      LIMIT ?
-    `
-      params = [Number(searchTerm), limit]
-    } else {
-      query = `
-      SELECT i.*, c.*
-      FROM invoices i
-      JOIN customers c ON c.customer_id = i.invoice_customer_id
-      WHERE i.invoice_is_active = 1
-        AND (
-          c.first_name LIKE ? COLLATE NOCASE OR
-          c.last_name LIKE ? COLLATE NOCASE OR
-          c.company_name LIKE ? COLLATE NOCASE
-        )
-      ORDER BY i.invoice_created_at DESC
-      LIMIT ?
-    `
-      params = [pattern, pattern, pattern, limit]
-    }
-
-    const rows = db.prepare(query).all(...params)
-
-    return { success: true, rows }
   }
 })
