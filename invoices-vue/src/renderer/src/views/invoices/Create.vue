@@ -552,10 +552,9 @@ export default {
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.total_after_discount = this.summary.total_after_discount
-      const data = JSON.parse(JSON.stringify(this.invoice))
       if (!this.checkServiceDateInput()) return
 
-      await store.setStore('invoice', data)
+      await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
       this.$router.push('/invoices/preview')
       console.timeEnd('commit')
     }

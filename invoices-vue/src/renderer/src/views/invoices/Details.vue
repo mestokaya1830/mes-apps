@@ -306,10 +306,11 @@ export default {
   },
   methods: {
     async getInvoice() {
-      if (!this.$route.params.id) return
+      const id = this.$route.params.id
+      if (!id) return
       try {
-        const id = this.$route.params.id
         const result = await window.api.getInvoiceById(id)
+        console.log(result)
         if (!result.success) return
         this.invoice = {
           ...result.rows,
@@ -327,31 +328,17 @@ export default {
         console.warn('No auth data in store')
       }
     },
-    formatRechnungId(id) {
-      if (!id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(id).padStart(5, '0')}`
-    },
-    addDays(invoiceDate, days) {
-      if (!invoiceDate || !days) return ''
-      const date = new Date(invoiceDate)
-      date.setDate(date.getDate() + days)
-      return this.formatDate(date.toISOString().split('T')[0])
-    },
-    calculateEarlyPayment() {
-      if (!this.invoice?.total || !this.invoice?.early_payment_percentage) {
-        return 0
-      }
-      const outstanding = this.invoice.outstanding || this.invoice.total
-      return (outstanding * this.invoice.early_payment_percentage) / 100
-    },
     calculateAmountWithEarlyPayment() {
       // if (!this.invoice?.summary?.total) return 0
       // const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
       // return outstanding - this.calculateEarlyPayment()
     },
     async setInvoiceStatus() {
-      const result = await window.api.setInvoiceStatus(this.invoice.id, this.invoice_status)
+      const data = {
+        id: this.invoice.id,
+        status: this.invoice_status
+      }
+      const result = await window.api.setInvoiceStatus(data)
       if (result.success) {
         this.$router.push('/invoices')
       }

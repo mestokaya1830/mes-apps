@@ -69,10 +69,11 @@ export default {
       }
     },
     async updateUser() {
-      const res = await window.api.updateUser(
-        Array.from(this.binaryImage),
-        JSON.parse(JSON.stringify(this.user))
-      )
+      const data = {
+        image: Array.from(this.binaryImage),
+        user: JSON.parse(JSON.stringify(this.user))
+      }
+      const res = await window.api.updateUser(data)
       if (res.success) {
         this.$router.push('/profile')
       }

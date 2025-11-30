@@ -42,8 +42,7 @@ companies: [
 ]
 
 
-
-
+// Rastgele tarih
 const randDate = () => {
   const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')
   const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')
@@ -75,8 +74,10 @@ const lastNames = ['Müller','Schmidt','Becker','Fischer','Weber','Wagner','Koch
 const cities = ['Berlin','Hamburg','München','Köln','Düsseldorf','Leipzig','Frankfurt','Stuttgart','Bremen']
 const companies = ['Einzelunternehmen', 'GmbH', 'OHG', 'KG', 'GmbH_co_KG', 'Partg', 'Partgmbb', 'Partgmbh', 'Ug', 'Gbr']
 
+let customerList = []
 
 for (let i = 1; i <= 30; i++) {
+
   const first_name = rand(firstNames)
   const last_name = rand(lastNames)
   const full_name = `${first_name} ${last_name}`
@@ -86,10 +87,9 @@ for (let i = 1; i <= 30; i++) {
   const tax_number = `DE${Math.floor(100000000 + Math.random() * 899999999)}`
   const vat_id = `DE${Math.floor(100000000 + Math.random() * 899999999)}`
 
-
   const customer = {
     is_active: 1,
-    company_type: companies[Math.floor(Math.random() * companies.length)], //many_type: companies[Math.floor(Math.random() * companies.length)],
+    company_type: rand(companies),
     company_name: `${rand(lastNames)} & Partner`,
     first_name,
     last_name,
@@ -104,15 +104,17 @@ for (let i = 1; i <= 30; i++) {
     vat_id
   }
 
-   insertCustomer.run(customer)
+  // İstersen bunu aktif edip DB’ye gerçekten kaydedebilirsin
+  // insertCustomer.run(customer)
+
+  customerList.push(customer)
 }
 
-------------------------------------------------------------------------------------
 
-// invoice
+// ---------- INVOICE INSERT ----------
 const insertInvoice = db.prepare(`
   INSERT INTO invoices (
-    customer_id,
+    customer,
     date,
     due_date,
     service_date,
@@ -122,16 +124,17 @@ const insertInvoice = db.prepare(`
     early_payment_discount,
     early_payment_percentage,
     early_payment_days,
+    total_after_discount,
     is_small_company,
     is_reverse_charge,
     is_eu_delivery,
     positions,
-    subtotal,
-    vat_amount,
-    total,
+    net_total,
+    vat_total,
+    gross_total,
     is_active
   ) VALUES (
-    @customer_id,
+    @customer,
     @date,
     @due_date,
     @service_date,
@@ -141,19 +144,20 @@ const insertInvoice = db.prepare(`
     @early_payment_discount,
     @early_payment_percentage,
     @early_payment_days,
+    @total_after_discount,
     @is_small_company,
     @is_reverse_charge,
     @is_eu_delivery,
     @positions,
-    @subtotal,
-    @vat_amount,
-    @total,
+    @net_total,
+    @vat_total,
+    @gross_total,
     @is_active
   )
 `)
 
 for (let i = 1; i <= 100; i++) {
-  const customerId = Math.floor(Math.random() * 30) + 1
+
   const invoiceDate = randDate()
   const serviceDate = randDate()
   const isSmallCompany = Math.random() < 0.2
@@ -181,11 +185,11 @@ for (let i = 1; i <= 100; i++) {
   const positions = [
     {
       id: 1,
-      title: 'Dienstleistung',
-      description: 'Allgemeine Servicetätigkeit',
+      title: "Dienstleistung",
+      description: "Allgemeine Servicetätigkeit",
       service_period_start: randDate(),
       service_period_end: randDate(),
-      unit: 'Stk',
+      unit: "Stk",
       quantity: qty,
       price,
       vat,
@@ -194,28 +198,38 @@ for (let i = 1; i <= 100; i++) {
     }
   ]
 
-  const subtotal = Number((qty * price).toFixed(0))
-  const vat_amount = Number((qty * vat_unit).toFixed(0))
-  const total = Number((qty * unit_total).toFixed(0))
+  // ✨ FİNANSAL HESAPLAMA
+  const net_total = Number((qty * price).toFixed(2))
+  const vat_total = Number((qty * vat_unit).toFixed(2))
+  const gross_total = Number((qty * unit_total).toFixed(2))
+
+  // ✨ İNDİRİM HESABI
+  const discount_amount =
+    early_payment_discount > 0
+      ? early_payment_discount
+      : (net_total * early_payment_percentage / 100)
+
+  const total_after_discount = Number((net_total - discount_amount).toFixed(2))
 
   insertInvoice.run({
-    customer_id: customerId,
+    customer: JSON.stringify(customerList[Math.floor(Math.random() * customerList.length)]),
     date: invoiceDate,
     due_date,
     service_date: serviceDate,
-    currency: 'EUR.de-DE',
+    currency: "EUR.de-DE",
     payment_terms,
     payment_conditions,
     early_payment_discount,
     early_payment_percentage,
     early_payment_days,
+    total_after_discount,
     is_small_company: isSmallCompany ? 1 : 0,
     is_reverse_charge: 0,
     is_eu_delivery: 0,
     positions: JSON.stringify(positions),
-    subtotal,
-    vat_amount,
-    total,
+    net_total,
+    vat_total,
+    gross_total,
     is_active: 1
   })
 }

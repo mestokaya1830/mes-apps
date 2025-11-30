@@ -401,10 +401,11 @@ export default {
     async register() {
       if (this.user) {
         if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
-        const result = await window.api.register(
-          Array.from(this.binaryImage),
-          JSON.parse(JSON.stringify(this.user))
-        )
+        const data = {
+          image: Array.from(this.binaryImage),
+          data: JSON.parse(JSON.stringify(this.user))
+        }
+        const result = await window.api.register(data)
         if (result.success) {
           this.errorMessage = ''
           this.$router.push('/login')

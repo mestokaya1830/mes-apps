@@ -123,10 +123,11 @@ export default {
     },
     async updateCustomer() {
       try {
-        const result = await window.api.updateCustomerById(
-          this.$route.params.id,
-          JSON.parse(JSON.stringify(this.customer))
-        )
+        const data = {
+          id: this.$route.params.id,
+          customer: JSON.parse(JSON.stringify(this.customer))
+        }
+        const result = await window.api.updateCustomerById(data)
         if (!result.success) return
         this.$router.push('/customers')
       } catch (error) {

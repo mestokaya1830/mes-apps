@@ -93,87 +93,87 @@ ipcMain.handle('check-register', async () => {
   }
 })
 
-ipcMain.handle('register', async (event, image, data) => {
+ipcMain.handle('register', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
   try {
-    if (data) {
-      const companyDetailsJSON = JSON.stringify(data.company_details || {})
-      const contactPersonJSON = JSON.stringify(data.contact_person || {})
+    const [image, data] = payload
+    const companyDetailsJSON = JSON.stringify(data.company_details || {})
+    const contactPersonJSON = JSON.stringify(data.contact_person || {})
 
-      const user = db
-        .prepare(
-          `INSERT INTO users (
-            gender,
-            first_name,
-            last_name,
-            password,
-            email,
-            phone,
-            address,
-            postal_code,
-            city,
-            state,
-            country,
-            website,
-            company_name,
-            company_details,
-            company_signature,
-            contact_person,
-            tax_number,
-            tax_office,
-            vat_id,
-            court_registration,
-            court_location,
-            logo,
-            image_type,
-            bank_name,
-            bic,
-            iban,
-            bank_account_holder,
-            invoice_approved
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-        )
-        .run(
-          data.gender,
-          data.first_name,
-          data.last_name,
-          data.password,
-          data.email,
-          data.phone,
-          data.address,
-          data.postal_code,
-          data.city,
-          data.state,
-          data.country,
-          data.website,
-          data.company_name,
-          companyDetailsJSON,
-          data.company_signature,
-          contactPersonJSON,
-          data.tax_number,
-          data.tax_office,
-          data.vat_id,
-          data.court_registration,
-          data.court_location,
-          Buffer.from(image),
-          data.image_type,
-          data.bank_name,
-          data.bic,
-          data.iban,
-          data.bank_account_holder,
-          data.invoice_approved
-        )
-      return { success: true, user: user }
-    } else {
-      return { success: false, message: 'Invalid email or password' }
-    }
+    const user = db
+      .prepare(
+        `INSERT INTO users (
+          gender,
+          first_name,
+          last_name,
+          password,
+          email,
+          phone,
+          address,
+          postal_code,
+          city,
+          state,
+          country,
+          website,
+          company_name,
+          company_details,
+          company_signature,
+          contact_person,
+          tax_number,
+          tax_office,
+          vat_id,
+          court_registration,
+          court_location,
+          logo,
+          image_type,
+          bank_name,
+          bic,
+          iban,
+          bank_account_holder,
+          invoice_approved
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      )
+      .run(
+        data.gender,
+        data.first_name,
+        data.last_name,
+        data.password,
+        data.email,
+        data.phone,
+        data.address,
+        data.postal_code,
+        data.city,
+        data.state,
+        data.country,
+        data.website,
+        data.company_name,
+        companyDetailsJSON,
+        data.company_signature,
+        contactPersonJSON,
+        data.tax_number,
+        data.tax_office,
+        data.vat_id,
+        data.court_registration,
+        data.court_location,
+        Buffer.from(image),
+        data.image_type,
+        data.bank_name,
+        data.bic,
+        data.iban,
+        data.bank_account_holder,
+        data.invoice_approved
+      )
+    return { success: true, user: user }
   } catch (error) {
     console.log(error)
   }
 })
 
 //user and login
-ipcMain.handle('login', async (event, data) => {
-  const { email, password } = data
+ipcMain.handle('login', async (event, payload) => {
+  const { email, password } = payload
   try {
     const row = db
       .prepare('SELECT * FROM users WHERE email = ? AND password = ?')
@@ -190,10 +190,10 @@ ipcMain.handle('login', async (event, data) => {
   }
 })
 
-ipcMain.handle('reset-password', async (event, data) => {
+ipcMain.handle('reset-password', async (event, payload) => {
   try {
     db.prepare("DELETE FROM tokens WHERE replace(expires_at, 'T', ' ') < datetime('now')").run()
-    const { token, password } = data
+    const { token, password } = payload
     const tokenRow = db.prepare('SELECT * FROM tokens WHERE token = ?').get(token)
     if (!tokenRow) {
       return { success: false, message: 'Invalid token' }
@@ -213,8 +213,8 @@ ipcMain.handle('reset-password', async (event, data) => {
   }
 })
 
-ipcMain.handle('email-verfication', async (event, data) => {
-  const { email } = data
+ipcMain.handle('email-verfication', async (event, payload) => {
+  const { email } = payload
   const expiresAt = new Date(Date.now() + 60000 * 1)
   const token = Math.random().toString(36).substring(2, 50)
   try {
@@ -295,84 +295,81 @@ ipcMain.handle('get-user', async () => {
   }
 })
 
-ipcMain.handle('update-user', async (event, image, data) => {
+ipcMain.handle('update-user', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
   try {
-    if (data) {
-      db.prepare('DELETE FROM users WHERE id != 1').run()
-      const companyDetailsJSON = JSON.stringify(data.company_details || {})
-      const contactPersonJSON = JSON.stringify(data.contact_person || {})
+    const { image, user } = payload
+    db.prepare('DELETE FROM users WHERE id != 1').run()
+    const info = db
+      .prepare(
+        `UPDATE users SET
+          gender = ?,
+          first_name = ?,
+          last_name = ?,
+          password = ?,
+          email = ?,
+          phone = ?,
+          address = ?,
+          postal_code = ?,
+          city = ?,
+          state = ?,
+          country = ?,
+          website = ?,
+          company_name = ?,
+          company_details = ?,
+          company_signature = ?,
+          contact_person = ?,
+          tax_number = ?,
+          tax_office = ?,
+          vat_id = ?,
+          court_registration = ?,
+          court_location = ?,
+          logo = ?,
+          image_type = ?,
+          bank_name = ?,
+          bic = ?,
+          iban = ?,
+          bank_account_holder = ?,
+          invoice_approved = ?
+        WHERE id = 1`
+      )
+      .run(
+        user.gender,
+        user.first_name,
+        user.last_name,
+        user.password,
+        user.email,
+        user.phone,
+        user.address,
+        user.postal_code,
+        user.city,
+        user.state,
+        user.country,
+        user.website,
+        user.company_name,
+        JSON.stringify(user.company_details || {}),
+        user.company_signature,
+        JSON.stringify(user.contact_person || {}),
+        user.tax_number,
+        user.tax_office,
+        user.vat_id,
+        user.court_registration,
+        user.court_location,
+        Buffer.from(image),
+        user.image_type,
+        user.bank_name,
+        user.bic,
+        user.iban,
+        user.bank_account_holder,
+        user.invoice_approved
+      )
 
-      const user = db
-        .prepare(
-          `UPDATE users SET
-            gender = ?,
-            first_name = ?,
-            last_name = ?,
-            password = ?,
-            email = ?,
-            phone = ?,
-            address = ?,
-            postal_code = ?,
-            city = ?,
-            state = ?,
-            country = ?,
-            website = ?,
-            company_name = ?,
-            company_details = ?,
-            company_signature = ?,
-            contact_person = ?,
-            tax_number = ?,
-            tax_office = ?,
-            vat_id = ?,
-            court_registration = ?,
-            court_location = ?,
-            logo = ?,
-            image_type = ?,
-            bank_name = ?,
-            bic = ?,
-            iban = ?,
-            bank_account_holder = ?,
-            invoice_approved = ?
-          WHERE id = 1`
-        )
-        .run(
-          data.gender,
-          data.first_name,
-          data.last_name,
-          data.password,
-          data.email,
-          data.phone,
-          data.address,
-          data.postal_code,
-          data.city,
-          data.state,
-          data.country,
-          data.website,
-          data.company_name,
-          companyDetailsJSON,
-          data.company_signature,
-          contactPersonJSON,
-          data.tax_number,
-          data.tax_office,
-          data.vat_id,
-          data.court_registration,
-          data.court_location,
-          Buffer.from(image),
-          data.image_type,
-          data.bank_name,
-          data.bic,
-          data.iban,
-          data.bank_account_holder,
-          data.invoice_approved
-        )
-
-      if (user.changes > 0) {
-        return { success: true, message: 'Profil wurde erfolgreich aktualisiert' }
-      } else {
-        return { success: false, message: 'Profil konnte nicht aktualisiert werden' }
-      }
+    if (info.changes > 0) {
+      return { success: true, message: 'Profil wurde erfolgreich aktualisiert' }
     } else {
-      return { success: false, message: 'Ungültige Daten' }
+      return { success: false, message: 'Profil konnte nicht aktualisiert werden' }
     }
   } catch (error) {
     console.error('updateProfile error:', error)
@@ -385,11 +382,14 @@ ipcMain.handle('get-dashboard', async () => {
   try {
     const rows = db.transaction(() => {
       return {
-        customers: db.prepare('SELECT COUNT(*) AS count FROM customers WHERE is_active = 1').get().count,
-        invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1').get().count,
+        customers: db.prepare('SELECT COUNT(*) AS count FROM customers WHERE is_active = 1').get()
+          .count,
+        invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1').get()
+          .count,
         offers: db.prepare('SELECT COUNT(*) AS count FROM offers WHERE is_active = 1').get().count,
         orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count,
-        deliveries: db.prepare('SELECT COUNT(*) AS count FROM deliveries WHERE is_active = 1').get().count,
+        deliveries: db.prepare('SELECT COUNT(*) AS count FROM deliveries WHERE is_active = 1').get()
+          .count,
         reminders: db.prepare('SELECT COUNT(*) AS count FROM remeinders').get().count,
         payments: db.prepare('SELECT COUNT(*) AS count FROM payments WHERE is_paid = 1').get().count
       }
@@ -403,11 +403,12 @@ ipcMain.handle('get-dashboard', async () => {
 })
 
 //customers
-ipcMain.handle('add-customer', async (event, data) => {
-  if (!data) {
+ipcMain.handle('add-customer', async (event, payload) => {
+  if (!payload) {
     return { success: false, message: 'No data provided' }
   }
   try {
+    const { customer } = payload
     const info = db
       .prepare(
         `
@@ -420,20 +421,20 @@ ipcMain.handle('add-customer', async (event, data) => {
     `
       )
       .run(
-        data.company_type ?? '',
-        data.company_name ?? '',
-        data.first_name,
-        data.last_name,
-        data.first_name + ' ' + data.last_name,
-        data.email,
-        data.phone,
-        data.address ?? '',
-        data.postal_code ?? '',
-        data.city ?? '',
-        data.country ?? '',
-        data.tax_number ?? '',
-        data.vat_id ?? '',
-        data.is_active ?? 1
+        customer.company_type ?? '',
+        customer.company_name ?? '',
+        customer.first_name,
+        customer.last_name,
+        customer.first_name + ' ' + customer.last_name,
+        customer.email,
+        customer.phone,
+        customer.address ?? '',
+        customer.postal_code ?? '',
+        customer.city ?? '',
+        customer.country ?? '',
+        customer.tax_number ?? '',
+        customer.vat_id ?? '',
+        customer.is_active ?? 1
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -461,7 +462,7 @@ ipcMain.handle('get-customers', async () => {
   }
 })
 
-ipcMain.handle('get-customer-by-id', async (data, id) => {
+ipcMain.handle('get-customer-by-id', async (event, id) => {
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
@@ -510,29 +511,30 @@ ipcMain.handle('get-customer-by-id', async (data, id) => {
   }
 })
 
-ipcMain.handle('update-customer-by-id', async (event, data, id) => {
-  if (!data && !id) {
+ipcMain.handle('update-customer-by-id', async (event, payload) => {
+  if (!payload) {
     return { success: false, message: 'No data provided' }
   }
   try {
+    const { id, customer } = payload
     const info = db
       .prepare(
         'UPDATE customers SET company_type = ?, company_name = ?, first_name = ?, last_name = ?, address = ?, postal_code = ?, city = ?, country = ?, email = ?, phone = ?, tax_number = ?, vat_id = ?, is_active = ?  WHERE id = ?'
       )
       .run(
-        data.company_type,
-        data.company_name,
-        data.first_name,
-        data.last_name,
-        data.address,
-        data.postal_code,
-        data.city,
-        data.country,
-        data.email,
-        data.phone,
-        data.tax_number,
-        data.vat_id,
-        data.is_active,
+        customer.company_type,
+        customer.company_name,
+        customer.first_name,
+        customer.last_name,
+        customer.address,
+        customer.postal_code,
+        customer.city,
+        customer.country,
+        customer.email,
+        customer.phone,
+        customer.tax_number,
+        customer.vat_id,
+        customer.is_active,
         id
       )
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -608,11 +610,12 @@ ipcMain.handle('search-customer', async (term) => {
 })
 
 //invoices
-ipcMain.handle('add-invoice', async (event, data) => {
-  if (!data) {
+ipcMain.handle('add-invoice', async (event, payload) => {
+  if (!payload) {
     return { success: false, message: 'No data provided' }
   }
   try {
+    const { invoice } = payload
     const info = db
       .prepare(
         `
@@ -640,25 +643,25 @@ ipcMain.handle('add-invoice', async (event, data) => {
         `
       )
       .run(
-        JSON.stringify(data.customer) || null,
-        data.is_active,
-        data.date,
-        data.due_date,
-        data.service_date,
-        data.currency,
-        data.payment_terms,
-        data.payment_conditions,
-        data.early_payment_discount,
-        data.early_payment_percentage,
-        data.early_payment_days,
-        data.total_after_discount,
-        data.is_small_company ? 1 : 0,
-        data.is_reverse_charge ? 1 : 0,
-        data.is_eu_delivery ? 1 : 0,
-        JSON.stringify(data.positions || []),
-        data.net_total,
-        data.vat_total,
-        data.gross_total
+        JSON.stringify(invoice.customer) || null,
+        invoice.is_active,
+        invoice.date,
+        invoice.due_date,
+        invoice.service_date,
+        invoice.currency,
+        invoice.payment_terms,
+        invoice.payment_conditions,
+        invoice.early_payment_discount,
+        invoice.early_payment_percentage,
+        invoice.early_payment_days,
+        invoice.total_after_discount,
+        invoice.is_small_company ? 1 : 0,
+        invoice.is_reverse_charge ? 1 : 0,
+        invoice.is_eu_delivery ? 1 : 0,
+        JSON.stringify(invoice.positions || []),
+        invoice.net_total,
+        invoice.vat_total,
+        invoice.gross_total
       )
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
@@ -673,7 +676,7 @@ ipcMain.handle('get-invoices', async () => {
     const rows = db
       .prepare(
         `
-          SELECT *
+          SELECT id, date, due_date, total_after_discount, is_active, customer
           FROM invoices
           WHERE is_active = 1
           ORDER BY id DESC
@@ -688,7 +691,7 @@ ipcMain.handle('get-invoices', async () => {
   }
 })
 
-ipcMain.handle('get-invoice-by-id', async (data, id) => {
+ipcMain.handle('get-invoice-by-id', async (event, id) => {
   if (!id) {
     return { success: false, message: 'No data provided' }
   }
@@ -709,18 +712,165 @@ ipcMain.handle('get-invoice-by-id', async (data, id) => {
     return { success: false, message: err.message }
   }
 })
-ipcMain.handle('set-invoice-status', async (event, id, value) => {
-  if (!id) {
+
+ipcMain.handle('set-invoice-status', async (event, payload) => {
+  if (!payload) {
     return { success: false, message: 'No data provided' }
   }
   try {
-    db.prepare(`Update invoices Set is_active = ? WHERE id = ?`).run(value, id)
+    const { id, status } = payload
+    db.prepare(`Update invoices Set is_active = ? WHERE id = ?`).run(status, id)
     return { success: true }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
   }
 })
+
+ipcMain.handle('invoices-categories-filter', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const { category } = payload
+    let query = ''
+    let rows = []
+    let limit = 50
+
+    switch (category) {
+      case 'all':
+        query = `SELECT id, date, due_date, total_after_discount, is_active, customer
+          FROM invoices
+          ORDER BY id DESC
+          LIMIT ?`
+        rows = db.prepare(query).all(limit)
+        break
+
+      case 'active':
+        query = `SELECT id, date, due_date, total_after_discount, is_active, customer
+          FROM invoices
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?`
+        rows = db.prepare(query).all(limit)
+        break
+
+      case 'canceled':
+        query = `SELECT id, date, due_date, total_after_discount, is_active, customer
+          FROM invoices
+          WHERE is_active = 0
+          ORDER BY id DESC
+          LIMIT ?`
+        rows = db.prepare(query).all(limit)
+        break
+
+      case 'is_paid':
+        query = `
+            SELECT
+                i.id,
+                i.date,
+                i.due_date,
+                i.total_after_discount,
+                i.is_active,
+                i.customer
+            FROM invoices i
+            WHERE EXISTS (
+                SELECT 1
+                FROM payments p
+                WHERE p.invoice_id = i.id AND p.is_paid = 1
+            )
+            ORDER BY i.id DESC
+            LIMIT ?;
+          `
+        rows = db.prepare(query).all(limit)
+        break
+
+      case 'is_not_paid':
+        query = `
+            SELECT
+                i.id,
+                i.date,
+                i.due_date,
+                i.total_after_discount,
+                i.is_active,
+                i.customer
+            FROM invoices i
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM payments p
+                WHERE p.invoice_id = i.id AND p.is_paid = 1
+            )
+            ORDER BY i.id DESC
+            LIMIT ?;
+          `
+        rows = db.prepare(query).all(limit)
+        break
+
+      case 'is_partially_paid':
+        query = `
+              SELECT
+                  i.id,
+                  i.date,
+                  i.due_date,
+                  i.total_after_discount,
+                  i.is_active,
+                  i.customer
+              FROM invoices i
+              WHERE i.is_active = 1
+                AND EXISTS (
+                    SELECT 1
+                    FROM payments p
+                    WHERE p.invoice_id = i.id
+                      AND p.is_paid = 0
+                      AND p.is_partially_paid = 1
+                )
+              ORDER BY i.id DESC
+              LIMIT ?;
+            `
+        rows = db.prepare(query).all(limit)
+        break
+
+      default:
+        query = `SELECT * FROM invoices WHERE is_active = 1 ORDER BY id DESC LIMIT ?`
+        rows = db.prepare(query).all(limit)
+    }
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('invoices-date-filter', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT 
+          id,
+          date,
+          due_date,
+          total_after_discount,
+          is_active,
+          customer
+        FROM invoices
+        WHERE date BETWEEN ? AND ?
+        ORDER BY id DESC
+        LIMIT ?;`
+      )
+      .all(start, end, limit)
+    return { success: true, rows }
+  } catch (error) {
+    console.error('dateFilter error:', error)
+    return { success: false, message: error.message }
+  }
+})
+
 //offers
 ipcMain.handle('add-offer', async (event, data) => {
   if (!data) {
@@ -989,8 +1139,6 @@ ipcMain.handle('add-payment', async (data, file_name, image_file) => {
   }
 })
 
-
-
 ipcMain.handle('get-document', async (event, data, tableName) => {
   let limit = 50
   try {
@@ -1053,8 +1201,6 @@ ipcMain.handle('get-document-by-id', async (event, data, id, tableName) => {
   }
 })
 
-
-
 ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
   try {
     console.log(startDate, endDate)
@@ -1075,122 +1221,6 @@ ipcMain.handle('document-report', async (data, tableName, startDate, endDate) =>
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('category-filter', async (event, tableName, category) => {
-  try {
-    let query = ''
-    let rows = []
-    let limit = 50
-
-    if (tableName === 'invoices') {
-      switch (category) {
-        case 'all':
-          query = `SELECT * FROM invoices ORDER BY invoice_id DESC LIMIT ?`
-          rows = db.prepare(query).all(limit)
-          break
-
-        case 'active':
-          query = `SELECT * FROM invoices WHERE invoice_is_active = 1 ORDER BY invoice_id DESC LIMIT ?`
-          rows = db.prepare(query).all(limit)
-          break
-
-        case 'canceled':
-          query = `SELECT * FROM invoices WHERE invoice_is_active = 0 ORDER BY invoice_id DESC LIMIT ?`
-          rows = db.prepare(query).all(limit)
-          break
-
-        case 'is_paid':
-          query = `
-            SELECT 
-                i.*,
-                c.*,
-                p.*
-            FROM invoices i
-            JOIN customers c ON c.customer_id = i.invoice_customer_id
-            LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
-            WHERE i.invoice_is_active = 1
-              AND p.is_paid = 1
-            ORDER BY i.invoice_id DESC
-            LIMIT ?
-          `
-          rows = db.prepare(query).all(limit)
-          break
-
-        case 'is_not_paid':
-          query = `
-            SELECT 
-                i.*,
-                c.*,
-                p.*
-            FROM invoices i
-            JOIN customers c ON c.customer_id = i.invoice_customer_id
-            LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
-            WHERE i.invoice_is_active = 1
-              AND (p.is_paid = 0 OR p.payment_id IS NULL)
-            ORDER BY i.invoice_id DESC
-            LIMIT ?
-          `
-          rows = db.prepare(query).all(limit)
-          break
-
-        case 'is_partially_paid':
-          query = `
-              SELECT 
-                  i.*,
-                  c.*,
-                  p.*
-              FROM invoices i
-              JOIN customers c ON c.customer_id = i.invoice_customer_id
-              LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
-              WHERE i.invoice_is_active = 1
-                AND p.is_partially_paid = 1
-                AND (p.is_paid = 0 OR p.is_paid IS NULL)
-              ORDER BY i.invoice_id DESC
-              LIMIT ?
-            `
-          rows = db.prepare(query).all(limit)
-          break
-
-        default:
-          query = `SELECT * FROM invoices WHERE invoice_is_active = 1 ORDER BY invoice_id DESC LIMIT ?`
-          rows = db.prepare(query).all(limit)
-      }
-
-      return { success: true, rows }
-    }
-
-    return { success: false, message: 'Invalid table name' }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('date-filter', async (event, data, tableName, date) => {
-  let limit = 50
-  try {
-    if (tableName === 'invoices') {
-      const rows = db
-        .prepare(
-          `SELECT 
-            i.*,
-            c.*,
-            p.*
-          FROM invoices i
-          JOIN customers c ON c.customer_id = i.invoice_customer_id
-          LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
-          WHERE i.invoice_is_active = 1 AND i.invoice_date BETWEEN ? AND ?
-          ORDER BY i.invoice_id DESC
-          LIMIT ?;`
-        )
-        .all(date.start, date.end, limit)
-      return { success: true, rows }
-    }
-  } catch (error) {
-    console.error('dateFilter error:', error)
-    return { success: false, message: error.message }
   }
 })
 
@@ -1234,4 +1264,3 @@ ipcMain.handle('search-filter', (event, tableName, searchTerm) => {
     return { success: true, rows }
   }
 })
-

@@ -1,7 +1,7 @@
 <template>
   <div class="editor-panel">
     <!-- Header Section -->
-    <div class="editor-header-block">
+    <div v-if="invoices" class="editor-header-block">
       <div>
         <h1 class="title">{{ title }} {{ invoices.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
@@ -26,7 +26,7 @@
 
     <div class="filter-container">
       <div class="form-group">
-        <select v-model="categories_filter" class="select-input" @change="getCategory">
+        <select v-model="categories_filter" class="select-input" @change="categoriesFilter">
           <option value="" disabled>Kategorie</option>
           <option value="all">Alle</option>
           <option value="active">Aktiv</option>
@@ -147,6 +147,8 @@ export default {
   },
   methods: {
     async getInvoices() {
+      const route = this.$route
+      console.log(route)
       try {
         const result = await window.api.getInvoices()
         if (!result.success) return
@@ -154,6 +156,7 @@ export default {
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
+        console.log(this.invoices)
       } catch (error) {
         console.error(error)
       }
@@ -163,13 +166,16 @@ export default {
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    async getCategory() {
+    async categoriesFilter() {
       try {
         this.clearDate()
-        const result = await window.api.categoryFilter('invoices', this.categories_filter)
-        if (result.success) {
-          this.invoices = result.rows
-        }
+        const result = await window.api.invoicesCategoriesFilter(this.categories_filter)
+        if (!result.success) return
+        this.invoices = result.rows.map((row) => ({
+          ...row,
+          customer: row.customer ? JSON.parse(row.customer) : null
+        }))
+        console.log('category', this.invoices)
       } catch (error) {
         console.error(error)
       }
@@ -201,9 +207,13 @@ export default {
             start: this.date_box_start,
             end: this.date_box_end
           }
-          const result = await window.api.dateFilter('invoices', date)
-          this.invoices = result.rows
-          console.log(this.invoices)
+          const result = await window.api.invoicesDateFilter(date)
+          if (!result.success) return
+          this.invoices = result.rows.map((row) => ({
+            ...row,
+            customer: row.customer ? JSON.parse(row.customer) : null
+          }))
+          console.log('date', this.invoices)
           await store.setStore('date_filter', JSON.parse(JSON.stringify(date))) //for back from details page
         }
       } catch (error) {

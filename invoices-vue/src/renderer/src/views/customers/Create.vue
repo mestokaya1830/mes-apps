@@ -162,7 +162,9 @@ export default {
       this.showSuccess = false
       this.errorMessage = ''
       try {
-        const data = JSON.parse(JSON.stringify(this.customer))
+        const data = {
+          customer: JSON.parse(JSON.stringify(this.customer))
+        }
         const result = await window.api.addCustomer(data)
         if (result.success) {
           this.showSuccess = true
