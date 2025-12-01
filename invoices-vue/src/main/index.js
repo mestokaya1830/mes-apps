@@ -715,7 +715,7 @@ ipcMain.handle('get-invoices', async () => {
     const rows = db
       .prepare(
         `
-          SELECT id, date, due_date, total_after_discount, is_active, customer
+          SELECT id, date, due_date, gross_total, is_active, customer
           FROM invoices
           WHERE is_active = 1
           ORDER BY id DESC
@@ -778,7 +778,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
 
     switch (category) {
       case 'all':
-        query = `SELECT id, date, due_date, total_after_discount, is_active, customer
+        query = `SELECT id, date, due_date, gross_total, is_active, customer
           FROM invoices
           ORDER BY id DESC
           LIMIT ?`
@@ -786,7 +786,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
         break
 
       case 'active':
-        query = `SELECT id, date, due_date, total_after_discount, is_active, customer
+        query = `SELECT id, date, due_date, gross_total, is_active, customer
           FROM invoices
           WHERE is_active = 1
           ORDER BY id DESC
@@ -795,7 +795,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
         break
 
       case 'canceled':
-        query = `SELECT id, date, due_date, total_after_discount, is_active, customer
+        query = `SELECT id, date, due_date, gross_total, is_active, customer
           FROM invoices
           WHERE is_active = 0
           ORDER BY id DESC
@@ -809,7 +809,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
                 i.id,
                 i.date,
                 i.due_date,
-                i.total_after_discount,
+                i.gross_total,
                 i.is_active,
                 i.customer
             FROM invoices i
@@ -830,7 +830,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
                 i.id,
                 i.date,
                 i.due_date,
-                i.total_after_discount,
+                i.gross_total,
                 i.is_active,
                 i.customer
             FROM invoices i
@@ -851,7 +851,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
                   i.id,
                   i.date,
                   i.due_date,
-                  i.total_after_discount,
+                  i.gross_total,
                   i.is_active,
                   i.customer
               FROM invoices i
@@ -896,7 +896,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
             id,
             date,
             due_date,
-            total_after_discount,
+            gross_total,
             is_active,
             customer
           FROM invoices
@@ -916,7 +916,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
 
         rows = db
           .prepare(
-            `SELECT id, date, due_date, total_after_discount, is_active, customer
+            `SELECT id, date, due_date, gross_total, is_active, customer
             FROM invoices
             WHERE id BETWEEN ? AND ? AND is_active = 1
             ORDER BY id DESC LIMIT ?`
@@ -925,7 +925,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
       } else {
         rows = db
           .prepare(
-            `SELECT id, date, due_date, total_after_discount, is_active, customer
+            `SELECT id, date, due_date, gross_total, is_active, customer
             FROM invoices
             WHERE id + 0 LIKE ? AND is_active = 1
             ORDER BY id DESC LIMIT ?`
@@ -953,7 +953,7 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
           id,
           date,
           due_date,
-          total_after_discount,
+          gross_total,
           is_active,
           customer
         FROM invoices
