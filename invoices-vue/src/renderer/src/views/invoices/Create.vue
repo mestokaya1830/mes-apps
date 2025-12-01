@@ -437,7 +437,7 @@ export default {
         const result = await window.api.getCustomerById(this.$route.query.id)
         if (!result.success) return
         this.invoice.id = result.data.invoice_id.id
-        this.invoice.customer = result.data.rows
+        this.invoice.customer = result.data.customer
       } catch (error) {
         console.error(error)
       }

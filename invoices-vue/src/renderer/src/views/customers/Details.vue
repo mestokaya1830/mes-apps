@@ -3,20 +3,22 @@
     <div v-if="customer" class="editor-panel">
       <div class="editor-header-block">
         <div class="editor-title">
-          📝 {{ title }} {{ formatCustomerId(customer.id) }}
+          📝 {{ title }}
         </div>
       </div>
 
       <div class="customer-info">
         <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
-        <p><strong>Firmenname:</strong> {{ customer.company_name }}</p>
+        <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
+        <p><strong>Kunden.Nr.:</strong> {{ formatCustomerId(customer.id) }}</p>
         <p><strong>Vorname:</strong> {{ customer.first_name }}</p>
         <p><strong>Nachname:</strong> {{ customer.last_name }}</p>
         <p><strong>Email:</strong> {{ customer.email }}</p>
         <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
         <p><strong>Adresse:</strong> {{ customer.address }}</p>
         <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
-
+        {{ counts }}
+<!-- 
         <p><strong>Gesamt Rechnungen:</strong> {{ customer.total_invoices }}</p>
         <p><strong>Bezahlt:</strong> {{ customer.total_paid }}</p>
         <p><strong>Unbezahlt:</strong> {{ customer.total_unpaid }}</p>
@@ -24,7 +26,7 @@
         <p><strong>Früh bezahlt:</strong> {{ customer.early_paid }}</p>
         <p><strong>Bestellungen:</strong> {{ customer.total_orders }}</p>
         <p><strong>Angebote:</strong> {{ customer.total_offers }}</p>
-        <p><strong>Erinnerungen:</strong> {{ customer.total_reminders }}</p>
+        <p><strong>Erinnerungen:</strong> {{ customer.total_reminders }}</p> -->
       </div>
     </div>
   </div>
@@ -36,7 +38,8 @@ export default {
   data() {
     return {
       title: 'Kunden Details',
-      customer: null
+      customer: null,
+      counts: null
     }
   },
   mounted() {
@@ -45,10 +48,12 @@ export default {
   methods: {
     async getCustomer() {
       try {
-        const result = await window.api.getCustomerById(this.$route.params.id)
+        const result = await window.api.customerDetails(this.$route.params.id)
         if (!result.success) return
-        this.customer = result.rows
-        console.log(this.customer)
+        this.customer = result.data.customer
+        this.counts = result.data.counts
+        console.log(result.data.customer)
+        console.log(result.data.counts)
       } catch (error) {
         console.error(error)
       }

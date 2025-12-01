@@ -62,14 +62,10 @@ export default {
     },
     async saveInvoice() {
       if (this.tableData) {
-        const data = {
-          invoice: JSON.parse(JSON.stringify(this.tableData))
-        }
-        const result = await window.api.addInvoice(data)
-        console.log(result)
-        // if (!result.success) return
-        // this.clearStore()
-        // this.$router.push('/invoices')
+        const result = await window.api.addInvoice(JSON.parse(JSON.stringify(this.tableData)))
+        if (!result.success) return
+        this.clearStore()
+        this.$router.push('/invoices')
       }
     },
     printDocument() {

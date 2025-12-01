@@ -42,7 +42,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(invoice.customer_id) }}</span>
+              <span class="meta-value">{{ formatCustomerId(invoice.customer.id) }}</span>
             </div>
 
             <div v-if="invoice.country === 'Germany' && invoice.tax_number" class="meta-row">

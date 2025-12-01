@@ -62,6 +62,21 @@ try {
 } catch (err) {
   console.error(err.message)
 }
+
+//extract query-------------------------------------------------------------------
+try {
+  const result = db
+    .prepare(
+      `SELECT * 
+       FROM invoices 
+       WHERE CAST(json_extract(customer, '$.id') AS INTEGER) = ?;`
+    )
+    .all(4) // 1 → customer id
+  console.log(result)
+} catch (err) {
+  console.error(err.message)
+}
+
 -------------------------------------------------------------------------------------
 //add column
 try {

@@ -467,11 +467,11 @@ ipcMain.handle('get-customer-by-id', async (event, id) => {
     return { success: false, message: 'No id provided' }
   }
   try {
-    const rows = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
+    const customer = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
     const invoice_id = db.prepare(`SELECT id FROM invoices ORDER BY id DESC LIMIT 1;`).get()
 
     const data = {
-      rows,
+      customer,
       invoice_id
     }
     return { success: true, data }
@@ -538,6 +538,44 @@ ipcMain.handle('update-customer-by-id', async (event, payload) => {
         id
       )
     return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('customer-details', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    const customer = db
+      .prepare(
+        `
+          SELECT * FROM customers WHERE id = ?
+        `
+      )
+      .get(id)
+    //get all counts for customer
+    const counts = db
+      .prepare(
+        `
+          SELECT
+            COALESCE((SELECT COUNT(*) FROM invoices 
+                      WHERE json_extract(customer, '$.id') = CAST(:id AS TEXT)), 0) AS invoice_count,
+            COALESCE((SELECT COUNT(*) FROM offers    WHERE customer_id = :id), 0) AS offer_count,
+            COALESCE((SELECT COUNT(*) FROM orders    WHERE customer_id = :id), 0) AS order_count,
+            COALESCE((SELECT COUNT(*) FROM reminders WHERE customer_id = :id), 0) AS reminder_count,
+            COALESCE((SELECT COUNT(*) FROM payments  WHERE customer_id = :id), 0) AS payment_count
+        `
+      )
+      .get({ id })
+
+    const data = {
+      customer,
+      counts
+    }
+    return { success: true, data }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -616,7 +654,7 @@ ipcMain.handle('add-invoice', async (event, payload) => {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const { invoice } = payload
+    const invoice = payload
     const info = db
       .prepare(
         `
