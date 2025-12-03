@@ -62,16 +62,27 @@ export default {
       formatNumber(value) {
         return new Intl.NumberFormat('de-DE').format(value || 0)
       },
-      validateServicePeriod(pos) {
-        if (!pos.service_period_start || !pos.service_period_end) return
+      checkPositionsDates(positions) {
+        for (let i = 0; i < positions.length; i++) {
+          if (!positions[i].service_period_start) {
+            this.$refs.service_period_start[i].focus?.()
+            return
+          }
 
-        const start = new Date(pos.service_period_start)
-        const end = new Date(pos.service_period_end)
+          if (!positions[i].service_period_end) {
+            this.$refs.service_period_end[i].focus?.()
+            return
+          }
 
-        if (start > end) {
-          alert('❌ Das Startdatum darf nicht nach dem Enddatum liegen.')
-          pos.service_period_end = ''
+          if (
+            new Date(positions[i].service_period_start) > new Date(positions[i].service_period_end)
+          ) {
+            this.$refs.service_period_end[i].focus?.()
+            console.log(`❌ Position ${i + 1}: Startdatum darf nicht nach Enddatum liegen.`)
+            return
+          }
         }
+        return true
       }
     }
   }

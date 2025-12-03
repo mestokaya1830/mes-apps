@@ -196,7 +196,7 @@
                   ref="service_period_start"
                   v-model="item.service_period_start"
                   type="date"
-                  class="form-input datepicker"
+                  class="form-input"
                 />
               </div>
               <div class="form-group">
@@ -205,7 +205,7 @@
                   ref="service_period_end"
                   v-model="item.service_period_end"
                   type="date"
-                  class="form-input datepicker"
+                  class="form-input"
                 />
               </div>
             </div>
@@ -228,6 +228,8 @@
                   v-model.number="item.quantity"
                   type="number"
                   class="form-input"
+                  min="1"
+                  required
                   @input="setUnitTotal(item.quantity, item.price, index)"
                 />
               </div>
@@ -367,7 +369,7 @@
 import store from '../../store/store.js'
 export default {
   name: 'Createinvoice',
-  inject: ['formatInvoiceId', 'validateServicePeriod'],
+  inject: ['formatInvoiceId', 'checkPositionsDates'],
   data() {
     return {
       title: 'Rechnung erstellen',
@@ -520,28 +522,6 @@ export default {
       date.setDate(date.getDate() + this.invoice.payment_terms)
       this.invoice.due_date = date.toISOString().split('T')[0]
     },
-    checkPositionsDates() {
-      for (let i = 0; i < this.invoice.positions.length; i++) {
-        const pos = this.invoice.positions[i]
-
-        if (!pos.service_period_start) {
-          this.$refs.service_period_start[i].focus?.()
-          return
-        }
-
-        if (!pos.service_period_end) {
-          this.$refs.service_period_end[i].focus?.()
-          return
-        }
-
-        if (new Date(pos.service_period_start) > new Date(pos.service_period_end)) {
-          this.$refs.service_period_end[i].focus?.()
-          alert(`❌ Position ${i + 1}: Startdatum darf nicht nach Enddatum liegen.`)
-          return
-        }
-      }
-      return true
-    },
     async submitStore() {
       if (!this.invoice) return
       console.time('commit')
@@ -551,9 +531,7 @@ export default {
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.total_after_discount = this.summary.total_after_discount
-      // if (!this.checkServiceDateInput()) return
-      this.checkPositionsDates()
-      if (!this.checkPositionsDates()) return
+      if (!this.checkPositionsDates(this.invoice.positions)) return
       // await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
       // this.$router.push('/invoices/preview')
       console.timeEnd('commit')
