@@ -20,7 +20,7 @@
           <div class="form-group">
             <label class="form-label">Leistungsdatum <span class="stars">*</span></label>
             <input
-              ref="invoice_service_date"
+              ref="service_date"
               v-model="invoice.service_date"
               type="date"
               class="form-input"
@@ -30,13 +30,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
-            <input
-              ref="invoice_date"
-              v-model="invoice.date"
-              type="date"
-              class="form-input"
-              required
-            />
+            <input ref="date" v-model="invoice.date" type="date" class="form-input" required />
           </div>
         </div>
       </div>
@@ -369,7 +363,7 @@
 import store from '../../store/store.js'
 export default {
   name: 'Createinvoice',
-  inject: ['formatInvoiceId', 'checkPositionsDates'],
+  inject: ['formatInvoiceId', 'checkPositionsDates', 'checkServiceDates'],
   data() {
     return {
       title: 'Rechnung erstellen',
@@ -531,9 +525,11 @@ export default {
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.total_after_discount = this.summary.total_after_discount
+      if (!this.checkServiceDates(this.invoice.service_date, this.invoice.date)) return
       if (!this.checkPositionsDates(this.invoice.positions)) return
-      // await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
-      // this.$router.push('/invoices/preview')
+
+      await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
+      this.$router.push('/invoices/preview')
       console.timeEnd('commit')
     }
   }

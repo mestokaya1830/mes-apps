@@ -15,11 +15,12 @@
               type="email"
               class="form-control"
               placeholder="example@email.com"
+              @input="error = ''"
             />
-            <p class="error-message" v-if="message.error">{{ message.error }}</p>
+            <p v-if="error" class="error">{{ error }}</p>
           </div>
         </div>
-        <p class="success-message" v-if="message.success">{{ message.success }}</p>
+        <p v-if="success" class="success">{{ success }}</p>
         <button class="form-btn" type="submit">Send Email</button>
       </form>
     </div>
@@ -31,10 +32,8 @@ export default {
   data() {
     return {
       email: '',
-      message: {
-        success: '',
-        error: ''
-      }
+      success: '',
+      error: ''
     }
   },
   methods: {
@@ -44,29 +43,29 @@ export default {
     },
 
     async sendEmail() {
-      this.message = { success: '', error: '' }
-
-      if (!this.email) {
-        this.message.error = 'Email cant be empty'
+      this.success = ''
+      this.error = ''
+      if (!this.email.trim()) {
+        this.error = 'Email cant be empty'
         return
       }
 
-      if (!this.validateEmail(this.email)) {
-        this.message.error = 'Invalid email format'
+      if (!this.validateEmail(this.email.trim())) {
+        this.error = 'Invalid email format'
         return
       }
 
       try {
         const res = await window.api.emailVerfication({ email: this.email })
-        if (res.success) {
-          this.message.success = res.success
-          this.message.error = ''
-          this.$router.push('/reset-password')
-        } else {
-          this.message.error = res.message || 'Something went wrong'
+        if (!res.success) {
+          this.error = res || 'Something went wrong'
+          return
         }
+        this.success = res.success
+        this.error = ''
+        this.$router.push('/reset-password')
       } catch (err) {
-        this.message.error = err.message || 'Server error'
+        this.error = err || 'Server error'
       }
     }
   }

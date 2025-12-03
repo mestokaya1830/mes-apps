@@ -62,6 +62,18 @@ export default {
       register: false
     }
   },
+  watch: {
+    user: {
+      handler(newVal) {
+        for (const key in newVal) {
+          if (typeof newVal[key] === 'string' && newVal[key] && this.error[key]) {
+            this.error[key] = ''
+          }
+        }
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.checkRegister()
   },
@@ -74,7 +86,13 @@ export default {
         console.error(err)
       }
     },
-
+    trimFormFields() {
+      for (const item in this.user) {
+        if (typeof this.user[item] === 'string') {
+          this.user[item] = this.user[item].trim()
+        }
+      }
+    },
     validateForm() {
       let valid = true
       this.error = { email: '', password: '', credential: '' }
@@ -99,16 +117,17 @@ export default {
     },
 
     async loginUser() {
+      this.trimFormFields()
       if (!this.validateForm()) return
 
       try {
         const res = await window.api.login(this.user)
         if (!res.success) {
           this.error.credential = res.message || 'Invalid credentials'
-        } else {
-          await store.setStore('auth', res.user)
-          this.$router.push('/')
+          return
         }
+        await store.setStore('auth', res.user)
+        this.$router.push('/')
       } catch (err) {
         this.error.credential = err.message || 'Server error'
       }

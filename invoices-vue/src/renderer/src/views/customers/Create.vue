@@ -19,85 +19,148 @@
           </svg>
         </router-link>
       </div>
+
       <!-- Base -->
       <div class="form-section">
         <div class="form-section-title">🧾 Kundeninformationen</div>
+
         <div class="form-row">
+          <!-- Unternehmenstyp -->
           <div class="form-group">
-            <label class="form-label">Unternehmenstyp <span class="stars">*</span></label>
+            <label class="form-label"> Unternehmenstyp <span class="stars">*</span> </label>
             <select v-model="customer.company_type" class="form-input">
               <option disabled value="">Wähle Unternehmenstyp</option>
               <option v-for="item in companies" :key="item.value" :value="item.value">
                 {{ item.label }}
               </option>
             </select>
+            <div v-if="error.company_type" class="error">
+              {{ error.company_type }}
+            </div>
           </div>
+
+          <!-- Firmenname -->
           <div class="form-group">
             <label class="form-label">Firmenname <span class="stars">*</span></label>
-            <input v-model="customer.company_name" type="text" class="form-input" required />
+            <input v-model="customer.company_name" type="text" class="form-input" />
+            <div v-if="error.company_name" class="error">
+              {{ error.company_name }}
+            </div>
           </div>
+
+          <!-- Vorname -->
           <div class="form-group">
             <label class="form-label">Vorname <span class="stars">*</span></label>
             <input v-model="customer.first_name" type="text" class="form-input" />
+            <div v-if="error.first_name" class="error">
+              {{ error.first_name }}
+            </div>
           </div>
+
+          <!-- Nachname -->
           <div class="form-group">
             <label class="form-label">Nachname <span class="stars">*</span></label>
             <input v-model="customer.last_name" type="text" class="form-input" />
+            <div v-if="error.last_name" class="error">
+              {{ error.last_name }}
+            </div>
           </div>
+
+          <!-- E-Mail -->
           <div class="form-group">
             <label class="form-label">E-Mail <span class="stars">*</span></label>
             <input v-model="customer.email" type="email" class="form-input" />
+            <div v-if="error.email" class="error">
+              {{ error.email }}
+            </div>
           </div>
+
+          <!-- Telefonnummer -->
           <div class="form-group">
             <label class="form-label">Telefonnummer <span class="stars">*</span></label>
-            <input v-model="customer.phone" type="number" class="form-input" />
+            <input v-model="customer.phone" type="text" class="form-input" />
+            <div v-if="error.phone" class="error">
+              {{ error.phone }}
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Adressdaten -->
       <div class="form-section">
         <div class="form-section-title">📍 Adressdaten</div>
         <div class="form-row">
+          <!-- Address -->
           <div class="form-group">
-            <label class="form-label">Addresse <span class="stars">*</span></label>
+            <label class="form-label">Adresse <span class="stars">*</span></label>
             <input v-model="customer.address" type="text" class="form-input" />
+            <div v-if="error.address" class="error">
+              {{ error.address }}
+            </div>
           </div>
+
+          <!-- Postleitzahl -->
           <div class="form-group">
             <label class="form-label">Postleitzahl <span class="stars">*</span></label>
-            <input v-model="customer.postal_code" type="number" class="form-input" required />
+            <input v-model="customer.postal_code" type="text" class="form-input" />
+            <div v-if="error.postal_code" class="error">
+              {{ error.postal_code }}
+            </div>
           </div>
+
+          <!-- Stadt -->
           <div class="form-group">
             <label class="form-label">Stadt <span class="stars">*</span></label>
             <input v-model="customer.city" type="text" class="form-input" />
+            <div v-if="error.city" class="error">
+              {{ error.city }}
+            </div>
           </div>
+
+          <!-- Land -->
           <div class="form-group">
             <label class="form-label">Land <span class="stars">*</span></label>
             <input v-model="customer.country" type="text" class="form-input" />
+            <div v-if="error.country" class="error">
+              {{ error.country }}
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Steuer -->
       <div class="form-section">
         <div class="form-section-title">💼 Steuerinformationen</div>
+
         <div class="form-row">
+          <!-- Steuernummer -->
           <div class="form-group">
             <label class="form-label">Steuernummer <span class="stars">*</span></label>
             <input v-model="customer.tax_number" type="text" class="form-input" />
+            <div v-if="error.tax_number" class="error">
+              {{ error.tax_number }}
+            </div>
           </div>
+
+          <!-- VAT ID -->
           <div class="form-group">
             <label class="form-label">USt-IdNr. <span class="stars">*</span></label>
             <input v-model="customer.vat_id" type="text" class="form-input" />
+            <div v-if="error.vat_id" class="error">
+              {{ error.vat_id }}
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Submit -->
       <div class="form-section">
         <div v-if="showSuccess" class="">
           <p class="font-medium">✅ Kunde erfolgreich gespeichert!</p>
         </div>
 
-        <div v-if="errorMessage" class="">
-          <p class="font-medium">❌ Error: {{ errorMessage }}</p>
-        </div>
         <div class="flex justify-center pt-6">
-          <button type="button" @click="saveCustomer" class="form-btn">Speichern</button>
+          <button type="button" class="form-btn" @click="saveCustomer">Speichern</button>
         </div>
       </div>
     </div>
@@ -112,7 +175,7 @@ export default {
       title: 'Kundenregistrierungsformular',
       isSubmitting: false,
       showSuccess: false,
-      errorMessage: '',
+      error: {},
       customer: {
         company_type: '',
         company_name: '',
@@ -156,62 +219,100 @@ export default {
       ]
     }
   },
+  watch: {
+    customer: {
+      handler(newVal) {
+        for (const key in newVal) {
+          if (typeof newVal[key] === 'string' && newVal[key] && this.error[key]) {
+            this.error[key] = ''
+          }
+        }
+      },
+      deep: true
+    }
+  },
   methods: {
+    trimFormFields() {
+      for (const item in this.customer) {
+        if (typeof this.customer[item] === 'string') {
+          this.customer[item] = this.customer[item].trim()
+        }
+      }
+    },
     validateForm() {
       const c = this.customer
+      this.error = {}
+      let valid = true
 
-      // Şirket tipi
-      if (!c.company_type) return 'Bitte wählen Sie den Unternehmenstyp.'
+      if (!c.company_type) {
+        this.error.company_type = 'Bitte Unternehmenstyp auswählen.'
+        valid = false
+      }
+      if (!c.company_name) {
+        this.error.company_name = 'Firmenname muss mindestens 2 Zeichen enthalten..'
+        valid = false
+      }
 
-      // Firma adı
-      if (!c.company_name || c.company_name.length < 3)
-        return 'Der Firmenname muss mindestens 3 Zeichen enthalten.'
+      if (!c.first_name || c.first_name.length < 2) {
+        this.error.first_name = 'Vorname muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      // Ad
-      if (!c.first_name || c.first_name.length < 2)
-        return 'Vorname muss mindestens 2 Zeichen enthalten.'
+      if (!c.last_name || c.last_name.length < 2) {
+        this.error.last_name = 'Nachname muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      // Soyad
-      if (!c.last_name || c.last_name.length < 2)
-        return 'Nachname muss mindestens 2 Zeichen enthalten.'
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
+      if (!emailRegex.test(c.email)) {
+        this.error.email = 'Ungültige E-Mail-Adresse.'
+        valid = false
+      }
 
-      // Email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(c.email)) return 'Ungültige E-Mail-Adresse.'
+      if (!/^\+?[0-9\s\-()]{7,15}$/.test(c.phone)) {
+        this.error.phone = 'Telefonnummer muss zwischen 7 und 15 Ziffern enthalten.'
+        valid = false
+      }
 
-      // Telefon — en az 3 rakam
-      if (!/^\+?\d{3,}$/.test(c.phone)) return 'Telefonnummer muss mindestens 3 Ziffern enthalten.'
+      if (!c.address || c.address.trim().length < 3) {
+        this.error.address = 'Adresse muss mindestens 3 Zeichen enthalten.'
+        valid = false
+      } else if (!/^[A-Za-zÄÖÜäöüß\s\-.]+\s+\d+[A-Za-z]?$/.test(c.address)) {
+        this.error.address = 'Adresse muss Straße und Hausnummer enthalten (z. B. Musterstraße 12).'
+        valid = false
+      }
 
-      // Adres
-      if (!c.address || c.address.length < 3) return 'Adresse muss mindestens 3 Zeichen enthalten.'
+      if (!/^\d{5}$/.test(c.postal_code)) {
+        this.error.postal_code = 'Postleitzahl muss aus 5 Zahlen bestehen.'
+        valid = false
+      }
 
-      // PLZ — Alman Formatı: 5 sayı
-      if (!/^\d{5}$/.test(c.postal_code)) return 'Postleitzahl muss aus 5 Zahlen bestehen.'
+      if (!c.city || c.city.length < 2) {
+        this.error.city = 'Stadt muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      // Şehir
-      if (!c.city || c.city.length < 2) return 'Stadt muss mindestens 2 Zeichen enthalten.'
+      if (!c.country || c.country.length < 2) {
+        this.error.country = 'Land muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      // Ülke
-      if (!c.country || c.country.length < 2) return 'Land muss mindestens 2 Zeichen enthalten.'
+      if (!/^[0-9]{10,11}$/.test(c.tax_number)) {
+        this.error.tax_number = 'Steuernummer muss 10–11 Ziffern enthalten.'
+        valid = false
+      }
 
-      // Steuernummer
-      if (!c.tax_number || c.tax_number.length < 3)
-        return 'Steuernummer muss mindestens 3 Zeichen enthalten.'
+      if (!/^DE[0-9]{9}$/.test(c.vat_id)) {
+        this.error.vat_id = 'Die deutsche USt-ID muss mit "DE" beginnen und 9 Ziffern enthalten.'
+        valid = false
+      }
 
-      // VAT
-      if (!c.vat_id || c.vat_id.length < 3) return 'USt-ID muss mindestens 3 Zeichen enthalten.'
-
-      return null
+      return valid
     },
     async saveCustomer() {
       this.showSuccess = false
-      this.errorMessage = ''
-
-      const validationError = this.validateForm()
-      if (validationError) {
-        this.errorMessage = validationError
-        return
-      }
+      this.trimFormFields()
+      if (!this.validateForm()) return
 
       try {
         this.isSubmitting = true
@@ -223,7 +324,7 @@ export default {
           setTimeout(() => this.$router.push('/customers'), 1000)
         }
       } catch (error) {
-        this.errorMessage = error.message
+        console.error(error)
       } finally {
         this.isSubmitting = false
       }
@@ -233,6 +334,11 @@ export default {
 </script>
 
 <style>
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
 /* EDITOR PANEL */
 .editor-panel {
   width: 70%;

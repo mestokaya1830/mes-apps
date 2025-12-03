@@ -41,16 +41,16 @@ export default {
           return error.message || ''
         }
       },
-      formatValidDays(baseDate, validDays) {
-        if (!baseDate || !validDays) return ''
-        const d = new Date(baseDate)
-        d.setDate(d.getDate() + Number(validDays))
-        return d.toLocaleDateString('de-DE', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-        })
-      },
+      // formatValidDays(baseDate, validDays) {
+      //   if (!baseDate || !validDays) return ''
+      //   const d = new Date(baseDate)
+      //   d.setDate(d.getDate() + Number(validDays))
+      //   return d.toLocaleDateString('de-DE', {
+      //     day: '2-digit',
+      //     month: '2-digit',
+      //     year: 'numeric'
+      //   })
+      // },
       formatCurrency(value, currency) {
         if (currency == undefined) {
           currency = 'EUR.de-DE'
@@ -61,6 +61,24 @@ export default {
       },
       formatNumber(value) {
         return new Intl.NumberFormat('de-DE').format(value || 0)
+      },
+      checkServiceDates(start, end) {
+        if (!start) {
+          this.$refs.service_date.focus?.()
+          return
+        }
+
+        if (!end) {
+          this.$refs.date.focus?.()
+          return
+        }
+
+        if (start > end) {
+          this.$refs.date.focus?.()
+          console.log(`❌ Startdatum darf nicht nach Enddatum liegen.`)
+          return
+        }
+        return true
       },
       checkPositionsDates(positions) {
         for (let i = 0; i < positions.length; i++) {
@@ -74,9 +92,7 @@ export default {
             return
           }
 
-          if (
-            new Date(positions[i].service_period_start) > new Date(positions[i].service_period_end)
-          ) {
+          if (positions[i].service_period_start > positions[i].service_period_end) {
             this.$refs.service_period_end[i].focus?.()
             console.log(`❌ Position ${i + 1}: Startdatum darf nicht nach Enddatum liegen.`)
             return

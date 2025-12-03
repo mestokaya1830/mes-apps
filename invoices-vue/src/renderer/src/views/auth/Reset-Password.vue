@@ -9,16 +9,21 @@
         <div class="form-group">
           <label for="token" class="form-label">Token</label>
           <div>
-            <input id="token" v-model="token" type="text" class="form-control" />
-            <div v-if="message.token" class="text error-message">{{ message.token }}</div>
+            <input id="token" v-model="reset_data.token" type="text" class="form-control" />
+            <div v-if="error.token" class="error">{{ error.token }}</div>
           </div>
         </div>
 
         <div class="form-group">
           <label for="inputPassword" class="form-label">Password</label>
           <div>
-            <input id="inputPassword" v-model="password" type="password" class="form-control" />
-            <div v-if="message.password" class="text error-message">{{ message.password }}</div>
+            <input
+              id="inputPassword"
+              v-model="reset_data.password"
+              type="password"
+              class="form-control"
+            />
+            <div v-if="error.password" class="error">{{ error.password }}</div>
           </div>
         </div>
 
@@ -27,16 +32,16 @@
           <div>
             <input
               id="confirm_password"
-              v-model="passwordConfirmation"
+              v-model="reset_data.passwordConfirmation"
               type="password"
               class="form-control"
             />
-            <div v-if="message.confirm" class="text error-message">{{ message.confirm }}</div>
+            <div v-if="error.confirm" class="error">{{ error.confirm }}</div>
           </div>
         </div>
 
-        <div v-if="message.success" class="text text-success mt-3 mb-3">{{ message.success }}</div>
-        <div v-if="message.credential" class="text error-message">{{ message.credential }}</div>
+        <div v-if="error.success" class="text text-success mt-3 mb-3">{{ error.success }}</div>
+        <div v-if="error.credential" class="error">{{ error.credential }}</div>
 
         <button class="form-btn" type="submit">Reset</button>
       </form>
@@ -48,60 +53,75 @@
 export default {
   data() {
     return {
-      token: '',
-      password: '',
-      passwordConfirmation: '',
-      message: {
-        success: '',
-        credential: '',
+      reset_data: {
         token: '',
         password: '',
-        confirm: ''
-      }
+        passwordConfirmation: ''
+      },
+      error: {}
+    }
+  },
+  watch: {
+    reset_data: {
+      handler(newVal) {
+        for (const key in newVal) {
+          if (typeof newVal[key] === 'string' && newVal[key] && this.error[key]) {
+            this.error[key] = ''
+          }
+        }
+      },
+      deep: true
     }
   },
   methods: {
+    trimFormFields() {
+      for (const item in this.user) {
+        if (typeof this.user[item] === 'string') {
+          this.user[item] = this.user[item].trim()
+        }
+      }
+    },
     validateForm() {
+      const rd = this.reset_data
       let valid = true
-      this.message = { success: '', credential: '', token: '', password: '', confirm: '' }
 
-      if (!this.token) {
-        this.message.token = "Token can't be empty!"
+      if (!rd.token) {
+        this.error.token = "Token can't be empty!"
         valid = false
       }
 
-      if (!this.password) {
-        this.message.password = "Password can't be empty!"
+      if (!rd.password) {
+        this.error.password = "Password can't be empty!"
         valid = false
       }
 
-      if (
-        this.password &&
-        this.passwordConfirmation &&
-        this.password !== this.passwordConfirmation
-      ) {
-        this.message.confirm = 'Passwords do not match!'
+      if (rd.password && rd.passwordConfirmation && rd.password !== this.passwordConfirmation) {
+        this.error.confirm = 'Passwords do not match!'
         valid = false
       }
-
       return valid
     },
 
     async reset() {
+      this.trimFormFields()
       if (!this.validateForm()) return
 
       try {
-        const data = { password: this.password, token: this.token }
+        const data = {
+          token: this.reset_data.token,
+          password: this.reset_data.password
+        }
         const res = await window.api.resetPassword(data)
 
-        if (res.error) {
+        if (!res.success) {
           this.message.credential = res.error
-        } else {
-          this.message.success = 'Password reset successfully!'
-          this.token = ''
-          this.password = ''
-          this.passwordConfirmation = ''
+          return
         }
+
+        this.message.success = 'Password reset successfully!'
+        this.token = ''
+        this.password = ''
+        this.passwordConfirmation = ''
       } catch (err) {
         this.message.credential = err.message || 'Server error'
       }
@@ -109,3 +129,11 @@ export default {
   }
 }
 </script>
+
+<style>
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
+</style>

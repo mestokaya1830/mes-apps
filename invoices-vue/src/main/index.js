@@ -450,7 +450,7 @@ ipcMain.handle('get-customers', async () => {
     const rows = db
       .prepare(
         `
-        SELECT id, company_type, company_name, first_name, last_name, is_active FROM customers LIMIT ?
+        SELECT id, company_type, company_name, first_name, last_name, is_active FROM customers ORDER BY id DESC LIMIT ?
       `
       )
       .all(limit)
