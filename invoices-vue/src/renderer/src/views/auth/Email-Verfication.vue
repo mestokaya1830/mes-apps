@@ -2,26 +2,31 @@
   <div class="form-container">
     <div class="form-card">
       <div class="form-header">
-        <h2>Email Verfication</h2>
+        <h2>Email Verification</h2>
         <p>Please enter your email</p>
       </div>
-      <form>
+      <form @submit.prevent="sendEmail">
         <div class="form-group">
           <label for="email" class="form-label">Email</label>
           <div>
-            <input id="email" v-model="email" type="email" class="form-control" />
-            <p class="error-message">{{ message.error }}</p>
+            <input
+              id="email"
+              v-model="email"
+              type="email"
+              class="form-control"
+              placeholder="example@email.com"
+            />
+            <p class="error-message" v-if="message.error">{{ message.error }}</p>
           </div>
         </div>
-        <p class="active">{{ message.success }}</p>
-        <button class="form-btn" type="button" @click="sendEmail()">Send Email</button>
+        <p class="success-message" v-if="message.success">{{ message.success }}</p>
+        <button class="form-btn" type="submit">Send Email</button>
       </form>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -33,21 +38,35 @@ export default {
     }
   },
   methods: {
+    validateEmail(email) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return regex.test(email)
+    },
+
     async sendEmail() {
-      const data = { email: this.email }
-      if (this.email == '') {
-        this.message = { error: 'Email cant be null' }
-        return false
+      this.message = { success: '', error: '' }
+
+      if (!this.email) {
+        this.message.error = 'Email cant be empty'
+        return
       }
-      const res = await window.api.emailVerfication(data)
-      if (res.success) {
-        this.message = { success: res.success }
-        this.message = res
-        this.$router.push('/reset-password')
-    
-      } else {
-        this.message = { error: res.message }
-    
+
+      if (!this.validateEmail(this.email)) {
+        this.message.error = 'Invalid email format'
+        return
+      }
+
+      try {
+        const res = await window.api.emailVerfication({ email: this.email })
+        if (res.success) {
+          this.message.success = res.success
+          this.message.error = ''
+          this.$router.push('/reset-password')
+        } else {
+          this.message.error = res.message || 'Something went wrong'
+        }
+      } catch (err) {
+        this.message.error = err.message || 'Server error'
       }
     }
   }

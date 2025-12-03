@@ -157,20 +157,70 @@ export default {
     }
   },
   methods: {
+    validateForm() {
+      const c = this.customer
+
+      // Şirket tipi
+      if (!c.company_type) return 'Bitte wählen Sie den Unternehmenstyp.'
+
+      // Firma adı
+      if (!c.company_name || c.company_name.length < 3)
+        return 'Der Firmenname muss mindestens 3 Zeichen enthalten.'
+
+      // Ad
+      if (!c.first_name || c.first_name.length < 2)
+        return 'Vorname muss mindestens 2 Zeichen enthalten.'
+
+      // Soyad
+      if (!c.last_name || c.last_name.length < 2)
+        return 'Nachname muss mindestens 2 Zeichen enthalten.'
+
+      // Email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(c.email)) return 'Ungültige E-Mail-Adresse.'
+
+      // Telefon — en az 3 rakam
+      if (!/^\+?\d{3,}$/.test(c.phone)) return 'Telefonnummer muss mindestens 3 Ziffern enthalten.'
+
+      // Adres
+      if (!c.address || c.address.length < 3) return 'Adresse muss mindestens 3 Zeichen enthalten.'
+
+      // PLZ — Alman Formatı: 5 sayı
+      if (!/^\d{5}$/.test(c.postal_code)) return 'Postleitzahl muss aus 5 Zahlen bestehen.'
+
+      // Şehir
+      if (!c.city || c.city.length < 2) return 'Stadt muss mindestens 2 Zeichen enthalten.'
+
+      // Ülke
+      if (!c.country || c.country.length < 2) return 'Land muss mindestens 2 Zeichen enthalten.'
+
+      // Steuernummer
+      if (!c.tax_number || c.tax_number.length < 3)
+        return 'Steuernummer muss mindestens 3 Zeichen enthalten.'
+
+      // VAT
+      if (!c.vat_id || c.vat_id.length < 3) return 'USt-ID muss mindestens 3 Zeichen enthalten.'
+
+      return null
+    },
     async saveCustomer() {
-      if (!this.customer) return
       this.showSuccess = false
       this.errorMessage = ''
+
+      const validationError = this.validateForm()
+      if (validationError) {
+        this.errorMessage = validationError
+        return
+      }
+
       try {
-        const data = {
-          customer: JSON.parse(JSON.stringify(this.customer))
-        }
+        this.isSubmitting = true
+        const data = { customer: JSON.parse(JSON.stringify(this.customer)) }
         const result = await window.api.addCustomer(data)
+
         if (result.success) {
           this.showSuccess = true
-          setTimeout(() => {
-            this.$router.push('/customers')
-          }, 1000)
+          setTimeout(() => this.$router.push('/customers'), 1000)
         }
       } catch (error) {
         this.errorMessage = error.message

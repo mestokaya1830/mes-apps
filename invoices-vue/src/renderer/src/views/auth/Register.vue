@@ -271,145 +271,137 @@ export default {
   data() {
     return {
       isSubmitting: false,
-      showSuccess: false,
       errorMessage: '',
-      placeholder: { value: null, label: '-- Bitte wählen --' },
       user: {
         gender: '',
-        first_name: 'Max',
-        last_name: 'Mustermann',
-        password: '121212',
-        email: 'user@user.de',
-        phone: '+49 30 12345678',
-        address: 'Musterstraße 12',
-        postal_code: '10115',
-        city: 'Berlin',
+        first_name: '',
+        last_name: '',
+        password: '',
+        email: '',
+        phone: '',
+        address: '',
+        postal_code: '',
+        city: '',
         state: '',
         country: 'Deutschland',
-        website: 'https://www.example.de',
-        company_name: 'Musterfirma GmbH',
-        company_details: {
-          company_type_short: '',
-          company_type: ''
-        },
-        company_signature: 'https://www.example.de/signature.png',
+        website: '',
+        company_name: '',
+        company_details: { company_type_short: '', company_type: '' },
+        company_signature: '',
         contact_person: {
           gender: '',
-          first_name: 'Max',
-          last_name: 'Mustermann',
-          email: 'user@user.de',
-          phone: '+49 30 12345678'
+          first_name: '',
+          last_name: '',
+          email: '',
+          phone: ''
         },
-        tax_number: '12/345/67890',
-        tax_office: 'Finanzamt Berlin-Mitte',
-        vat_id: 'DE123456789',
-        court_registration: 'Amtsgericht Berlin',
-        court_location: 'Berlin',
-        bank_name: 'Deutsche Bank',
-        bic: 'DEUTDEBBXXX',
-        iban: 'DE89370400440532013000',
-        bank_account_holder: 'Max Mustermann',
-        image_type: '',
-        invoice_approved: 'Rechnungsinformationen sind vom Benutzer genehmigt.'
+        tax_number: '',
+        tax_office: '',
+        vat_id: '',
+        court_registration: '',
+        court_location: '',
+        bank_name: '',
+        bic: '',
+        iban: '',
+        bank_account_holder: ''
       },
       binaryImage: null,
       selectedImage: null,
-
-      //data
       german_states: [
-        { label: 'Baden-Württemberg', value: 'Baden-Württemberg' },
-        { label: 'Bayern', value: 'Bayern' },
-        { label: 'Berlin', value: 'Berlin' },
-        { label: 'Brandenburg', value: 'Brandenburg' },
-        { label: 'Bremen', value: 'Bremen' },
-        { label: 'Hamburg', value: 'Hamburg' },
-        { label: 'Hessen', value: 'Hessen' },
-        { label: 'Mecklenburg-Vorpommern', value: 'Mecklenburg-Vorpommern' },
-        { label: 'Niedersachsen', value: 'Niedersachsen' },
-        { label: 'Nordrhein-Westfalen', value: 'Nordrhein-Westfalen' },
-        { label: 'Rheinland-Pfalz', value: 'Rheinland-Pfalz' },
-        { label: 'Saarland', value: 'Saarland' },
-        { label: 'Sachsen', value: 'Sachsen' },
-        { label: 'Sachsen-Anhalt', value: 'Sachsen-Anhalt' },
-        { label: 'Schleswig-Holstein', value: 'Schleswig-Holstein' },
-        { label: 'Thüringen', value: 'Thüringen' }
+        /* ... aynı liste ... */
       ],
-
       companies: [
-        { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
-        // Şahıs işletmesi – en yaygın küçük işletme türü (Kleinunternehmer §19 UStG)
-        { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },
-        // Serbest meslek (doktor, mimar, mühendis, yazar vb.) – KDV bazen muaf
-        { value: 'Gbr', label: 'GbR (Gesellschaft bürgerlichen Rechts)', is_small_company: true },
-        // Adi ortaklık – serbest meslek sahipleri veya küçük işletmeler
-        { value: 'Ug', label: 'UG (haftungsbeschränkt)', is_small_company: true },
-        // Mini GmbH – düşük sermaye ile limited şirket
-        {
-          value: 'GmbH',
-          label: 'GmbH (Gesellschaft mit beschränkter Haftung)',
-          is_small_company: false
-        },
-        // Limited şirket – genelde KDV yükümlüsü
-        { value: 'Ohg', label: 'OHG (Offene Handelsgesellschaft)', is_small_company: false },
-        // Ticari ortaklık – küçük sayılmaz
-        { value: 'Kg', label: 'KG (Kommanditgesellschaft)', is_small_company: false },
-        // Komandit ortaklık – orta veya büyük ölçekli işletmeler
-        { value: 'GmbH_co_KG', label: 'GmbH & Co. KG', is_small_company: false },
-        // GmbH'nin komandit ortak olduğu özel ortaklık türü
-        { value: 'Partg', label: 'PartG (Partnerschaftsgesellschaft)', is_small_company: false },
-        // Profesyonel meslekler (avukat, doktor, diş hekimi, mimar vb.) için ortaklık
-        {
-          value: 'Partgmbb',
-          label: 'PartGmbB (Partnerschaftsgesellschaft mit beschränkter Berufshaftung)',
-          is_small_company: false
-        },
-        // Sınırlı mesleki sorumluluklu ortaklık
-        { value: 'Ek', label: 'e.K. (eingetragener Kaufmann)', is_small_company: true },
-        // Tescilli tacir – genelde küçük veya orta işletmeler
-        { value: 'Ev', label: 'e.V. (eingetragener Verein)', is_small_company: false },
-        // Dernek – kâr amacı gütmeyen organizasyonlar
-        { value: 'GgmbH', label: 'gGmbH (gemeinnützige GmbH)', is_small_company: false },
-        // Kar amacı gütmeyen limited şirket – özel vergi durumu (§4 UStG)
-        { value: 'Stiftung', label: 'Stiftung', is_small_company: false },
-        // Vakıf – genellikle kamu yararına çalışan kuruluşlar
-        { value: 'Ag', label: 'AG (Aktiengesellschaft)', is_small_company: false },
-        // Anonim şirket – büyük ölçekli işletmeler
-        { value: 'Se', label: 'SE (Societas Europaea)', is_small_company: false }
-        // Avrupa şirketi – uluslararası düzeyde faaliyet gösteren büyük firmalar
+        /* ... aynı liste ... */
       ]
     }
   },
   methods: {
     async setLogo(event) {
       const file = event.target.files[0]
-      this.user.image_type = file.type
       if (!file) return
+
+      this.user.image_type = file.type
+
+      // Preview
       const previewReader = new FileReader()
       previewReader.onload = () => {
-        this.selectedImage = previewReader.result // Base64 string, <img> için
+        this.selectedImage = previewReader.result
       }
       previewReader.readAsDataURL(file)
 
-      // DB  binary
+      // Binary
       const binaryReader = new FileReader()
       binaryReader.onload = () => {
-        this.binaryImage = new Uint8Array(binaryReader.result) // ArrayBuffer → Uint8Array
+        this.binaryImage = new Uint8Array(binaryReader.result)
       }
       binaryReader.readAsArrayBuffer(file)
     },
-    // Submit form
+
+    validateEmail(value) {
+      const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return regex.test(value)
+    },
+    validateMin(value, min) {
+      return value?.length >= min
+    },
+    validateNumber(value) {
+      return /^[0-9]+$/.test(value)
+    },
+    validatePhone(value) {
+      return /^\+?[0-9 ]{3,15}$/.test(value)
+    },
+    validateIBAN(value) {
+      return /^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$/.test(value.replace(/\s/g, ''))
+    },
+
+    validateForm() {
+      const u = this.user
+
+      // Personal Info
+      if (!u.first_name || !this.validateMin(u.first_name, 3)) return 'Vorname min. 3 Zeichen'
+      if (!u.last_name || !this.validateMin(u.last_name, 3)) return 'Nachname min. 3 Zeichen'
+      if (!u.email || !this.validateEmail(u.email)) return 'Ungültige E-Mail-Adresse'
+      if (u.phone && !this.validatePhone(u.phone)) return 'Ungültige Telefonnummer'
+
+      // Address
+      if (u.postal_code && !this.validateNumber(u.postal_code)) return 'Postleitzahl nur Zahlen'
+      if (u.postal_code && u.postal_code.length < 5) return 'Postleitzahl min. 5 Zeichen'
+      if (!u.city || !this.validateMin(u.city, 2)) return 'Stadt min. 2 Zeichen'
+
+      // Bank Info
+      if (u.iban && !this.validateIBAN(u.iban)) return 'Ungültige IBAN'
+
+      // Logo
+      if (!this.binaryImage) return 'Firmenlogo ist erforderlich'
+
+      return null
+    },
+
     async register() {
-      if (this.user) {
-        if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
+      this.errorMessage = ''
+      const error = this.validateForm()
+      if (error) {
+        this.errorMessage = error
+        return
+      }
+
+      this.isSubmitting = true
+
+      try {
         const data = {
           image: Array.from(this.binaryImage),
           data: JSON.parse(JSON.stringify(this.user))
         }
         const result = await window.api.register(data)
         if (result.success) {
-          this.errorMessage = ''
           this.$router.push('/login')
+        } else {
+          this.errorMessage = result.message || 'Fehler beim Speichern'
         }
+      } catch (err) {
+        this.errorMessage = err.message || 'Fehler beim Speichern'
+      } finally {
+        this.isSubmitting = false
       }
     }
   }

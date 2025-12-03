@@ -3,16 +3,17 @@
     <div v-if="!register" class="form-card">
       <div class="form-header">
         <h2>Welcome To Mes App Setup</h2>
-        <router-link to="register" class="forgot-password"> Next </router-link>
+        <router-link to="register" class="forgot-password">Next</router-link>
       </div>
     </div>
+
     <div v-else class="form-card">
       <div class="form-header">
         <h2>Welcome Back</h2>
         <p>Please sign in to your account</p>
       </div>
 
-      <form>
+      <form @submit.prevent="loginUser">
         <div class="form-group">
           <label for="email">Email Address</label>
           <input
@@ -22,9 +23,7 @@
             :class="{ error: error.email }"
             placeholder="Enter your email"
           />
-          <div v-if="error.email" class="error-message">
-            {{ error.email }}
-          </div>
+          <div v-if="error.email" class="error-message">{{ error.email }}</div>
         </div>
 
         <div class="form-group">
@@ -36,19 +35,16 @@
             :class="{ error: error.password }"
             placeholder="Enter your password"
           />
-          <div v-if="error.password" class="error-message">
-            {{ error.password }}
-          </div>
+          <div v-if="error.password" class="error-message">{{ error.password }}</div>
         </div>
 
         <div class="form-options">
-          <div class="registered"></div>
-          <router-link to="email-verfication" class="forgot-password">
-            Forgot password?
-          </router-link>
+          <router-link to="email-verfication" class="forgot-password">Forgot password?</router-link>
         </div>
+
         <div v-if="error.credential" class="text error-message">{{ error.credential }}</div>
-        <button type="button" class="form-btn" @click="loginUser()">Sign In</button>
+
+        <button type="submit" class="form-btn">Sign In</button>
       </form>
     </div>
   </div>
@@ -56,19 +52,13 @@
 
 <script>
 import store from '../../store/store.js'
+
 export default {
   name: 'Login',
   data() {
     return {
-      user: {
-        email: '',
-        password: ''
-      },
-      error: {
-        email: '',
-        password: '',
-        credential: ''
-      },
+      user: { email: '', password: '' },
+      error: { email: '', password: '', credential: '' },
       register: false
     }
   },
@@ -77,24 +67,50 @@ export default {
   },
   methods: {
     async checkRegister() {
-      const res = await window.api.checkRegister()
-      this.register = res.success
+      try {
+        const res = await window.api.checkRegister()
+        this.register = res.success
+      } catch (err) {
+        console.error(err)
+      }
     },
+
+    validateForm() {
+      let valid = true
+      this.error = { email: '', password: '', credential: '' }
+
+      if (!this.user.email) {
+        this.error.email = 'Email cannot be empty'
+        valid = false
+      } else if (!this.user.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        this.error.email = 'Invalid email format'
+        valid = false
+      }
+
+      if (!this.user.password) {
+        this.error.password = 'Password cannot be empty'
+        valid = false
+      } else if (this.user.password.length < 6) {
+        this.error.password = 'Password must be at least 6 characters'
+        valid = false
+      }
+
+      return valid
+    },
+
     async loginUser() {
-      this.error = {}
-      if (this.user.email == '') {
-        this.error = { email: 'Email cant be null' }
-      } else if (this.user.password == '') {
-        this.error = { password: 'Password cant be null' }
-      } else {
-        const data = { email: this.user.email, password: this.user.password }
-        const res = await window.api.login(data)
+      if (!this.validateForm()) return
+
+      try {
+        const res = await window.api.login(this.user)
         if (!res.success) {
-          this.error.credential = res.message
+          this.error.credential = res.message || 'Invalid credentials'
         } else {
           await store.setStore('auth', res.user)
           this.$router.push('/')
         }
+      } catch (err) {
+        this.error.credential = err.message || 'Server error'
       }
     }
   }

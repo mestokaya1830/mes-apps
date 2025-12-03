@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import store from './store/store.js'
 import TitleBar from './components/preview/TitleBarPreview.vue'
 import SideBar from './components/preview/SideBarPreview.vue'
 
@@ -19,7 +18,6 @@ export default {
     SideBar
   },
   provide() {
-    const self = this
     return {
       formatCustomerId(value) {
         if (!value) return ''

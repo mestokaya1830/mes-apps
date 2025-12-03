@@ -105,7 +105,8 @@ export default {
   data() {
     return {
       title: 'Kunden bearbeiten',
-      customer: null
+      customer: null,
+      errorMessage: ''
     }
   },
   mounted() {
@@ -121,17 +122,73 @@ export default {
         console.error(error)
       }
     },
+
+    // --------------------------
+    // FORM VALIDASYON KONTROLÜ
+    // --------------------------
+    validateForm() {
+      const c = this.customer
+
+      if (!c.company_type || c.company_type.length < 2)
+        return 'Unternehmenstyp muss mindestens 2 Zeichen enthalten.'
+
+      if (!c.company_name || c.company_name.length < 3)
+        return 'Firmenname muss mindestens 3 Zeichen enthalten.'
+
+      if (!c.first_name || c.first_name.length < 2)
+        return 'Vorname muss mindestens 2 Zeichen enthalten.'
+
+      if (!c.last_name || c.last_name.length < 2)
+        return 'Nachname muss mindestens 2 Zeichen enthalten.'
+
+      if (!c.address || c.address.length < 3) return 'Adresse muss mindestens 3 Zeichen enthalten.'
+
+      // Alman Postleitzahl — 5 haneli
+      if (!/^\d{5}$/.test(c.postal_code)) return 'Postleitzahl muss aus 5 Ziffern bestehen.'
+
+      if (!c.city || c.city.length < 2) return 'Stadt muss mindestens 2 Zeichen enthalten.'
+
+      if (!c.country || c.country.length < 2) return 'Land muss mindestens 2 Zeichen enthalten.'
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(c.email)) return 'Ungültige E-Mail-Adresse.'
+
+      // Telefon minimum 3 rakam — + kabul edilir
+      if (!/^\+?\d{3,}$/.test(c.phone)) return 'Telefonnummer muss mindestens 3 Zahlen enthalten.'
+
+      if (!c.tax_number || c.tax_number.length < 3)
+        return 'Steuernummer muss mindestens 3 Zeichen enthalten.'
+
+      if (!c.vat_id || c.vat_id.length < 3) return 'USt-ID muss mindestens 3 Zeichen enthalten.'
+
+      return null
+    },
+
+    // --------------------------
+    // UPDATE
+    // --------------------------
     async updateCustomer() {
+      this.errorMessage = ''
+
+      const error = this.validateForm()
+      if (error) {
+        this.errorMessage = error
+        return
+      }
+
       try {
         const data = {
           id: this.$route.params.id,
           customer: JSON.parse(JSON.stringify(this.customer))
         }
+
         const result = await window.api.updateCustomerById(data)
         if (!result.success) return
+
         this.$router.push('/customers')
       } catch (error) {
         console.error(error)
+        this.errorMessage = error.message
       }
     }
   }

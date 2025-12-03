@@ -176,43 +176,43 @@
           Keine Positionen vorhanden
         </div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in invoice.positions" :key="index" class="position-item">
+          <div v-for="(item, index) in invoice.positions" :key="index" class="position-item">
             <div class="positions-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
             </div>
             <div class="form-group">
               <label class="form-label">Bezeichnung</label>
-              <input v-model="pos.title" type="text" class="form-input" />
+              <input v-model="item.title" type="text" class="form-input" />
             </div>
             <div class="form-group">
               <label class="form-label">Beschreibung</label>
-              <input v-model="pos.description" type="text" class="form-input" />
+              <input v-model="item.description" type="text" class="form-input" />
             </div>
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Leistungszeitraum Von</label>
                 <input
-                  v-model="pos.service_period_start"
+                  ref="service_period_start"
+                  v-model="item.service_period_start"
                   type="date"
-                  class="form-input"
-                  @change="validateServicePeriod(pos)"
+                  class="form-input datepicker"
                 />
               </div>
               <div class="form-group">
                 <label class="form-label">Leistungszeitraum Bis</label>
                 <input
-                  v-model="pos.service_period_end"
+                  ref="service_period_end"
+                  v-model="item.service_period_end"
                   type="date"
-                  class="form-input"
-                  @change="validateServicePeriod(pos)"
+                  class="form-input datepicker"
                 />
               </div>
             </div>
             <div class="form-row form-row-4">
               <div class="form-group">
                 <label class="form-label">Einheit</label>
-                <select v-model="pos.unit" class="form-input">
+                <select v-model="item.unit" class="form-input">
                   <option value="Stk">Stk</option>
                   <option value="Std">Std</option>
                   <option value="Tag">Tag</option>
@@ -225,29 +225,29 @@
               <div class="form-group">
                 <label class="form-label">Menge</label>
                 <input
-                  v-model.number="pos.quantity"
+                  v-model.number="item.quantity"
                   type="number"
                   class="form-input"
-                  @input="setUnitTotal(pos.quantity, pos.price, index)"
+                  @input="setUnitTotal(item.quantity, item.price, index)"
                 />
               </div>
               <div class="form-group">
                 <label class="form-label">Preis (€)</label>
                 <input
-                  v-model.number="pos.price"
+                  v-model.number="item.price"
                   type="number"
                   class="form-input"
                   step="0.01"
-                  @input="setUnitTotal(pos.quantity, pos.price, index)"
+                  @input="setUnitTotal(item.quantity, item.price, index)"
                 />
               </div>
               <div class="form-group">
                 <label class="form-label">MwSt. (%)</label>
                 <select
                   v-if="!invoice.is_reverse_charge"
-                  v-model.number="pos.vat"
+                  v-model.number="item.vat"
                   class="form-input"
-                  @change="setUnitTotal(pos.quantity, pos.price, index)"
+                  @change="setUnitTotal(item.quantity, item.price, index)"
                 >
                   <option :value="0">0</option>
                   <option :value="7">7</option>
@@ -259,12 +259,12 @@
               <div class="positions-total-item">
                 <label class="form-label">Vat Unit (€)</label>
                 <div class="form-result-item">
-                  {{ pos.vat_unit }}
+                  {{ item.vat_unit }}
                 </div>
               </div>
               <div class="positions-total-item">
                 <label class="form-label">Unit Total (€)</label>
-                <div class="form-result-item">{{ pos.unit_total }}</div>
+                <div class="form-result-item">{{ item.unit_total }}</div>
               </div>
             </div>
           </div>
@@ -358,7 +358,7 @@
         </div>
       </div>
       <!-- preview button -->
-      <button class="preview-btn" @click="setStore">👁️ Vorschau anzeigen</button>
+      <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
     </div>
   </div>
 </template>
@@ -520,30 +520,29 @@ export default {
       date.setDate(date.getDate() + this.invoice.payment_terms)
       this.invoice.due_date = date.toISOString().split('T')[0]
     },
-    checkServiceDateInput() {
-      if (!this.invoice.service_date) {
-        this.$refs.invoice_service_date.focus()
-        return false
-      }
+    checkPositionsDates() {
+      for (let i = 0; i < this.invoice.positions.length; i++) {
+        const pos = this.invoice.positions[i]
 
-      if (!this.invoice.date) {
-        this.$refs.invoice_date.focus()
-        return false
-      }
+        if (!pos.service_period_start) {
+          this.$refs.service_period_start[i].focus?.()
+          return
+        }
 
-      if (this.invoice.service_date > this.invoice.date) {
-        const confirm = window.confirm(
-          'Hinweis: Leistungsdatum liegt nach dem Rechnungsdatum. Dies ist nur bei Abschlagsrechnungen zulässig. Möchten Sie trotzdem fortfahren?'
-        )
-        if (!confirm) {
-          this.$refs.invoice_service_date.focus()
-          return false
+        if (!pos.service_period_end) {
+          this.$refs.service_period_end[i].focus?.()
+          return
+        }
+
+        if (new Date(pos.service_period_start) > new Date(pos.service_period_end)) {
+          this.$refs.service_period_end[i].focus?.()
+          alert(`❌ Position ${i + 1}: Startdatum darf nicht nach Enddatum liegen.`)
+          return
         }
       }
-
       return true
     },
-    async setStore() {
+    async submitStore() {
       if (!this.invoice) return
       console.time('commit')
       this.setDueDate()
@@ -552,10 +551,11 @@ export default {
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.total_after_discount = this.summary.total_after_discount
-      if (!this.checkServiceDateInput()) return
-
-      await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
-      this.$router.push('/invoices/preview')
+      // if (!this.checkServiceDateInput()) return
+      this.checkPositionsDates()
+      if (!this.checkPositionsDates()) return
+      // await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
+      // this.$router.push('/invoices/preview')
       console.timeEnd('commit')
     }
   }
