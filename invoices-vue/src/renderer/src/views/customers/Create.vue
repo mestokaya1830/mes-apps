@@ -188,9 +188,9 @@ export default {
         country: '',
         email: '',
         phone: '+49',
+        website: '',
         tax_number: '',
-        vat_id: '',
-        created_at: ''
+        vat_id: ''
       },
       companies: [
         { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },

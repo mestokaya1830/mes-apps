@@ -1,37 +1,47 @@
 //users
-db.exec(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,
-    gender TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    password TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    phone TEXT NOT NULL,
-    address TEXT NOT NULL,
-    postal_code TEXT NOT NULL,
-    city TEXT NOT NULL,
-    state TEXT NOT NULL,
-    country TEXT DEFAULT 'Deutschland',
-    website TEXT,
-    company_name TEXT NOT NULL,
-    company_details TEXT NOT NULL,
-    company_signature TEXT NOT NULL,                -- GmbH, AG, OHG vs.
-    contact_person TEXT,                       -- Geschäftsführer
-    tax_number TEXT NOT NULL,                    -- Steuernummer
-    tax_office TEXT,                             -- Opsiyonel (Steueramt)                             -- Opsiyonel (VAT ID prefix, örn: DE)
-    vat_id TEXT,                                 -- USt-IdNr
-    court_registration TEXT,                     -- Opsiyonel (Handelsregisternummer)
-    court_location TEXT,                         -- Amtsgericht Berlin
-    logo TEXT NOT NULL,
-    image_type TEXT NOT NULL,
-    bank_name TEXT NOT NULL,
-    bic TEXT NOT NULL,
-    iban TEXT NOT NULL,
-    bank_account_holder TEXT NOT NULL,
-    invoice_approved TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);`)
+db.exec(`
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY,                         -- Primary key
+    gender TEXT NOT NULL,                           -- Gender
+    first_name TEXT NOT NULL,                       -- First name
+    last_name TEXT NOT NULL,                        -- Last name
+    password TEXT NOT NULL,                         -- User password
+    email TEXT UNIQUE NOT NULL,                     -- Email address
+    phone TEXT NOT NULL,                            -- Phone number
+    address TEXT NOT NULL,                          -- Street address
+    postal_code TEXT NOT NULL,                      -- Postal code
+    city TEXT NOT NULL,                             -- City
+    state TEXT NOT NULL,                            -- State / Region
+    country TEXT DEFAULT 'Deutschland',             -- Country
+    website TEXT,                                   -- Optional website
+
+    company_name TEXT NOT NULL,                     -- Company name
+    company_details TEXT NOT NULL,                  -- Company details / description
+    company_signature TEXT NOT NULL,                -- Company type signature (GmbH, AG, etc.)
+    contact_person TEXT,                            -- Contact person (e.g., CEO)
+
+    tax_number TEXT NOT NULL,                       -- Tax number
+    tax_office TEXT,                                -- Optional tax office
+    vat_id TEXT,                                    -- VAT ID
+    court_registration TEXT,                        -- Optional court registration number
+    court_location TEXT,                            -- Court location (Amtsgericht)
+
+    logo TEXT NOT NULL,                             -- Logo file path
+    image_type TEXT NOT NULL,                       -- Logo image type
+
+    bank_name TEXT NOT NULL,                        -- Bank name
+    bic TEXT NOT NULL,                              -- Bank BIC / SWIFT
+    iban TEXT NOT NULL,                             -- Bank IBAN
+    bank_account_holder TEXT NOT NULL,             -- Account holder name
+
+    invoice_approved TEXT NOT NULL,                -- Invoice approval status
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP  -- Record update timestamp
+);
+`);
+
+
 
 
 //tokens
@@ -45,217 +55,280 @@ db.exec(`CREATE TABLE tokens (
 
 --------------------------------------------------------------------------------------------------
 //customers
-db.exec(`CREATE TABLE IF NOT EXISTS customers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    is_active INTEGER NOT NULL DEFAULT 1,
-    company_type TEXT NOT NULL,
-    company_name TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    full_name TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    address TEXT NOT NULL,
-    postal_code TEXT NOT NULL,
-    city TEXT NOT NULL,
-    country TEXT NOT NULL,
-    tax_number TEXT NOT NULL,
-    vat_id TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )`)
+db.exec(`
+CREATE TABLE IF NOT EXISTS customers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,          -- Primary key
+    is_active INTEGER NOT NULL DEFAULT 1,          -- Active status (1 = active, 0 = inactive)
+
+    company_type TEXT NOT NULL,                     -- Company type (GmbH, AG, etc.)
+    company_name TEXT NOT NULL,                     -- Company name
+
+    first_name TEXT NOT NULL,                       -- Contact first name
+    last_name TEXT NOT NULL,                        -- Contact last name
+    full_name TEXT NOT NULL,                        -- Full name (concatenated)
+
+    email TEXT NOT NULL,                            -- Email address
+    phone TEXT NOT NULL,                            -- Phone number
+    website TEXT NOT NULL,
+    address TEXT NOT NULL,                          -- Street address
+    postal_code TEXT NOT NULL,                      -- Postal code
+    city TEXT NOT NULL,                             -- City
+    country TEXT NOT NULL,                          -- Country
+
+    tax_number TEXT NOT NULL,                       -- Tax number
+    vat_id TEXT NOT NULL,                           -- VAT ID
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP  -- Record update timestamp
+);
+`);
+
 
 ---------------------------------------------------------------------------------------------------
 //invoices
-db.exec(`CREATE TABLE IF NOT EXISTS invoices (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_id INTEGER NOT NULL,
-    customer TEXT NOT NULL,
-    is_active INTEGER NOT NULL DEFAULT 1,
-    cancellation_reason TEXT NOT NULL,
-    date TEXT NOT NULL,
-    due_date TEXT NOT NULL,
-    service_date TEXT NOT NULL,
-    currency TEXT NOT NULL,
-    payment_terms INTEGER NOT NULL,
-    payment_conditions TEXT NOT NULL,
-    early_payment_discount INTEGER NOT NULL,
-    early_payment_percentage INTEGER NOT NULL,
-    early_payment_days INTEGER NOT NULL,
-    is_small_company INTEGER NOT NULL,
-    is_reverse_charge INTEGER NOT NULL,
-    is_eu_delivery INTEGER NOT NULL,
-    positions TEXT NOT NULL,
-    net_total INTEGER NOT NULL,
-    vat_total INTEGER NOT NULL,
-    gross_total INTEGER NOT NULL,
-    total_after_discount INTEGER NOT NULL,
-    hash_256 TEXT NOT NULL,
-    canceled_at TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+db.exec(`
+CREATE TABLE IF NOT EXISTS invoices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
+    customer_id INTEGER NOT NULL,                   -- Foreign key to customers
+    customer TEXT NOT NULL,                         -- Customer info as text
+    is_active INTEGER NOT NULL DEFAULT 1,          -- Active status (1 = active, 0 = inactive)
+    canceled_at TEXT,                               -- Cancellation timestamp
+    cancellation_reason TEXT NOT NULL,             -- Reason for cancellation
+
+    date TEXT NOT NULL,                             -- Invoice date
+    service_date TEXT NOT NULL,                     -- Service date
+    due_date TEXT NOT NULL,                         -- Due date
+
+    currency TEXT NOT NULL,                         -- Currency code
+    payment_terms INTEGER NOT NULL,                 -- Payment terms in days
+    payment_conditions TEXT NOT NULL,              -- Payment conditions description
+    early_payment_discount INTEGER NOT NULL,       -- Early payment discount flag
+    early_payment_percentage INTEGER NOT NULL,     -- Early payment discount percentage
+    early_payment_days INTEGER NOT NULL,           -- Early payment discount days
+
+    is_small_company INTEGER NOT NULL,             -- Small company flag
+    is_reverse_charge INTEGER NOT NULL,            -- Reverse charge flag
+    is_eu_delivery INTEGER NOT NULL,               -- EU delivery flag
+
+    positions TEXT NOT NULL,                        -- JSON/text of invoice positions
+    net_total INTEGER NOT NULL,                     -- Net total amount
+    vat_total INTEGER NOT NULL,                     -- VAT total amount
+    gross_total INTEGER NOT NULL,                   -- Gross total amount
+    total_after_discount INTEGER NOT NULL,         -- Total after discount
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record update timestamp
+
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
-);`)
+);
+`);
+
 
 -----------------------------------------------------------------------------------------------
-//payments
-db.exec(`CREATE TABLE IF NOT EXISTS payments (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  invoice_id INTEGER NOT NULL,
-  customer_id INTEGER NOT NULL,
-  date TEXT NOT NULL,
-  paid_amount INTEGER NOT NULL,
-  payment_method TEXT NOT NULL,
-  payment_reference TEXT NOT NULL,
-  counterparty_iban TEXT NOT NULL,
-  counterparty_name TEXT NOT NULL,
-  notes TEXT NOT NULL,
-  is_partially_paid INTEGER NOT NULL,
-  is_paid INTEGER NOT NULL,
-  file_name TEXT NULL,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
-  FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
-);`)
+db.exec(`
+CREATE TABLE IF NOT EXISTS offers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
+    customer_id INTEGER NOT NULL,                   -- Foreign key to customers
+    invoice_id INTEGER,                             -- Foreign key to invoices
 
---------------------------------------------------------------------------------------------
-//reminders
-db.exec(
-  `CREATE TABLE IF NOT EXISTS reminders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    is_sent INTEGER NOT NULL DEFAULT 0,          -- 1 = müşteriye gönderildi
-    is_cancelled INTEGER NOT NULL DEFAULT 0,     -- storno / iptal edildi mi
-    invoice_id INTEGER NOT NULL,
-    customer_id INTEGER NOT NULL,
-    level INTEGER NOT NULL,                      -- 0 = Zahlungserinnerung, 1 = 1. Mahnung, 2 = 2. Mahnung, 3 = letzte Mahnung
-    level_text TEXT NOT NULL,                    -- "Zahlungserinnerung", "1. Mahnung" vs.
-    reminder_date TEXT NOT NULL,                 -- PDF’teki resmi Mahnung tarihi (örn. 2025-04-10)
-    due_date_new TEXT NOT NULL,                  -- Yeni ödeme son tarihi (örn. +7 gün)
-    reminder_fee INTEGER NOT NULL DEFAULT 0,        -- Mahngebühr (örn. 500 = 5,00 €)
-    late_interest INTEGER NOT NULL DEFAULT 0,       -- Verzugszinsen toplamı (otomatik hesaplanır)
-    intro_text TEXT NOT NULL DEFAULT '',
-    main_text TEXT NOT NULL DEFAULT '',
-    closing_text TEXT NOT NULL DEFAULT '',
-    sent_at TEXT,                                -- Gerçek gönderim tarihi (e-posta/posta)
-    sent_method TEXT,                            -- 'email', 'post', 'einschreiben', 'portal'
-    proof_type TEXT,                             -- 'email', 'post', 'einschreiben', 'portal'
-    proof_file_name TEXT,                        -- Kanıt dosyası (Einschreiben fişi, e-posta ekran görüntüsü vs.)
-    proof_sent_at TEXT,                          -- Kanıt tarihi (posta fişi tarihi vs.)
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now')),
-    FOREIGN KEY(invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
-    FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE CASCADE
-);`)
+    date TEXT NOT NULL,                             -- Offer creation date
+    valid_until TEXT NOT NULL,                      -- Offer validity date
+    
+    customer JSON NOT NULL,                         -- Customer info stored as JSON
+    contact_person TEXT,                            -- Contact person for the offer
 
+    subject TEXT NOT NULL,                          -- Offer subject / description
+    currency TEXT NOT NULL,                         -- Currency code
+    payment_terms TEXT NOT NULL,                    -- Payment terms description
+    delivery_terms TEXT NOT NULL,                   -- Delivery terms
+    delivery_time TEXT NOT NULL,                    -- Delivery time description
 
----------------------------------------------------------------------------------------
-//offers
-db.exec(`CREATE TABLE IF NOT EXISTS offers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_id INTEGER NOT NULL,
-    invoice_id INTEGER,
-    customer JSON NOT NULL,
-    contact_person TEXT,
-    date TEXT NOT NULL,
-    valid_until TEXT NOT NULL,
-    subject TEXT NOT NULL,
-    currency TEXT NOT NULL,
-    payment_terms TEXT NOT NULL,
-    delivery_terms TEXT NOT NULL,
-    delivery_time TEXT NOT NULL,
-    net_total INTEGER INTEGER NOT NULL,
-    vat_total INTEGER INTEGER NOT NULL,
-    gross_total INTEGER NOT NULL,
-    status TEXT NOT NULL,
-    is_active INTEGER NOT NULL DEFAULT 1,
-    is_legal INTEGER NOT NULL DEFAULT 1,
-    accepted_at TEXT,
-    rejected_at TEXT,
-    introduction_text TEXT NOT NULL,
-    closing_text TEXT NOT NULL,
-    notes TEXT NOT NULL,
-    internal_notes TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    positions TEXT NOT NULL,                        -- Offer positions stored as JSON/text
+    net_total INTEGER NOT NULL,                     -- Net total amount
+    vat_total INTEGER NOT NULL,                     -- VAT total amount
+    gross_total INTEGER NOT NULL,                   -- Gross total amount
+
+    status TEXT NOT NULL,                           -- Offer status (draft, accepted, rejected)
+    is_active INTEGER NOT NULL DEFAULT 1,          -- Active flag
+    is_legal INTEGER NOT NULL DEFAULT 1,           -- Legally binding flag
+    accepted_at TEXT,                               -- Timestamp when offer was accepted
+    rejected_at TEXT,                               -- Timestamp when offer was rejected
+
+    introduction_text TEXT NOT NULL,                -- Introduction text for the offer
+    closing_text TEXT NOT NULL,                     -- Closing text for the offer
+    notes TEXT NOT NULL,                            -- Public notes
+    
+    internal_notes TEXT,                            -- Internal notes (private)
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record update timestamp
+
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT,
     FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE SET NULL
-);`)
+);
+`);
+----------------------------------------------------------------------------------------------------------
+db.exec(`
+CREATE TABLE IF NOT EXISTS orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
+    customer_id INTEGER NOT NULL,                   -- Foreign key to customers
+    customer TEXT NOT NULL,                         -- Customer info as text
 
+    date TEXT NOT NULL,                             -- Order creation date
+    validity_date TEXT,                             -- Order validity date
+    service_period_start TEXT,                      -- Service period start
+    service_period_end TEXT,                        -- Service period end
+    delivery_date TEXT,                             -- Delivery date
 
-'draft'
-        CHECK (status IN ('draft','sent','accepted','rejected','expired','converted')),
---------------------------------------------------------------------------------------
-//orders
-db.exec(`CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_id INTEGER NOT NULL,
-    customer TEXT NOT NULL,
-    date TEXT NOT NULL,                  
-    validity_date TEXT,                   
-    service_period_start TEXT,
-    service_period_end TEXT,
-    delivery_date TEXT,
-    is_active INTEGER NOT NULL DEFAULT 1,
-    is_cancelled INTEGER NOT NULL DEFAULT 0,
-    delivery_address TEXT,
-    delivery_postal_code TEXT,
-    delivery_city TEXT,
-    delivery_country TEXT DEFAULT 'Deutschland',
-    payment_terms TEXT,
-    payment_method TEXT,
-    payment_conditions TEXT,
-    delivery_terms TEXT,
-    shipping_method TEXT,
-    net_total INTEGER NOT NULL DEFAULT 0,
-    vat_total INTEGER NOT NULL DEFAULT 0,
-    gross_total INTEGER NOT NULL DEFAULT 0,
-    intro_text TEXT DEFAULT '',
-    customer_notes TEXT DEFAULT '',
-    internal_notes TEXT DEFAULT '',
-    closing_text TEXT DEFAULT '',
-    positions TEXT NOT NULL,
-    sent_at TEXT,
-    sent_method TEXT,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now')),
+    is_active INTEGER NOT NULL DEFAULT 1,          -- Active flag
+    is_cancelled INTEGER NOT NULL DEFAULT 0,       -- Cancelled flag
+
+    delivery_address TEXT,                          -- Delivery address
+    delivery_postal_code TEXT,                      -- Delivery postal code
+    delivery_city TEXT,                             -- Delivery city
+    delivery_country TEXT DEFAULT 'Deutschland',   -- Delivery country
+
+    payment_terms TEXT,                             -- Payment terms
+    payment_method TEXT,                            -- Payment method
+    payment_conditions TEXT,                        -- Payment conditions
+    delivery_terms TEXT,                            -- Delivery terms
+    shipping_method TEXT,                           -- Shipping method
+
+    net_total INTEGER NOT NULL DEFAULT 0,          -- Net total amount
+    vat_total INTEGER NOT NULL DEFAULT 0,          -- VAT total amount
+    gross_total INTEGER NOT NULL DEFAULT 0,        -- Gross total amount
+
+    intro_text TEXT DEFAULT '',                     -- Introduction text for order
+    customer_notes TEXT DEFAULT '',                 -- Notes from customer
+    internal_notes TEXT DEFAULT '',                 -- Internal notes (private)
+    closing_text TEXT DEFAULT '',                   -- Closing text for order
+
+    positions TEXT NOT NULL,                        -- Order positions stored as JSON/text
+
+    sent_at TEXT,                                   -- Timestamp when order was sent
+    sent_method TEXT,                               -- Method of sending (email, post, etc.)
+
+    created_at TEXT DEFAULT (datetime('now')),     -- Record creation timestamp
+    updated_at TEXT DEFAULT (datetime('now')),     -- Record update timestamp
+
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT
-);`)
+);
+`);
+
+----------------------------------------------------------------------------------------------
+db.exec(`
+CREATE TABLE IF NOT EXISTS payments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
+    invoice_id INTEGER NOT NULL,                     -- Foreign key to invoices
+    customer_id INTEGER NOT NULL,                    -- Foreign key to customers
+
+    date TEXT NOT NULL,                              -- Payment date
+    paid_amount INTEGER NOT NULL,                    -- Amount paid
+    payment_method TEXT NOT NULL,                    -- Payment method
+    payment_reference TEXT NOT NULL,                 -- Payment reference / transaction ID
+
+    counterparty_iban TEXT NOT NULL,                -- Counterparty IBAN
+    counterparty_name TEXT NOT NULL,                -- Counterparty name
+
+    notes TEXT NOT NULL,                             -- Payment notes / description
+    is_partially_paid INTEGER NOT NULL,             -- Partially paid flag
+    is_paid INTEGER NOT NULL,                        -- Fully paid flag
+    file_name TEXT NULL,                             -- Optional file / receipt name
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Record creation timestamp
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Record update timestamp
+
+    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+);
+`);
+
+--------------------------------------------------------------------------------------------
+db.exec(`
+CREATE TABLE IF NOT EXISTS reminders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
+
+    invoice_id INTEGER NOT NULL,                     -- Foreign key to invoices
+    customer_id INTEGER NOT NULL,                    -- Foreign key to customers
+
+    is_sent INTEGER NOT NULL DEFAULT 0,             -- 1 = sent to customer
+    is_cancelled INTEGER NOT NULL DEFAULT 0,        -- 1 = cancelled / voided
+
+    level INTEGER NOT NULL,                          -- Reminder level (0 = first, 1 = 1st reminder, 2 = 2nd, 3 = final)
+    level_text TEXT NOT NULL,                        -- Reminder text for level ("Zahlungserinnerung", "1. Mahnung", etc.)
+
+    reminder_date TEXT NOT NULL,                     -- Official reminder date (PDF date)
+    due_date_new TEXT NOT NULL,                      -- New due date (+days)
+    reminder_fee INTEGER NOT NULL DEFAULT 0,        -- Reminder fee in cents (e.g., 500 = €5.00)
+    late_interest INTEGER NOT NULL DEFAULT 0,       -- Late interest total
+
+    intro_text TEXT NOT NULL DEFAULT '',            -- Introduction text
+    main_text TEXT NOT NULL DEFAULT '',             -- Main body text
+    closing_text TEXT NOT NULL DEFAULT '',          -- Closing text
+
+    sent_at TEXT,                                   -- Actual sending date (email/post)
+    sent_method TEXT,                               -- Method sent ('email', 'post', 'einschreiben', 'portal')
+
+    proof_type TEXT,                                -- Proof type ('email', 'post', 'einschreiben', 'portal')
+    proof_file_name TEXT,                           -- Proof file name (receipt, screenshot, etc.)
+    proof_sent_at TEXT,                             -- Proof date (receipt date, etc.)
+
+    created_at TEXT DEFAULT (datetime('now')),      -- Record creation timestamp
+    updated_at TEXT DEFAULT (datetime('now')),      -- Record update timestamp
+
+    FOREIGN KEY(invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+    FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE CASCADE
+);
+`);
 
 -------------------------------------------------------------------------------------
-//deliveries
-db.exec(`CREATE TABLE IF NOT EXISTS deliveries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    delivery_number TEXT UNIQUE,                    -- LFS2025-00001 (GoBD’de art arda numara zorunlu!)
-    order_id INTEGER,                               -- Auftrag’a bağlı (opsiyonel)
-    invoice_id INTEGER,                             -- Daha sonra faturaya bağlanabilir
-    customer_id INTEGER NOT NULL,
-    delivery_date TEXT NOT NULL,                    -- Gerçek teslim tarihi (PDF’teki resmi tarih)
-    planned_delivery_date TEXT,                     -- Planlanan tarih (opsiyonel)
-    status TEXT NOT NULL DEFAULT 'pending',         -- pending, in_transit, delivered, partial, cancelled
-    is_active INTEGER NOT NULL DEFAULT 1,
-    is_cancelled INTEGER NOT NULL DEFAULT 0,
-    delivered_by TEXT,                              -- DHL, UPS, kendi araç, Abholung vs.
-    delivery_method TEXT,                           -- Paket, Spedition, digital, Abholung
-    tracking_number TEXT,                           -- DHL Sendungsnummer vs.
-    delivery_reference TEXT,                        -- Lieferschein-Nummer, Kunde Referenz
-    received_by TEXT,                               -- İmza atan kişi (fişte yazmalı)
-    received_at TEXT,                               -- İmza zamanı (eğer dijitalse)
-    delivery_address TEXT,
-    delivery_postal_code TEXT,
-    delivery_city TEXT,
-    delivery_country TEXT DEFAULT 'Deutschland',
-    positions TEXT NOT NULL,                        -- [{"id":1, "qty":5, "delivered_qty":5}, ...]
-    delivered_total_cent INTEGER NOT NULL DEFAULT 0,
-    remaining_total_cent INTEGER NOT NULL DEFAULT 0,
-    note TEXT DEFAULT '',
-    internal_note TEXT DEFAULT '',
-    pdf_file_name TEXT,                             -- Lieferschein PDF’i
-    proof_file_name TEXT,                           -- İmza fotoğrafı, DHL Beleg vs.
-    proof_type TEXT,                                -- 'signature', 'photo', 'tracking', 'digital'
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now')),
+db.exec(`
+CREATE TABLE IF NOT EXISTS deliveries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
+    order_id INTEGER,                                -- Reference to order (optional)
+    invoice_id INTEGER,                              -- Reference to invoice (optional)
+    customer_id INTEGER NOT NULL,                    -- Reference to customer
+    
+    date TEXT NOT NULL,
+
+    customer TEXT NOT NULL,
+    
+    planned_delivery_date TEXT,                      -- Planned delivery date (optional)
+
+    status TEXT NOT NULL DEFAULT 'pending',         -- Delivery status: pending, in_transit, delivered, partial, cancelled
+    is_active INTEGER NOT NULL DEFAULT 1,           -- Active flag
+    is_cancelled INTEGER NOT NULL DEFAULT 0,        -- Cancelled flag
+
+    positions TEXT NOT NULL,
+    
+    delivery_date TEXT NOT NULL,                     -- Actual delivery date (official PDF date)
+    delivered_by TEXT,                               -- Courier / delivery agent (DHL, UPS, own vehicle, pickup, etc.)
+    delivery_method TEXT,                            -- Delivery method: package, freight, digital, pickup
+    tracking_number TEXT,                            -- Tracking number (DHL, UPS, etc.)
+    delivery_reference TEXT,                         -- Delivery reference (customer reference / Lieferschein number)
+    received_by TEXT,                                -- Person who signed (should appear on proof)
+    received_at TEXT,                                -- Time of receipt/signature
+
+    delivery_address TEXT,                           -- Delivery street address
+    delivery_postal_code TEXT,                       -- Delivery postal code
+    delivery_city TEXT,                              -- Delivery city
+    delivery_country TEXT DEFAULT 'Deutschland',    -- Delivery country
+
+    delivered_total_cent INTEGER NOT NULL DEFAULT 0, -- Total delivered amount in cents
+    remaining_total_cent INTEGER NOT NULL DEFAULT 0, -- Remaining amount in cents
+
+    note TEXT DEFAULT '',                             -- Public notes
+    internal_note TEXT DEFAULT '',                    -- Internal notes
+
+    pdf_file_name TEXT,                              -- Delivery PDF file name
+    proof_file_name TEXT,                            -- Proof file (signature photo, DHL receipt, etc.)
+    proof_type TEXT,                                 -- Proof type: 'signature', 'photo', 'tracking', 'digital'
+
+    created_at TEXT DEFAULT (datetime('now')),       -- Record creation timestamp
+    updated_at TEXT DEFAULT (datetime('now')),       -- Record update timestamp
+
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL,
     FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE SET NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
-);`)
+);
+`);

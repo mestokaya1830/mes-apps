@@ -117,21 +117,26 @@ ipcMain.handle('register', async (event, payload) => {
           state,
           country,
           website,
+
           company_name,
           company_details,
           company_signature,
           contact_person,
+
           tax_number,
           tax_office,
           vat_id,
           court_registration,
           court_location,
+
           logo,
           image_type,
+
           bank_name,
           bic,
           iban,
           bank_account_holder,
+
           invoice_approved
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
@@ -148,21 +153,26 @@ ipcMain.handle('register', async (event, payload) => {
         data.state,
         data.country,
         data.website,
+
         data.company_name,
         companyDetailsJSON,
         data.company_signature,
         contactPersonJSON,
+
         data.tax_number,
         data.tax_office,
         data.vat_id,
         data.court_registration,
         data.court_location,
+
         Buffer.from(image),
         data.image_type,
+
         data.bank_name,
         data.bic,
         data.iban,
         data.bank_account_holder,
+
         data.invoice_approved
       )
     return { success: true, user: user }
@@ -413,28 +423,34 @@ ipcMain.handle('add-customer', async (event, payload) => {
       .prepare(
         `
       INSERT INTO customers (
+        is_active,
         company_type, company_name,
-        first_name, last_name, full_name, email, phone,
+        first_name, last_name, full_name, email, phone, website,
         address, postal_code, city, country,
-        tax_number, vat_id, is_active
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        tax_number, vat_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
       )
       .run(
+        customer.is_active ?? 1,
+
         customer.company_type ?? '',
         customer.company_name ?? '',
+
         customer.first_name,
         customer.last_name,
         customer.first_name + ' ' + customer.last_name,
+
         customer.email,
         customer.phone,
+        customer.website,
         customer.address ?? '',
         customer.postal_code ?? '',
         customer.city ?? '',
         customer.country ?? '',
+
         customer.tax_number ?? '',
-        customer.vat_id ?? '',
-        customer.is_active ?? 1
+        customer.vat_id ?? ''
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -631,11 +647,16 @@ ipcMain.handle('add-invoice', async (event, payload) => {
       .prepare(
         `
           INSERT INTO invoices (
+            customer_id,
             customer,
             is_active,
+            canceled_at,
+            cancellation_reason,
+
             date,
             due_date,
             service_date,
+
             currency,
             payment_terms,
             payment_conditions,
@@ -643,22 +664,29 @@ ipcMain.handle('add-invoice', async (event, payload) => {
             early_payment_percentage,
             early_payment_days,
             total_after_discount,
+
             is_small_company,
             is_reverse_charge,
             is_eu_delivery,
+
             positions,
             net_total,
             vat_total,
             gross_total
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ) VALUES (?, ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
       )
       .run(
         JSON.stringify(invoice.customer) || null,
+        invoice.customer_id,
         invoice.is_active,
+        invoice.canceled_at,
+        invoice.cancellation_reason,
+
         invoice.date,
         invoice.due_date,
         invoice.service_date,
+
         invoice.currency,
         invoice.payment_terms,
         invoice.payment_conditions,
@@ -666,9 +694,11 @@ ipcMain.handle('add-invoice', async (event, payload) => {
         invoice.early_payment_percentage,
         invoice.early_payment_days,
         invoice.total_after_discount,
+
         invoice.is_small_company ? 1 : 0,
         invoice.is_reverse_charge ? 1 : 0,
         invoice.is_eu_delivery ? 1 : 0,
+
         JSON.stringify(invoice.positions || []),
         invoice.net_total,
         invoice.vat_total,
@@ -944,45 +974,78 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
 })
 
 //offers
-ipcMain.handle('add-offer', async (event, payload) => {
-  const data = payload
-  if (!data) {
-    return { success: false, message: 'No data provided' }
-  }
+ipcMain.handle('add-offer', async (event, data) => {
+  if (!data) return { success: false, message: 'No data provided' }
 
   try {
     const info = db
       .prepare(
         `
-          INSERT INTO offers (
-            customer,
-            is_active,
-            offer_date,
-            subject,
-            is_legal,
-            valid_until,
-            currency,
-            payment_terms,
-            positions,
-            total_net,
-            total_vat,
-            total_gross
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
+        INSERT INTO offers (
+          customer_id,
+          invoice_id,
+
+          date,
+          valid_until,
+
+          customer,
+          contact_person,
+
+          subject,
+          currency,
+          payment_terms,
+          delivery_terms,
+          delivery_time,
+
+          positions,
+          net_total,
+          vat_total,
+          gross_total,
+
+          status,
+          is_active,
+          is_legal,
+          accepted_at,
+          rejected_at,
+
+          introduction_text,
+          closing_text,
+          notes,
+          
+          internal_notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `
       )
       .run(
+        data.customer_id ?? null,
+        data.invoice_id ?? null,
+
+        data.date ?? null,
         JSON.stringify(data.customer || {}),
-        data.is_active ?? 1,
-        data.offer_date,
-        data.subject,
-        data.is_legal ?? 1,
-        data.valid_until,
-        data.currency ?? 'EUR',
+        data.contact_person ?? '',
+        data.valid_until ?? null,
+
+        data.subject ?? '',
+        data.currency ?? 'EUR.de-DE',
         data.payment_terms ?? '',
+        data.delivery_terms ?? '',
+        data.delivery_time ?? '',
+
         JSON.stringify(data.positions || []),
-        data.total_net ?? 0,
-        data.total_vat ?? 0,
-        data.total_gross ?? 0
+        data.net_total ?? 0,
+        data.vat_total ?? 0,
+        data.gross_total ?? 0,
+
+        data.status ?? 'draft',
+        data.is_active ?? 1,
+        data.is_legal ?? 1,
+        data.accepted_at ?? null,
+        data.rejected_at ?? null,
+
+        data.introduction_text ?? '',
+        data.closing_text ?? '',
+        data.notes ?? '',
+        data.internal_notes ?? ''
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -994,163 +1057,325 @@ ipcMain.handle('add-offer', async (event, payload) => {
 
 //orders
 ipcMain.handle('add-order', async (event, data) => {
-  if (!data) {
-    return { success: false, message: 'No data provided' }
-  }
+  if (!data) return { success: false, message: 'No data provided' }
+
   try {
     const info = db
       .prepare(
         `
-      INSERT INTO orders (
-        order_number,
-        date,
-        is_legal,
-        is_active,
-        service_period_start,
-        service_period_end,
-        validity_date,
-        delivery_date,
-        delivery_address,
-        customer_id,
-        company_name,
-        first_name,
-        last_name,
-        address,
-        postal_code,
-        city,
-        country,
-        email,
-        customer_reference,
-        payment_terms,
-        payment_method,
-        payment_conditions,
-        payment_purpose,
-        paid_amount,
-        delivery_terms,
-        shipping_method,
-        customer_notes,
-        internal_notes,
-        special_notes,
-        closing_text,
-        positions_json
-      )
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `
+        INSERT INTO orders (
+          id,
+          customer_id,
+          customer,
+          
+          date,
+          validity_date,
+          service_period_start,
+          service_period_end,
+          delivery_date,
+          
+          is_active,
+          is_cancelled,
+          
+          delivery_address,
+          delivery_postal_code,
+          delivery_city,
+          delivery_country,
+          delivery_terms,
+          shipping_method,
+          
+          payment_terms,
+          payment_method,
+          payment_conditions,
+          
+          positions,
+          net_total,
+          vat_total,
+          gross_total,
+          
+          intro_text,
+          customer_notes,
+          internal_notes,
+          closing_text,
+          
+          
+          sent_at,
+          sent_method,
+          
+          created_at,
+          updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `
       )
       .run(
-        data.order_number,
-        data.date,
-        data.is_legal,
-        data.is_active,
-        data.service_period_start,
-        data.service_period_end,
-        data.validity_date,
-        data.delivery_date,
-        data.delivery_address,
-        data.selected_customer.id,
-        data.selected_customer.company_name,
-        data.selected_customer.first_name,
-        data.selected_customer.last_name,
-        data.selected_customer.address,
-        data.selected_customer.postal_code,
-        data.selected_customer.city,
-        data.selected_customer.country,
-        data.selected_customer.email,
-        data.customer_reference,
-        data.payment.payment_terms,
-        data.payment.payment_method,
-        data.payment.payment_conditions,
-        data.payment.payment_purpose,
-        data.payment.paid_amount,
-        data.delivery_terms,
-        data.shipping_method,
-        data.customer_notes,
-        data.internal_notes,
-        data.special_notes,
-        data.closing_text,
-        JSON.stringify(data.positions) // 🔥 burada JSON string'e çeviriyoruz
+        null, // id AUTOINCREMENT
+        data.customer_id ?? null,
+        JSON.stringify(data.customer || {}),
+
+        data.date ?? null,
+        data.validity_date ?? null,
+        data.service_period_start ?? null,
+        data.service_period_end ?? null,
+        data.delivery_date ?? null,
+
+        data.is_active ?? 1,
+        data.is_cancelled ?? 0,
+
+        data.delivery_address ?? '',
+        data.delivery_postal_code ?? '',
+        data.delivery_city ?? '',
+        data.delivery_country ?? 'Deutschland',
+        data.delivery_terms ?? '',
+        data.shipping_method ?? '',
+
+        data.payment_terms ?? '',
+        data.payment_method ?? '',
+        data.payment_conditions ?? '',
+
+        JSON.stringify(data.positions || []),
+        data.net_total ?? 0,
+        data.vat_total ?? 0,
+        data.gross_total ?? 0,
+
+        data.intro_text ?? '',
+        data.customer_notes ?? '',
+        data.internal_notes ?? '',
+        data.closing_text ?? '',
+
+        data.sent_at ?? null,
+        data.sent_method ?? '',
+
+        data.created_at ?? new Date().toISOString(),
+        data.updated_at ?? new Date().toISOString()
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
-    console.error('Error saving order:', err)
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+//payments
+ipcMain.handle('add-payment', async (event, data, file_name, image_file) => {
+  if (!data) return { success: false, message: 'No data provided' }
+
+  try {
+    const info = db
+      .prepare(
+        `
+        INSERT INTO payments (
+          invoice_id,
+          customer_id,
+        
+          date,
+          paid_amount,
+          payment_method,
+          payment_reference,
+
+          counterparty_iban,
+          counterparty_name,
+
+          notes,
+          is_partially_paid,
+          is_paid,
+          file_name,
+
+          created_at,
+          updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `
+      )
+      .run(
+        data.invoice_id ?? null,
+        data.customer_id ?? null,
+
+        data.date ?? null,
+        data.paid_amount ?? 0,
+        data.payment_method ?? '',
+        data.payment_reference ?? '',
+
+        data.counterparty_iban ?? '',
+        data.counterparty_name ?? '',
+
+        data.notes ?? '',
+        data.is_partially_paid ? 1 : 0,
+        data.is_paid ? 1 : 0,
+        file_name ?? null
+      )
+
+    if (image_file && file_name) {
+      const base64Data = image_file.includes(',') ? image_file.split(',')[1] : image_file
+      const buffer = Buffer.from(base64Data, 'base64')
+      const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name)
+      await fs.promises.writeFile(savePath, buffer)
+    }
+
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+//reminders
+ipcMain.handle('add-reminder', async (event, data) => {
+  if (!data) return { success: false, message: 'No data provided' }
+
+  try {
+    const info = db
+      .prepare(
+        `
+        INSERT INTO reminders (
+          invoice_id,
+          customer_id,
+
+          is_sent,
+          is_cancelled,
+
+          level,
+          level_text,
+
+          reminder_date,
+          due_date_new,
+          reminder_fee,
+          late_interest,
+
+          intro_text,
+          main_text,
+          closing_text,
+
+          sent_at,
+          sent_method,
+
+          proof_type,
+          proof_file_name,
+          proof_sent_at,
+
+          created_at,
+          updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `
+      )
+      .run(
+        data.invoice_id ?? null,
+        data.customer_id ?? null,
+
+        data.is_sent ? 1 : 0,
+        data.is_cancelled ? 1 : 0,
+
+        data.level ?? 0,
+        data.level_text ?? '',
+
+        data.reminder_date ?? null,
+        data.due_date_new ?? null,
+        data.reminder_fee ?? 0,
+        data.late_interest ?? 0,
+
+        data.intro_text ?? '',
+        data.main_text ?? '',
+        data.closing_text ?? '',
+
+        data.sent_at ?? null,
+        data.sent_method ?? '',
+
+        data.proof_type ?? '',
+        data.proof_file_name ?? '',
+        data.proof_sent_at ?? null
+      )
+
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
     return { success: false, message: err.message }
   }
 })
 
 //deliveries
 ipcMain.handle('add-delivery', async (event, data) => {
-  if (data) {
-    try {
-      const customer = JSON.stringify(data.customer || {})
-      const positions = JSON.stringify(data.positions || {})
+  if (!data) return { success: false, message: 'No data provided' }
 
-      db.prepare(
-        `
-          INSERT INTO deliveries (
-            order_id,
-            date,
-            delivery_status,
-            delivered_by,
-            delivery_reference,
-            received_by,
-            note,
-            customer,
-            positions
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
-      ).run(
-        data.order_id,
-        data.date,
-        data.note,
-        data.delivery_status,
-        data.delivered_by,
-        data.delivery_reference,
-        data.received_by,
-        customer,
-        positions
-      )
-      return { success: true }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
-    }
-  }
-})
-
-//reminders
-ipcMain.handle('add-reminder', async (event, data) => {
-  if (!data) {
-    return { success: false, message: 'No data provided' }
-  }
   try {
     const info = db
       .prepare(
         `
-          INSERT INTO reminders (
-            date,
-            remeinder_fee,
-            late_fee,
-            level,
-            intro_text,
-            warning_text,
-            closing_text,
-            payment_deadline,
-            invoice
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
+        INSERT INTO deliveries (
+          order_id,
+          invoice_id,
+          customer_id,
+
+          customer,
+
+          date,
+
+          planned_delivery_date,
+          
+          status,
+          is_active,
+          is_cancelled,
+          
+          positions,
+
+          delivery_date,
+          delivered_by,
+          delivery_method,
+          tracking_number,
+          delivery_reference,
+          received_by,
+          received_at,
+
+          delivery_address,
+          delivery_postal_code,
+          delivery_city,
+          delivery_country,
+
+
+          delivered_total_cent,
+          remaining_total_cent,
+
+          note,
+          internal_note,
+
+          pdf_file_name,
+          proof_file_name,
+          proof_type,
+
+          created_at,
+          updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `
       )
       .run(
-        data.date,
-        data.remeinder_fee,
-        data.late_fee,
-        data.level,
-        data.intro_text,
-        data.warning_text,
-        data.closing_text,
-        data.payment_deadline,
-        JSON.stringify(data.invoice || {})
+        data.order_id ?? null,
+        data.invoice_id ?? null,
+        data.customer_id ?? null,
+        JSON.stringify(data.customer || {}),
+        data.delivery_number ?? '',
+        data.delivery_date ?? null,
+        data.planned_delivery_date ?? null,
+        data.status ?? 'pending',
+        data.is_active ?? 1,
+        data.is_cancelled ?? 0,
+        data.delivered_by ?? '',
+        data.delivery_method ?? '',
+        data.tracking_number ?? '',
+        data.delivery_reference ?? '',
+        data.received_by ?? '',
+        data.received_at ?? null,
+        data.delivery_address ?? '',
+        data.delivery_postal_code ?? '',
+        data.delivery_city ?? '',
+        data.delivery_country ?? 'Deutschland',
+        positions,
+        data.delivered_total_cent ?? 0,
+        data.remaining_total_cent ?? 0,
+        data.note ?? '',
+        data.internal_note ?? '',
+        data.pdf_file_name ?? '',
+        data.proof_file_name ?? '',
+        data.proof_type ?? ''
       )
+
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -1158,122 +1383,8 @@ ipcMain.handle('add-reminder', async (event, data) => {
   }
 })
 
-//add payment
-ipcMain.handle('add-payment', async (data, file_name, image_file) => {
-  if (!data) {
-    return { success: false, message: 'No data provided' }
-  }
-  try {
-    const info = db
-      .prepare(
-        `
-          INSERT INTO payments (
-            payment_date,
-            amount,
-            payment_method,
-            reference,
-            notes,
-            partial_paid,
-            file_name,
-            is_active,
-            invoice_id,
-            invoice_customer_id
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `
-      )
-      .run(
-        data.payment_date,
-        data.amount,
-        data.payment_method,
-        data.reference,
-        data.notes,
-        data.partial_paid ? 1 : 0, // ✅ Boolean -> Integer
-        file_name,
-        data.is_active,
-        data.invoice_id,
-        data.invoice_customer_id
-      )
-    if (image_file) {
-      const base64Data = image_file.includes(',') ? image_file.split(',')[1] : image_file
-      const buffer = Buffer.from(base64Data, 'base64')
-      const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name)
-      await fs.promises.writeFile(savePath, buffer)
-    }
-    return { success: true, lastInsertId: info.lastInsertRowid }
-    // const buffer = Buffer.from(image_file.split(',')[1], 'base64')
-    // // const savePath = path.join(os.homedir(), fileName);//linux home folder
-    // // const savePath = path.join(os.homedir(), "Downloads", fileName);// linux downloads folder
-    // const savePath = path.join(app.getAppPath(), 'src/renderer/public/uploads', file_name) // inner app uploads folder
-    // await fs.promises.writeFile(savePath, buffer)
-    // return { success: true, customer: row }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
 
-ipcMain.handle('get-document', async (event, data, tableName) => {
-  let limit = 50
-  try {
-    if (tableName === 'invoices') {
-      const rows = db
-        .prepare(
-          `
-         SELECT
-              i.id,
-              i.total,
-              i.created_at,
-              c.id,
-              c.company_name,
-              c.first_name,
-              c.last_name,
-              COALESCE(SUM(p.amount), 0) AS total_paid,
-              (i.total - COALESCE(SUM(p.amount), 0)) AS remaining_amount
-          FROM invoices i
-          JOIN customers c
-              ON c.id = i.customer_id
-          LEFT JOIN payments p
-              ON p.invoice_id = i.id
-          WHERE i.is_active = 1
-          GROUP BY i.id
-          ORDER BY i.created_at DESC
-          LIMIT ?;
-        `
-        )
-        .all(limit)
-      return { success: true, rows }
-    }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('get-document-by-id', async (event, data, id, tableName) => {
-  try {
-    if (tableName === 'invoices') {
-      const rows = db
-        .prepare(
-          `
-            SELECT 
-            i.*,
-            c.*,
-            p.*
-            FROM invoices i
-            JOIN customers c ON c.customer_id = i.invoice_customer_id
-            LEFT JOIN payments p ON p.payment_invoice_id = i.invoice_id
-            WHERE i.invoice_id = :id
-          `
-        )
-        .all({ id })
-      return { success: true, rows }
-    }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
+//reports
 ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
   try {
     console.log(startDate, endDate)
