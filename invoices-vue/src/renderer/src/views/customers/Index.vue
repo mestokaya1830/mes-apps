@@ -78,6 +78,31 @@
               </svg>
               Rechnung erstellen
             </router-link>
+            <router-link
+              :to="{
+                path: '/offers/create',
+                query: { id: item.id }
+              }"
+              class="action-btn details-btn"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21 8V21H3V3h12l6 5z"></path>
+                <line x1="3" y1="7" x2="21" y2="7"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="17" x2="21" y2="17"></line>
+              </svg>
+              Angebote erstellen
+            </router-link>
             <router-link :to="'/customers/details/' + item.id" class="action-btn details-btn">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

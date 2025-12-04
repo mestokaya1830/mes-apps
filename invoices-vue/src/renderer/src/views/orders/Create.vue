@@ -20,6 +20,7 @@
             <label class="form-label">Datum <span class="stars">*</span></label>
             <input v-model="orders.date" type="date" class="form-input" />
           </div>
+          <div v-if="error.date" class="error">{{ error.date }}</div>
         </div>
 
         <div class="form-row">
@@ -27,10 +28,12 @@
             <label class="form-label">Leistungszeitraum Von <span class="stars">*</span></label>
             <input v-model="orders.service_period_start" type="date" class="form-input" />
           </div>
+          <div v-if="error.service_period_start" class="error">{{ error.service_period_start }}</div>
           <div class="form-group">
             <label class="form-label">Leistungszeitraum Bis <span class="stars">*</span></label>
             <input v-model="orders.service_period_end" type="date" class="form-input" />
           </div>
+          <div v-if="error.service_period_end" class="error">{{ error.service_period_end }}</div>
         </div>
       </div>
 
@@ -444,6 +447,7 @@ export default {
       title: 'Auftrag erstellen',
       customers: [],
       customerList: 'Wähle Kunden',
+      error: {},
       orders: {
         id: '1',
         date: '',

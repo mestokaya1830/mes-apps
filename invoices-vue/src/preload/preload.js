@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('api', {
   //customer
   addCustomer: async (data) => ipcRenderer.invoke('add-customer', data),
   getCustomers: async (data) => ipcRenderer.invoke('get-customers', data),
-  getCustomerById: async (id) => ipcRenderer.invoke('get-customer-by-id', id),
+  getCustomerById: async (data) => ipcRenderer.invoke('get-customer-by-id', data),
   customerDetails: async (id) => ipcRenderer.invoke('customer-details', id),
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
   deleteCustomerById: async (id) => ipcRenderer.invoke('delete-customer-by-id', id),
@@ -35,6 +35,14 @@ contextBridge.exposeInMainWorld('api', {
   filterInvoicesCategories: async (data) => ipcRenderer.invoke('flter-invoices-categories', data),
   searchInvoices: async (term) => ipcRenderer.invoke('search-invoices', term),
   filterInvoicesDate: async (date) => ipcRenderer.invoke('filter-invoices-date', date),
+
+  //offer
+  addOffer: async (data) => ipcRenderer.invoke('add-offer', data),
+  getOffers: async (data) => ipcRenderer.invoke('get-offers', data),
+  getOfferById: async (id) => ipcRenderer.invoke('get-offer-by-id', id),
+
+
+  //payment
   savePayment: (data) => ipcRenderer.invoke('save-payment', data),
 
   documentReport: async (data) => ipcRenderer.invoke('document-report', data)

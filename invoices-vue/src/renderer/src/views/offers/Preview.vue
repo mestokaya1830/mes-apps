@@ -11,13 +11,13 @@
             <div class="recipient-address">
               <div class="section-title">Empfänger</div>
               <div class="company-name-subtitle">
-                {{ offerPreview.selected_customer.company_name }}
+                {{ offerPreview.customer.company_name }}
               </div>
-              <div class="meta-label">{{ offerPreview.selected_customer.address }}</div>
+              <div class="meta-label">{{ offerPreview.customer.address }}</div>
               <div class="meta-label">
-                {{ offerPreview.selected_customer.postal_code }}
-                {{ offerPreview.selected_customer.city }}<br />
-                {{ offerPreview.selected_customer.country }}
+                {{ offerPreview.customer.postal_code }}
+                {{ offerPreview.customer.city }}<br />
+                {{ offerPreview.customer.country }}
               </div>
             </div>
           </div>
@@ -43,39 +43,39 @@
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{
-                formatCustomerId(offerPreview.selected_customer.id)
+                formatCustomerId(offerPreview.customer.id)
               }}</span>
             </div>
 
             <div
               v-if="
-                offerPreview.selected_customer.country === 'Germany' &&
-                offerPreview.selected_customer.tax_number
+                offerPreview.customer.country === 'Germany' &&
+                offerPreview.customer.tax_number
               "
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.tax_number }}</span>
+              <span class="meta-value">{{ offerPreview.customer.tax_number }}</span>
             </div>
 
             <div
               v-else-if="
-                offerPreview.selected_customer.is_in_eu && offerPreview.selected_customer.vat_id
+                offerPreview.customer.is_in_eu && offerPreview.customer.vat_id
               "
               class="meta-row"
             >
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ offerPreview.customer.vat_id }}</span>
             </div>
 
             <div
               v-else-if="
-                !offerPreview.selected_customer.is_in_eu && offerPreview.selected_customer.vat_id
+                !offerPreview.customer.is_in_eu && offerPreview.customer.vat_id
               "
               class="meta-row"
             >
               <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.vat_id }}</span>
+              <span class="meta-value">{{ offerPreview.customer.vat_id }}</span>
             </div>
             <div v-if="offerPreview.valid_until" class="meta-row">
               <span class="meta-label">Gültig bis:</span>
@@ -91,9 +91,9 @@
               <span class="meta-label">Datum:</span>
               <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
             </div>
-            <div v-if="offerPreview.selected_customer?.id" class="meta-row">
+            <div v-if="offerPreview.customer?.id" class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ offerPreview.selected_customer.id }}</span>
+              <span class="meta-value">{{ offerPreview.customer.id }}</span>
             </div>
            
             <div
@@ -280,8 +280,7 @@
 
       <!-- Action Buttons -->
       <ActionsButtonPreview
-        v-if="offerPreview.selected_customer"
-        tableName="offers"
+        v-if="offerPreview.customer"
         :tableData="offerPreview"
         sourcePage="preview"
       />
@@ -323,14 +322,12 @@ export default {
   },
   methods: {
     getOfferPreview() {
-      if (store.state.offers) {
-        this.offerPreview = store.state.offers
-      }
+      if (!store.state.offer) return
+      this.offerPreview = store.state.offer
     },
     getAuth() {
-      if (store.state.auth) {
-        this.auth = store.state.auth
-      }
+      if (!store.state.auth) return
+      this.auth = store.state.auth
     }
   }
 }

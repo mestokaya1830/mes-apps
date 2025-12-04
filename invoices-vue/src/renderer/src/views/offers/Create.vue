@@ -13,23 +13,39 @@
         <div class="form-section-title">📌 Grunddaten</div>
         <div class="form-group">
           <label class="form-label">Angebotsnummer <span class="stars">*</span></label>
-          <input v-model="offers.id" type="text" class="form-input" readonly />
+          <input v-model="offer.id" type="text" class="form-input" readonly />
           <small class="form-hint">Format: AN-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Angebotsdatum <span class="stars">*</span></label>
-            <input v-model="offers.date" type="date" class="form-input" required />
+            <input
+              ref="date"
+              v-model="offer.date"
+              type="date"
+              class="form-input"
+              required
+              @input="error.date = ''"
+            />
+            <div v-if="error.date" class="error">{{ error.date }}</div>
           </div>
           <div class="form-group">
             <label class="form-label">Gültigkeitsdatum <span class="stars">*</span></label>
-            <input v-model="offers.valid_until" type="date" class="form-input" />
+            <input
+              ref="valid_until"
+              v-model="offer.valid_until"
+              type="date"
+              class="form-input"
+              required
+              @input="error.valid_until = ''"
+            />
+            <div v-if="error.valid_until" class="error">{{ error.valid_until }}</div>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Betreff / Beschreibung</label>
           <input
-            v-model="offers.subject"
+            v-model="offer.subject"
             type="text"
             class="form-input"
             placeholder="z.B. Webentwicklung Projekt XYZ"
@@ -37,79 +53,40 @@
         </div>
       </div>
 
-      <!-- Kunde -->
-      <div v-if="customers" class="form-section">
-        <div class="form-section-title">👤 Kunde</div>
-        <div class="form-group">
-          <label class="form-label">Kundendaten</label>
-          <select v-model="customerList" class="form-input" @change="getCustomerById">
-            <option selected disabled>Wähle Kunden</option>
-            <option v-for="item in customers" :key="item.id" :value="item.id">
-              {{ item.company_name ? item.company_name : item.first_name + ' ' + item.last_name }}
-            </option>
-          </select>
-        </div>
-        <div v-if="offers.selected_customer.id" class="customer-details">
+      <!-- Customer -->
+      <div v-if="offer.customer" class="form-section">
+        <div class="form-section-title">👤 Kundendaten</div>
+        <div v-if="offer.customer?.id" class="customer-details">
           <div class="form-group">
             <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-            <input v-model="offers.selected_customer.id" type="text" class="form-input" readonly />
+            <input v-model="offer.customer.id" type="text" class="form-input" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Firmname <span class="stars">*</span></label>
-            <input
-              v-model="offers.selected_customer.company_name"
-              type="text"
-              class="form-input"
-              readonly
-            />
+            <input v-model="offer.customer.company_name" type="text" class="form-input" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname <span class="stars">*</span></label>
-              <input
-                v-model="offers.selected_customer.first_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="offer.customer.first_name" type="text" class="form-input" readonly />
             </div>
             <div class="form-group">
               <label class="form-label">Nachname <span class="stars">*</span></label>
-              <input
-                v-model="offers.selected_customer.last_name"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="offer.customer.last_name" type="text" class="form-input" readonly />
             </div>
           </div>
           <div class="form-group">
             <label class="form-label">Adresse <span class="stars">*</span></label>
-            <input
-              v-model="offers.selected_customer.address"
-              type="text"
-              class="form-input"
-              readonly
-            />
+            <input v-model="offer.customer.address" type="text" class="form-input" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">PLZ <span class="stars">*</span></label>
-              <input
-                v-model="offers.selected_customer.postal_code"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="offer.customer.postal_code" type="text" class="form-input" readonly />
             </div>
             <div class="form-group">
               <label class="form-label">Stadt <span class="stars">*</span></label>
-              <input
-                v-model="offers.selected_customer.city"
-                type="text"
-                class="form-input"
-                readonly
-              />
+              <input v-model="offer.customer.city" type="text" class="form-input" readonly />
             </div>
           </div>
         </div>
@@ -118,7 +95,7 @@
       <!-- Legally Binding -->
       <div class="switch-container">
         <label for="is_legal" class="switch">
-          <input id="is_legal" v-model="offers.is_legal" type="checkbox" />
+          <input id="is_legal" v-model="offer.is_legal" type="checkbox" />
           <span class="slider round"></span>
         </label>
         <div class="switch-text">
@@ -131,7 +108,7 @@
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
           <label class="form-label">Waehrung</label>
-          <select v-model="offers.currency" class="form-input">
+          <select v-model="offer.currency" class="form-input">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
             <option value="GBP.en-GB">GBP</option>
@@ -149,11 +126,9 @@
       <!-- Positionen -->
       <div class="form-section">
         <div class="form-section-title">📦 Positionen</div>
-        <div v-if="offers.positions && offers.positions.length === 0">
-          Keine Positionen vorhanden
-        </div>
+        <div v-if="offer.positions && offer.positions.length === 0">Keine Positionen vorhanden</div>
         <div v-else class="positions-editor">
-          <div v-for="(pos, index) in offers.positions" :key="index" class="position-item">
+          <div v-for="(pos, index) in offer.positions" :key="index" class="position-item">
             <div class="positions-header">
               <span class="position-number">Position {{ index + 1 }}</span>
               <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
@@ -229,9 +204,7 @@
       </div>
 
       <!-- Vorschau Button -->
-      <router-link to="/offers/preview" class="preview-btn" @click="setStore">
-        👁️ Vorschau anzeigen
-      </router-link>
+      <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
     </div>
   </div>
 </template>
@@ -239,55 +212,54 @@
 <script>
 import store from '../../store/store.js'
 export default {
-  name: 'CreateOffers',
-  inject: ['storePreview'],
+  name: 'CreateOffer',
+  inject: ['formatCurrency', 'checkServiceDates'],
   data() {
     return {
       title: 'Angebot erstellen',
-      customers: [],
-      customerList: 'Wähle Kunden',
-      offers: {
+      error: {},
+      offer: {
         id: 1,
+        customer: null,
         date: '',
         valid_until: '',
         is_legal: 0,
         is_active: 1,
         subject: '',
         currency: 'EUR.de-DE',
-        selected_customer: {},
         positions: [],
-        payment: {
-          paid_amount: 0 //for store purpose
-        }
+        paid_amount: 0
       }
     }
   },
   mounted() {
-    this.getCustomers()
+    this.getCustomer()
     this.getStore()
   },
   methods: {
-    async getCustomers() {
+    async getCustomer() {
+      if (!this.$route.query.id) return
       try {
-        const response = await window.api.getCustomers()
-        if (response.success) {
-          this.customers = response.customers
+        const data = {
+          id: this.$route.query.id,
+          table_name: 'offers'
         }
+        const result = await window.api.getCustomerById(data)
+        console.log(result)
+        if (!result.success) return
+        this.offer.id = result.data.last_id
+        this.offer.customer = result.data.customer
       } catch (error) {
-        console.error('Error fetching customers:', error)
+        console.error(error)
       }
     },
-    getCustomerById() {
-      const customer = this.customers.find((item) => item.id === this.customerList)
-      if (customer) this.offers.selected_customer = customer
-    },
     getStore() {
-      if (store.state.offers) {
-        this.offers = JSON.parse(JSON.stringify(store.state.offers))
+      if (store.state.offer) {
+        this.offer = JSON.parse(JSON.stringify(store.state.offer))
       }
     },
     addPosition() {
-      this.offers.positions.push({
+      this.offer.positions.push({
         title: 'Neue Position',
         description: 'Beschreibung',
         unit: 'Stk',
@@ -297,28 +269,35 @@ export default {
       })
     },
     deletePosition(index) {
-      if (this.offers.positions.length > 0) {
-        this.offers.positions.splice(index, 1)
+      if (this.offer.positions.length > 0) {
+        this.offer.positions.splice(index, 1)
       } else {
         alert('Keine Positionen vorhanden!')
       }
     },
     getUnitTotal(quantity, price, index) {
-      const vat = this.offers.positions[index].vat || 0
+      const vat = this.offer.positions[index].vat || 0
       const base = quantity * price
-      this.offers.positions[index].unit_total = base.toFixed(2)
-      this.offers.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
+      this.offer.positions[index].unit_total = base.toFixed(2)
+      this.offer.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
-    setStore() {
-      if (this.offers) {
-        this.offers.is_legal = Number(this.offers.is_legal)
-        this.storePreview('offers', this.offers)
-      }
+
+    async submitStore() {
+      if (!this.offer) return
+      if (!this.checkServiceDates(this.offer.date, this.offer.valid_until, 'date', 'valid_until'))
+        return
+      await store.setStore('offer', JSON.parse(JSON.stringify(this.offer)))
+      this.$router.push('/offers/preview')
     }
   }
 }
 </script>
 <style>
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
 /* EDITOR PANEL */
 .editor-panel {
   width: 70%;

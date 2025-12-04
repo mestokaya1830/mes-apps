@@ -27,7 +27,7 @@ try {
 // db.exec('PRAGMA foreign_keys = ON;')//default off
 
 // try {
-//   db.prepare('DROP TABLE orders').run()
+//   db.prepare('DROP TABLE remeinders').run()
 // } catch (err) {
 //   console.error(err.message)
 // }
@@ -39,6 +39,3 @@ try {
 // } catch (err) {
 //   console.error(err.message)
 // }
- 
-
-

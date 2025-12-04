@@ -51,6 +51,7 @@
 
 <script>
 export default {
+  inject: ['trimFormFields'],
   data() {
     return {
       reset_data: {
@@ -74,13 +75,6 @@ export default {
     }
   },
   methods: {
-    trimFormFields() {
-      for (const item in this.user) {
-        if (typeof this.user[item] === 'string') {
-          this.user[item] = this.user[item].trim()
-        }
-      }
-    },
     validateForm() {
       const rd = this.reset_data
       let valid = true
@@ -103,7 +97,7 @@ export default {
     },
 
     async reset() {
-      this.trimFormFields()
+      this.trimFormFields(this.user)
       if (!this.validateForm()) return
 
       try {

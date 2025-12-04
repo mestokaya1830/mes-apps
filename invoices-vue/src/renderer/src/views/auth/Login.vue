@@ -55,6 +55,7 @@ import store from '../../store/store.js'
 
 export default {
   name: 'Login',
+  inject:['trimFormFields'],
   data() {
     return {
       user: { email: '', password: '' },
@@ -86,13 +87,6 @@ export default {
         console.error(err)
       }
     },
-    trimFormFields() {
-      for (const item in this.user) {
-        if (typeof this.user[item] === 'string') {
-          this.user[item] = this.user[item].trim()
-        }
-      }
-    },
     validateForm() {
       let valid = true
       this.error = { email: '', password: '', credential: '' }
@@ -117,7 +111,7 @@ export default {
     },
 
     async loginUser() {
-      this.trimFormFields()
+      this.trimFormFields(this.user)
       if (!this.validateForm()) return
 
       try {

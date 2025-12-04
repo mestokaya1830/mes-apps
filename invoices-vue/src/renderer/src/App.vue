@@ -41,16 +41,16 @@ export default {
           return error.message || ''
         }
       },
-      // formatValidDays(baseDate, validDays) {
-      //   if (!baseDate || !validDays) return ''
-      //   const d = new Date(baseDate)
-      //   d.setDate(d.getDate() + Number(validDays))
-      //   return d.toLocaleDateString('de-DE', {
-      //     day: '2-digit',
-      //     month: '2-digit',
-      //     year: 'numeric'
-      //   })
-      // },
+      formatValidDays(baseDate, validDays) {
+        if (!baseDate || !validDays) return ''
+        const d = new Date(baseDate)
+        d.setDate(d.getDate() + Number(validDays))
+        return d.toLocaleDateString('de-DE', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        })
+      },
       formatCurrency(value, currency) {
         if (currency == undefined) {
           currency = 'EUR.de-DE'
@@ -62,20 +62,22 @@ export default {
       formatNumber(value) {
         return new Intl.NumberFormat('de-DE').format(value || 0)
       },
-      checkServiceDates(start, end) {
+      checkServiceDates(start, end, ref1, ref2) {
         if (!start) {
-          this.$refs.service_date.focus?.()
+          this.$refs[ref1].focus?.()
+          this.error[ref1] = 'Startdatum darf nicht leer sein.'
           return
         }
 
         if (!end) {
-          this.$refs.date.focus?.()
+          this.$refs[ref2].focus?.()
+          this.error[ref2] = 'Enddatum darf nicht leer sein.'
           return
         }
 
         if (start > end) {
-          this.$refs.date.focus?.()
-          console.log(`❌ Startdatum darf nicht nach Enddatum liegen.`)
+          this.$refs[ref2].focus?.()
+          this.error[ref2] = 'Startdatum darf nicht nach Enddatum liegen.'
           return
         }
         return true
@@ -84,21 +86,30 @@ export default {
         for (let i = 0; i < positions.length; i++) {
           if (!positions[i].service_period_start) {
             this.$refs.service_period_start[i].focus?.()
+            this.error.service_period_start = 'Startdatum darf nicht leer sein.'
             return
           }
 
           if (!positions[i].service_period_end) {
             this.$refs.service_period_end[i].focus?.()
+            this.error.service_period_end = 'Enddatum darf nicht leer sein.'
             return
           }
 
           if (positions[i].service_period_start > positions[i].service_period_end) {
             this.$refs.service_period_end[i].focus?.()
-            console.log(`❌ Position ${i + 1}: Startdatum darf nicht nach Enddatum liegen.`)
+            this.error.service_period_end = 'Startdatum darf nicht nach Enddatum liegen.'
             return
           }
         }
         return true
+      },
+      trimFormFields(data) {
+        for (const item in data) {
+          if (typeof data[item] === 'string') {
+            data[item] = data[item].trim()
+          }
+        }
       }
     }
   }

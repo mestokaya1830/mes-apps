@@ -25,12 +25,21 @@
               type="date"
               class="form-input"
               required
+              @input="error.service_date = ''"
             />
-            <small class="form-hint">Datum der Leistungserbringung</small>
+            <div v-if="error.service_date" class="error">{{ error.service_date }}</div>
           </div>
           <div class="form-group">
             <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
-            <input ref="date" v-model="invoice.date" type="date" class="form-input" required />
+            <input
+              ref="date"
+              v-model="invoice.date"
+              type="date"
+              class="form-input"
+              required
+              @input="error.date = ''"
+            />
+            <div v-if="error.date" class="error">{{ error.date }}</div>
           </div>
         </div>
       </div>
@@ -192,6 +201,9 @@
                   type="date"
                   class="form-input"
                 />
+                <div v-if="error.service_period_start" class="error">
+                  {{ error.service_period_start }}
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Leistungszeitraum Bis</label>
@@ -201,6 +213,9 @@
                   type="date"
                   class="form-input"
                 />
+                <div v-if="error.service_period_end" class="error">
+                  {{ error.service_period_end}}
+                </div>
               </div>
             </div>
             <div class="form-row form-row-4">
@@ -368,6 +383,7 @@ export default {
     return {
       title: 'Rechnung erstellen',
       early_payment_input: false,
+      error: {},
       invoice: {
         id: 0, //will come from db
         customer: null,
@@ -430,9 +446,13 @@ export default {
     async getCustomer() {
       if (!this.$route.query.id) return
       try {
-        const result = await window.api.getCustomerById(this.$route.query.id)
+        const data = {
+          id: this.$route.query.id,
+          table_name: 'invoices'
+        }
+        const result = await window.api.getCustomerById(data)
         if (!result.success) return
-        this.invoice.id = result.data.invoice_id.id
+        this.invoice.id = result.data.last_id
         this.invoice.customer = result.data.customer
       } catch (error) {
         console.error(error)
@@ -525,7 +545,15 @@ export default {
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.total_after_discount = this.summary.total_after_discount
-      if (!this.checkServiceDates(this.invoice.service_date, this.invoice.date)) return
+      if (
+        !this.checkServiceDates(
+          this.invoice.service_date,
+          this.invoice.date,
+          'service_date',
+          'date'
+        )
+      )
+        return
       if (!this.checkPositionsDates(this.invoice.positions)) return
 
       await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
@@ -538,6 +566,11 @@ export default {
 
 <style>
 /* EDITOR PANEL */
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
 .editor-panel {
   width: 70%;
   background: white;

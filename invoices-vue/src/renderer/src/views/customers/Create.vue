@@ -170,6 +170,7 @@
 <script>
 export default {
   name: 'CustomerRegistrationForm',
+  inject: ['trimFormFields'],
   data() {
     return {
       title: 'Kundenregistrierungsformular',
@@ -232,13 +233,6 @@ export default {
     }
   },
   methods: {
-    trimFormFields() {
-      for (const item in this.customer) {
-        if (typeof this.customer[item] === 'string') {
-          this.customer[item] = this.customer[item].trim()
-        }
-      }
-    },
     validateForm() {
       const c = this.customer
       this.error = {}
@@ -311,7 +305,7 @@ export default {
     },
     async saveCustomer() {
       this.showSuccess = false
-      this.trimFormFields()
+      this.trimFormFields(this.customer)
       if (!this.validateForm()) return
 
       try {

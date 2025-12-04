@@ -87,7 +87,7 @@
 
           <label class="form-field">
             <span>🇩🇪 Bundesland (Deutschland)</span>
-           <input v-model="user.state" type="text" placeholder="State" />
+            <input v-model="user.state" type="text" placeholder="State" />
             <div v-if="error.state" class="error">{{ error.state }}</div>
           </label>
         </div>
@@ -295,6 +295,7 @@
 <script>
 export default {
   name: 'UserRegistrationForm',
+  inject: ['trimFormFields'],
   data() {
     return {
       isSubmitting: false,
@@ -397,14 +398,6 @@ export default {
       binaryReader.readAsArrayBuffer(file)
     },
 
-    trimFormFields() {
-      for (const item in this.user) {
-        if (typeof this.user[item] === 'string') {
-          this.user[item] = this.user[item].trim()
-        }
-      }
-    },
-
     validateForm() {
       const u = this.user
       let valid = true
@@ -498,7 +491,7 @@ export default {
     },
 
     async register() {
-      this.trimFormFields()
+      this.trimFormFields(this.user)
       this.error = this.validateForm()
       if (!this.validateForm()) return
       this.isSubmitting = true

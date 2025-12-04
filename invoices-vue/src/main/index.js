@@ -390,7 +390,7 @@ ipcMain.handle('get-dashboard', async () => {
         orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count,
         deliveries: db.prepare('SELECT COUNT(*) AS count FROM deliveries WHERE is_active = 1').get()
           .count,
-        reminders: db.prepare('SELECT COUNT(*) AS count FROM remeinders').get().count,
+        reminders: db.prepare('SELECT COUNT(*) AS count FROM reminders').get().count,
         payments: db.prepare('SELECT COUNT(*) AS count FROM payments WHERE is_paid = 1').get().count
       }
     })()
@@ -462,49 +462,21 @@ ipcMain.handle('get-customers', async () => {
   }
 })
 
-ipcMain.handle('get-customer-by-id', async (event, id) => {
+ipcMain.handle('get-customer-by-id', async (event, payload) => {
+  const { id, table_name } = payload
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
   try {
     const customer = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
-    const invoice_id = db.prepare(`SELECT id FROM invoices ORDER BY id DESC LIMIT 1;`).get()
+    const lastRow = db.prepare(`SELECT id FROM ${table_name} ORDER BY id DESC LIMIT 1;`).get()
 
+    const last_id = lastRow ? lastRow.id : 0
     const data = {
       customer,
-      invoice_id
+      last_id
     }
     return { success: true, data }
-    // const rows = db
-    //   .prepare(
-    //     `
-    //    SELECT
-    //       c.*,
-
-    //       -- Invoice count
-    //       COALESCE((SELECT COUNT(*) FROM invoices i WHERE i.customer_id = c.id AND i.is_active = 1), 0) AS total_invoices,
-
-    //       -- Payments aggregate
-    //       COALESCE((SELECT COUNT(*) FROM payments p WHERE p.customer_id = c.id AND p.is_paid = 1), 0) AS total_paid,
-    //       COALESCE((SELECT COUNT(*) FROM payments p WHERE p.customer_id = c.id AND p.is_paid = 0), 0) AS total_unpaid,
-    //       COALESCE((SELECT COUNT(*) FROM payments p
-    //                 JOIN invoices i ON i.id = p.invoice_id
-    //                 WHERE p.customer_id = c.id AND p.is_paid = 0 AND i.due_date < DATE('now')), 0) AS overdue,
-    //       COALESCE((SELECT COUNT(*) FROM payments p
-    //                 JOIN invoices i ON i.id = p.invoice_id
-    //                 WHERE p.customer_id = c.id AND p.is_paid = 1 AND p.date < i.due_date), 0) AS early_paid,
-
-    //       -- Orders / Offers / Reminders
-    //       COALESCE((SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id AND o.is_active = 1), 0) AS total_orders,
-    //       COALESCE((SELECT COUNT(*) FROM offers ofr WHERE ofr.customer_id = c.id AND ofr.is_active = 1), 0) AS total_offers,
-    //       COALESCE((SELECT COUNT(*) FROM reminders r WHERE r.customer_id = c.id AND r.is_active = 1), 0) AS total_reminders
-
-    //     FROM customers c
-    //     WHERE c.id = ?
-
-    //   `
-    //   )
-    //   .get(id)
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -970,7 +942,8 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
 })
 
 //offers
-ipcMain.handle('add-offer', async (event, data) => {
+ipcMain.handle('add-offer', async (event, payload) => {
+  const data = payload
   if (!data) {
     return { success: false, message: 'No data provided' }
   }
@@ -980,7 +953,7 @@ ipcMain.handle('add-offer', async (event, data) => {
       .prepare(
         `
           INSERT INTO offers (
-            customer_id,
+            customer,
             is_active,
             offer_date,
             subject,
@@ -996,7 +969,7 @@ ipcMain.handle('add-offer', async (event, data) => {
         `
       )
       .run(
-        data.customer_id,
+        JSON.stringify(data.customer || {}),
         data.is_active ?? 1,
         data.offer_date,
         data.subject,
