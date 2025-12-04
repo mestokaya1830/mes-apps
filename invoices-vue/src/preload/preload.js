@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('api', {
   addInvoice: async (data) => ipcRenderer.invoke('add-invoice', data),
   getInvoices: async (data) => ipcRenderer.invoke('get-invoices', data),
   getInvoiceById: async (id) => ipcRenderer.invoke('get-invoice-by-id', id),
-  setInvoiceStatus: async (data) => ipcRenderer.invoke('set-invoice-status', data),
+  cancelInvoice: async (data) => ipcRenderer.invoke('cancel-invoice', data),
   filterInvoicesCategories: async (data) => ipcRenderer.invoke('flter-invoices-categories', data),
   searchInvoices: async (term) => ipcRenderer.invoke('search-invoices', term),
   filterInvoicesDate: async (date) => ipcRenderer.invoke('filter-invoices-date', date),

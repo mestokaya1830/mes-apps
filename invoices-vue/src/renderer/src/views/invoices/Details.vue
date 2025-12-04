@@ -219,57 +219,95 @@
             <span class="bank-value">{{ auth.bic }}</span>
           </div>
         </div>
+        <div v-if="invoice.is_active" class="form-section">
+          <div class="custom-row">
+            <label for="">Zahlung erfassen</label>
+            <router-link :to="`/payments/create/${invoice.invoice_id}`">
+              <button class="btn btn-payment">
+                <span class="btn-text">💳 Zahlung erfassen</span>
+              </button>
+            </router-link>
+            <div class="form-group">
+              <label for="">Stornieren</label>
+              <textarea v-model="cancellation_reason" class="form-input">
+                Stornieren
+              </textarea>
+              <input
+                v-model="cancled_by"
+                type="text"
+                class="form-input"
+                placeholder="Storniert Von"
+              />
+              <button @click="setInvoiceCancelled" class="btn btn-cancel">Stornieren</button>
+            </div>
+
+            <!-- <div class="form-group">
+              <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
+                <option value="" disabled>Bezahlungsstatus</option>
+                <option value="1">Bezahlt</option>
+                <option value="0">Unbezahlt</option>
+              </select>
+            </div> -->
+            <!-- <div v-if="!invoice.payment.is_paid">
+              <router-link :to="`/invoices/payment/${invoice.id}`">
+                <button class="btn btn-primary">
+                  <span class="nav-icon">💳</span>
+                  <span>Zahlung erhalten markieren</span>
+                </button>
+              </router-link>
+              <router-link :to="`/remainders/create/${invoice.id}`">
+                <button class="btn btn-primary">
+                  <span class="nav-icon">⚠️</span>
+                  <span>Mahnung erstellen</span>
+                </button>
+              </router-link>
+            </div> -->
+
+            <!-- <div class="form-group">
+              <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
+                <option value="" disabled>Bezahlungsstatus</option>
+                <option value="1">Bezahlt</option>
+                <option value="0">Unbezahlt</option>
+              </select>
+            </div> -->
+          </div>
+        </div>
+        <div v-else class="form-section">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="">Storniereninformation</label>
+
+              <div>
+                <label
+                  ><strong>Rechnung-Nr: </strong>
+                  <span>{{ formatInvoiceId(invoice.id) }}</span></label
+                >
+              </div>
+              <div>
+                <label
+                  ><strong>Storniert am: </strong> <span>{{ invoice.canceled_at }}</span></label
+                >
+              </div>
+
+              <div>
+                <label
+                  ><strong>Storniert von:</strong> <span>{{ invoice.canceled_by }}</span></label
+                >
+              </div>
+
+              <div>
+                <label
+                  ><strong>Grund der Stornierung:</strong>
+                  <span>{{ invoice.cancellation_reason }}</span></label
+                >
+              </div>
+            </div>
+          </div>
+        </div>
 
         <FooterSidePreview />
       </div>
 
-      <div class="form-section">
-        <div class="form-row">
-          <div class="form-group">
-            <select v-model="invoice_status" class="form-input" @change="setInvoiceStatus()">
-              <option value="" disabled>Status</option>
-              <option value="0">Stornieren</option>
-              <option value="1">Aktivieren</option>
-            </select>
-          </div>
-          <router-link :to="`/payments/create/${invoice.invoice_id}`">
-            <button class="btn btn-primary">
-              <span class="nav-icon">💳</span>
-              <span>Zahlung erfassen</span>
-            </button>
-          </router-link>
-
-          <!-- <div class="form-group">
-            <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
-              <option value="" disabled>Bezahlungsstatus</option>
-              <option value="1">Bezahlt</option>
-              <option value="0">Unbezahlt</option>
-            </select>
-          </div> -->
-          <!-- <div v-if="!invoice.payment.is_paid">
-            <router-link :to="`/invoices/payment/${invoice.id}`">
-              <button class="btn btn-primary">
-                <span class="nav-icon">💳</span>
-                <span>Zahlung erhalten markieren</span>
-              </button>
-            </router-link>
-            <router-link :to="`/remainders/create/${invoice.id}`">
-              <button class="btn btn-primary">
-                <span class="nav-icon">⚠️</span>
-                <span>Mahnung erstellen</span>
-              </button>
-            </router-link>
-          </div> -->
-
-          <!-- <div class="form-group">
-            <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
-              <option value="" disabled>Bezahlungsstatus</option>
-              <option value="1">Bezahlt</option>
-              <option value="0">Unbezahlt</option>
-            </select>
-          </div> -->
-        </div>
-      </div>
       <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
@@ -297,7 +335,8 @@ export default {
       title: 'Rechnung',
       invoice: null,
       auth: null,
-      invoice_status: ''
+      cancellation_reason: '',
+      cancled_by: ''
     }
   },
   mounted() {
@@ -317,6 +356,7 @@ export default {
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions)
         }
+        console.log(this.invoice)
       } catch (error) {
         console.error(error)
       }
@@ -333,12 +373,14 @@ export default {
       // const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
       // return outstanding - this.calculateEarlyPayment()
     },
-    async setInvoiceStatus() {
+    async setInvoiceCancelled() {
       const data = {
         id: this.invoice.id,
-        status: this.invoice_status
+        status: 0,
+        cancellation_reason: this.cancellation_reason,
+        canceled_by: this.cancled_by
       }
-      const result = await window.api.setInvoiceStatus(data)
+      const result = await window.api.cancelInvoice(data)
       if (result.success) {
         this.$router.push('/invoices')
       }
@@ -347,6 +389,11 @@ export default {
 }
 </script>
 <style>
+.custom-row {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+}
 /* PREVIEW PANEL */
 .preview-panel {
   width: 80%;
@@ -395,6 +442,35 @@ export default {
   font-size: 10px;
 }
 
+.btn {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
+.btn-payment {
+  background: #3b82f6;
+  color: white;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.btn-cancel {
+  background: #ef4444;
+  color: white;
+  margin-left: auto;
+  margin-top: 10px;
+}
+.btn-text {
+  text-decoration: none !important;
+  box-shadow: none;
+}
 /* BANK + CONTACT BOX */
 .bank-box {
   background: #f1f5f9;

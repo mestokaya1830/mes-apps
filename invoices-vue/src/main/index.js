@@ -724,13 +724,15 @@ ipcMain.handle('get-invoice-by-id', async (event, id) => {
   }
 })
 
-ipcMain.handle('set-invoice-status', async (event, payload) => {
+ipcMain.handle('cancel-invoice', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const { id, status } = payload
-    db.prepare(`Update invoices Set is_active = ? WHERE id = ?`).run(status, id)
+    const { id, status, cancellation_reason, canceled_by } = payload
+    db.prepare(
+      `Update invoices Set is_active = ?, canceled_at = CURRENT_TIMESTAMP, cancellation_reason = ?, canceled_by = ? WHERE id = ?`
+    ).run(status, cancellation_reason, canceled_by, id)
     return { success: true }
   } catch (err) {
     console.error('DB error:', err.message)

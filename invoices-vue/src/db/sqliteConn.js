@@ -39,3 +39,14 @@ try {
 // } catch (err) {
 //   console.error(err.message)
 // }
+
+// try {
+//   const result = db
+//     .prepare(
+//       `Alter table invoices add column canceled_by TEXT;`
+//     )
+//     .run() // 1 → customer id
+//   console.log(result)
+// } catch (err) {
+//   console.error(err.message)
+// }

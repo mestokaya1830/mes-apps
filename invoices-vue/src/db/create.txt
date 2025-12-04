@@ -90,7 +90,8 @@ db.exec(`CREATE TABLE IF NOT EXISTS invoices (
     vat_total INTEGER NOT NULL,
     gross_total INTEGER NOT NULL,
     total_after_discount INTEGER NOT NULL,
-    has
+    hash_256 TEXT NOT NULL,
+    canceled_at TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
