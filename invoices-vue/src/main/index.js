@@ -432,10 +432,10 @@ ipcMain.handle('add-customer', async (event, payload) => {
     `
       )
       .run(
-        customer.is_active ?? 1,
+        customer.is_active ? 1 : 0,
 
-        customer.company_type ?? '',
-        customer.company_name ?? '',
+        customer.company_type,
+        customer.company_name,
 
         customer.first_name,
         customer.last_name,
@@ -444,13 +444,13 @@ ipcMain.handle('add-customer', async (event, payload) => {
         customer.email,
         customer.phone,
         customer.website,
-        customer.address ?? '',
-        customer.postal_code ?? '',
-        customer.city ?? '',
-        customer.country ?? '',
+        customer.address,
+        customer.postal_code,
+        customer.city,
+        customer.country,
 
-        customer.tax_number ?? '',
-        customer.vat_id ?? ''
+        customer.tax_number,
+        customer.vat_id
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -1021,35 +1021,35 @@ ipcMain.handle('add-offer', async (event, data) => {
       `
       )
       .run(
-        data.customer_id ?? null,
+        data.customer_id,
 
-        data.date ?? null,
-        data.valid_until ?? null,
+        data.date,
+        data.valid_until,
 
         JSON.stringify(data.customer || {}),
-        data.contact_person ?? '',
+        data.contact_person,
 
-        data.subject ?? '',
-        data.currency ?? 'EUR.de-DE',
-        data.payment_terms ?? '',
-        data.delivery_terms ?? '',
-        data.delivery_time ?? '',
+        data.subject,
+        data.currency,
+        data.payment_terms,
+        data.delivery_terms,
+        data.delivery_time,
 
         JSON.stringify(data.positions || []),
-        data.net_total ?? 0,
-        data.vat_total ?? 0,
-        data.gross_total ?? 0,
+        data.net_total,
+        data.vat_total,
+        data.gross_total,
 
-        data.status ?? 'draft',
-        data.status_date ?? null,
+        data.status,
+        data.status_date,
         data.is_active ? 1 : 0,
         data.is_legal ? 1 : 0,
 
-        data.introduction_text ?? '',
-        data.closing_text ?? '',
-        data.notes ?? '',
+        data.introduction_text,
+        data.closing_text,
+        data.notes,
 
-        data.internal_notes ?? ''
+        data.internal_notes
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -1138,97 +1138,115 @@ ipcMain.handle('update-offer-by-id', async (event, payload) => {
 })
 
 //orders
-ipcMain.handle('add-order', async (event, data) => {
-  if (!data) return { success: false, message: 'No data provided' }
+ipcMain.handle('add-order', async (event, payload) => {
+  if (!payload) return { success: false, message: 'No data provided' }
 
   try {
+    const data = payload
     const info = db
       .prepare(
         `
-        INSERT INTO orders (
-          id,
-          customer_id,
-          customer,
-          
-          date,
-          validity_date,
-          service_period_start,
-          service_period_end,
-          delivery_date,
-          
-          is_active,
-          is_cancelled,
-          
-          delivery_address,
-          delivery_postal_code,
-          delivery_city,
-          delivery_country,
-          delivery_terms,
-          shipping_method,
-          
-          payment_terms,
-          payment_method,
-          payment_conditions,
-          
-          positions,
-          net_total,
-          vat_total,
-          gross_total,
-          
-          intro_text,
-          customer_notes,
-          internal_notes,
-          closing_text,
-          
-          
-          sent_at,
-          sent_method,
-          
-          created_at,
-          updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `
+      INSERT INTO orders (
+        id,
+        customer_id,
+        customer,
+
+        date,
+        validity_date,
+        service_period_start,
+        service_period_end,
+        delivery_date,
+
+        status,
+        status_date,
+        status_by,
+        status_comments,
+
+        is_active,
+        cancelled_at,
+        cancelled_by,
+        cancellation_reason,
+
+        delivery_address,
+        delivery_postal_code,
+        delivery_city,
+        delivery_country,
+
+        payment_terms,
+        payment_method,
+        payment_conditions,
+
+        delivery_terms,
+        shipping_method,
+
+        positions,
+        currency,
+        net_total,
+        vat_total,
+        gross_total,
+
+        intro_text,
+        customer_notes,
+        internal_notes,
+        closing_text,
+
+        sent_at,
+        sent_method,
+
+        created_at,
+        updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `
       )
       .run(
         null, // id AUTOINCREMENT
-        data.customer_id ?? null,
+        data.customer_id,
         JSON.stringify(data.customer || {}),
 
-        data.date ?? null,
-        data.validity_date ?? null,
-        data.service_period_start ?? null,
-        data.service_period_end ?? null,
-        data.delivery_date ?? null,
+        data.date,
+        data.validity_date,
+        data.service_period_start,
+        data.service_period_end,
+        data.delivery_date,
 
-        data.is_active ?? 1,
-        data.is_cancelled ?? 0,
+        data.status ?? 'pending',
+        data.status_date,
+        data.status_by,
+        data.status_comments,
 
-        data.delivery_address ?? '',
-        data.delivery_postal_code ?? '',
-        data.delivery_city ?? '',
-        data.delivery_country ?? 'Deutschland',
-        data.delivery_terms ?? '',
-        data.shipping_method ?? '',
+        data.is_active ? 1 : 0,
+        data.cancelled_at,
+        data.cancelled_by,
+        data.cancellation_reason,
 
-        data.payment_terms ?? '',
-        data.payment_method ?? '',
-        data.payment_conditions ?? '',
+        data.delivery_address,
+        data.delivery_postal_code,
+        data.delivery_city,
+        data.delivery_country,
+
+        data.payment_terms,
+        data.payment_method,
+        data.payment_conditions,
+
+        data.delivery_terms,
+        data.shipping_method,
 
         JSON.stringify(data.positions || []),
-        data.net_total ?? 0,
-        data.vat_total ?? 0,
-        data.gross_total ?? 0,
+        data.currency,
+        data.net_total,
+        data.vat_total,
+        data.gross_total,
 
-        data.intro_text ?? '',
-        data.customer_notes ?? '',
-        data.internal_notes ?? '',
-        data.closing_text ?? '',
+        data.intro_text,
+        data.customer_notes,
+        data.internal_notes,
+        data.closing_text,
 
-        data.sent_at ?? null,
-        data.sent_method ?? '',
+        data.sent_at,
+        data.sent_method,
 
-        data.created_at ?? new Date().toISOString(),
-        data.updated_at ?? new Date().toISOString()
+        data.created_at,
+        data.updated_at
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -1237,6 +1255,7 @@ ipcMain.handle('add-order', async (event, data) => {
     return { success: false, message: err.message }
   }
 })
+
 
 //payments
 ipcMain.handle('add-payment', async (event, data, file_name, image_file) => {

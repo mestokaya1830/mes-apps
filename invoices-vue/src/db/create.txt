@@ -172,46 +172,58 @@ CREATE TABLE IF NOT EXISTS offers (
 ----------------------------------------------------------------------------------------------------------
 db.exec(`
 CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
-    customer_id INTEGER NOT NULL,                   -- Foreign key to customers
-    customer TEXT NOT NULL,                         -- Customer info as text
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER,
+    customer TEXT DEFAULT '{}',
 
-    date TEXT NOT NULL,                             -- Order creation date
-    validity_date TEXT,                             -- Order validity date
-    service_period_start TEXT,                      -- Service period start
-    service_period_end TEXT,                        -- Service period end
-    delivery_date TEXT,                             -- Delivery date
+    date TEXT DEFAULT '',
+    validity_date TEXT DEFAULT '',
+    service_period_start TEXT DEFAULT '',
+    service_period_end TEXT DEFAULT '',
+    delivery_date TEXT DEFAULT '',
 
-    is_active INTEGER NOT NULL DEFAULT 1,          -- Active flag
-    is_cancelled INTEGER NOT NULL DEFAULT 0,       -- Cancelled flag
+    status TEXT DEFAULT 'pending',
+    status_date TEXT DEFAULT '',
+    status_by TEXT DEFAULT '',
+    status_comments TEXT DEFAULT '',
 
-    delivery_address TEXT,                          -- Delivery address
-    delivery_postal_code TEXT,                      -- Delivery postal code
-    delivery_city TEXT,                             -- Delivery city
-    delivery_country TEXT DEFAULT 'Deutschland',   -- Delivery country
+    is_active INTEGER DEFAULT 1,
+    cancelled_at TEXT DEFAULT '',
+    cancelled_by TEXT DEFAULT '',
+    cancellation_reason TEXT DEFAULT '',
 
-    payment_terms TEXT,                             -- Payment terms
-    payment_method TEXT,                            -- Payment method
-    payment_conditions TEXT,                        -- Payment conditions
-    delivery_terms TEXT,                            -- Delivery terms
-    shipping_method TEXT,                           -- Shipping method
+    delivery_address TEXT DEFAULT '',
+    delivery_postal_code TEXT DEFAULT '',
+    delivery_city TEXT DEFAULT '',
+    delivery_country TEXT DEFAULT 'Deutschland',
 
-    net_total INTEGER NOT NULL DEFAULT 0,          -- Net total amount
-    vat_total INTEGER NOT NULL DEFAULT 0,          -- VAT total amount
-    gross_total INTEGER NOT NULL DEFAULT 0,        -- Gross total amount
+    payment_terms INTEGER DEFAULT 14,
+    payment_method TEXT DEFAULT '',
+    payment_conditions TEXT DEFAULT '',
+    currency TEXT DEFAULT 'EUR.de-DE',
+    net_total INTEGER DEFAULT 0,
+    vat_total INTEGER DEFAULT 0,
+    gross_total INTEGER DEFAULT 0,
 
-    intro_text TEXT DEFAULT '',                     -- Introduction text for order
-    customer_notes TEXT DEFAULT '',                 -- Notes from customer
-    internal_notes TEXT DEFAULT '',                 -- Internal notes (private)
-    closing_text TEXT DEFAULT '',                   -- Closing text for order
+    delivery_terms TEXT DEFAULT '',
+    shipping_method TEXT DEFAULT '',
 
-    positions TEXT NOT NULL,                        -- Order positions stored as JSON/text
+    positions TEXT DEFAULT '[]',
+    customer_reference TEXT DEFAULT '',
+    attachments TEXT DEFAULT '[]',
+    priority TEXT DEFAULT '',
+    internal_status_notes TEXT DEFAULT '',
 
-    sent_at TEXT,                                   -- Timestamp when order was sent
-    sent_method TEXT,                               -- Method of sending (email, post, etc.)
+    intro_text TEXT DEFAULT '',
+    customer_notes TEXT DEFAULT '',
+    internal_notes TEXT DEFAULT '',
+    closing_text TEXT DEFAULT '',
 
-    created_at TEXT DEFAULT (datetime('now')),     -- Record creation timestamp
-    updated_at TEXT DEFAULT (datetime('now')),     -- Record update timestamp
+    sent_at TEXT DEFAULT '',
+    sent_method TEXT DEFAULT '',
+
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
 
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT
 );
