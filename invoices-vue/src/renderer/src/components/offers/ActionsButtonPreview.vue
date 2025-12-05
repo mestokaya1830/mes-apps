@@ -17,6 +17,12 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
+      <button v-if="tableData.id" class="btn">
+        <router-link :to="`/offers/edit/${tableData.id}`">
+          <span class="nav-icon">✏</span>
+          <span>Bearbeiten</span>
+        </router-link>
+      </button>
     </div>
   </div>
 </template>
@@ -62,7 +68,6 @@ export default {
     },
     async saveOffer() {
       if (this.tableData) {
-        console.log(this.sourcePage)
         const result = await window.api.addOffer(JSON.parse(JSON.stringify(this.tableData)))
         if (!result.success) return
         this.clearStore()
@@ -90,7 +95,9 @@ export default {
 <style scoped>
 .action-buttons {
   display: flex;
+  flex-wrap: wrap;
   margin-top: 30px;
+  height: auto;
 }
 
 .btn {

@@ -17,6 +17,12 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
+      <button v-if="tableData.id" class="btn">
+        <router-link :to="`/invoices/edit/${tableData.id}`">
+          <span class="nav-icon">✏</span>
+          <span>Bearbeiten</span>
+        </router-link>
+      </button>
     </div>
   </div>
 </template>
@@ -89,6 +95,8 @@ export default {
 <style scoped>
 .action-buttons {
   display: flex;
+  flex-wrap: wrap;
+  height: auto;
   margin-top: 30px;
 }
 

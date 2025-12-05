@@ -651,7 +651,9 @@ ipcMain.handle('add-invoice', async (event, payload) => {
             customer_id,
             customer,
             is_active,
-            canceled_at,
+
+            canceled_by,
+            canceled_date,
             cancellation_reason,
 
             date,
@@ -674,14 +676,16 @@ ipcMain.handle('add-invoice', async (event, payload) => {
             net_total,
             vat_total,
             gross_total
-          ) VALUES (?, ?, ?, ?, ?, ?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
       )
       .run(
         JSON.stringify(invoice.customer) || null,
         invoice.customer_id,
         invoice.is_active,
-        invoice.canceled_at,
+
+        invoice.canceled_by,
+        invoice.canceled_date,
         invoice.cancellation_reason,
 
         invoice.date,
@@ -985,7 +989,6 @@ ipcMain.handle('add-offer', async (event, data) => {
         `
         INSERT INTO offers (
           customer_id,
-          invoice_id,
 
           date,
           valid_until,
@@ -1005,27 +1008,26 @@ ipcMain.handle('add-offer', async (event, data) => {
           gross_total,
 
           status,
+          status_date,
           is_active,
           is_legal,
-          accepted_at,
-          rejected_at,
 
           introduction_text,
           closing_text,
           notes,
           
           internal_notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
       .run(
         data.customer_id ?? null,
-        data.invoice_id ?? null,
 
         data.date ?? null,
+        data.valid_until ?? null,
+
         JSON.stringify(data.customer || {}),
         data.contact_person ?? '',
-        data.valid_until ?? null,
 
         data.subject ?? '',
         data.currency ?? 'EUR.de-DE',
@@ -1039,17 +1041,95 @@ ipcMain.handle('add-offer', async (event, data) => {
         data.gross_total ?? 0,
 
         data.status ?? 'draft',
+        data.status_date ?? null,
         data.is_active ? 1 : 0,
         data.is_legal ? 1 : 0,
-        data.accepted_at ?? null,
-        data.rejected_at ?? null,
 
         data.introduction_text ?? '',
         data.closing_text ?? '',
         data.notes ?? '',
+
         data.internal_notes ?? ''
       )
 
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-offers', async () => {
+  try {
+    const limit = 50
+    const rows = db
+      .prepare(
+        `
+          SELECT id, date, valid_until, status, status_date, customer, is_active
+          FROM offers
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+      )
+      .all(limit)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-offer-by-id', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const rows = db
+      .prepare(
+        `
+          SELECT *
+          FROM offers
+          WHERE id = ?
+        `
+      )
+      .get(id)
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('delete-offer-by-id', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    const info = db.prepare('DELETE FROM offers WHERE id = ?').run(id)
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('update-offer-by-id', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const { id, status, status_by, status_date, status_comments } = payload
+    const info = db
+      .prepare(
+        `
+          UPDATE offers
+          SET status = ?, status_by = ?, status_date = ?, status_comments = ?
+          WHERE id = ?
+        `
+      )
+      .run(status, status_by, status_date, status_comments, id)
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -1384,7 +1464,6 @@ ipcMain.handle('add-delivery', async (event, data) => {
     return { success: false, message: err.message }
   }
 })
-
 
 //reports
 ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {

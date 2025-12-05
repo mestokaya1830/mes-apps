@@ -40,6 +40,8 @@ contextBridge.exposeInMainWorld('api', {
   addOffer: async (data) => ipcRenderer.invoke('add-offer', data),
   getOffers: async (data) => ipcRenderer.invoke('get-offers', data),
   getOfferById: async (id) => ipcRenderer.invoke('get-offer-by-id', id),
+  deleteOfferById: async (id) => ipcRenderer.invoke('delete-offer-by-id', id),
+  updateOfferById: async (data) => ipcRenderer.invoke('update-offer-by-id', data),
 
 
   //payment

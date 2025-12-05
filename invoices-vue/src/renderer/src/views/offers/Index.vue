@@ -3,7 +3,7 @@
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>
-        <h1 class="title">{{ title }} {{ offersList.length }}</h1>
+        <h1 class="title">{{ title }} {{ offers.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Angebote</p>
       </div>
       <router-link to="/customers" class="add-btn">
@@ -33,7 +33,7 @@
     </div>
     <!-- Offers Grid -->
     <div class="customer-grid">
-      <div v-for="item in offersList" :key="item.id" class="customer-card">
+      <div v-for="item in offers" :key="item.id" class="customer-card">
         <!-- Card Header -->
         <div class="card-header">
           <div class="customer-avatar">
@@ -43,8 +43,14 @@
             <h3 class="customer-name">{{ formatOfferId(item.id) }}</h3>
             <span class="customer-type-badge">{{ item.customer.company_name }}</span>
           </div>
-          <div class="status-badge" :class="item.accepted ? 'active' : 'inactive'">
-            {{ item.accepted ? 'Akzeptiert' : 'Nicht akzeptiert' }}
+          <div class="status-badge">
+            {{
+              item.status === 'draft'
+                ? 'Ausstehend'
+                : item.status === 'accept'
+                  ? 'Akzeptiert'
+                  : 'Nicht akzeptiert'
+            }}
           </div>
         </div>
 
@@ -66,7 +72,7 @@
             </svg>
             Details
           </router-link>
-          <button class="action-btn delete-btn" @click="deleteOffer(offer.id)">
+          <button class="action-btn delete-btn" @click="deleteOffer(item.id)">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -89,7 +95,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="!offersList || offersList.length === 0" class="empty-state">
+    <div v-if="offers" class="empty-state">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="64"
@@ -113,11 +119,11 @@
 
 <script>
 export default {
+  inject: ['formatOfferId'],
   data() {
     return {
       title: 'Angebote',
-      offersList: [],
-      search: [],
+      offers: [],
       search_box: '',
       date_box_start: '',
       date_box_end: '',
@@ -125,34 +131,31 @@ export default {
     }
   },
   mounted() {
-    this.getOffersList()
+    this.getOffers()
   },
   methods: {
-    async getOffersList() {
-      // try {
-      //   const result = await window.api.getDocument('offers')
-      //   this.offersList = result.rows.map((item) => ({
-      //     ...item,
-      //     customer: JSON.parse(item.customer)
-      //   }))
-      //   this.search = this.offersList
-      // } catch (error) {
-      //   console.error(error)
-      // }
+    async getOffers() {
+      try {
+        const result = await window.api.getOffers()
+        this.offers = result.rows.map((item) => ({
+          ...item,
+          customer: JSON.parse(item.customer)
+        }))
+      } catch (error) {
+        console.error(error)
+      }
     },
     async deleteOffer(id) {
+      console.log(id)
       if (confirm('Sind Sie sicher, dass Sie dieses Angebot löschen möchten?')) {
         try {
-          const result = await window.api.deleteDocument('offers', id)
-          if (result.success) this.getOffersList()
+          const result = await window.api.deleteOfferById(id)
+          if (result.success) this.getOffers()
+          this.$router.push('/offers')
         } catch (error) {
           console.error(error)
         }
       }
-    },
-    formatOfferId(id) {
-      if (!id) return ''
-      return `ANG-${String(id).padStart(6, '0')}`
     },
     getInitials(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
@@ -161,7 +164,7 @@ export default {
     },
     searchFilter() {
       if (this.search_box && this.search_box.trim() !== '') {
-        this.offersList = this.search.filter(
+        this.offers = this.search.filter(
           (item) =>
             item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
             item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
@@ -169,23 +172,23 @@ export default {
             this.formatInvoiceId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
         )
       } else {
-        this.offersList = this.search
+        this.offers = this.search
       }
     },
     dateFilter() {
       if (this.date_box_start && this.date_box_end) {
-        this.offersList = this.search.filter(
+        this.offers = this.search.filter(
           (item) => item.date >= this.date_box_start && item.date <= this.date_box_end
         )
       } else if (this.date_box_start && !this.date_box_end) {
-        this.offersList = this.search.filter((item) => item.date == this.date_box_start)
+        this.offers = this.search.filter((item) => item.date == this.date_box_start)
       } else {
-        this.offersList = this.search
+        this.offers = this.search
       }
     },
     sorting(key) {
       if (!key) return
-      this.offersList.sort((a, b) => {
+      this.offers.sort((a, b) => {
         const res = a[key] > b[key] ? 1 : -1
         return this.isSort ? res : -res
       })

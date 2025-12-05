@@ -92,7 +92,9 @@ CREATE TABLE IF NOT EXISTS invoices (
     customer_id INTEGER NOT NULL,                   -- Foreign key to customers
     customer TEXT NOT NULL,                         -- Customer info as text
     is_active INTEGER NOT NULL DEFAULT 1,          -- Active status (1 = active, 0 = inactive)
-    canceled_at TEXT,                               -- Cancellation timestamp
+    
+    canceled_date TEXT,                               -- Cancellation timestamp
+    canceled_by TEXT,
     cancellation_reason TEXT NOT NULL,             -- Reason for cancellation
 
     date TEXT NOT NULL,                             -- Invoice date
@@ -129,7 +131,6 @@ db.exec(`
 CREATE TABLE IF NOT EXISTS offers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
     customer_id INTEGER NOT NULL,                   -- Foreign key to customers
-    invoice_id INTEGER,                             -- Foreign key to invoices
 
     date TEXT NOT NULL,                             -- Offer creation date
     valid_until TEXT NOT NULL,                      -- Offer validity date
@@ -148,11 +149,12 @@ CREATE TABLE IF NOT EXISTS offers (
     vat_total INTEGER NOT NULL,                     -- VAT total amount
     gross_total INTEGER NOT NULL,                   -- Gross total amount
 
-    status TEXT NOT NULL,                           -- Offer status (draft, accepted, rejected)
+    status TEXT NOT NULL,                            -- Offer status (draft, accepted, rejected)
+    status_by TEXT,
+    status_date TEXT,
+    status_comments TEXT,
     is_active INTEGER NOT NULL DEFAULT 1,          -- Active flag
     is_legal INTEGER NOT NULL DEFAULT 1,           -- Legally binding flag
-    accepted_at TEXT,                               -- Timestamp when offer was accepted
-    rejected_at TEXT,                               -- Timestamp when offer was rejected
 
     introduction_text TEXT NOT NULL,                -- Introduction text for the offer
     closing_text TEXT NOT NULL,                     -- Closing text for the offer

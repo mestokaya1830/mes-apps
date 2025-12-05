@@ -26,22 +26,11 @@ try {
 
 // db.exec('PRAGMA foreign_keys = ON;')//default off
 
-// try {
-//   db.prepare('DROP TABLE remeinders').run()
-// } catch (err) {
-//   console.error(err.message)
-// }
 
 // try {
-//   const result = db.prepare(`PRAGMA table_info(offers);`).all()
+//   const result = db.prepare(`PRAGMA table_info(invoices);`).all()
 //   const fields = result.map((r) => r.name)
 //   console.log(fields)
-// } catch (err) {
-//   console.error(err.message)
-// }
-
-// try {
-//   db.exec('ALTER TABLE offers DROP COLUMN customer_id;')
 // } catch (err) {
 //   console.error(err.message)
 // }

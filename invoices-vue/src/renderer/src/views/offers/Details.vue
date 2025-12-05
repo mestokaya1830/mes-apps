@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Angebots-Nr.:</span>
-              <span class="meta-value">{{ formatAngebotsId }}</span>
+              <span class="meta-value">{{ formatOfferId }}</span>
             </div>
 
             <div class="meta-row">
@@ -45,32 +45,11 @@
               <span class="meta-value">{{ formatCustomerId(offer.customer.id) }}</span>
             </div>
 
-            <div
-              v-if="
-                offer.customer.country === 'Germany' &&
-                offer.customer.tax_number
-              "
-              class="meta-row"
-            >
+            <div class="meta-row">
               <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ offer.customer.tax_number }}</span>
-            </div>
-
-            <div
-              v-else-if="offer.customer.is_in_eu && offer.customer.vat_id"
-              class="meta-row"
-            >
-              <span class="meta-label">USt-IdNr.:</span>
               <span class="meta-value">{{ offer.customer.vat_id }}</span>
             </div>
 
-            <div
-              v-else-if="!offer.customer.is_in_eu && offer.customer.vat_id"
-              class="meta-row"
-            >
-              <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ offer.customer.vat_id }}</span>
-            </div>
             <div v-if="offer.valid_until" class="meta-row">
               <span class="meta-label">Gültig bis:</span>
               <span class="meta-value">{{ formatDate(offer.valid_until) }}</span>
@@ -120,6 +99,12 @@
           Sehr geehrte Damen und Herren,<br /><br />
           vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:
         </div>
+        <div>
+          <div class="section-title">introduction_text</div>
+          <div class="intro-text">
+            {{ offer.introduction_text }}
+          </div>
+        </div>
 
         <!-- Positions Table -->
         <table class="positions-table">
@@ -165,78 +150,39 @@
         </table>
 
         <!-- summary -->
-        <div v-if="offer.summary" class="summary-section">
+        <div class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{
-              formatCurrency(offer.summary.subtotal, offer.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(offer.net_total, offer.currency) }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{
-              formatCurrency(offer.summary.vat_amount, offer.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(offer.vat_total, offer.currency) }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{
-              formatCurrency(offer.summary.total, offer.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(offer.gross_total, offer.currency) }}</span>
           </div>
         </div>
 
         <!-- Payment Terms -->
-        <div v-if="offer.payment" class="payment-section">
+        <div class="payment-section">
           <div class="section-heading">Zahlungsbedingungen</div>
           <div class="payment-content">
-            <p v-if="offer.payment.terms">
-              Zahlbar innerhalb <strong>{{ offer.payment.terms }} Tagen</strong> netto nach
+            <p>
+              Zahlbar innerhalb <strong>{{ offer.payment_terms }} Tagen</strong> netto nach
               Rechnungsdatum.
             </p>
-            <p v-if="offer.payment.has_skonto">
-              Bei Zahlung innerhalb von
-              <strong>{{ offer.payment.skonto_days }} Tagen</strong> gewähren wir
-              <strong>{{ offer.payment.skonto_percentage }}% Skonto</strong>.
-            </p>
-            <p v-if="offer.payment.payment_conditions">
-              {{ offer.payment.payment_conditions }}
-            </p>
           </div>
         </div>
-
-        <!-- Bank Details -->
-        <div v-if="auth.bank || offer.bank" class="bank-section">
-          <div class="section-heading">Bankverbindung</div>
-          <div class="bank-details">
-            <div v-if="auth.bank?.bank_name || offer.bank?.bank_name">
-              Kreditinstitut: {{ auth.bank?.bank_name || offer.bank?.bank_name }}
-            </div>
-            <div v-if="auth.bank?.iban || offer.bank?.iban">
-              IBAN: {{ auth.bank?.iban || offer.bank?.iban }}
-            </div>
-            <div v-if="auth.bank?.bic || offer.bank?.bic">
-              BIC: {{ auth.bank?.bic || offer.bank?.bic }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Legal Validity -->
-        <div v-if="offer.is_legal_validity" class="signature-section">
-          <div class="signature-note">
-            Durch Ihre Unterschrift bestätigen Sie die Annahme dieses Angebots.
-          </div>
-          <div class="signature-box">
-            <div class="signature-line">
-              <div>_____________________________</div>
-              <div class="signature-label">Ort, Datum</div>
-            </div>
-            <div class="signature-line">
-              <div>_____________________________</div>
-              <div class="signature-label">Unterschrift</div>
-            </div>
+        <!-- delivery Terms -->
+        <div class="payment-section">
+          <div class="section-heading">Lieferung terms</div>
+          <div class="payment-content">
+            <p>{{ offer.delivery_terms }}</p>
+            <p>{{ offer.delivery_time }}</p>
           </div>
         </div>
 
@@ -244,6 +190,18 @@
         <div class="closing">
           Wir freuen uns auf Ihre Rückmeldung und stehen für Rückfragen gerne zur Verfügung.<br /><br />
           Mit freundlichen Grüßen
+        </div>
+        <div>
+          <div class="section-title">Notes</div>
+          <div class="intro-text">
+            {{ offer.notes }}
+          </div>
+        </div>
+        <div>
+          <div class="section-title">closing_text</div>
+          <div class="intro-text">
+            {{ offer.closing_text }}
+          </div>
         </div>
 
         <!-- Contact Person -->
@@ -271,24 +229,18 @@
           </div>
         </div>
       </div>
-
       <!-- Action Buttons -->
-      <ActionsButtonPreview
-        v-if="offer.customer"
-        tableName="offer"
-        :tableData="offer"
-        sourcePage="details"
-      />
+      <ActionsButtonPreview v-if="offer" :tableData="offer" sourcePage="details" />
     </div>
 
-    <router-link to="/offer" class="back-link"> ← Zurück zur Angebotsliste </router-link>
+    <router-link to="/offers" class="back-link"> ← Zurück zur Angebotsliste </router-link>
   </div>
 </template>
 
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import ActionsButtonPreview from '../../components/offers/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 export default {
   name: 'OfferDetails',
@@ -297,18 +249,12 @@ export default {
     ContactPersonPreview,
     ActionsButtonPreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
+  inject: ['formatOfferId', 'formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {
     return {
       title: 'Angebot-Details',
       offer: null,
       auth: null
-    }
-  },
-  computed: {
-    formatAngebotsId() {
-      if (!this.offer || !this.offer.id) return ''
-      return `ANG-${String(this.offer.id).padStart(6, '0')}`
     }
   },
   mounted() {
@@ -317,15 +263,12 @@ export default {
   },
   methods: {
     async getOffer() {
-      const id = this.$route.params.id
       try {
-        const result = await window.api.getDocumentById(id, 'offer')
+        const result = await window.api.getOfferById(this.$route.params.id)
         this.offer = {
           ...result.rows,
           customer: JSON.parse(result.rows.customer),
-          positions: JSON.parse(result.rows.positions),
-          payment: JSON.parse(result.rows.payment),
-          summary: JSON.parse(result.rows.summary)
+          positions: JSON.parse(result.rows.positions)
         }
         console.log(this.offer)
       } catch (error) {

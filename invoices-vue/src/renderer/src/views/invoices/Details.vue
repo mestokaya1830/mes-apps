@@ -219,91 +219,6 @@
             <span class="bank-value">{{ auth.bic }}</span>
           </div>
         </div>
-        <div v-if="invoice.is_active" class="form-section">
-          <div class="custom-row">
-            <label for="">Zahlung erfassen</label>
-            <router-link :to="`/payments/create/${invoice.invoice_id}`">
-              <button class="btn btn-payment">
-                <span class="btn-text">💳 Zahlung erfassen</span>
-              </button>
-            </router-link>
-            <div class="form-group">
-              <label for="">Stornieren</label>
-              <textarea v-model="cancellation_reason" class="form-input">
-                Stornieren
-              </textarea>
-              <input
-                v-model="cancled_by"
-                type="text"
-                class="form-input"
-                placeholder="Storniert Von"
-              />
-              <button @click="setInvoiceCancelled" class="btn btn-cancel">Stornieren</button>
-            </div>
-
-            <!-- <div class="form-group">
-              <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
-                <option value="" disabled>Bezahlungsstatus</option>
-                <option value="1">Bezahlt</option>
-                <option value="0">Unbezahlt</option>
-              </select>
-            </div> -->
-            <!-- <div v-if="!invoice.payment.is_paid">
-              <router-link :to="`/invoices/payment/${invoice.id}`">
-                <button class="btn btn-primary">
-                  <span class="nav-icon">💳</span>
-                  <span>Zahlung erhalten markieren</span>
-                </button>
-              </router-link>
-              <router-link :to="`/remainders/create/${invoice.id}`">
-                <button class="btn btn-primary">
-                  <span class="nav-icon">⚠️</span>
-                  <span>Mahnung erstellen</span>
-                </button>
-              </router-link>
-            </div> -->
-
-            <!-- <div class="form-group">
-              <select v-model="paid_status" class="form-input" @change="setPaidStatus()">
-                <option value="" disabled>Bezahlungsstatus</option>
-                <option value="1">Bezahlt</option>
-                <option value="0">Unbezahlt</option>
-              </select>
-            </div> -->
-          </div>
-        </div>
-        <div v-else class="form-section">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="">Storniereninformation</label>
-
-              <div>
-                <label
-                  ><strong>Rechnung-Nr: </strong>
-                  <span>{{ formatInvoiceId(invoice.id) }}</span></label
-                >
-              </div>
-              <div>
-                <label
-                  ><strong>Storniert am: </strong> <span>{{ invoice.canceled_at }}</span></label
-                >
-              </div>
-
-              <div>
-                <label
-                  ><strong>Storniert von:</strong> <span>{{ invoice.canceled_by }}</span></label
-                >
-              </div>
-
-              <div>
-                <label
-                  ><strong>Grund der Stornierung:</strong>
-                  <span>{{ invoice.cancellation_reason }}</span></label
-                >
-              </div>
-            </div>
-          </div>
-        </div>
 
         <FooterSidePreview />
       </div>
@@ -316,10 +231,10 @@
 
 <script>
 import store from '../../store/store.js'
-import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
+import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
+import ActionsButtonPreview from '../../components/invoices/ActionsButtonPreview.vue'
+import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
 
 export default {
   name: 'InvoicesDetails',
@@ -334,9 +249,7 @@ export default {
     return {
       title: 'Rechnung',
       invoice: null,
-      auth: null,
-      cancellation_reason: '',
-      cancled_by: ''
+      auth: null
     }
   },
   mounted() {
@@ -372,18 +285,6 @@ export default {
       // if (!this.invoice?.summary?.total) return 0
       // const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
       // return outstanding - this.calculateEarlyPayment()
-    },
-    async setInvoiceCancelled() {
-      const data = {
-        id: this.invoice.id,
-        status: 0,
-        cancellation_reason: this.cancellation_reason,
-        canceled_by: this.cancled_by
-      }
-      const result = await window.api.cancelInvoice(data)
-      if (result.success) {
-        this.$router.push('/invoices')
-      }
     }
   }
 }

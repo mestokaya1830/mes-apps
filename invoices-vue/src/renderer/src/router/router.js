@@ -96,10 +96,48 @@ const routes = [
     meta: { title: 'Offer Details', auth: true }
   },
   {
+    path: '/invoices/edit/:id',
+    name: 'invoices-edit',
+    component: () => import('../views/invoices/Edit.vue'),
+    meta: { title: 'Invoices Edit', auth: true }
+  },
+  {
     path: '/invoices/preview',
     name: 'invoices-preview',
     component: () => import('../views/invoices/Preview.vue'),
     meta: { title: 'Rechnungen Vorschau', auth: true }
+  },
+
+  //offers
+  {
+    path: '/offers',
+    name: 'offers',
+    component: () => import('../views/offers/Index.vue'),
+    meta: { title: 'Offers', auth: true }
+  },
+  {
+    path: '/offers/create',
+    name: 'offers-create',
+    component: () => import('../views/offers/Create.vue'),
+    meta: { title: 'Add New Offer', auth: true }
+  },
+  {
+    path: '/offers/details/:id',
+    name: 'offers-details',
+    component: () => import('../views/offers/Details.vue'),
+    meta: { title: 'Offer Details', auth: true }
+  },
+  {
+    path: '/offers/edit/:id',
+    name: 'offers-edit',
+    component: () => import('../views/offers/Edit.vue'),
+    meta: { title: 'Offer Edit', auth: true }
+  },
+  {
+    path: '/offers/preview',
+    name: 'offers-preview',
+    component: () => import('../views/offers/Preview.vue'),
+    meta: { title: 'Offers Preview', auth: true }
   },
 
   //payments
@@ -150,7 +188,6 @@ const routes = [
   },
 
   //orrders
-
   {
     path: '/orders',
     name: 'orders',
@@ -174,33 +211,6 @@ const routes = [
     name: 'orders-preview',
     component: () => import('../views/orders/Preview.vue'),
     meta: { title: 'Aufträge Vorschau', auth: true }
-  },
-
-  //offers
-
-  {
-    path: '/offers',
-    name: 'offers',
-    component: () => import('../views/offers/Index.vue'),
-    meta: { title: 'Offers', auth: true }
-  },
-  {
-    path: '/offers/create',
-    name: 'offers-create',
-    component: () => import('../views/offers/Create.vue'),
-    meta: { title: 'Add New Offer', auth: true }
-  },
-  {
-    path: '/offers/details/:id',
-    name: 'offers-details',
-    component: () => import('../views/offers/Details.vue'),
-    meta: { title: 'Offer Details', auth: true }
-  },
-  {
-    path: '/offers/preview',
-    name: 'offers-preview',
-    component: () => import('../views/offers/Preview.vue'),
-    meta: { title: 'Offers Preview', auth: true }
   },
 
   //deliveries

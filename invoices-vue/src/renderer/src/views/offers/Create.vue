@@ -291,24 +291,30 @@ export default {
       offer: {
         id: 0,
         customer_id: 0, //for foreing key
-        invoice_id: null,
         customer: null,
+
         date: '',
         valid_until: '',
+
         subject: '',
         currency: 'EUR.de-DE',
+
         payment_terms: '',
         delivery_terms: '',
         delivery_time: '',
+
         introduction_text: '',
         closing_text: '',
         notes: '',
         internal_notes: '',
+
         status: 'draft',
+        status_by: '',
+        status_date: '',
+        status_comments: '',
         is_active: 1,
         is_legal: 0,
-        accepted_at: null,
-        rejected_at: null,
+
         positions: [],
         net_total: 0,
         vat_total: 0,
@@ -387,6 +393,7 @@ export default {
       if (!this.checkServiceDates(this.offer.date, this.offer.valid_until, 'date', 'valid_until'))
         return
       this.summary()
+      console.log(this.offer)
       await store.setStore('offer', JSON.parse(JSON.stringify(this.offer)))
       this.$router.push('/offers/preview')
     }
