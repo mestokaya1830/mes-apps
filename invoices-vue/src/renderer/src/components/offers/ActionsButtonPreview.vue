@@ -62,6 +62,7 @@ export default {
     },
     async saveOffer() {
       if (this.tableData) {
+        console.log(this.sourcePage)
         const result = await window.api.addOffer(JSON.parse(JSON.stringify(this.tableData)))
         if (!result.success) return
         this.clearStore()
@@ -78,7 +79,7 @@ export default {
     },
     async clearStore() {
       try {
-        await store.clearStore(this.tableName)
+        await store.clearStore('offer')
       } catch (error) {
         console.error(error)
       }

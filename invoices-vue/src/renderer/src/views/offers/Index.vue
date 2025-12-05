@@ -93,16 +93,16 @@ export default {
   },
   methods: {
     async getOffersList() {
-      try {
-        const result = await window.api.getDocument('offers')
-        this.offersList = result.rows.map((item) => ({
-          ...item,
-          customer: JSON.parse(item.customer)
-        }))
-        this.search = this.offersList
-      } catch (error) {
-        console.error(error)
-      }
+      // try {
+      //   const result = await window.api.getDocument('offers')
+      //   this.offersList = result.rows.map((item) => ({
+      //     ...item,
+      //     customer: JSON.parse(item.customer)
+      //   }))
+      //   this.search = this.offersList
+      // } catch (error) {
+      //   console.error(error)
+      // }
     },
     async deleteOffer(id) {
       if (confirm('Sind Sie sicher, dass Sie dieses Angebot löschen möchten?')) {

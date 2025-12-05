@@ -115,7 +115,7 @@ export default {
       if (!this.validateForm()) return
 
       try {
-        const res = await window.api.login(this.user)
+        const res = await window.api.login(JSON.parse(JSON.stringify(this.user)))
         if (!res.success) {
           this.error.credential = res.message || 'Invalid credentials'
           return

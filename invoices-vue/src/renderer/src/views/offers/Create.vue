@@ -92,17 +92,6 @@
         </div>
       </div>
 
-      <!-- Legally Binding -->
-      <div class="switch-container">
-        <label for="is_legal" class="switch">
-          <input id="is_legal" v-model="offer.is_legal" type="checkbox" />
-          <span class="slider round"></span>
-        </label>
-        <div class="switch-text">
-          <strong>Legally binding signature</strong>
-        </div>
-      </div>
-
       <!-- currency -->
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
@@ -190,17 +179,98 @@
               <div class="positions-total-item">
                 <label class="form-label">Vat Unit (€)</label>
                 <div class="form-result-item">
-                  {{ pos.vat_unit }}
+                  {{ pos.vat_unit || '0.00' }}
                 </div>
               </div>
               <div class="positions-total-item">
                 <label class="form-label">Unit Total (€)</label>
-                <div class="form-result-item">{{ pos.unit_total }}</div>
+                <div class="form-result-item">{{ pos.unit_total || '0.00' }}</div>
               </div>
             </div>
           </div>
         </div>
         <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
+      </div>
+
+      <!-- Zusätzliche Informationen -->
+      <div class="form-section">
+        <div class="form-section-title">📄 Zusätzliche Informationen</div>
+
+        <div class="form-group">
+          <label class="form-label">Zahlungsbedingungen</label>
+          <textarea
+            v-model="offer.payment_terms"
+            class="form-input"
+            rows="2"
+            placeholder="z. B. 14 Tage netto, 2 % Skonto bei Zahlung innerhalb 8 Tagen"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Lieferbedingungen</label>
+          <textarea
+            v-model="offer.delivery_terms"
+            class="form-input"
+            rows="2"
+            placeholder="z. B. frei Haus, ab Werk, DAP, EXW unserer Niederlassung in Berlin"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Lieferzeit</label>
+          <input v-model="offer.delivery_time" type="date" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Einleitungstext</label>
+          <textarea
+            v-model="offer.introduction_text"
+            class="form-input"
+            rows="3"
+            placeholder="Vielen Dank für Ihre Anfrage vom XX.XX.XXXX. Gerne unterbreiten wir Ihnen nachfolgend unser Angebot…"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Abschlusstext</label>
+          <textarea
+            v-model="offer.closing_text"
+            class="form-input"
+            rows="3"
+            placeholder="Wir freuen uns auf Ihre Rückmeldung und stehen bei Rückfragen jederzeit gerne zur Verfügung. Mit freundlichen Grüßen"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Notizen (für Kunden sichtbar)</label>
+          <textarea
+            v-model="offer.notes"
+            class="form-input"
+            rows="3"
+            placeholder="z. B. Preise verstehen sich zzgl. gesetzlicher MwSt. • Gültigkeit des Angebots: 30 Tage"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Interne Notizen</label>
+          <textarea
+            v-model="offer.internal_notes"
+            class="form-input"
+            rows="3"
+            placeholder="z. B. Kunde wünscht Expressversand • Rabatt nur bei Vorkasse • Material aktuell knapp"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Legally Binding -->
+      <div class="switch-container">
+        <label for="is_legal" class="switch">
+          <input id="is_legal" v-model="offer.is_legal" type="checkbox" />
+          <span class="slider round"></span>
+        </label>
+        <div class="switch-text">
+          <strong>Legally binding signature</strong>
+        </div>
       </div>
 
       <!-- Vorschau Button -->
@@ -219,11 +289,10 @@ export default {
       title: 'Angebot erstellen',
       error: {},
       offer: {
-        id: null,
-        customer_id: null,
+        id: 0,
+        customer_id: 0, //for foreing key
         invoice_id: null,
         customer: null,
-        contact_person: '',
         date: '',
         valid_until: '',
         subject: '',
@@ -260,10 +329,10 @@ export default {
           table_name: 'offers'
         }
         const result = await window.api.getCustomerById(data)
-        console.log(result)
         if (!result.success) return
-        this.offer.id = result.data.last_id
+        this.offer.id = result.data.last_id == 0 ? 1 : result.data.last_id
         this.offer.customer = result.data.customer
+        this.offer.customer_id = result.data.customer.id
       } catch (error) {
         console.error(error)
       }
@@ -280,7 +349,9 @@ export default {
         unit: 'Stk',
         quantity: 1,
         price: 0,
-        vat: 19
+        vat: 19,
+        unit_total: '0.00',
+        vat_unit: '0.00'
       })
     },
     deletePosition(index) {
@@ -296,17 +367,33 @@ export default {
       this.offer.positions[index].unit_total = base.toFixed(2)
       this.offer.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
+    summary() {
+      let netTotal = 0
+      let vatTotal = 0
 
+      this.offer.positions.forEach((pos) => {
+        const unitTotal = parseFloat(pos.unit_total || 0)
+        const vatUnit = parseFloat(pos.vat_unit || 0)
+        netTotal += unitTotal
+        vatTotal += vatUnit
+      })
+
+      this.offer.net_total = netTotal.toFixed(2)
+      this.offer.vat_total = vatTotal.toFixed(2)
+      this.offer.gross_total = (netTotal + vatTotal).toFixed(2)
+    },
     async submitStore() {
       if (!this.offer) return
       if (!this.checkServiceDates(this.offer.date, this.offer.valid_until, 'date', 'valid_until'))
         return
+      this.summary()
       await store.setStore('offer', JSON.parse(JSON.stringify(this.offer)))
       this.$router.push('/offers/preview')
     }
   }
 }
 </script>
+
 <style>
 .error {
   color: red;

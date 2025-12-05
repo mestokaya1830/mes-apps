@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Angebots-Nr.:</span>
-              <span class="meta-value">{{ formatOfferId }}</span>
+              <span class="meta-value">{{ formatOfferId(offerPreview.id) }}</span>
             </div>
 
             <div class="meta-row">
@@ -34,24 +34,13 @@
               <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
             </div>
 
-            <!-- Leistungsdatum hinzugefügt -->
-            <div v-if="offerPreview.service_date" class="meta-row">
-              <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(offerPreview.service_date) }}</span>
-            </div>
-
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(offerPreview.customer.id)
-              }}</span>
+              <span class="meta-value">{{ formatCustomerId(offerPreview.customer.id) }}</span>
             </div>
 
             <div
-              v-if="
-                offerPreview.customer.country === 'Germany' &&
-                offerPreview.customer.tax_number
-              "
+              v-if="offerPreview.customer.country === 'Germany' && offerPreview.customer.tax_number"
               class="meta-row"
             >
               <span class="meta-label">Steuer-Nr.:</span>
@@ -59,9 +48,7 @@
             </div>
 
             <div
-              v-else-if="
-                offerPreview.customer.is_in_eu && offerPreview.customer.vat_id
-              "
+              v-else-if="offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
               class="meta-row"
             >
               <span class="meta-label">USt-IdNr.:</span>
@@ -69,44 +56,23 @@
             </div>
 
             <div
-              v-else-if="
-                !offerPreview.customer.is_in_eu && offerPreview.customer.vat_id
-              "
+              v-else-if="!offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
               class="meta-row"
             >
               <span class="meta-label">VAT ID:</span>
               <span class="meta-value">{{ offerPreview.customer.vat_id }}</span>
             </div>
+
             <div v-if="offerPreview.valid_until" class="meta-row">
               <span class="meta-label">Gültig bis:</span>
               <span class="meta-value">{{ formatDate(offerPreview.valid_until) }}</span>
             </div>
+
+            <div v-if="offerPreview.status" class="meta-row">
+              <span class="meta-label">Status:</span>
+              <span class="meta-value">{{ getStatusText(offerPreview.status) }}</span>
+            </div>
           </div>
-          <!-- <div class="offer-meta">
-            <div class="meta-row">
-              <span class="meta-label">Angebots-Nr.:</span>
-              <span class="meta-value">{{ offerPreview.id }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
-            </div>
-            <div v-if="offerPreview.customer?.id" class="meta-row">
-              <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ offerPreview.customer.id }}</span>
-            </div>
-           
-            <div
-              v-if="offerPreview.service_period_start && offerPreview.service_period_end"
-              class="meta-row"
-            >
-              <span class="meta-label">Leistungszeitraum:</span>
-              <span class="meta-value">
-                {{ formatDate(offerPreview.service_period_start) }} -
-                {{ formatDate(offerPreview.service_period_end) }}
-              </span>
-            </div>
-          </div> -->
         </div>
 
         <!-- Document Title -->
@@ -115,16 +81,27 @@
         </div>
 
         <!-- Subject / Description -->
-        <div class="form-group">
+        <div v-if="offerPreview.subject" class="form-group">
           <label class="form-label">Betreff / Beschreibung</label>
           <div class="intro-text">
             {{ offerPreview.subject }}
           </div>
         </div>
-        <!-- Intro Text -->
+
+        <!-- Introduction Text -->
         <div class="intro-text">
-          Sehr geehrte Damen und Herren,<br /><br />
-          vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:
+          <span v-if="offerPreview.introduction_text">
+            {{ offerPreview.introduction_text }}
+          </span>
+          <span v-else>
+            Sehr geehrte Damen und Herren,<br /><br />
+            vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:
+          </span>
+        </div>
+
+        <!-- Contact Person -->
+        <div v-if="offerPreview.contact_person" class="contact-person-section">
+          <strong>Ihr Ansprechpartner:</strong> {{ offerPreview.contact_person }}
         </div>
 
         <!-- Positions Table -->
@@ -149,20 +126,11 @@
                 <div v-if="item.description" class="position-description">
                   {{ item.description }}
                 </div>
-                <div
-                  v-if="item.service_period_start && item.service_period_end"
-                  class="position-service-period"
-                >
-                  Leistungszeitraum: {{ formatDate(item.service_period_start) }} -
-                  {{ formatDate(item.service_period_end) }}
-                </div>
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
               <td class="right">{{ formatCurrency(item.price, offerPreview.currency) }}</td>
-              <td class="right">
-                {{ offerPreview.is_reverse_charge ? '0%' : item.vat + '%' }}
-              </td>
+              <td class="right">{{ item.vat }}%</td>
               <td class="right">
                 {{ formatCurrency(item.unit_total, offerPreview.currency) }}
               </td>
@@ -170,46 +138,59 @@
           </tbody>
         </table>
 
-        <!-- summary -->
-        <div v-if="offerPreview.summary" class="summary-section">
+        <!-- Summary Section -->
+        <div class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
             <span class="total-value">{{
-              formatCurrency(offerPreview.summary.subtotal, offerPreview.currency)
+              formatCurrency(offerPreview.net_total || 0, offerPreview.currency)
             }}</span>
           </div>
 
           <div class="total-row">
-            <span class="total-label">MwSt.:</span>
+            <span class="total-label">MwSt. Gesamt:</span>
             <span class="total-value">{{
-              formatCurrency(offerPreview.summary.vat_amount, offerPreview.currency)
+              formatCurrency(offerPreview.vat_total || 0, offerPreview.currency)
             }}</span>
           </div>
 
           <div class="total-row subtotal">
-            <span class="total-label">Rechnungsbetrag (brutto):</span>
+            <span class="total-label">Gesamtbetrag (brutto):</span>
             <span class="total-value">{{
-              formatCurrency(offerPreview.summary.total, offerPreview.currency)
+              formatCurrency(offerPreview.gross_total || 0, offerPreview.currency)
             }}</span>
           </div>
         </div>
 
         <!-- Payment Terms -->
-        <div v-if="offerPreview.payment" class="payment-section">
+        <div v-if="offerPreview.payment_terms" class="payment-section">
           <div class="section-heading">Zahlungsbedingungen</div>
           <div class="payment-content">
-            <p v-if="offerPreview.payment.terms">
-              Zahlbar innerhalb <strong>{{ offerPreview.payment.terms }} Tagen</strong> netto nach
-              Rechnungsdatum.
-            </p>
-            <p v-if="offerPreview.payment.has_skonto">
-              Bei Zahlung innerhalb von
-              <strong>{{ offerPreview.payment.skonto_days }} Tagen</strong> gewähren wir
-              <strong>{{ offerPreview.payment.skonto_percentage }}% Skonto</strong>.
-            </p>
-            <p v-if="offerPreview.payment.payment_conditions">
-              {{ offerPreview.payment.payment_conditions }}
-            </p>
+            <p>{{ offerPreview.payment_terms }}</p>
+          </div>
+        </div>
+
+        <!-- Delivery Terms -->
+        <div v-if="offerPreview.delivery_terms" class="delivery-section">
+          <div class="section-heading">Lieferbedingungen</div>
+          <div class="delivery-content">
+            <p>{{ offerPreview.delivery_terms }}</p>
+          </div>
+        </div>
+
+        <!-- Delivery Time -->
+        <div v-if="offerPreview.delivery_time" class="delivery-time-section">
+          <div class="section-heading">Lieferzeit</div>
+          <div class="delivery-time-content">
+            <p>{{ offerPreview.delivery_time }}</p>
+          </div>
+        </div>
+
+        <!-- Notes (Customer visible) -->
+        <div v-if="offerPreview.notes" class="notes-section">
+          <div class="section-heading">Hinweise</div>
+          <div class="notes-content">
+            <p>{{ offerPreview.notes }}</p>
           </div>
         </div>
 
@@ -229,33 +210,21 @@
           </div>
         </div>
 
-        <!-- Legal Validity -->
-        <div v-if="offerPreview.is_legal_validity" class="signature-section">
-          <div class="signature-note">
-            Durch Ihre Unterschrift bestätigen Sie die Annahme dieses Angebots.
-          </div>
-          <div class="signature-box">
-            <div class="signature-line">
-              <div>_____________________________</div>
-              <div class="signature-label">Ort, Datum</div>
-            </div>
-            <div class="signature-line">
-              <div>_____________________________</div>
-              <div class="signature-label">Unterschrift</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Closing -->
+        <!-- Closing Text -->
         <div class="closing">
-          Wir freuen uns auf Ihre Rückmeldung und stehen für Rückfragen gerne zur Verfügung.<br /><br />
-          Mit freundlichen Grüßen
+          <span v-if="offerPreview.closing_text">
+            {{ offerPreview.closing_text }}
+          </span>
+          <span v-else>
+            Wir freuen uns auf Ihre Rückmeldung und stehen für Rückfragen gerne zur Verfügung.<br /><br />
+            Mit freundlichen Grüßen
+          </span>
         </div>
 
         <!-- Contact Person -->
         <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
 
-        <!-- leagal validity -->
+        <!-- Legal Validity Signature -->
         <div v-if="offerPreview.is_legal" class="pdf-footer">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
@@ -276,11 +245,24 @@
             </div>
           </div>
         </div>
+
+        <!-- Internal Notes (only visible in preview, not in PDF) -->
+        <div v-if="offerPreview.internal_notes" class="internal-notes-section no-print">
+          <div class="section-heading" style="color: #e74c3c">
+            Interne Notizen (nicht für Kunden sichtbar)
+          </div>
+          <div
+            class="internal-notes-content"
+            style="background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107"
+          >
+            <p>{{ offerPreview.internal_notes }}</p>
+          </div>
+        </div>
       </div>
 
       <!-- Action Buttons -->
       <ActionsButtonPreview
-        v-if="offerPreview.customer"
+        v-if="offerPreview"
         :tableData="offerPreview"
         sourcePage="preview"
       />
@@ -293,7 +275,7 @@
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import ActionsButtonPreview from '../../components/offers/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 export default {
   name: 'OfferPreview',
@@ -302,18 +284,12 @@ export default {
     ContactPersonPreview,
     ActionsButtonPreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
+  inject: ['formatCustomerId', 'formatOfferId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {
     return {
       title: 'Angebot',
       offerPreview: null,
       auth: null
-    }
-  },
-  computed: {
-    formatOfferId() {
-      if (!this.offerPreview || !this.offerPreview.id) return ''
-      return `ANG-${String(this.offerPreview.id).padStart(6, '0')}`
     }
   },
   mounted() {
@@ -324,14 +300,26 @@ export default {
     getOfferPreview() {
       if (!store.state.offer) return
       this.offerPreview = store.state.offer
+      console.log('preview', this.offerPreview)
     },
     getAuth() {
       if (!store.state.auth) return
       this.auth = store.state.auth
+    },
+    getStatusText(status) {
+      const statusMap = {
+        draft: 'Entwurf',
+        sent: 'Versendet',
+        accepted: 'Akzeptiert',
+        rejected: 'Abgelehnt',
+        expired: 'Abgelaufen'
+      }
+      return statusMap[status] || status
     }
   }
 }
 </script>
+
 <style>
 /* PREVIEW PANEL */
 .preview-panel {
@@ -615,5 +603,27 @@ export default {
   white-space: pre-wrap;
   font-size: 12px;
   color: #666;
+}
+.contact-person-section,
+.delivery-section,
+.delivery-time-section,
+.notes-section,
+.internal-notes-section {
+  margin: 20px 0;
+}
+
+.section-heading {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.delivery-content,
+.delivery-time-content,
+.notes-content {
+  padding: 10px;
+  background: #f8f9fa;
+  border-left: 3px solid #007bff;
 }
 </style>

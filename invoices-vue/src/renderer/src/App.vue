@@ -27,6 +27,10 @@ export default {
         if (!value) return ''
         return `RE-${String(value).padStart(5, '0')}`
       },
+      formatOfferId(value) {
+        if (!value) return ''
+        return `ANG-${String(value).padStart(5, '0')}`
+      },
       formatDate(value) {
         if (!value) return ''
         try {

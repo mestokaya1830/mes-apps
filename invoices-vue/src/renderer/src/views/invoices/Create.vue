@@ -239,7 +239,7 @@
                   class="form-input"
                   min="1"
                   required
-                  @input="setUnitTotal(item.quantity, item.price, index)"
+                  @input="getUnitTotal(item.quantity, item.price, index)"
                 />
               </div>
               <div class="form-group">
@@ -249,7 +249,7 @@
                   type="number"
                   class="form-input"
                   step="0.01"
-                  @input="setUnitTotal(item.quantity, item.price, index)"
+                  @input="getUnitTotal(item.quantity, item.price, index)"
                 />
               </div>
               <div class="form-group">
@@ -258,7 +258,7 @@
                   v-if="!invoice.is_reverse_charge"
                   v-model.number="item.vat"
                   class="form-input"
-                  @change="setUnitTotal(item.quantity, item.price, index)"
+                  @change="getUnitTotal(item.quantity, item.price, index)"
                 >
                   <option :value="0">0</option>
                   <option :value="7">7</option>
@@ -418,7 +418,7 @@ export default {
       )
       const gross_total = net_total + vat_total
 
-      let early_payment_discount = 0
+      let early_payment_discount = 0  
       if (this.early_payment_input) {
         early_payment_discount = (gross_total * this.invoice.early_payment_percentage) / 100
       }
@@ -510,7 +510,7 @@ export default {
         alert('Keine Positionen vorhanden!')
       }
     },
-    setUnitTotal(quantity, price, index) {
+    getUnitTotal(quantity, price, index) {
       const vat = this.invoice.positions[index].vat || 0
       const base = quantity * price
       let total = 0

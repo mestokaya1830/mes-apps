@@ -480,6 +480,7 @@ ipcMain.handle('get-customers', async () => {
 
 ipcMain.handle('get-customer-by-id', async (event, payload) => {
   const { id, table_name } = payload
+  console.log(payload)
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
@@ -975,6 +976,7 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
 
 //offers
 ipcMain.handle('add-offer', async (event, data) => {
+  console.log(data)
   if (!data) return { success: false, message: 'No data provided' }
 
   try {
@@ -1037,8 +1039,8 @@ ipcMain.handle('add-offer', async (event, data) => {
         data.gross_total ?? 0,
 
         data.status ?? 'draft',
-        data.is_active ?? 1,
-        data.is_legal ?? 1,
+        data.is_active ? 1 : 0,
+        data.is_legal ? 1 : 0,
         data.accepted_at ?? null,
         data.rejected_at ?? null,
 
