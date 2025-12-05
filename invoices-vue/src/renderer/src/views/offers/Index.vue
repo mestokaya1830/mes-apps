@@ -6,8 +6,17 @@
         <h1 class="title">{{ title }} {{ offersList.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Angebote</p>
       </div>
-      <router-link to="/offers/create" class="add-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <router-link to="/customers" class="add-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -20,8 +29,7 @@
       <input v-model="date_box_start" type="date" @change="dateFilter()" />
       <input v-model="date_box_end" type="date" @change="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
-       <router-link to="/reports/offers" class="preview-btn">
-        👁️ Report</router-link>
+      <router-link to="/reports/offers" class="preview-btn"> 👁️ Report</router-link>
     </div>
     <!-- Offers Grid -->
     <div class="customer-grid">
@@ -43,16 +51,36 @@
         <!-- Card Actions -->
         <div class="card-actions">
           <router-link :to="'/offers/details/' + item.id" class="action-btn details-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
             Details
           </router-link>
           <button class="action-btn delete-btn" @click="deleteOffer(offer.id)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              ></path>
             </svg>
             Löschen
           </button>
@@ -62,7 +90,16 @@
 
     <!-- Empty State -->
     <div v-if="!offersList || offersList.length === 0" class="empty-state">
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="64"
+        height="64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
         <circle cx="9" cy="7" r="4"></circle>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -71,7 +108,6 @@
       <h3>Keine Angebote</h3>
       <p>Erstellen Sie neue Angebote, um sie hier zu sehen.</p>
     </div>
-
   </div>
 </template>
 
@@ -118,7 +154,7 @@ export default {
       if (!id) return ''
       return `ANG-${String(id).padStart(6, '0')}`
     },
-     getInitials(firstName, lastName) {
+    getInitials(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
@@ -160,7 +196,6 @@ export default {
 </script>
 
 <style scoped>
-
 .editor-panel {
   width: 100%;
   margin: 0 auto;
@@ -223,14 +258,14 @@ export default {
   background: white;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
 }
 
 .customer-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
