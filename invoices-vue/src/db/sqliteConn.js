@@ -35,3 +35,9 @@ try {
 //   console.error(err.message)
 // }
 
+// try {
+//   const result = db.prepare(`Alter Table Orders Add Column payment_reference text`).run() // 1 → customer id
+//   console.log(result)
+// } catch (err) {
+//   console.error(err.message)
+// }

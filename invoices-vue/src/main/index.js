@@ -1143,63 +1143,77 @@ ipcMain.handle('add-order', async (event, payload) => {
 
   try {
     const data = payload
+
     const info = db
       .prepare(
         `
-      INSERT INTO orders (
-        id,
-        customer_id,
-        customer,
+        INSERT INTO orders (
+          id,
+          customer_id,
+          customer,
 
-        date,
-        validity_date,
-        service_period_start,
-        service_period_end,
-        delivery_date,
+          date,
+          validity_date,
+          service_period_start,
+          service_period_end,
+          delivery_date,
 
-        status,
-        status_date,
-        status_by,
-        status_comments,
+          status,
+          status_date,
+          status_by,
+          status_comments,
 
-        is_active,
-        cancelled_at,
-        cancelled_by,
-        cancellation_reason,
+          is_active,
+          cancelled_at,
+          cancelled_by,
+          cancellation_reason,
 
-        delivery_address,
-        delivery_postal_code,
-        delivery_city,
-        delivery_country,
+          delivery_address,
+          delivery_postal_code,
+          delivery_city,
+          delivery_country,
 
-        payment_terms,
-        payment_method,
-        payment_conditions,
+          payment_terms,
+          payment_method,
+          payment_conditions,
+          payment_reference,
 
-        delivery_terms,
-        shipping_method,
+          delivery_terms,
+          shipping_method,
 
-        positions,
-        currency,
-        net_total,
-        vat_total,
-        gross_total,
+          positions,
+          currency,
+          net_total,
+          vat_total,
+          gross_total,
 
-        intro_text,
-        customer_notes,
-        internal_notes,
-        closing_text,
+          intro_text,
+          customer_notes,
+          internal_notes,
+          closing_text,
 
-        sent_at,
-        sent_method,
+          sent_at,
+          sent_method,
 
-        created_at,
-        updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `
+          created_at,
+          updated_at
+        ) VALUES (
+          ?, ?, ?, ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?,
+          ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?,
+          ?, ?
+        )
+      `
       )
       .run(
-        null, // id AUTOINCREMENT
+        null, // id (AUTOINCREMENT)
+
         data.customer_id,
         JSON.stringify(data.customer || {}),
 
@@ -1227,6 +1241,7 @@ ipcMain.handle('add-order', async (event, payload) => {
         data.payment_terms,
         data.payment_method,
         data.payment_conditions,
+        data.payment_reference,
 
         data.delivery_terms,
         data.shipping_method,
@@ -1251,11 +1266,66 @@ ipcMain.handle('add-order', async (event, payload) => {
 
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
+    console.error('DB error:', err)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-order-by-id', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const rows = db
+      .prepare(
+        `
+          SELECT *
+          FROM orders
+          WHERE id = ?
+        `
+      )
+      .get(id)
+
+    return { success: true, rows }
+  } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
   }
 })
 
+ipcMain.handle('get-orders', async () => {
+  try {
+    const limit = 50
+    const rows = db
+      .prepare(
+        `
+          SELECT id, date, status, customer, is_active
+          FROM orders
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+      )
+      .all(limit)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('delete-order-by-id', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    const info = db.prepare('DELETE FROM orders WHERE id = ?').run(id)
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
 
 //payments
 ipcMain.handle('add-payment', async (event, data, file_name, image_file) => {

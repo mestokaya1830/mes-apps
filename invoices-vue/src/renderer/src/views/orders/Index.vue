@@ -1,6 +1,5 @@
 <template>
   <div class="editor-panel">
-
     <!-- Header Section -->
     <div class="editor-header-block">
       <div>
@@ -8,7 +7,16 @@
         <p class="subtitle">Verwalten Sie alle Ihre Aufträge</p>
       </div>
       <router-link to="/customers" class="add-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -21,8 +29,7 @@
       <input v-model="date_box_start" type="date" @input="dateFilter()" />
       <input v-model="date_box_end" type="date" @input="dateFilter()" />
       <div @click="sorting('id')">&#8645;</div>
-       <router-link to="/reports/orders" class="preview-btn">
-        👁️ Report</router-link>
+      <router-link to="/reports/orders" class="preview-btn"> 👁️ Report</router-link>
     </div>
     <!-- Orders Grid -->
     <div class="customer-grid">
@@ -44,16 +51,36 @@
         <!-- Card Actions -->
         <div class="card-actions">
           <router-link :to="'/orders/details/' + item.id" class="action-btn details-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
             Details
           </router-link>
           <button class="action-btn delete-btn" @click="deleteOrder(order.id)">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
               <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              ></path>
             </svg>
             Löschen
           </button>
@@ -63,7 +90,16 @@
 
     <!-- Empty State -->
     <div v-if="!ordersList || ordersList.length === 0" class="empty-state">
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="64"
+        height="64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
         <circle cx="9" cy="7" r="4"></circle>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -72,12 +108,13 @@
       <h3>Keine Aufträge</h3>
       <p>Erstellen Sie neue Aufträge, um sie hier zu sehen.</p>
     </div>
-
   </div>
 </template>
 
 <script>
 export default {
+  name: 'Orders',
+  inject: ['formatOrderId', 'formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Aufträge',
@@ -90,17 +127,17 @@ export default {
     }
   },
   mounted() {
-    this.getOrdersList()
+    this.getOrders()
   },
   methods: {
-    async getOrdersList() {
+    async getOrders() {
       try {
-        const result = await window.api.getDocument('orders')
+        const result = await window.api.getOrders()
+        if (!result.success) return
         this.ordersList = result.rows.map((item) => ({
           ...item,
           customer: JSON.parse(item.customer)
         }))
-        this.search = this.ordersList
       } catch (error) {
         console.error(error)
       }
@@ -108,46 +145,18 @@ export default {
     async deleteOrder(id) {
       if (confirm('Sind Sie sicher, dass Sie diesen Auftrag löschen möchten?')) {
         try {
-          const result = await window.api.deleteDocument('orders', id)
-          if (result.success) this.getOrdersList()
+          const result = await window.api.deleteOrderById(id)
+          if (!result.success) return
+          this.getOrders()
         } catch (error) {
           console.error(error)
         }
       }
     },
-     formatOrderId(id) {
-      if (!id) return ''
-      const year = new Date().getFullYear()
-      return `AUF-${year}-${String(id).padStart(5, '0')}`
-    },
     getInitials(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
-    },
-    searchFilter() {
-      if (this.search_box && this.search_box.trim() !== '') {
-        this.ordersList = this.search.filter(
-          (item) =>
-            item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            item.customer.company_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            this.formatInvoiceId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
-        )
-      } else {
-        this.ordersList = this.search
-      }
-    },
-    dateFilter() {
-      if (this.date_box_start && this.date_box_end) {
-        this.ordersList = this.search.filter(
-          (item) => item.date >= this.date_box_start && item.date <= this.date_box_end
-        )
-      } else if (this.date_box_start && !this.date_box_end) {
-        this.ordersList = this.search.filter((item) => item.date == this.date_box_start)
-      } else {
-        this.ordersList = this.search
-      }
     },
     sorting(key) {
       if (!key) return
@@ -225,14 +234,14 @@ export default {
   background: white;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
 }
 
 .customer-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {

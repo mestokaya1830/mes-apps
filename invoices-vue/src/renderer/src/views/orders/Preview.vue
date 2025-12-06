@@ -6,17 +6,17 @@
         <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- Recipient and order details -->
-        <div v-if="orderPreview.selected_customer" class="recipient">
+        <div v-if="orderPreview.customer" class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ orderPreview.selected_customer.company_name }}
+              {{ orderPreview.customer.company_name }}
             </div>
-            <div>{{ orderPreview.selected_customer.address }}</div>
+            <div>{{ orderPreview.customer.address }}</div>
             <div>
-              {{ orderPreview.selected_customer.postal_code }}
-              {{ orderPreview.selected_customer.city }}<br />
-              {{ orderPreview.selected_customer.country }}
+              {{ orderPreview.customer.postal_code }}
+              {{ orderPreview.customer.city }}<br />
+              {{ orderPreview.customer.country }}
             </div>
           </div>
 
@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Auftrags-Nr.:</span>
-              <span class="meta-value">{{ formatOrderId }}</span>
+              <span class="meta-value">{{ formatOrderId(orderPreview.id) }}</span>
             </div>
 
             <div class="meta-row">
@@ -35,9 +35,7 @@
             </div>
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(orderPreview.selected_customer.id)
-              }}</span>
+              <span class="meta-value">{{ formatCustomerId(orderPreview.customer.id) }}</span>
             </div>
             <div v-if="auth.tax_number" class="meta-row">
               <span class="meta-label">Tax Number:</span>
@@ -196,8 +194,6 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label">Verwendungszweck:</span>
-            <span class="bank-value">{{ orderPreview.payment.verwendungszweck }}</span>
           </div>
         </div>
 
@@ -228,12 +224,7 @@
       </div>
 
       <!-- Actions -->
-      <ActionsButtonPreview
-        v-if="orderPreview.selected_customer"
-        tableName="orders"
-        :tableData="orderPreview"
-        sourcePage="preview"
-      />
+      <ActionsButtonPreview v-if="orderPreview" :tableData="orderPreview" sourcePage="preview" />
     </div>
 
     <router-link to="/orders/create" class="back-link">
@@ -246,7 +237,7 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import ActionsButtonPreview from '../../components/orders/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
@@ -257,7 +248,7 @@ export default {
     ActionsButtonPreview,
     ContactPersonPreview
   },
-  inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
+  inject: ['formatOrderId', 'formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Auftragsbestätigung',
@@ -266,12 +257,6 @@ export default {
     }
   },
   computed: {
-    // Format order ID like AUF-2025-00001
-    formatOrderId() {
-      if (!this.orderPreview.id) return ''
-      const year = new Date().getFullYear()
-      return `AUF-${year}-${String(this.orderPreview.id).padStart(5, '0')}`
-    },
     // Check if payment or delivery terms exist
     hasPaymentOrDeliveryTerms() {
       return (
@@ -298,14 +283,12 @@ export default {
   },
   methods: {
     getOrderPreview() {
-      if (store.state.orders) {
-        this.orderPreview = store.state.orders
-      }
+      if (!store.state.order) return
+      this.orderPreview = store.state.order
     },
     getAuth() {
-      if (store.state.auth) {
-        this.auth = store.state.auth
-      }
+      if (!store.state.auth) return
+      this.auth = store.state.auth
     }
   }
 }

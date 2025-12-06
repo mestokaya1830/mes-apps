@@ -148,8 +148,6 @@ export default {
   },
   methods: {
     async getInvoices() {
-      const route = this.$route
-      console.log(route)
       try {
         const result = await window.api.getInvoices()
         if (!result.success) return

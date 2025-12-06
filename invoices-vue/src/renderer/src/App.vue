@@ -31,6 +31,10 @@ export default {
         if (!value) return ''
         return `ANG-${String(value).padStart(5, '0')}`
       },
+      formatOrderId(value) {
+        if (!value) return ''
+        return `AUF-${String(value).padStart(5, '0')}`
+      },
       formatDate(value) {
         if (!value) return ''
         try {

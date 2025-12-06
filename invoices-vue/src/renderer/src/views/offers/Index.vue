@@ -162,30 +162,6 @@ export default {
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    searchFilter() {
-      if (this.search_box && this.search_box.trim() !== '') {
-        this.offers = this.search.filter(
-          (item) =>
-            item.customer.first_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            item.customer.last_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            item.customer.company_name.toLowerCase().includes(this.search_box.toLowerCase()) ||
-            this.formatInvoiceId(item.id).toLowerCase().includes(this.search_box.toLowerCase())
-        )
-      } else {
-        this.offers = this.search
-      }
-    },
-    dateFilter() {
-      if (this.date_box_start && this.date_box_end) {
-        this.offers = this.search.filter(
-          (item) => item.date >= this.date_box_start && item.date <= this.date_box_end
-        )
-      } else if (this.date_box_start && !this.date_box_end) {
-        this.offers = this.search.filter((item) => item.date == this.date_box_start)
-      } else {
-        this.offers = this.search
-      }
-    },
     sorting(key) {
       if (!key) return
       this.offers.sort((a, b) => {

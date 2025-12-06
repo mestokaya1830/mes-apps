@@ -26,7 +26,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Auftrags-Nr.:</span>
-              <span class="meta-value">{{ formattedOrderId }}</span>
+              <span class="meta-value">{{ formatOrderId(order.id) }}</span>
             </div>
 
             <div class="meta-row">
@@ -107,27 +107,21 @@
           </tbody>
         </table>
 
-        <!-- summary -->
-        <div v-if="order.summary" class="summary-section">
+         <!-- summary -->
+        <div class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{
-              formatCurrency(order.summary.subtotal, order.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(order.net_total, order.currency) }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{
-              formatCurrency(order.summary.vat_amount, order.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(order.vat_total, order.currency) }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{
-              formatCurrency(order.summary.total, order.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(order.gross_total, order.currency) }}</span>
           </div>
         </div>
 
@@ -196,8 +190,6 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label">Verwendungszweck:</span>
-            <span class="bank-value">{{ order.payment.verwendungszweck }}</span>
           </div>
         </div>
 
@@ -229,8 +221,7 @@
 
       <!-- Actions -->
       <ActionsButtonPreview
-        v-if="order.customer"
-        tableName="order"
+        v-if="order"
         :tableData="order"
         sourcePage="details"
       />
@@ -246,7 +237,7 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import ActionsButtonPreview from '../../components/orders/ActionsButtonPreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
@@ -257,7 +248,7 @@ export default {
     ActionsButtonPreview,
     ContactPersonPreview
   },
-  inject: ['formatCustomerId', 'formatCurrency', 'formatDate'],
+  inject: ['formatOrderId','formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Auftrags-Vorschau',
@@ -266,12 +257,6 @@ export default {
     }
   },
   computed: {
-    // Format order ID like AUF-2025-00001
-    formattedOrderId() {
-      if (!this.order.id) return ''
-      const year = new Date().getFullYear()
-      return `AUF-${year}-${String(this.order.id).padStart(5, '0')}`
-    },
     // Check if payment or delivery terms exist
     hasPaymentOrDeliveryTerms() {
       return (
@@ -300,13 +285,12 @@ export default {
     async getOrder() {
       const id = this.$route.params.id
       try {
-        const result = await window.api.getDocumentById(id, 'order')
+        const result = await window.api.getOrderById(id)
+        if (!result.success) return
         this.order = {
           ...result.rows,
           customer: JSON.parse(result.rows.customer),
-          positions: JSON.parse(result.rows.positions),
-          payment: JSON.parse(result.rows.payment),
-          summary: JSON.parse(result.rows.summary)
+          positions: JSON.parse(result.rows.positions)
         }
         console.log(this.order)
       } catch (error) {
@@ -314,9 +298,8 @@ export default {
       }
     },
     getAuth() {
-      if (store.state.auth) {
-        this.auth = store.state.auth
-      }
+      if (!store.state.auth) return
+      this.auth = store.state.auth
     }
   }
 }
