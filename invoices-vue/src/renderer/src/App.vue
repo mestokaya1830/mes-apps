@@ -35,6 +35,10 @@ export default {
         if (!value) return ''
         return `AUF-${String(value).padStart(5, '0')}`
       },
+      formatPaymentId(value) {
+        if (!value) return ''
+        return `ZA-${String(value).padStart(5, '0')}`
+      },
       formatDate(value) {
         if (!value) return ''
         try {

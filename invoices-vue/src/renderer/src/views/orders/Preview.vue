@@ -5,6 +5,11 @@
         <!-- Header section -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
+        <!-- Intro Text -->
+        <div v-if="orderPreview.intro_text" class="intro-text" style="margin-bottom: 20px">
+          <p>{{ orderPreview.intro_text }}</p>
+        </div>
+
         <!-- Recipient and order details -->
         <div v-if="orderPreview.customer" class="recipient">
           <div class="recipient-address">
@@ -28,7 +33,6 @@
               <span class="meta-label">Auftrags-Nr.:</span>
               <span class="meta-value">{{ formatOrderId(orderPreview.id) }}</span>
             </div>
-
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
               <span class="meta-value">{{ formatDate(orderPreview.date) }}</span>
@@ -61,8 +65,23 @@
                 {{ formatDate(orderPreview.service_period_end) }}
               </span>
             </div>
+
+            <!-- Cancellation info -->
+            <div v-if="orderPreview.cancellation_reason" class="meta-row">
+              <span class="meta-label">Cancellation Reason:</span>
+              <span class="meta-value">{{ orderPreview.cancellation_reason }}</span>
+            </div>
+            <div v-if="orderPreview.cancelled_at" class="meta-row">
+              <span class="meta-label">Cancelled At:</span>
+              <span class="meta-value">{{ formatDate(orderPreview.cancelled_at) }}</span>
+            </div>
+            <div v-if="orderPreview.cancelled_by" class="meta-row">
+              <span class="meta-label">Cancelled By:</span>
+              <span class="meta-value">{{ orderPreview.cancelled_by }}</span>
+            </div>
           </div>
         </div>
+
         <!-- Positions table -->
         <table class="positions-table">
           <thead>
@@ -76,7 +95,7 @@
               <th class="right" style="width: 15%">Gesamtpreis</th>
             </tr>
           </thead>
-          <tbody v-if="orderPreview.positions && orderPreview.positions.length > 0">
+          <tbody v-if="orderPreview.positions && orderPreview.positions.length">
             <tr v-for="(item, index) in orderPreview.positions" :key="index">
               <td>{{ index + 1 }}</td>
               <td>
@@ -95,17 +114,29 @@
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
               <td class="right">{{ formatCurrency(item.price, orderPreview.currency) }}</td>
-              <td class="right">
-                {{ item.vat + '%' }}
-              </td>
-              <td class="right">
-                {{ formatCurrency(item.unit_total, orderPreview.currency) }}
-              </td>
+              <td class="right">{{ item.vat }}%</td>
+              <td class="right">{{ formatCurrency(item.unit_total, orderPreview.currency) }}</td>
             </tr>
           </tbody>
         </table>
 
-        <!-- summary -->
+        <!-- Customer Notes -->
+        <div v-if="orderPreview.customer_notes" class="customer-notes" style="margin-top: 20px">
+          <div class="section-title">Kundennotiz</div>
+          <p>{{ orderPreview.customer_notes }}</p>
+        </div>
+
+        <!-- Internal Notes -->
+        <div
+          v-if="orderPreview.internal_notes"
+          class="internal-notes"
+          style="opacity: 0.6; margin-top: 20px; border-left: 4px solid #999; padding-left: 12px"
+        >
+          <div class="section-title">Interne Notiz (nicht im PDF)</div>
+          <p>{{ orderPreview.internal_notes }}</p>
+        </div>
+
+        <!-- Summary -->
         <div v-if="orderPreview.summary" class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
@@ -113,14 +144,12 @@
               formatCurrency(orderPreview.summary.subtotal, orderPreview.currency)
             }}</span>
           </div>
-
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
             <span class="total-value">{{
               formatCurrency(orderPreview.summary.vat_amount, orderPreview.currency)
             }}</span>
           </div>
-
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
             <span class="total-value">{{
@@ -129,28 +158,24 @@
           </div>
         </div>
 
+        <!-- Form section -->
         <div class="form-section">
-          <!-- Delivery date -->
           <div v-if="orderPreview.delivery_date" class="meta-row">
             <span class="meta-label">Delivery Date:</span>
             <span class="meta-value">{{ formatDate(orderPreview.delivery_date) }}</span>
           </div>
-
-          <!-- Valid until -->
           <div v-if="orderPreview.validity_date" class="meta-row">
             <span class="meta-label">Valid Until:</span>
             <span class="meta-value">{{ formatDate(orderPreview.validity_date) }}</span>
           </div>
-
-          <!-- Optional delivery address if different -->
           <div v-if="orderPreview.delivery_address" class="meta-row">
             <span class="meta-label">Delivery Address:</span>
             <span class="meta-value">{{ orderPreview.delivery_address }}</span>
           </div>
         </div>
 
-        <!-- Payment and delivery terms -->
-        <div v-if="orderPreview" class="terms-section">
+        <!-- Payment & Delivery -->
+        <div class="terms-section" v-if="orderPreview">
           <div class="section-title">Payment & Delivery Terms</div>
           <div class="terms-grid">
             <div v-if="orderPreview.payment?.payment_terms" class="term-item">
@@ -160,6 +185,10 @@
             <div v-if="orderPreview.payment?.payment_method" class="term-item">
               <span class="term-label">Payment Method:</span>
               <span class="term-value">{{ orderPreview.payment.payment_method }}</span>
+            </div>
+            <div v-if="orderPreview.payment?.payment_reference" class="term-item">
+              <span class="term-label">Zahlungsreferenz:</span>
+              <span class="term-value">{{ orderPreview.payment.payment_reference }}</span>
             </div>
             <div v-if="orderPreview.delivery_terms" class="term-item">
               <span class="term-label">Delivery Terms:</span>
@@ -175,16 +204,16 @@
           </div>
         </div>
 
-        <!-- Closing text -->
+        <!-- Closing Text -->
         <div class="closing-text">
           {{ orderPreview.closing_text }}
           <p>Mit freundlichen Grüßen,</p>
         </div>
 
-        <!-- Contact person -->
+        <!-- Contact Person -->
         <ContactPersonPreview :contactData="auth.contact_person" />
 
-        <!-- Bank information -->
+        <!-- Bank Information -->
         <div class="bank-box">
           <div class="bank-title">🏦 Bank Details</div>
           <div class="bank-info">
@@ -197,13 +226,12 @@
           </div>
         </div>
 
-        <!-- leagal validity -->
+        <!-- Legal validity -->
         <div v-if="orderPreview.is_legal" class="signatures-section">
           <label style="display: flex; align-items: center; gap: 8px">
             <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
             Rechtsgültige Unterschrift erforderlich
           </label>
-
           <div
             class="signature-box"
             style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px"
@@ -219,7 +247,7 @@
           </div>
         </div>
 
-        <!-- Footer with legal info / AGB notice -->
+        <!-- Footer -->
         <FooterSidePreview />
       </div>
 

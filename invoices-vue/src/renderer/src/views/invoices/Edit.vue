@@ -15,7 +15,7 @@
             <div class="form-group">
               <label for="">Storniert am</label>
               <input
-                v-model="canceled_date"
+                v-model="cancelled_at"
                 type="date"
                 class="form-input"
                 placeholder="Datum der Stornierung auswählen"
@@ -25,7 +25,7 @@
             <div class="form-group">
               <label for="">Storniert von</label>
               <input
-                v-model="canceled_by"
+                v-model="cancelled_by"
                 type="text"
                 class="form-input"
                 placeholder="Name der Person, die storniert"
@@ -59,8 +59,8 @@ export default {
   data() {
     return {
       title: 'Rechnung bearbeiten',
-      canceled_by: '',
-      canceled_date: '',
+      cancelled_by: '',
+      cancelled_at: '',
       cancellation_reason: ''
     }
   },
@@ -69,10 +69,10 @@ export default {
       const id = this.$route.params.id
       const data = {
         id: id,
-        status: 0,
+        is_active: 0,
         cancellation_reason: this.cancellation_reason,
-        canceled_by: this.cancled_by,
-        canceled_date: this.canceled_date
+        cancelled_by: this.cancled_by,
+        cancelled_at: this.cancelled_at
       }
       const result = await window.api.cancelInvoice(data)
       if (result.success) {

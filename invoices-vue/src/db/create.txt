@@ -93,8 +93,8 @@ CREATE TABLE IF NOT EXISTS invoices (
     customer TEXT NOT NULL,                         -- Customer info as text
     is_active INTEGER NOT NULL DEFAULT 1,          -- Active status (1 = active, 0 = inactive)
     
-    canceled_date TEXT,                               -- Cancellation timestamp
-    canceled_by TEXT,
+    cancelled_at TEXT,                               -- Cancellation timestamp
+    cancelled_by TEXT,
     cancellation_reason TEXT NOT NULL,             -- Reason for cancellation
 
     date TEXT NOT NULL,                             -- Invoice date
@@ -237,18 +237,24 @@ CREATE TABLE IF NOT EXISTS payments (
     invoice_id INTEGER NOT NULL,                     -- Foreign key to invoices
     customer_id INTEGER NOT NULL,                    -- Foreign key to customers
 
-    date TEXT NOT NULL,                              -- Payment date
-    paid_amount INTEGER NOT NULL,                    -- Amount paid
+    invoice_date TEXT NOT NULL,                      -- Invoice date
+    invoice_due_date TEXT NOT NULL,                  -- Invoice due date
+    currency TEXT NOT NULL,                          -- Currency
+    invoice_total REAL NOT NULL,                             -- Total invoice amount
+
+    payment_date TEXT NOT NULL,                      -- Payment date
+    paid_amount REAL NOT NULL,                       -- Amount paid in this payment
+    outstanding_amount REAL NOT NULL DEFAULT 0,      -- Remaining amount after this payment
+
     payment_method TEXT NOT NULL,                    -- Payment method
     payment_reference TEXT NOT NULL,                 -- Payment reference / transaction ID
+    counterparty_name TEXT NOT NULL,                 -- Counterparty name
+    counterparty_iban TEXT NOT NULL,                 -- Counterparty IBAN
 
-    counterparty_iban TEXT NOT NULL,                -- Counterparty IBAN
-    counterparty_name TEXT NOT NULL,                -- Counterparty name
-
-    notes TEXT NOT NULL,                             -- Payment notes / description
-    is_partially_paid INTEGER NOT NULL,             -- Partially paid flag
-    is_paid INTEGER NOT NULL,                        -- Fully paid flag
-    file_name TEXT NULL,                             -- Optional file / receipt name
+    notes TEXT,                                     -- Optional payment notes
+    is_partially_paid INTEGER NOT NULL DEFAULT 1,    -- Partially paid flag
+    is_paid INTEGER NOT NULL DEFAULT 0,             -- Fully paid flag
+    file_name TEXT,                                 -- Optional file / receipt name
 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Record creation timestamp
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Record update timestamp

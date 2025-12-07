@@ -476,9 +476,8 @@ export default {
       }
     },
     getStore() {
-      if (store.state.order) {
-        this.order = JSON.parse(JSON.stringify(store.state.order))
-      }
+      if (!store.state.order) return
+      this.order = JSON.parse(JSON.stringify(store.state.order))
     },
     addPosition() {
       this.order.positions.push({

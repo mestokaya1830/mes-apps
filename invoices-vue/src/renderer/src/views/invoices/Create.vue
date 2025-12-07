@@ -437,11 +437,8 @@ export default {
   },
   methods: {
     async getStore() {
-      // await store.clearStore('invoice')
-      if (this.$route.query.id) return
       if (!store.state.invoice) return
-
-      console.log('create', store.state.invoice)
+      this.invoice = JSON.parse(JSON.stringify(store.state.invoice))
     },
     async getCustomer() {
       if (!this.$route.query.id) return

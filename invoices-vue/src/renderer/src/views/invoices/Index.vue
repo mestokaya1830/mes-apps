@@ -72,6 +72,7 @@
           <div class="status-badge total">
             {{ formatCurrency(item.gross_total, item.currency) }}
           </div>
+          <router-link :to="`/payments/create/${item.id}`" class="status-badge payment">Zahlung erfassen</router-link>
         </div>
 
         <!-- Card Actions -->
@@ -297,6 +298,7 @@ export default {
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
 }
 
+
 /* Grid & Cards */
 .customer-grid {
   display: grid;
@@ -398,6 +400,11 @@ export default {
   background-color: #667eea;
   color: #fff;
   top: 30px;
+}
+.status-badge.payment {
+  background-color: cadetblue;
+  color: #fff;
+  top: 60px;
 }
 
 .card-actions {

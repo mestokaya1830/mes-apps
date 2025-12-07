@@ -5,66 +5,81 @@
         <!-- Header section -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
+        <!-- Intro Text -->
+        <div v-if="order.intro_text" class="intro-text" style="margin-bottom: 20px">
+          <p>{{ order.intro_text }}</p>
+        </div>
+
         <!-- Recipient and order details -->
         <div v-if="order.customer" class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
-            <div class="company-name-subtitle">
-              {{ order.customer.company_name }}
-            </div>
+            <div class="company-name-subtitle">{{ order.customer.company_name }}</div>
             <div>{{ order.customer.address }}</div>
             <div>
-              {{ order.customer.postal_code }}
-              {{ order.customer.city }}<br />
-              {{ order.customer.country }}
+              {{ order.customer.postal_code }} {{ order.customer.city }}<br />{{
+                order.customer.country
+              }}
             </div>
           </div>
 
-          <!-- recipient details -->
           <div class="recipient-details">
             <div class="recipient-title">Auftragsdetails</div>
 
             <div class="meta-row">
-              <span class="meta-label">Auftrags-Nr.:</span>
-              <span class="meta-value">{{ formatOrderId(order.id) }}</span>
-            </div>
-
-            <div class="meta-row">
-              <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(order.date) }}</span>
+              <span class="meta-label">Auftrags-Nr.:</span
+              ><span class="meta-value">{{ formatOrderId(order.id) }}</span>
             </div>
             <div class="meta-row">
-              <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(order.customer.id)
-              }}</span>
+              <span class="meta-label">Datum:</span
+              ><span class="meta-value">{{ formatDate(order.date) }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">Kunden-Nr.:</span
+              ><span class="meta-value">{{ formatCustomerId(order.customer.id) }}</span>
             </div>
             <div v-if="auth.tax_number" class="meta-row">
-              <span class="meta-label">Tax Number:</span>
-              <span class="meta-value">{{ auth.tax_number }}</span>
+              <span class="meta-label">Tax Number:</span
+              ><span class="meta-value">{{ auth.tax_number }}</span>
             </div>
             <div v-if="auth.vat_id" class="meta-row">
-              <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ auth.vat_id }}</span>
+              <span class="meta-label">VAT ID:</span
+              ><span class="meta-value">{{ auth.vat_id }}</span>
             </div>
             <div v-if="order.customer_reference" class="meta-row">
-              <span class="meta-label">Kundenreferenz:</span>
-              <span class="meta-value">{{ order.customer_reference }}</span>
+              <span class="meta-label">Kundenreferenz:</span
+              ><span class="meta-value">{{ order.customer_reference }}</span>
             </div>
 
             <!-- Service period -->
-            <div
-              v-if="order.service_period_start && order.service_period_end"
-              class="meta-row"
-            >
+            <div v-if="order.service_period_start && order.service_period_end" class="meta-row">
               <span class="meta-label">Service Period:</span>
-              <span class="meta-value">
-                {{ formatDate(order.service_period_start) }} -
-                {{ formatDate(order.service_period_end) }}
-              </span>
+              <span class="meta-value"
+                >{{ formatDate(order.service_period_start) }} -
+                {{ formatDate(order.service_period_end) }}</span
+              >
+            </div>
+
+            <!-- NEW: Status, Priority, Sent info -->
+            <div class="meta-row">
+              <span class="meta-label">Status:</span
+              ><span class="meta-value">{{ order.status }}</span>
+            </div>
+            <div v-if="order.priority" class="meta-row">
+              <span class="meta-label">Priorität:</span
+              ><span class="meta-value">{{ order.priority }}</span>
+            </div>
+            <div v-if="order.sent_at" class="meta-row">
+              <span class="meta-label">Gesendet am:</span
+              ><span class="meta-value">{{ formatDate(order.sent_at) }}</span>
+            </div>
+            <div v-if="order.sent_method" class="meta-row">
+              <span class="meta-label">Gesendet per:</span
+              ><span class="meta-value">{{ order.sent_method }}</span>
             </div>
           </div>
         </div>
+
         <!-- Positions table -->
         <table class="positions-table">
           <thead>
@@ -97,51 +112,51 @@
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
               <td class="right">{{ formatCurrency(item.price, order.currency) }}</td>
-              <td class="right">
-                {{ item.vat + '%' }}
-              </td>
-              <td class="right">
-                {{ formatCurrency(item.unit_total, order.currency) }}
-              </td>
+              <td class="right">{{ item.vat + '%' }}</td>
+              <td class="right">{{ formatCurrency(item.unit_total, order.currency) }}</td>
             </tr>
           </tbody>
         </table>
 
-         <!-- summary -->
+        <!-- Customer Notes -->
+        <div v-if="order.customer_notes" class="customer-notes" style="margin-top: 25px">
+          <div class="section-title">Kundennotiz</div>
+          <p>{{ order.customer_notes }}</p>
+        </div>
+
+        <!-- summary -->
         <div class="summary-section">
           <div class="total-row">
-            <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{ formatCurrency(order.net_total, order.currency) }}</span>
+            <span class="total-label">Zwischensumme (netto):</span
+            ><span class="total-value">{{ formatCurrency(order.net_total, order.currency) }}</span>
           </div>
-
           <div class="total-row">
-            <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{ formatCurrency(order.vat_total, order.currency) }}</span>
+            <span class="total-label">MwSt.:</span
+            ><span class="total-value">{{ formatCurrency(order.vat_total, order.currency) }}</span>
           </div>
-
           <div class="total-row subtotal">
-            <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{ formatCurrency(order.gross_total, order.currency) }}</span>
+            <span class="total-label">Rechnungsbetrag (brutto):</span
+            ><span class="total-value">{{
+              formatCurrency(order.gross_total, order.currency)
+            }}</span>
           </div>
         </div>
 
         <div class="form-section">
-          <!-- Delivery date -->
           <div v-if="order.delivery_date" class="meta-row">
-            <span class="meta-label">Delivery Date:</span>
-            <span class="meta-value">{{ formatDate(order.delivery_date) }}</span>
+            <span class="meta-label">Delivery Date:</span
+            ><span class="meta-value">{{ formatDate(order.delivery_date) }}</span>
           </div>
-
-          <!-- Valid until -->
           <div v-if="order.validity_date" class="meta-row">
-            <span class="meta-label">Valid Until:</span>
-            <span class="meta-value">{{ formatDate(order.validity_date) }}</span>
+            <span class="meta-label">Valid Until:</span
+            ><span class="meta-value">{{ formatDate(order.validity_date) }}</span>
           </div>
-
-          <!-- Optional delivery address if different -->
           <div v-if="order.delivery_address" class="meta-row">
-            <span class="meta-label">Delivery Address:</span>
-            <span class="meta-value">{{ order.delivery_address }}</span>
+            <span class="meta-label">Delivery Address:</span
+            ><span class="meta-value"
+              >{{ order.delivery_address }}<br />{{ order.delivery_postal_code }}
+              {{ order.delivery_city }}<br />{{ order.delivery_country }}</span
+            >
           </div>
         </div>
 
@@ -150,24 +165,45 @@
           <div class="section-title">Payment & Delivery Terms</div>
           <div class="terms-grid">
             <div v-if="order.payment?.payment_terms" class="term-item">
-              <span class="term-label">Payment Terms:</span>
-              <span class="term-value">{{ paymentTermsText }}</span>
+              <span class="term-label">Payment Terms:</span
+              ><span class="term-value">{{ paymentTermsText }}</span>
             </div>
             <div v-if="order.payment?.payment_method" class="term-item">
-              <span class="term-label">Payment Method:</span>
-              <span class="term-value">{{ order.payment.payment_method }}</span>
+              <span class="term-label">Payment Method:</span
+              ><span class="term-value">{{ order.payment.payment_method }}</span>
+            </div>
+            <div v-if="order.payment_reference" class="term-item">
+              <span class="term-label">Zahlungsreferenz:</span
+              ><span class="term-value">{{ order.payment_reference }}</span>
             </div>
             <div v-if="order.delivery_terms" class="term-item">
-              <span class="term-label">Delivery Terms:</span>
-              <span class="term-value">{{ order.delivery_terms }}</span>
+              <span class="term-label">Delivery Terms:</span
+              ><span class="term-value">{{ order.delivery_terms }}</span>
             </div>
             <div v-if="order.shipping_method" class="term-item">
-              <span class="term-label">Shipping Method:</span>
-              <span class="term-value">{{ order.shipping_method }}</span>
+              <span class="term-label">Shipping Method:</span
+              ><span class="term-value">{{ order.shipping_method }}</span>
             </div>
           </div>
           <div v-if="order.payment?.payment_conditions" class="payment-conditions">
             {{ order.payment.payment_conditions }}
+          </div>
+        </div>
+
+        <!-- Cancellation info -->
+        <div v-if="order.status === 'cancelled'" class="cancel-info" style="margin-top: 25px">
+          <h3 style="color: red">Storniert</h3>
+          <div v-if="order.cancelled_at" class="meta-row">
+            <span class="meta-label">Storniert am:</span
+            ><span class="meta-value">{{ formatDate(order.cancelled_at) }}</span>
+          </div>
+          <div v-if="order.cancelled_by" class="meta-row">
+            <span class="meta-label">Storniert von:</span
+            ><span class="meta-value">{{ order.cancelled_by }}</span>
+          </div>
+          <div v-if="order.cancellation_reason" class="meta-row">
+            <span class="meta-label">Grund:</span
+            ><span class="meta-value">{{ order.cancellation_reason }}</span>
           </div>
         </div>
 
@@ -177,6 +213,16 @@
           <p>Mit freundlichen Grüßen,</p>
         </div>
 
+        <!-- Internal Notes (only employees, not in PDF) -->
+        <div
+          v-if="order.internal_notes"
+          class="internal-notes"
+          style="opacity: 0.6; margin-top: 25px; border-left: 4px solid #999; padding-left: 12px"
+        >
+          <div class="section-title">Interne Notiz (nicht im PDF)</div>
+          <p>{{ order.internal_notes }}</p>
+        </div>
+
         <!-- Contact person -->
         <ContactPersonPreview :contactData="auth.contact_person" />
 
@@ -184,22 +230,23 @@
         <div class="bank-box">
           <div class="bank-title">🏦 Bank Details</div>
           <div class="bank-info">
-            <span class="bank-label">Bank:</span>
-            <span class="bank-value">{{ auth.bank_name }}</span>
-            <span class="bank-label">IBAN:</span>
-            <span class="bank-value">{{ auth.iban }}</span>
-            <span class="bank-label">BIC:</span>
-            <span class="bank-value">{{ auth.bic }}</span>
+            <span class="bank-label">Bank:</span
+            ><span class="bank-value">{{ auth.bank_name }}</span>
+            <span class="bank-label">IBAN:</span><span class="bank-value">{{ auth.iban }}</span>
+            <span class="bank-label">BIC:</span><span class="bank-value">{{ auth.bic }}</span>
           </div>
         </div>
 
         <!-- leagal validity -->
         <div v-if="order.is_legal" class="pdf-footer">
-          <label style="display: flex; align-items: center; gap: 8px">
-            <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
-            Rechtsgültige Unterschrift erforderlich
-          </label>
-
+          <label style="display: flex; align-items: center; gap: 8px"
+            ><input
+              type="checkbox"
+              checked
+              disabled
+              style="width: 16px; height: 16px"
+            />Rechtsgültige Unterschrift erforderlich</label
+          >
           <div
             class="signature-box"
             style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px"
@@ -220,16 +267,10 @@
       </div>
 
       <!-- Actions -->
-      <ActionsButtonPreview
-        v-if="order"
-        :tableData="order"
-        sourcePage="details"
-      />
+      <ActionsButtonPreview v-if="order" :tableData="order" sourcePage="details" />
     </div>
 
-    <router-link to="/order" class="back-link">
-      ← Zurück zur Auftragsliste
-    </router-link>
+    <router-link to="/orders" class="back-link">← Zurück zur Auftragsliste</router-link>
   </div>
 </template>
 
@@ -248,7 +289,7 @@ export default {
     ActionsButtonPreview,
     ContactPersonPreview
   },
-  inject: ['formatOrderId','formatCustomerId', 'formatCurrency', 'formatDate'],
+  inject: ['formatOrderId', 'formatCustomerId', 'formatCurrency', 'formatDate'],
   data() {
     return {
       title: 'Auftrags-Vorschau',

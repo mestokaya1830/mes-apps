@@ -223,6 +223,48 @@
         <FooterSidePreview />
       </div>
 
+      <!-- Invoice Grid -->
+      <div v-if="invoice.payments" class="customer-grid">
+        <table class="table-auto w-full border">
+          <thead>
+            <tr>
+              <th class="border px-2 py-1">ZahlungID</th>
+              <th class="border px-2 py-1">Payment Date</th>
+              <th class="border px-2 py-1">Paid Amount</th>
+              <th class="border px-2 py-1">Outstanding</th>
+              <th class="border px-2 py-1">Method</th>
+              <th class="border px-2 py-1">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in invoice.payments" :key="item.id">
+              <td class="border px-2 py-1">{{ formatPaymentId(item.id) }}</td>
+              <td class="border px-2 py-1">{{ item.payment_date }}</td>
+              <td class="border px-2 py-1">{{ item.paid_amount }}</td>
+              <td class="border px-2 py-1">{{ item.outstanding_amount }}</td>
+              <td class="border px-2 py-1">{{ item.payment_method }}</td>
+              <td class="border px-2 py-1">
+                <router-link :to="'/payments/details/' + item.id" class="action-btn details-btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  Details
+                </router-link>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
@@ -244,7 +286,13 @@ export default {
     ActionsButtonPreview,
     FooterSidePreview
   },
-  inject: ['formatInvoiceId', 'formatCustomerId', 'formatDate', 'formatCurrency'],
+  inject: [
+    'formatPaymentId',
+    'formatInvoiceId',
+    'formatCustomerId',
+    'formatDate',
+    'formatCurrency'
+  ],
   data() {
     return {
       title: 'Rechnung',
@@ -657,5 +705,78 @@ export default {
   border-radius: 6px;
   font-size: 13px;
   font-family: inherit;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin-top: 1rem;
+}
+
+/* Tablo başlıkları */
+thead th {
+  background-color: #f3f3f3;
+  color: #333;
+  font-weight: bold;
+  padding: 8px;
+  text-align: left;
+  border-bottom: 2px solid #ccc;
+}
+
+/* Tablo hücreleri */
+tbody td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Satır hover efekti */
+tbody tr:hover {
+  background-color: #fafafa;
+}
+
+/* Buton basit stil */
+button {
+  padding: 4px 8px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* Buton hover efekti */
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive küçük ekranlar için */
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead tr {
+    display: none;
+  }
+
+  tbody tr {
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 4px;
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 8px;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    flex-basis: 50%;
+  }
 }
 </style>

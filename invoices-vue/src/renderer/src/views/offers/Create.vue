@@ -344,9 +344,8 @@ export default {
       }
     },
     getStore() {
-      if (store.state.offer) {
-        this.offer = JSON.parse(JSON.stringify(store.state.offer))
-      }
+      if (!store.state.offer) return
+      this.offer = JSON.parse(JSON.stringify(store.state.offer))
     },
     addPosition() {
       this.offer.positions.push({

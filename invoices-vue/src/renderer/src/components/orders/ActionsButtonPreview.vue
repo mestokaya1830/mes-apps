@@ -17,8 +17,8 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button v-if="tableData.id" class="btn">
-        <router-link :to="`/offers/edit/${tableData.id}`">
+      <button v-if="sourcePage !== 'preview'" class="btn">
+        <router-link :to="`/orders/edit/${tableData.id}`">
           <span class="nav-icon">✏</span>
           <span>Bearbeiten</span>
         </router-link>
@@ -70,7 +70,7 @@ export default {
       if (this.tableData) {
         const result = await window.api.addOrder(JSON.parse(JSON.stringify(this.tableData)))
         if (!result.success) return
-        this.clearStore()
+        // this.clearStore()
         this.$router.push('/orders')
       }
     },

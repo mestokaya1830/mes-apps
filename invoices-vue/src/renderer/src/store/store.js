@@ -12,6 +12,7 @@ const state = reactive({
   invoice: null,
   offer: null,
   order: null,
+  payment: null,
   deliverie: null,
   remeinder: null,
   date_filter: null,
@@ -32,6 +33,9 @@ async function init() {
 
     const order = await localforage.getItem('order')
     if (order) state.order = order
+
+    const payment = await localforage.getItem('payment')
+    if (payment) state.payment = payment
 
     const deliverie = await localforage.getItem('deliverie')
     if (deliverie) state.deliverie = deliverie

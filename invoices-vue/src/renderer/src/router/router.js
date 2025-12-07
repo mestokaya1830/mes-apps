@@ -9,7 +9,7 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
-    meta: { title: 'Home', auth: true }
+    meta: { title: 'Startseite', auth: true }
   },
 
   //user
@@ -23,31 +23,31 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: () => import('../views/auth/Register.vue'),
-    meta: { title: 'Register' }
+    meta: { title: 'Registrieren' }
   },
   {
     path: '/reset-password',
     name: 'reset-password',
     component: () => import('../views/auth/Reset-Password.vue'),
-    meta: { title: 'Reset Password' }
+    meta: { title: 'Passwort zurücksetzen' }
   },
   {
     path: '/email-verfication',
     name: 'email-verfication',
     component: () => import('../views/auth/Email-Verfication.vue'),
-    meta: { title: 'Email Verfication' }
+    meta: { title: 'E-Mail-Verifizierung' }
   },
   {
     path: '/profile',
     name: 'profile',
     component: () => import('../views/settings/Profile.vue'),
-    meta: { title: 'Profile', auth: true }
+    meta: { title: 'Profil', auth: true }
   },
   {
     path: '/edit-user',
     name: 'edit-user',
     component: () => import('../views/settings/EditUser.vue'),
-    meta: { title: 'Edit User', auth: true }
+    meta: { title: 'Benutzer bearbeiten', auth: true }
   },
 
   //customers
@@ -55,25 +55,25 @@ const routes = [
     path: '/customers',
     name: 'customers',
     component: () => import('../views/customers/Index.vue'),
-    meta: { title: 'Customers', auth: true }
+    meta: { title: 'Kunden', auth: true }
   },
   {
     path: '/customers/create',
     name: 'customers-create',
     component: () => import('../views/customers/Create.vue'),
-    meta: { title: 'Add New Customer', auth: true }
+    meta: { title: 'Neuer Kunde', auth: true }
   },
   {
     path: '/customers/details/:id',
     name: 'customers-details',
     component: () => import('../views/customers/Details.vue'),
-    meta: { title: 'Customer Details', auth: true }
+    meta: { title: 'Kundendetails', auth: true }
   },
   {
     path: '/customers/edit/:id',
     name: 'customers-edit',
     component: () => import('../views/customers/Edit.vue'),
-    meta: { title: 'Customer Edit', auth: true }
+    meta: { title: 'Kunde bearbeiten', auth: true }
   },
 
   //invoices
@@ -81,31 +81,31 @@ const routes = [
     path: '/invoices',
     name: 'invoices',
     component: () => import('../views/invoices/Index.vue'),
-    meta: { title: 'Invoices', auth: true }
+    meta: { title: 'Rechnungen', auth: true }
   },
   {
     path: '/invoices/create',
     name: 'invoices-create',
     component: () => import('../views/invoices/Create.vue'),
-    meta: { title: 'Add New Offer', auth: true }
+    meta: { title: 'Neue Rechnung', auth: true }
   },
   {
     path: '/invoices/details/:id',
     name: 'invoices-details',
     component: () => import('../views/invoices/Details.vue'),
-    meta: { title: 'Offer Details', auth: true }
+    meta: { title: 'Rechnungsdetails', auth: true }
   },
   {
     path: '/invoices/edit/:id',
     name: 'invoices-edit',
     component: () => import('../views/invoices/Edit.vue'),
-    meta: { title: 'Invoices Edit', auth: true }
+    meta: { title: 'Rechnung bearbeiten', auth: true }
   },
   {
     path: '/invoices/preview',
     name: 'invoices-preview',
     component: () => import('../views/invoices/Preview.vue'),
-    meta: { title: 'Rechnungen Vorschau', auth: true }
+    meta: { title: 'Rechnungsvorschau', auth: true }
   },
 
   //offers
@@ -113,31 +113,63 @@ const routes = [
     path: '/offers',
     name: 'offers',
     component: () => import('../views/offers/Index.vue'),
-    meta: { title: 'Offers', auth: true }
+    meta: { title: 'Angebote', auth: true }
   },
   {
     path: '/offers/create',
     name: 'offers-create',
     component: () => import('../views/offers/Create.vue'),
-    meta: { title: 'Add New Offer', auth: true }
+    meta: { title: 'Neues Angebot', auth: true }
   },
   {
     path: '/offers/details/:id',
     name: 'offers-details',
     component: () => import('../views/offers/Details.vue'),
-    meta: { title: 'Offer Details', auth: true }
+    meta: { title: 'Angebotsdetails', auth: true }
   },
   {
     path: '/offers/edit/:id',
     name: 'offers-edit',
     component: () => import('../views/offers/Edit.vue'),
-    meta: { title: 'Offer Edit', auth: true }
+    meta: { title: 'Angebot bearbeiten', auth: true }
   },
   {
     path: '/offers/preview',
     name: 'offers-preview',
     component: () => import('../views/offers/Preview.vue'),
-    meta: { title: 'Offers Preview', auth: true }
+    meta: { title: 'Angebotsvorschau', auth: true }
+  },
+
+  //orders
+  {
+    path: '/orders',
+    name: 'orders',
+    component: () => import('../views/orders/Index.vue'),
+    meta: { title: 'Aufträge', auth: true }
+  },
+  {
+    path: '/orders/create',
+    name: 'orders-create',
+    component: () => import('../views/orders/Create.vue'),
+    meta: { title: 'Neuer Auftrag', auth: true }
+  },
+  {
+    path: '/orders/details/:id',
+    name: 'orders-details',
+    component: () => import('../views/orders/Details.vue'),
+    meta: { title: 'Auftragsdetails', auth: true }
+  },
+  {
+    path: '/orders/edit/:id',
+    name: 'orders-edit',
+    component: () => import('../views/orders/Edit.vue'),
+    meta: { title: 'Auftrag bearbeiten', auth: true }
+  },
+  {
+    path: '/orders/preview',
+    name: 'orders-preview',
+    component: () => import('../views/orders/Preview.vue'),
+    meta: { title: 'Auftragsvorschau', auth: true }
   },
 
   //payments
@@ -145,138 +177,113 @@ const routes = [
     path: '/payments',
     name: 'payments',
     component: () => import('../views/payments/Index.vue'),
-    meta: { title: 'payments', auth: true }
+    meta: { title: 'Zahlungen', auth: true }
   },
   {
     path: '/payments/create/:id',
     name: 'payments-create',
     component: () => import('../views/payments/Create.vue'),
-    meta: { title: 'Add New Offer', auth: true }
+    meta: { title: 'Neue Zahlung', auth: true }
   },
   {
     path: '/payments/details/:id',
     name: 'payments-details',
     component: () => import('../views/payments/Details.vue'),
-    meta: { title: 'Offer Details', auth: true }
+    meta: { title: 'Zahlungsdetails', auth: true }
+  },
+  {
+    path: '/payments/preview',
+    name: 'payments-preview',
+    component: () => import('../views/payments/Preview.vue'),
+    meta: { title: 'Zahlungsvorschau', auth: true }
   },
 
   //remainders
-
   {
     path: '/remainders',
     name: 'remainders',
     component: () => import('../views/remainders/Index.vue'),
-    meta: { title: 'remainders', auth: true }
+    meta: { title: 'Erinnerungen', auth: true }
   },
   {
     path: '/remainders/create/:id',
     name: 'remainders-create',
     component: () => import('../views/remainders/Create.vue'),
-    meta: { title: 'Add New Remeinder', auth: true }
+    meta: { title: 'Neue Erinnerung', auth: true }
   },
   {
     path: '/remainders/details/:id',
     name: 'remainders-details',
     component: () => import('../views/remainders/Details.vue'),
-    meta: { title: 'Remeinder Details', auth: true }
+    meta: { title: 'Erinnerungsdetails', auth: true }
   },
   {
     path: '/remainders/preview',
     name: 'remainders-preview',
     component: () => import('../views/remainders/Preview.vue'),
-    meta: { title: 'remainders Vorschau', auth: true }
-  },
-
-  //orrders
-  {
-    path: '/orders',
-    name: 'orders',
-    component: () => import('../views/orders/Index.vue'),
-    meta: { title: 'Orders', auth: true }
-  },
-  {
-    path: '/orders/create',
-    name: 'orders-create',
-    component: () => import('../views/orders/Create.vue'),
-    meta: { title: 'Add New Order', auth: true }
-  },
-  {
-    path: '/orders/details/:id',
-    name: 'orders-details',
-    component: () => import('../views/orders/Details.vue'),
-    meta: { title: 'Order Details', auth: true }
-  },
-  {
-    path: '/orders/preview',
-    name: 'orders-preview',
-    component: () => import('../views/orders/Preview.vue'),
-    meta: { title: 'Aufträge Vorschau', auth: true }
+    meta: { title: 'Erinnerungsvorschau', auth: true }
   },
 
   //deliveries
-
   {
     path: '/deliveries',
     name: 'deliveries',
     component: () => import('../views/deliveries/Index.vue'),
-    meta: { title: 'deliveries', auth: true }
+    meta: { title: 'Lieferungen', auth: true }
   },
   {
     path: '/deliveries/create',
     name: 'deliveries-create',
     component: () => import('../views/deliveries/Create.vue'),
-    meta: { title: 'Add New Offer', auth: true }
+    meta: { title: 'Neue Lieferung', auth: true }
   },
   {
     path: '/deliveries/details/:id',
     name: 'deliveries-details',
     component: () => import('../views/deliveries/Details.vue'),
-    meta: { title: 'Deliveries Details', auth: true }
+    meta: { title: 'Lieferungsdetails', auth: true }
   },
   {
     path: '/deliveries/preview',
     name: 'deliveries-preview',
     component: () => import('../views/deliveries/Preview.vue'),
-    meta: { title: 'Deliveries Preview', auth: true }
+    meta: { title: 'Lieferungsvorschau', auth: true }
   },
 
   //about
-
   {
     path: '/about',
     name: 'About',
     component: () => import('../views/About.vue'),
-    meta: { title: 'About' }
+    meta: { title: 'Über' }
   },
 
   //reports
-
   {
     path: '/reports/invoices',
     name: 'reports-invoices',
     component: () => import('../views/reports/InvoicesReport.vue'),
-    meta: { title: 'Reports Invoices', auth: true }
+    meta: { title: 'Rechnungsberichte', auth: true }
   },
   {
     path: '/reports/offers',
     name: 'reports-offers',
     component: () => import('../views/reports/OffersReport.vue'),
-    meta: { title: 'Reports Offers', auth: true }
+    meta: { title: 'Angebotsberichte', auth: true }
   },
   {
     path: '/reports/orders',
     name: 'reports-orders',
     component: () => import('../views/reports/OrdersReport.vue'),
-    meta: { title: 'Reports Orders', auth: true }
+    meta: { title: 'Auftragsberichte', auth: true }
   },
 
   //not found
-
   {
     path: '/:catchAll(.*)',
     name: 'NotFound',
     component: () => import('../views/NotFound.vue'),
-    meta: { title: 'Not Found' }
+    meta: { title: 'Nicht gefunden' }
   }
 ]
 
@@ -289,7 +296,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
-  // next()
   if (to.meta.auth && !store.state.auth) {
     next('/login')
   } else {
