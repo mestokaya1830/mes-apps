@@ -4,193 +4,97 @@
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
-
-        <!-- Customer Info -->
-        <div v-if="paymentPreview.customer" class="recipient">
-          <div class="recipient-address">
-            <div class="recipient-title">Empfänger</div>
-            <div class="company-name-subtitle">{{ paymentPreview.customer.company_name }}</div>
-            <div class="meta-label">{{ paymentPreview.customer.address }}</div>
-            <div class="meta-label">
-              {{ paymentPreview.customer.postal_code }} {{ paymentPreview.customer.city }}<br />
-              {{ paymentPreview.customer.country }}
-            </div>
-          </div>
-
-          <!-- Invoice Details -->
-          <div class="recipient-details">
-            <div class="recipient-title">Rechnungsdetails</div>
-            <div class="meta-row">
-              <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatInvoiceId(paymentPreview.id) }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(paymentPreview.date) }}</span>
-            </div>
-            <div v-if="paymentPreview.service_date" class="meta-row">
-              <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(paymentPreview.service_date) }}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId(paymentPreview.customer.id) }}</span>
-            </div>
-            <div
-              v-if="
-                paymentPreview.customer.country === 'Germany' && paymentPreview.customer.tax_number
-              "
-              class="meta-row"
-            >
-              <span class="meta-label">Steuer-Nr.:</span>
-              <span class="meta-value">{{ paymentPreview.customer.tax_number }}</span>
-            </div>
-            <div
-              v-else-if="paymentPreview.customer.is_in_eu && paymentPreview.customer.vat_id"
-              class="meta-row"
-            >
-              <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ paymentPreview.customer.vat_id }}</span>
-            </div>
-            <div
-              v-else-if="!paymentPreview.customer.is_in_eu && paymentPreview.customer.vat_id"
-              class="meta-row"
-            >
-              <span class="meta-label">VAT ID:</span>
-              <span class="meta-value">{{ paymentPreview.customer.vat_id }}</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Payments Table -->
-        <div
-          v-if="paymentPreview.payments && paymentPreview.payments.length"
-          class="payments-table-section"
-        >
-          <h3>Zahlungen</h3>
-          <table class="payments-table">
-            <thead>
-              <tr>
-                <th>Datum</th>
-                <th>Gezahlter Betrag</th>
-                <th>Offener Betrag</th>
-                <th>Zahlungsmethode</th>
-                <th>Referenz</th>
-                <th>Gegenpartei</th>
-                <th>IBAN</th>
-                <th>Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="payment in paymentPreview.payments" :key="payment.id">
-                <td>{{ formatDate(payment.payment_date) }}</td>
-                <td>{{ formatCurrency(payment.paid_amount, payment.currency) }}</td>
-                <td>{{ formatCurrency(payment.outstanding_amount, payment.currency) }}</td>
-                <td>{{ payment.payment_method }}</td>
-                <td>{{ payment.payment_reference }}</td>
-                <td>{{ payment.counterparty_name }}</td>
-                <td>{{ payment.counterparty_iban }}</td>
-                <td>
-                  <button @click="openPaymentModal(payment)">Details</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
         <!-- Modal -->
-        <div v-if="selectedPayment" class="modal-overlay" @click.self="closePaymentModal">
+        <div>
           <div class="modal">
             <h3>Payment Details</h3>
             <table class="modal-table">
               <tbody>
                 <tr>
                   <td>ID</td>
-                  <td>{{ selectedPayment.id }}</td>
+                  <td>{{ paymentPreview.id }}</td>
                 </tr>
                 <tr>
                   <td>Invoice ID</td>
-                  <td>{{ selectedPayment.invoice_id }}</td>
+                  <td>{{ paymentPreview.invoice_id }}</td>
                 </tr>
                 <tr>
                   <td>Customer ID</td>
-                  <td>{{ selectedPayment.customer_id }}</td>
+                  <td>{{ paymentPreview.customer_id }}</td>
                 </tr>
                 <tr>
                   <td>Invoice Date</td>
-                  <td>{{ selectedPayment.invoice_date }}</td>
+                  <td>{{ paymentPreview.invoice_date }}</td>
                 </tr>
                 <tr>
                   <td>Invoice Due Date</td>
-                  <td>{{ selectedPayment.invoice_due_date }}</td>
+                  <td>{{ paymentPreview.invoice_due_date }}</td>
                 </tr>
                 <tr>
                   <td>Invoice Total</td>
                   <td>
-                    {{ formatCurrency(selectedPayment.invoice_total, selectedPayment.currency) }}
+                    {{ formatCurrency(paymentPreview.invoice_total, paymentPreview.currency) }}
                   </td>
                 </tr>
                 <tr>
                   <td>Currency</td>
-                  <td>{{ selectedPayment.currency }}</td>
+                  <td>{{ paymentPreview.currency }}</td>
                 </tr>
                 <tr>
                   <td>Payment Date</td>
-                  <td>{{ formatDate(selectedPayment.payment_date) }}</td>
+                  <td>{{ formatDate(paymentPreview.paymentPreview_date) }}</td>
                 </tr>
                 <tr>
                   <td>Paid Amount</td>
                   <td>
-                    {{ formatCurrency(selectedPayment.paid_amount, selectedPayment.currency) }}
+                    {{ formatCurrency(paymentPreview.paid_amount, paymentPreview.currency) }}
                   </td>
                 </tr>
                 <tr>
                   <td>Outstanding Amount</td>
                   <td>
-                    {{
-                      formatCurrency(selectedPayment.outstanding_amount, selectedPayment.currency)
-                    }}
+                    {{ formatCurrency(paymentPreview.outstanding_amount, paymentPreview.currency) }}
                   </td>
                 </tr>
                 <tr>
                   <td>Payment Method</td>
-                  <td>{{ selectedPayment.payment_method }}</td>
+                  <td>{{ paymentPreview.payment_method }}</td>
                 </tr>
                 <tr>
                   <td>Payment Reference</td>
-                  <td>{{ selectedPayment.payment_reference }}</td>
+                  <td>{{ paymentPreview.payment_reference }}</td>
                 </tr>
                 <tr>
                   <td>Counterparty Name</td>
-                  <td>{{ selectedPayment.counterparty_name }}</td>
+                  <td>{{ paymentPreview.counterparty_name }}</td>
                 </tr>
                 <tr>
                   <td>Counterparty IBAN</td>
-                  <td>{{ selectedPayment.counterparty_iban }}</td>
+                  <td>{{ paymentPreview.counterparty_iban }}</td>
                 </tr>
                 <tr>
                   <td>Notes</td>
-                  <td>{{ selectedPayment.notes }}</td>
+                  <td>{{ paymentPreview.notes }}</td>
                 </tr>
                 <tr>
                   <td>Is Partially Paid</td>
-                  <td>{{ selectedPayment.is_partially_paid }}</td>
+                  <td>{{ paymentPreview.is_partially_paid }}</td>
                 </tr>
                 <tr>
                   <td>Is Paid</td>
-                  <td>{{ selectedPayment.is_paid }}</td>
+                  <td>{{ paymentPreview.is_paid }}</td>
                 </tr>
                 <tr>
                   <td>File Name</td>
-                  <td>{{ selectedPayment.file_name }}</td>
+                  <td>{{ paymentPreview.file_name }}</td>
                 </tr>
                 <tr>
                   <td>Created At</td>
-                  <td>{{ selectedPayment.created_at }}</td>
+                  <td>{{ paymentPreview.created_at }}</td>
                 </tr>
                 <tr>
                   <td>Updated At</td>
-                  <td>{{ selectedPayment.updated_at }}</td>
+                  <td>{{ paymentPreview.updated_at }}</td>
                 </tr>
               </tbody>
             </table>
@@ -213,7 +117,6 @@
             <span class="bank-value">{{ auth.bic }}</span>
           </div>
         </div>
-
         <FooterSidePreview />
       </div>
 
@@ -224,12 +127,15 @@
       />
     </div>
 
-    <router-link to="/invoices/create" class="back-link">
-      ← Zurück zur Zahlungerstellung
+    <router-link
+      v-if="paymentPreview"
+      :to="`/payments/create/${paymentPreview.invoice_id}`"
+      class="back-link"
+    >
+      ← Zurück zur Rechnungsdetails
     </router-link>
   </div>
 </template>
-
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
@@ -256,8 +162,7 @@ export default {
     return {
       title: 'Zahlungbestätigung',
       paymentPreview: null,
-      auth: null,
-      selectedPayment: null
+      auth: null
     }
   },
   mounted() {
@@ -268,22 +173,21 @@ export default {
     getPaymentPreview() {
       if (!store.state.payment) return
       this.paymentPreview = store.state.payment
+      console.log('Payment Preview', this.paymentPreview)
     },
     getAuth() {
       if (!store.state.auth) return
       this.auth = store.state.auth
-    },
-    openPaymentModal(payment) {
-      this.selectedPayment = payment
-    },
-    closePaymentModal() {
-      this.selectedPayment = null
     }
   }
 }
 </script>
 
 <style scoped>
+.img {
+  width: 100px;
+  height: 100px;
+}
 /* Payments Table */
 .payments-table {
   width: 100%;
@@ -318,47 +222,287 @@ export default {
   background-color: #0056b3;
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+/* PREVIEW PANEL */
+.preview-panel {
+  width: 80%;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: auto;
+  padding: 20px;
+  top: 20px;
+}
+
+/* RECIPIENT */
+.recipient {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
-.modal {
-  background-color: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
+.recipient-address {
+  font-weight: 600;
+  color: var(--lightColor);
+  font-size: 12px;
 }
-.modal-table {
+
+/* META INFO */
+.meta-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  margin-bottom: 4px;
+}
+
+.meta-label {
+  font-weight: 600;
+  color: var(--lightColor);
+  font-size: 12px;
+}
+
+.meta-value {
+  color: var(--midColor);
+  font-size: 12px;
+}
+
+/* INTRO */
+.intro-text {
+  margin-bottom: 16px;
+  line-height: 1.6;
+  font-size: 10px;
+}
+
+/* BANK + CONTACT BOX */
+.bank-box {
+  background: #f1f5f9;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
+
+.bank-info {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: 4px;
+  line-height: 1.6;
+  font-size: 12px;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.bank-label {
+  color: #444;
+}
+
+.bank-value {
+  font-weight: 600;
+  color: #333;
+}
+
+/* BACK LINK */
+.back-link {
+  display: inline-block;
+  cursor: pointer;
+  margin: 40px 0;
+  font-size: 18px;
+  color: #3b82f6;
+  text-decoration: none;
+  border: 1px solid #3b82f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Positions Table */
+.positions-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 0.5rem;
+  margin-bottom: 30px;
+  font-size: 10pt;
 }
-.modal-table td {
-  padding: 6px;
-  border-bottom: 1px solid #eee;
+
+.positions-table thead {
+  background: #f8f9fa;
 }
-.close-button {
-  margin-top: 1rem;
-  padding: 6px 12px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
+
+.positions-table th {
+  padding: 10px 8px;
+  text-align: left;
+  font-size: 9pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #333;
+}
+
+.positions-table th.center,
+.positions-table td.center {
+  text-align: center;
+}
+
+.positions-table th.right,
+.positions-table td.right {
+  text-align: right;
+}
+
+.positions-table tbody tr {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.positions-table td {
+  padding: 12px 8px;
+  vertical-align: top;
+}
+
+.position-title {
+  font-weight: 600;
+  color: #000;
+  margin-bottom: 4px;
+}
+
+.position-description {
+  font-size: 9pt;
+  color: #666;
+  margin-top: 4px;
+}
+
+.position-service-period {
+  font-size: 8pt;
+  color: #888;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* recipient Title */
+.recipient-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #94a3b8;
+  margin-bottom: 16px;
+}
+
+/* Summary Section */
+.summary-section {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  width: 300px;
+  margin-bottom: 40px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 10pt;
+}
+
+.total-row.subtotal {
+  font-size: 11pt;
+  font-weight: 700;
+}
+
+.total-row.paid {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.total-row.outstanding {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.total-label {
+  font-weight: 500;
+}
+
+.total-value {
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Tax Notes */
+.tax-note {
+  margin-top: 20px;
+  padding: 12px 16px;
   border-radius: 4px;
-  cursor: pointer;
+  font-size: 9pt;
+  line-height: 1.5;
 }
-.close-button:hover {
-  background-color: #a71d2a;
+
+.small-company {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}
+
+/* Subject Line */
+.subject-line {
+  margin: 20px 0;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #0066cc;
+  font-size: 14px;
+}
+
+/* Payment Terms */
+.payment-terms-box {
+  margin: 30px 0;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.payment-terms-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #0066cc;
+}
+
+.payment-terms-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-term-item {
+  font-size: 13px;
+  line-height: 1.6;
+  padding: 8px 0;
+}
+
+.payment-term-item strong {
+  color: #333;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.skonto-highlight {
+  background-color: #e7f3ff;
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #0066cc;
+}
+
+.skonto-amount {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #0066cc;
+  font-weight: 600;
+}
+
+.payment-conditions-text {
+  margin-top: 6px;
+  padding: 10px;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  white-space: pre-wrap;
+  font-size: 12px;
+  color: #666;
 }
 </style>

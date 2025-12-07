@@ -98,6 +98,8 @@
                 </tr>
               </tbody>
             </table>
+
+            <img :src="`/uploads/payments/${payment.file_name}`" :alt="`payment.file_name`" alt="" class="img">
             <button class="close-button" @click="closePaymentModal">Close</button>
           </div>
         </div>
@@ -184,6 +186,10 @@ export default {
 </script>
 
 <style scoped>
+  .img {
+    width: 100px;
+    height: 100px;
+  }
 .preview-panel {
   width: 80%;
   background: white;

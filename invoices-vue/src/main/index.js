@@ -480,7 +480,6 @@ ipcMain.handle('get-customers', async () => {
 
 ipcMain.handle('get-customer-by-id', async (event, payload) => {
   const { id, table_name } = payload
-  console.log(payload)
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
@@ -764,12 +763,15 @@ ipcMain.handle('get-invoice-by-id', async (event, id) => {
 
     rows.payments = payments
 
+    const lastRow = db.prepare(`SELECT id FROM payments ORDER BY id DESC LIMIT 1;`).get()
+
+    const last_id = lastRow ? lastRow.id : 0
     if (!rows)
       return (
         (rows = { success: false, message: 'Invoice not found' }),
         console.error('Invoice not found')
       )
-    return { success: true, rows }
+    return { success: true, rows, last_id }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1364,7 +1366,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
   if (!payload) return { success: false, message: 'No data provided' }
 
   try {
-    const { payment, image_file } = payload
+    const payment  = payload
     console.log(payment)
     const info = db
       .prepare(
@@ -1411,8 +1413,10 @@ ipcMain.handle('add-payment', async (event, payload) => {
       )
 
     // Save file if uploaded
-    if (image_file && payment.file_name) {
-      const base64Data = image_file.includes(',') ? image_file.split(',')[1] : image_file
+    if (payment.image_file && payment.file_name) {
+      const base64Data = payment.image_file.includes(',')
+        ? payment.image_file.split(',')[1]
+        : payment.image_file
       const buffer = Buffer.from(base64Data, 'base64')
       const savePath = path.join(
         app.getAppPath(),

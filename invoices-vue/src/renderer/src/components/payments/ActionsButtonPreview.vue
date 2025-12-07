@@ -17,7 +17,7 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button class="btn btn-delete" @click="deletePayment">
+      <button v-if="sourcePage !== 'preview'" class="btn btn-delete" @click="deletePayment">
         <span class="nav-icon">🖨</span>
         <span>Loschen</span>
       </button>

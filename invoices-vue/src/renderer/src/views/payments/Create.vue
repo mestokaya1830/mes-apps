@@ -230,14 +230,21 @@ export default {
   },
   mounted() {
     this.getInvoice()
-    this.getStore()
   },
   methods: {
     async getInvoice() {
+      // await store.clearStore('payment')
       const id = this.$route.params.id
       try {
+        if (store.state.payment) {
+          this.payment = JSON.parse(JSON.stringify(store.state.payment))
+          this.selectedImage = this.payment.image_file
+          this.payment.outstanding_amount = this.payment.invoice_total
+          return
+        }
         const result = await window.api.getInvoiceById(id)
         if (!result.rows) return
+        this.payment.id = result.last_id + 1 
         this.payment.invoice_id = result.rows.id
         this.payment.customer_id = JSON.parse(result.rows.customer).id
         this.payment.invoice_date = result.rows.date
@@ -254,10 +261,6 @@ export default {
       } catch (error) {
         console.error(error)
       }
-    },
-    async getStore() {
-      if (!store.state.payment) return
-      this.payment = JSON.parse(JSON.stringify(store.state.payment))
     },
     formReset() {
       this.payment = {
@@ -281,14 +284,8 @@ export default {
       const reader = new FileReader()
       reader.onload = () => {
         this.selectedImage = reader.result
-        const now = new Date()
-        const dateStr =
-          now.getFullYear() +
-          (now.getMonth() + 1).toString().padStart(2, '0') +
-          now.getDate().toString().padStart(2, '0') +
-          now.getHours().toString().padStart(2, '0') +
-          now.getMinutes().toString().padStart(2, '0')
-        this.payment.file_name = `${this.payment.id}-${dateStr}.${file.name.split('.').pop()}`
+        const d = new Date()
+        this.payment.file_name = `${this.payment.id}-${d.getTime()}.${file.name.split('.').pop()}`
       }
       reader.readAsDataURL(file)
     },
@@ -313,12 +310,8 @@ export default {
     },
     async submitStore() {
       if (!this.summary()) return
-      const data = {
-        payment: this.payment,
-        image_file: this.selectedImage
-      }
-      console.log(data)
-      await store.setStore('payment', JSON.parse(JSON.stringify(data)))
+      this.payment.image_file = this.selectedImage
+      await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
       this.$router.push('/payments/preview')
     }
   }
