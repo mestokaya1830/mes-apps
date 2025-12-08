@@ -229,22 +229,25 @@ export default {
     }
   },
   mounted() {
-    this.getInvoice()
+    if (!store.state.reminder) return this.getInvoice()
+    this.getStore()
   },
   methods: {
     async getInvoice() {
       // await store.clearStore('payment')
       const id = this.$route.params.id
       try {
-        if (store.state.payment) {
-          this.payment = JSON.parse(JSON.stringify(store.state.payment))
-          this.selectedImage = this.payment.image_file
-          this.payment.outstanding_amount = this.payment.invoice_total
-          return
+        this.payment = JSON.parse(JSON.stringify(store.state.payment))
+        this.selectedImage = this.payment.image_file
+        this.payment.outstanding_amount = this.payment.invoice_total
+
+        const data = {
+          id: id,
+          table_name: 'payments'
         }
-        const result = await window.api.getInvoiceById(id)
+        const result = await window.api.getInvoiceById(data)
         if (!result.rows) return
-        this.payment.id = result.last_id + 1 
+        this.payment.id = result.payment_id.id + 1
         this.payment.invoice_id = result.rows.id
         this.payment.customer_id = JSON.parse(result.rows.customer).id
         this.payment.invoice_date = result.rows.date
@@ -255,6 +258,7 @@ export default {
         this.payment.outstanding_amount = Number(result.rows.gross_total - 0).toFixed(2) //0 is paid_total and will come from the db
 
         if (!this.payment) return
+        console.log(this.payment)
         this.paid_total_amount = (
           this.payment.invoice_total - this.payment.outstanding_amount
         ).toFixed(2)

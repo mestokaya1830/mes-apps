@@ -12,11 +12,11 @@
               <tbody>
                 <tr>
                   <td>ID</td>
-                  <td>{{ paymentPreview.id }}</td>
+                  <td>{{ formatPaymentId(paymentPreview.id) }}</td>
                 </tr>
                 <tr>
                   <td>Invoice ID</td>
-                  <td>{{ paymentPreview.invoice_id }}</td>
+                  <td>{{ formatInvoiceId(paymentPreview.invoice_id) }}</td>
                 </tr>
                 <tr>
                   <td>Customer ID</td>

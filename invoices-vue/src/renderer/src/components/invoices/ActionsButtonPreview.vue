@@ -70,7 +70,7 @@ export default {
       if (this.tableData) {
         const result = await window.api.addInvoice(JSON.parse(JSON.stringify(this.tableData)))
         if (!result.success) return
-        await this.clearStore('invoice')
+        this.clearStore()
         this.$router.push('/invoices')
       }
     },

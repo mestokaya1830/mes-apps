@@ -174,12 +174,6 @@ const routes = [
 
   //payments
   {
-    path: '/payments',
-    name: 'payments',
-    component: () => import('../views/payments/Index.vue'),
-    meta: { title: 'Zahlungen', auth: true }
-  },
-  {
     path: '/payments/create/:id',
     name: 'payments-create',
     component: () => import('../views/payments/Create.vue'),
@@ -198,29 +192,23 @@ const routes = [
     meta: { title: 'Zahlungsvorschau', auth: true }
   },
 
-  //remainders
+  //reminders
   {
-    path: '/remainders',
-    name: 'remainders',
-    component: () => import('../views/remainders/Index.vue'),
-    meta: { title: 'Erinnerungen', auth: true }
-  },
-  {
-    path: '/remainders/create/:id',
-    name: 'remainders-create',
-    component: () => import('../views/remainders/Create.vue'),
+    path: '/reminders/create/:id',
+    name: 'reminders-create',
+    component: () => import('../views/reminders/Create.vue'),
     meta: { title: 'Neue Erinnerung', auth: true }
   },
   {
-    path: '/remainders/details/:id',
-    name: 'remainders-details',
-    component: () => import('../views/remainders/Details.vue'),
+    path: '/reminders/details/:id',
+    name: 'reminders-details',
+    component: () => import('../views/reminders/Details.vue'),
     meta: { title: 'Erinnerungsdetails', auth: true }
   },
   {
-    path: '/remainders/preview',
-    name: 'remainders-preview',
-    component: () => import('../views/remainders/Preview.vue'),
+    path: '/reminders/preview',
+    name: 'reminders-preview',
+    component: () => import('../views/reminders/Preview.vue'),
     meta: { title: 'Erinnerungsvorschau', auth: true }
   },
 

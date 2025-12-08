@@ -36,9 +36,16 @@ try {
 // }
 
 // try {
-//   const result = db.prepare(`Alter Table payments DROP Column paid_total;`).run() // 1 → customer id
+//   const result = db.prepare(`Alter Table reminders RENAME Column main_text TO warning_text;`).run() // 1 → customer id
 //   console.log(result)
 // } catch (err) {
 //   console.error(err.message)
 // }
 
+
+// try {
+//   const result = db.prepare(`Select * From invoices;`).all()
+//   console.log('Reminders Table Info:', result)
+// } catch (error) {
+//   console.error('Error fetching reminders table info:', error.message)
+// }

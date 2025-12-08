@@ -223,7 +223,7 @@
         <FooterSidePreview />
       </div>
 
-      <!-- Invoice Grid -->
+      <!-- payment list -->
       <div v-if="invoice.payments" class="customer-grid">
         <table class="table-auto w-full border">
           <thead>
@@ -265,6 +265,7 @@
           </tbody>
         </table>
       </div>
+      <router-link :to="`/reminders/create/${invoice.id}`">Mahnung erstellen</router-link>
       <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
@@ -309,15 +310,19 @@ export default {
       const id = this.$route.params.id
       if (!id) return
       try {
-        const result = await window.api.getInvoiceById(id)
-        console.log(result)
+        const data = {
+          id: id,
+          table_name: 'invoices'
+        }
+        const result = await window.api.getInvoiceById(data)
         if (!result.success) return
+        console.log('invoice-result', result)
         this.invoice = {
           ...result.rows,
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions)
         }
-        console.log(this.invoice)
+        console.log('invoices-details', this.invoice)
       } catch (error) {
         console.error(error)
       }
@@ -328,11 +333,6 @@ export default {
       } else {
         console.warn('No auth data in store')
       }
-    },
-    calculateAmountWithEarlyPayment() {
-      // if (!this.invoice?.summary?.total) return 0
-      // const outstanding = this.invoice.summary.outstanding || this.invoice.summary.total
-      // return outstanding - this.calculateEarlyPayment()
     }
   }
 }

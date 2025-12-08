@@ -451,6 +451,8 @@ export default {
         if (!result.success) return
         this.invoice.id = result.data.last_id
         this.invoice.customer = result.data.customer
+
+        console.log('Customer data loaded:', this.invoice.customer)
       } catch (error) {
         console.error(error)
       }

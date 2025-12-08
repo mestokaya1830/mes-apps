@@ -19,25 +19,33 @@ export default {
   },
   provide() {
     return {
-      formatCustomerId(value) {
+      formatCustomerId(value, year = new Date().getFullYear()) {
         if (!value) return ''
-        return `KU-${String(value).padStart(5, '0')}`
+        return `KU-${year}-${String(value).padStart(5, '0')}`
       },
-      formatInvoiceId(value) {
+      formatInvoiceId(value, year = new Date().getFullYear()) {
         if (!value) return ''
-        return `RE-${String(value).padStart(5, '0')}`
+        return `RE-${year}-${String(value).padStart(5, '0')}`
       },
-      formatOfferId(value) {
+      formatOfferId(value, year = new Date().getFullYear()) {
         if (!value) return ''
-        return `ANG-${String(value).padStart(5, '0')}`
+        return `ANG-${year}-${String(value).padStart(5, '0')}`
       },
-      formatOrderId(value) {
+      formatOrderId(value, year = new Date().getFullYear()) {
         if (!value) return ''
-        return `AUF-${String(value).padStart(5, '0')}`
+        return `AUF-${year}-${String(value).padStart(5, '0')}`
       },
-      formatPaymentId(value) {
+      formatPaymentId(value, year = new Date().getFullYear()) {
         if (!value) return ''
-        return `ZA-${String(value).padStart(5, '0')}`
+        return `ZA-${year}-${String(value).padStart(5, '0')}`
+      },
+      formatReminderId(value, year = new Date().getFullYear()) {
+        if (!value) return ''
+        return `MA-${year}-${String(value).padStart(5, '0')}`
+      },
+      formatDeliveryId(value, year = new Date().getFullYear()) {
+        if (!value) return ''
+        return `LI-${year}-${String(value).padStart(5, '0')}`
       },
       formatDate(value) {
         if (!value) return ''

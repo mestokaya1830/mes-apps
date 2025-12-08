@@ -1,7 +1,7 @@
 <template lang="">
   <div>
     <div class="action-buttons">
-      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveOrder">
+      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
         <span class="nav-icon">💾</span>
         <span>Speichern</span>
       </button>
@@ -16,12 +16,6 @@
       <button class="btn btn-print" @click="printDocument">
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
-      </button>
-      <button v-if="sourcePage !== 'preview'" class="btn">
-        <router-link :to="`/orders/edit/${tableData.id}`">
-          <span class="nav-icon">✏</span>
-          <span>Bearbeiten</span>
-        </router-link>
       </button>
     </div>
   </div>
@@ -66,12 +60,12 @@ export default {
       html2pdf().set(options).from(element).save()
       this.clearStore()
     },
-    async saveOrder() {
+    async saveReminder() {
       if (this.tableData) {
-        const result = await window.api.addOrder(JSON.parse(JSON.stringify(this.tableData)))
+        const result = await window.api.addReminder(JSON.parse(JSON.stringify(this.tableData)))
         if (!result.success) return
         this.clearStore()
-        this.$router.push('/orders')
+        this.$router.push('/invoices/details/' + this.tableData.invoice_id)
       }
     },
     printDocument() {
@@ -84,7 +78,7 @@ export default {
     },
     async clearStore() {
       try {
-        await store.clearStore('order')
+        await store.clearStore('reminder')
       } catch (error) {
         console.error(error)
       }
@@ -96,8 +90,8 @@ export default {
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 30px;
   height: auto;
+  margin-top: 30px;
 }
 
 .btn {

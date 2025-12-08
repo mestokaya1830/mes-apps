@@ -1,22 +1,22 @@
 <template>
   <div>
-    <div class="preview-panel" v-if="remeinderPreview && auth">
+    <div v-if="reminderPreview && auth" class="preview-panel">
       <div class="printable">
         <!-- Header -->
-        <HeaderSidePreview :title="title" :auth="auth"/>
+        <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- customers -->
-        <div v-if="remeinderPreview" class="recipient">
+        <div class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ remeinderPreview.selected_invoice.customer.company_name }}
+              {{ reminderPreview.customer.company_name }}
             </div>
-            <div class="meta-label">{{ remeinderPreview.selected_invoice.customer.address }}</div>
+            <div class="meta-label">{{ reminderPreview.customer.address }}</div>
             <div class="meta-label">
-              {{ remeinderPreview.selected_invoice.customer.postal_code }}
-              {{ remeinderPreview.selected_invoice.customer.city }}<br />
-              {{ remeinderPreview.selected_invoice.customer.country }}
+              {{ reminderPreview.customer.postal_code }}
+              {{ reminderPreview.customer.city }}<br />
+              {{ reminderPreview.customer.country }}
             </div>
           </div>
           <!-- recipient details -->
@@ -25,41 +25,37 @@
 
             <div class="meta-row">
               <span class="meta-label">Mahnung-Nr.:</span>
-              <span class="meta-value">{{ formatRemeinderId }}</span>
+              <span class="meta-value">{{ formatReminderId(reminderPreview.id) }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatInvoiceId }}</span>
+              <span class="meta-value">{{ formatInvoiceId(reminderPreview.invoice_id) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(remeinderPreview.date) }}</span>
+              <span class="meta-value">{{ formatDate(reminderPreview.date) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(remeinderPreview.selected_invoice.customer.id)
-              }}</span>
+              <span class="meta-value">{{ formatCustomerId(reminderPreview.customer.id) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{
-                remeinderPreview.selected_invoice.customer.vat_id
-              }}</span>
+              <span class="meta-value">{{ reminderPreview.customer.vat_id }}</span>
             </div>
           </div>
         </div>
 
         Subject
-        <!-- <div class="subject">{{ remeinderPreview.subject }}</div> -->
+        <!-- <div class="subject">{{ reminderPreview.subject }}</div> -->
 
         <!-- Content -->
         <div>
           <p class="greeting">Sehr geehrte Damen und Herren,</p>
-          <p v-if="remeinderPreview?.intro_text">{{ remeinderPreview.intro_text }}</p>
+          <p v-if="reminderPreview?.intro_text">{{ reminderPreview.intro_text }}</p>
         </div>
 
         <!-- remeinders Details -->
@@ -75,7 +71,7 @@
               </tr>
             </thead>
             <!-- <tbody>
-              <tr v-for="item in remeinderPreview" :key="item.id">
+              <tr v-for="item in reminderPreview" :key="item.id">
                 <td>{{ item.id }}</td>
                 <td>{{ formatDate(item.date) }}</td>
                 <td>{{ formatDate(item.due_date) }}</td>
@@ -107,29 +103,29 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label">Verwen..:</span>
+            <!-- <span class="bank-label">Verwen..:</span>
             <span class="bank-value">{{
-              remeinderPreview.selected_invoice.payment.verwendungszweck
-            }}</span>
-            <span class="bank-value">Zahlungsziel: {{ remeinderPreview.payment_deadline }}</span>
+              reminderPreview.payment.verwendungszweck
+            }}</span> -->
+            <span class="bank-value">Zahlungsziel: {{ reminderPreview.payment_deadline }}</span>
           </div>
         </div>
 
-        <!-- Warning Box (für 2. und 3. remeinderPreview) -->
-        <div v-if="remeinderPreview?.level >= 2" class="warning-box">
-          <div v-if="remeinderPreview.level === 2">
+        <!-- Warning Box (für 2. und 3. reminderPreview) -->
+        <div v-if="reminderPreview?.level >= 2" class="warning-box">
+          <div v-if="reminderPreview.level === 2">
             <strong>⚠️ Wichtiger Hinweis:</strong><br />
-            <p>{{ remeinderPreview.warning_text }}</p>
+            <p>{{ reminderPreview.warning_text }}</p>
           </div>
-          <div v-if="remeinderPreview.level === 3">
-            <strong>🚨 Letzte remeinderPreview:</strong><br />
-            <p>{{ remeinderPreview.warning_text }}</p>
+          <div v-if="reminderPreview.level === 3">
+            <strong>🚨 Letzte reminderPreview:</strong><br />
+            <p>{{ reminderPreview.warning_text }}</p>
           </div>
         </div>
 
-        <div class="remeinderPreview-content">
-          <p v-if="remeinderPreview?.closing_text">
-            {{ remeinderPreview.closing_text }}
+        <div class="reminderPreview-content">
+          <p v-if="reminderPreview?.closing_text">
+            {{ reminderPreview.closing_text }}
           </p>
         </div>
 
@@ -148,9 +144,8 @@
         <FooterSidePreview />
       </div>
       <ActionsButtonPreview
-        v-if="remeinderPreview.selected_invoice.customer"
-        tableName="remeinders"
-        :tableData="remeinderPreview"
+        v-if="reminderPreview"
+        :tableData="reminderPreview"
         sourcePage="preview"
       />
     </div>
@@ -164,54 +159,44 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import ActionsButtonPreview from '../../components/reminders/ActionsButtonPreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
-  name: 'RemeinderPreview',
+  name: 'ReminderPreview',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
     ActionsButtonPreview,
     FooterSidePreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatCurrency'],
+  inject: [
+    'formatCustomerId',
+    'formatInvoiceId',
+    'formatReminderId',
+    'formatDate',
+    'formatCurrency'
+  ],
   data() {
     return {
       title: 'Mahnungs Vorschau',
-      remeinderPreview: null,
+      reminderPreview: null,
       auth: null
     }
   },
-  computed: {
-    formatInvoiceId() {
-      if (!this.remeinderPreview || !this.remeinderPreview.id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(this.remeinderPreview.selected_invoice.id).padStart(5, '0')}`
-    },
-    formatRemeinderId() {
-      if (!this.remeinderPreview || !this.remeinderPreview.id) return ''
-      const year = new Date().getFullYear()
-      return `MAH-${year}-${String(this.remeinderPreview.id).padStart(5, '0')}`
-    }
-  },
   mounted() {
-    this.getRemeinderPreview()
+    this.getReminderPreview()
     this.getAuth()
   },
   methods: {
-    getRemeinderPreview() {
-      if (store.state.remeinders) {
-        this.remeinderPreview = store.state.remeinders
-        console.log(this.remeinderPreview)
-      }
+    getReminderPreview() {
+      if (!store.state.reminder) return
+      this.reminderPreview = store.state.reminder
+      console.log(this.reminderPreview)
     },
     getAuth() {
-      if (store.state.auth) {
-        this.auth = store.state.auth
-      } else {
-        console.warn('No auth data in store')
-      }
+      if (!store.state.auth) return
+      this.auth = store.state.auth
     }
   }
 }

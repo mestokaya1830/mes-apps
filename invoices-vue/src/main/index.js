@@ -736,42 +736,70 @@ ipcMain.handle('get-invoices', async () => {
   }
 })
 
-ipcMain.handle('get-invoice-by-id', async (event, id) => {
+ipcMain.handle('get-invoice-by-id', async (event, payload) => {
+  const { id, table_name } = payload
   if (!id) {
     return { success: false, message: 'No data provided' }
   }
   try {
-    let rows = db
-      .prepare(
-        `
-          SELECT *
-          FROM invoices
-          WHERE id = ?
-        `
-      )
-      .get(id)
+    //from invoices details
+    if (table_name === 'invoices') {
+      let rows = db
+        .prepare(
+          `
+            SELECT *
+            FROM invoices
+            WHERE id = ?
+          `
+        )
+        .get(id)
 
-    let payments = db
-      .prepare(
-        `
-          SELECT *
-          FROM payments
-          WHERE invoice_id = ?
-        `
-      )
-      .all(id)
+      let payments = db
+        .prepare(
+          `
+            SELECT *
+            FROM payments
+            WHERE invoice_id = ?
+          `
+        )
+        .all(id)
+      rows.payments = payments
+      return { success: true, rows }
+    }
 
-    rows.payments = payments
+    //from payments create
+    if (table_name === 'payments') {
+      let rows = db
+        .prepare(
+          `
+            SELECT SELECT id, date, due_date, gross_total, total_after_discount, currency,  customer
+            FROM invoices
+            WHERE id = ?
+          `
+        )
+        .get(id)
+      const payment_id = db.prepare(`SELECT id FROM payments ORDER BY id DESC LIMIT 1;`).get()
+      return { success: true, rows, payment_id }
+    }
 
-    const lastRow = db.prepare(`SELECT id FROM payments ORDER BY id DESC LIMIT 1;`).get()
-
-    const last_id = lastRow ? lastRow.id : 0
-    if (!rows)
-      return (
-        (rows = { success: false, message: 'Invoice not found' }),
-        console.error('Invoice not found')
-      )
-    return { success: true, rows, last_id }
+    //from reminders create
+    if (table_name === 'reminders') {
+      let rows = db
+        .prepare(
+          `
+            SELECT id, date, due_date, gross_total, total_after_discount, currency,  customer
+            FROM invoices
+            WHERE id = ?
+          `
+        )
+        .get(id)
+      const reminder_id =
+        db.prepare(`SELECT id FROM reminders ORDER BY id DESC LIMIT 1`).get()?.id ?? 0
+      const paid_total = db
+        .prepare(`SELECT sum(paid_amount) As total FROM payments WHERE invoice_id = ?`)
+        .get(id)
+      return { success: true, rows, reminder_id, paid_total }
+    }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1366,7 +1394,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
   if (!payload) return { success: false, message: 'No data provided' }
 
   try {
-    const payment  = payload
+    const payment = payload
     console.log(payment)
     const info = db
       .prepare(
@@ -1492,7 +1520,7 @@ ipcMain.handle('add-reminder', async (event, data) => {
           late_interest,
 
           intro_text,
-          main_text,
+          warning_text,
           closing_text,
 
           sent_at,
@@ -1523,7 +1551,7 @@ ipcMain.handle('add-reminder', async (event, data) => {
         data.late_interest,
 
         data.intro_text,
-        data.main_text,
+        data.warning_text,
         data.closing_text,
 
         data.sent_at,
