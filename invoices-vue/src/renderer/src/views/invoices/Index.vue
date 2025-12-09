@@ -73,9 +73,11 @@
               {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
             </div>
             <div class="list-info">
-              <h3 class="list-name">{{ formatInvoiceId(item.id) }}</h3>
-              <span class="list-type-badge">{{ item.customer.company_name }}</span>
-              <span>{{ item.customer.first_name }} {{ item.customer.last_name }}</span>
+              <h3 class="list-id">{{ formatInvoiceId(item.id) }}</h3>
+              <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
+              <span class="list-name"
+                >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
+              >
             </div>
             <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
               {{ item.is_active ? 'Aktiv' : 'Storniert' }}
@@ -280,7 +282,6 @@ export default {
   color: #1a202c;
   margin: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -398,7 +399,7 @@ export default {
   min-width: 0;
 }
 
-.list-name {
+.list-id {
   font-size: 18px;
   font-weight: 600;
   color: #2d3748;
@@ -414,10 +415,13 @@ export default {
   background: #edf2f7;
   color: #4a5568;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
 }
-
+.list-name {
+  font-size: 12px;
+  margin: 10px;
+}
 .status-badge {
   padding: 6px 14px;
   border-radius: 20px;
