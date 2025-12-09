@@ -171,7 +171,7 @@
         </div>
 
         <!-- payment -->
-        <div class="payment-terms-box">
+        <div  class="payment-terms-box">
           <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
 
           <div class="payment-terms-content">
@@ -180,7 +180,7 @@
               {{ invoice.payment_terms }} Tage netto (fällig bis {{ formatDate(invoice.due_date) }})
             </div>
 
-            <div v-if="invoice.early_payment_days" class="payment-term-item skonto-highlight">
+            <div v-if="invoice.early_payment_days > 0" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
               {{ invoice.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
               {{ invoice.early_payment_days }} Tagen (bis {{ invoice.due_date }})
@@ -230,9 +230,9 @@
             <tr>
               <th class="border px-2 py-1">ZahlungID</th>
               <th class="border px-2 py-1">Payment Date</th>
+              <th class="border px-2 py-1">Invoice Total</th>
               <th class="border px-2 py-1">Paid Amount</th>
               <th class="border px-2 py-1">Outstanding</th>
-              <th class="border px-2 py-1">Method</th>
               <th class="border px-2 py-1">Details</th>
             </tr>
           </thead>
@@ -240,9 +240,9 @@
             <tr v-for="item in invoice.payments" :key="item.id">
               <td class="border px-2 py-1">{{ formatPaymentId(item.id) }}</td>
               <td class="border px-2 py-1">{{ item.payment_date }}</td>
+              <td class="border px-2 py-1">{{ item.invoice_total }}</td>
               <td class="border px-2 py-1">{{ item.paid_amount }}</td>
               <td class="border px-2 py-1">{{ item.outstanding_amount }}</td>
-              <td class="border px-2 py-1">{{ item.payment_method }}</td>
               <td class="border px-2 py-1">
                 <router-link :to="'/payments/details/' + item.id" class="action-btn details-btn">
                   <svg
@@ -316,13 +316,11 @@ export default {
         }
         const result = await window.api.getInvoiceById(data)
         if (!result.success) return
-        console.log('invoice-result', result)
         this.invoice = {
           ...result.rows,
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions)
         }
-        console.log('invoices-details', this.invoice)
       } catch (error) {
         console.error(error)
       }

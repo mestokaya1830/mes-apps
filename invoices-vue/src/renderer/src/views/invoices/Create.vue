@@ -387,6 +387,7 @@ export default {
       invoice: {
         id: 0, //will come from db
         customer: null,
+        customer_id: null,
         is_active: 1,
         date: '',
         due_date: '',
@@ -539,6 +540,7 @@ export default {
       if (!this.invoice) return
       console.time('commit')
       this.setDueDate()
+      this.invoice.customer_id = this.invoice.customer.id
       this.invoice.net_total = this.summary.net_total
       this.invoice.vat_total = this.summary.vat_total
       this.invoice.gross_total = this.summary.gross_total

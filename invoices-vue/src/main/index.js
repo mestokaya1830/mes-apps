@@ -397,11 +397,7 @@ ipcMain.handle('get-dashboard', async () => {
         invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1').get()
           .count,
         offers: db.prepare('SELECT COUNT(*) AS count FROM offers WHERE is_active = 1').get().count,
-        orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count,
-        deliveries: db.prepare('SELECT COUNT(*) AS count FROM deliveries WHERE is_active = 1').get()
-          .count,
-        reminders: db.prepare('SELECT COUNT(*) AS count FROM reminders').get().count,
-        payments: db.prepare('SELECT COUNT(*) AS count FROM payments WHERE is_paid = 1').get().count
+        orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count
       }
     })()
 
@@ -675,12 +671,12 @@ ipcMain.handle('add-invoice', async (event, payload) => {
             net_total,
             vat_total,
             gross_total
-          ) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
       )
       .run(
-        JSON.stringify(invoice.customer) || null,
         invoice.customer_id,
+        JSON.stringify(invoice.customer) || null,
         invoice.is_active,
 
         invoice.cancelled_by,
@@ -772,14 +768,19 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
       let rows = db
         .prepare(
           `
-            SELECT SELECT id, date, due_date, gross_total, total_after_discount, currency,  customer
+            SELECT id, customer_id, date, due_date, gross_total, early_payment_days, early_payment_percentage, early_payment_discount, total_after_discount, currency
             FROM invoices
             WHERE id = ?
           `
         )
         .get(id)
-      const payment_id = db.prepare(`SELECT id FROM payments ORDER BY id DESC LIMIT 1;`).get()
-      return { success: true, rows, payment_id }
+      const payment_id =
+        db.prepare(`SELECT id FROM payments As id ORDER BY id DESC LIMIT 1;`).get()?.id ?? 0
+
+      const previously_paid_amount =
+        db.prepare(`SELECT sum(previously_paid_amount) As total FROM payments WHERE invoice_id = ?`)
+          ?.total ?? 0
+      return { success: true, rows, payment_id, previously_paid_amount }
     }
 
     //from reminders create
@@ -795,10 +796,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
         .get(id)
       const reminder_id =
         db.prepare(`SELECT id FROM reminders ORDER BY id DESC LIMIT 1`).get()?.id ?? 0
-      const paid_total = db
-        .prepare(`SELECT sum(paid_amount) As total FROM payments WHERE invoice_id = ?`)
-        .get(id)
-      return { success: true, rows, reminder_id, paid_total }
+      return { success: true, rows, reminder_id }
     }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -1497,8 +1495,10 @@ ipcMain.handle('delete-payment-by-id', async (event, id) => {
 })
 
 //reminders
-ipcMain.handle('add-reminder', async (event, data) => {
-  if (!data) return { success: false, message: 'No data provided' }
+ipcMain.handle('add-reminder', async (event, payload) => {
+  console.log(payload)
+  const data = payload
+  if (!payload) return { success: false, message: 'No data provided' }
 
   try {
     const info = db

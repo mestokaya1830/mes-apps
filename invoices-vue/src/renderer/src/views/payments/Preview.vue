@@ -42,7 +42,7 @@
                 </tr>
                 <tr>
                   <td>Payment Date</td>
-                  <td>{{ formatDate(paymentPreview.paymentPreview_date) }}</td>
+                  <td>{{ formatDate(paymentPreview.payment_date) }}</td>
                 </tr>
                 <tr>
                   <td>Paid Amount</td>
@@ -87,14 +87,6 @@
                 <tr>
                   <td>File Name</td>
                   <td>{{ paymentPreview.file_name }}</td>
-                </tr>
-                <tr>
-                  <td>Created At</td>
-                  <td>{{ paymentPreview.created_at }}</td>
-                </tr>
-                <tr>
-                  <td>Updated At</td>
-                  <td>{{ paymentPreview.updated_at }}</td>
                 </tr>
               </tbody>
             </table>

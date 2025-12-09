@@ -12,11 +12,11 @@
             <div class="company-name-subtitle">
               {{ reminderPreview.customer.company_name }}
             </div>
-            <div class="meta-label">{{ reminderPreview.customer.address }}</div>
+            <div class="meta-label">{{ reminderPreview.customer.address || '[Adres Yok]' }}</div>
             <div class="meta-label">
-              {{ reminderPreview.customer.postal_code }}
-              {{ reminderPreview.customer.city }}<br />
-              {{ reminderPreview.customer.country }}
+              {{ reminderPreview.customer.postal_code || '[PLZ]' }}
+              {{ reminderPreview.customer.city || '[Şehir]' }}<br />
+              {{ reminderPreview.customer.country || '[Ülke]' }}
             </div>
           </div>
           <!-- recipient details -->
@@ -44,13 +44,10 @@
 
             <div class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ reminderPreview.customer.vat_id }}</span>
+              <span class="meta-value">{{ reminderPreview.customer.vat_id || '[VAT Yok]' }}</span>
             </div>
           </div>
         </div>
-
-        Subject
-        <!-- <div class="subject">{{ reminderPreview.subject }}</div> -->
 
         <!-- Content -->
         <div>
@@ -70,26 +67,34 @@
                 <th>Betrag</th>
               </tr>
             </thead>
-            <!-- <tbody>
-              <tr v-for="item in reminderPreview" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ formatDate(item.date) }}</td>
-                <td>{{ formatDate(item.due_date) }}</td>
-                <td>{{ formatCurrency(item.amount) }}</td>
+            <tbody>
+              <tr>
+                <td>{{ formatInvoiceId(reminderPreview.invoice_id) }}</td>
+                <td>{{ formatDate(reminderPreview.invoice_date) }}</td>
+                <td>{{ formatDate(reminderPreview.invoice_due_date) }}</td>
+                <td>{{ formatCurrency(reminderPreview.invoice_total) }}</td>
               </tr>
-              <tr v-if="item.reminder_fee > 0">
+              <tr v-if="reminderPreview.reminder_fee > 0">
                 <td colspan="3">Mahngebühr:</td>
-                <td>{{ formatCurrency(item.remeinder_fee) }}</td>
+                <td>{{ formatCurrency(reminderPreview.reminder_fee) }}</td>
               </tr>
-              <tr v-if="item.late_fee > 0">
+              <tr v-if="reminderPreview.late_interest > 0">
                 <td colspan="3">Verzugszinsen:</td>
-                <td>{{ formatCurrency(item.late_fee) }}</td>
+                <td>{{ formatCurrency(reminderPreview.late_interest) }}</td>
               </tr>
               <tr class="total-row">
                 <td colspan="3">Offener Gesamtbetrag:</td>
-                <td>{{ formatCurrency(getTotalAmount()) }}</td>
+                <td>
+                  {{
+                    formatCurrency(
+                      reminderPreview.invoice_total +
+                        reminderPreview.reminder_fee +
+                        reminderPreview.late_interest
+                    )
+                  }}
+                </td>
               </tr>
-            </tbody> -->
+            </tbody>
           </table>
         </div>
 
@@ -103,30 +108,24 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <!-- <span class="bank-label">Verwen..:</span>
-            <span class="bank-value">{{
-              reminderPreview.payment.verwendungszweck
-            }}</span> -->
             <span class="bank-value">Zahlungsziel: {{ reminderPreview.payment_deadline }}</span>
           </div>
         </div>
 
-        <!-- Warning Box (für 2. und 3. reminderPreview) -->
+        <!-- Warning Box -->
         <div v-if="reminderPreview?.level >= 2" class="warning-box">
-          <div v-if="reminderPreview.level === 2">
+          <div v-if="reminderPreview.level === '2'">
             <strong>⚠️ Wichtiger Hinweis:</strong><br />
             <p>{{ reminderPreview.warning_text }}</p>
           </div>
-          <div v-if="reminderPreview.level === 3">
-            <strong>🚨 Letzte reminderPreview:</strong><br />
+          <div v-if="reminderPreview.level === '3'">
+            <strong>🚨 Letzte Mahnung:</strong><br />
             <p>{{ reminderPreview.warning_text }}</p>
           </div>
         </div>
 
         <div class="reminderPreview-content">
-          <p v-if="reminderPreview?.closing_text">
-            {{ reminderPreview.closing_text }}
-          </p>
+          <p v-if="reminderPreview?.closing_text">{{ reminderPreview.closing_text }}</p>
         </div>
 
         <!-- Closing -->
@@ -149,7 +148,12 @@
         sourcePage="preview"
       />
     </div>
-    <router-link to="/remeinders/create" class="back-link">
+    {{ reminderPreview }}
+    <router-link
+      v-if="reminderPreview"
+      :to="`/reminders/create/${reminderPreview.invoice_id}`"
+      class="back-link"
+    >
       ← Zurück zur Rechnungserstellung
     </router-link>
   </div>

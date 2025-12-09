@@ -1,7 +1,7 @@
 <template lang="">
   <div>
     <div class="action-buttons">
-      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
+      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveReminder">
         <span class="nav-icon">💾</span>
         <span>Speichern</span>
       </button>

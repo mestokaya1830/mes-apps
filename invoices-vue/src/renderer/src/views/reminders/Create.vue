@@ -196,7 +196,7 @@ export default {
       this.reminder.invoice_date = result.rows.date
       this.reminder.invoice_due_date = result.rows.due_date
       this.reminder.invoice_total = result.rows.total_after_discount
-      this.reminder.paid_total = result.paid_total.total || 0
+      // this.reminder.paid_total = result.paid_total.total || 0
       this.reminder.customer = JSON.parse(result.rows.customer)
       this.updateTexts()
       console.log('create-reminder', this.reminder)

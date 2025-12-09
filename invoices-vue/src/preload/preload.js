@@ -54,5 +54,9 @@ contextBridge.exposeInMainWorld('api', {
   addPayment: (data) => ipcRenderer.invoke('add-payment', data),
   getPaymentById: (id) => ipcRenderer.invoke('get-payment-by-id', id),
   deletePaymentById: (id) => ipcRenderer.invoke('delete-payment-by-id', id),
+
+
+  //reminder
+  addReminder: (data) => ipcRenderer.invoke('add-reminder', data),
   // documentReport: async (data) => ipcRenderer.invoke('document-report', data)
 })

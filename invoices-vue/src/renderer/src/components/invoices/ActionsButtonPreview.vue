@@ -17,7 +17,7 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button v-if="tableData.id" class="btn">
+      <button v-if="tableData.id && sourcePage !== 'preview'" class="btn">
         <router-link :to="`/invoices/edit/${tableData.id}`">
           <span class="nav-icon">✏</span>
           <span>Bearbeiten</span>

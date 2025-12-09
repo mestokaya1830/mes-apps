@@ -282,6 +282,7 @@ export default {
     getInvoicePreview() {
       if (!store.state.invoice) return
       this.invoicePreview = store.state.invoice
+      console.log('invoice-preview', this.invoicePreview)
     },
     getAuth() {
       if (!store.state.auth) return

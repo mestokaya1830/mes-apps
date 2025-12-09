@@ -41,11 +41,3 @@ try {
 // } catch (err) {
 //   console.error(err.message)
 // }
-
-
-// try {
-//   const result = db.prepare(`Select * From invoices;`).all()
-//   console.log('Reminders Table Info:', result)
-// } catch (error) {
-//   console.error('Error fetching reminders table info:', error.message)
-// }

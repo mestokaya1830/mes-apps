@@ -53,27 +53,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Deliveries Card -->
-      <div class="customer-card" @click="goTo('deliveries')" style="cursor: pointer">
-        <div class="card-header">
-          <div class="customer-avatar">📦</div>
-          <div class="customer-info">
-            <h3 class="customer-name">Deleiveries</h3>
-            <span class="customer-type-badge">Gesamt: {{ tablesCount.deliveries }}</span>
-          </div>
-        </div>
-      </div>
-      <!-- remeinders Card -->
-      <div class="customer-card" @click="goTo('remeinders')" style="cursor: pointer">
-        <div class="card-header">
-          <div class="customer-avatar">📦</div>
-          <div class="customer-info">
-            <h3 class="customer-name">Reminders</h3>
-            <span class="customer-type-badge">Gesamt: {{ tablesCount.remeinders }}</span>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
