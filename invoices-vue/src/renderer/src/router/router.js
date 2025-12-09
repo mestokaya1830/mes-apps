@@ -222,24 +222,11 @@ const routes = [
 
   //reports
   {
-    path: '/reports/invoices',
-    name: 'reports-invoices',
-    component: () => import('../views/reports/InvoicesReport.vue'),
-    meta: { title: 'Rechnungsberichte', auth: true }
+    path: '/reports',
+    name: 'reports',
+    component: () => import('../views/reports/Index.vue'),
+    meta: { title: 'Berichte', auth: true }
   },
-  {
-    path: '/reports/offers',
-    name: 'reports-offers',
-    component: () => import('../views/reports/OffersReport.vue'),
-    meta: { title: 'Angebotsberichte', auth: true }
-  },
-  {
-    path: '/reports/orders',
-    name: 'reports-orders',
-    component: () => import('../views/reports/OrdersReport.vue'),
-    meta: { title: 'Auftragsberichte', auth: true }
-  },
-
   //not found
   {
     path: '/:catchAll(.*)',

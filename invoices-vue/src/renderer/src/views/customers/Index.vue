@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="customers" class="list-panel">
+    <div v-if="customers" class="main-container">
       <!-- Header Section -->
       <div class="editor-header-block">
         <div>
@@ -263,10 +263,7 @@ export default {
 </script>
 
 <style scoped>
-.list-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.main-container {
   width: 100%;
   margin: 0 auto;
   padding: 40px 24px;
@@ -276,7 +273,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 80%;
+  width: 100%;
   margin-bottom: 40px;
   flex-wrap: wrap;
   gap: 20px;
@@ -321,7 +318,7 @@ export default {
 /* Customer Grid */
 .customer-grid {
   display: grid;
-  width: 80%;
+  width: 100%;
   /* grid-template-columns: repeat(auto-fill, minmax(750px, 1fr)); */
   gap: 24px;
 }

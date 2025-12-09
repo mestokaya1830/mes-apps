@@ -3,7 +3,25 @@
     <TitleBar />
     <div class="container">
       <SideBar />
-      <router-view class="layouts" />
+      <div ref="container" class="layouts">
+        <router-view class="router" />
+      </div>
+    </div>
+    <div v-if="showGoTop" class="go-top-button" @click="scrollToTop">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+      <span>Go Top</span>
     </div>
   </div>
 </template>
@@ -18,32 +36,33 @@ export default {
     SideBar
   },
   provide() {
+    const year = new Date().getFullYear()
     return {
-      formatCustomerId(value, year = new Date().getFullYear()) {
+      formatCustomerId(value) {
         if (!value) return ''
         return `KU-${year}-${String(value).padStart(5, '0')}`
       },
-      formatInvoiceId(value, year = new Date().getFullYear()) {
+      formatInvoiceId(value) {
         if (!value) return ''
         return `RE-${year}-${String(value).padStart(5, '0')}`
       },
-      formatOfferId(value, year = new Date().getFullYear()) {
+      formatOfferId(value) {
         if (!value) return ''
         return `ANG-${year}-${String(value).padStart(5, '0')}`
       },
-      formatOrderId(value, year = new Date().getFullYear()) {
+      formatOrderId(value) {
         if (!value) return ''
         return `AUF-${year}-${String(value).padStart(5, '0')}`
       },
-      formatPaymentId(value, year = new Date().getFullYear()) {
+      formatPaymentId(value) {
         if (!value) return ''
         return `ZA-${year}-${String(value).padStart(5, '0')}`
       },
-      formatReminderId(value, year = new Date().getFullYear()) {
+      formatReminderId(value) {
         if (!value) return ''
         return `MA-${year}-${String(value).padStart(5, '0')}`
       },
-      formatDeliveryId(value, year = new Date().getFullYear()) {
+      formatDeliveryId(value) {
         if (!value) return ''
         return `LI-${year}-${String(value).padStart(5, '0')}`
       },
@@ -132,11 +151,37 @@ export default {
         }
       }
     }
+  },
+
+  data() {
+    return {
+      showGoTop: false
+    }
+  },
+  mounted() {
+    const container = this.$refs.container
+    if (container) {
+      container.addEventListener('scroll', this.handleScroll)
+    }
+  },
+  methods: {
+    handleScroll(event) {
+      this.showGoTop = event.target.scrollTop > 300
+    },
+    scrollToTop() {
+      const container = this.$refs.container
+      if (container) {
+        container.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        })
+      }
+    }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .container {
   display: flex;
   width: 100%;
@@ -152,5 +197,45 @@ export default {
   height: 100%;
   padding: 30px 20px;
   overflow-y: auto;
+}
+.router {
+  width: 80%;
+}
+.go-top-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.go-top-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.go-top-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.go-top-button span {
+  font-size: 14px;
+  font-weight: 500;
+}
+@media (max-width: 1260px) {
+  .router {
+    width: 90%;
+  }
 }
 </style>

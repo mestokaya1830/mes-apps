@@ -1,32 +1,32 @@
 <template>
-  <div class="editor-panel">
-    <!-- Header Section -->
-    <div v-if="invoices" class="editor-header-block">
-      <div>
-        <h1 class="title">{{ title }} {{ invoices.length }}</h1>
-        <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
+  <div>
+    <div class="main-container">
+      <!-- Header Section -->
+      <div v-if="invoices" class="editor-header-block">
+        <div>
+          <h1 class="title">{{ title }} {{ invoices.length }}</h1>
+          <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
+        </div>
+        <router-link to="/customers" class="add-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Neue Rechnung erstellen</span>
+        </router-link>
       </div>
-      <router-link to="/customers" class="add-btn">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        <span>Neue Rechnung erstellen</span>
-      </router-link>
-    </div>
 
-    <div class="filter-container">
-      <div class="form-group">
-        <select v-model="categories_filter" class="select-input" @change="filterCategories">
+      <div class="filter-container">
+        <select v-model="categories_filter" class="filter-input" @change="filterCategories">
           <option value="" disabled>Kategorie</option>
           <option value="all">Alle</option>
           <option value="active">Aktiv</option>
@@ -35,88 +35,101 @@
           <option value="is_not_paid">Unbezahlt</option>
           <option value="is_partially_paid">Teilweise bezahlt</option>
         </select>
-      </div>
 
-      <div class="search-box">
         <input
           v-model="search_box"
+          class="filter-input"
           placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
           @input="searchInvoice"
         />
-        <span v-if="search_box && search_box.length < 4" class="hint">
-          Mindestens 2 Zeichen eingeben
-        </span>
+
+        <input
+          ref="date_box_start"
+          v-model="date_box_start"
+          type="date"
+          class="filter-input"
+          @input="filterDate()"
+        />
+        <input
+          ref="date_box_end"
+          v-model="date_box_end"
+          type="date"
+          class="filter-input"
+          @input="filterDate()"
+        />
+        <div class="sort-btn" @click="sorting('id')">&#8645;</div>
       </div>
 
-      <input ref="date_box_start" v-model="date_box_start" type="date" @input="filterDate()" />
-      <input ref="date_box_end" v-model="date_box_end" type="date" @input="filterDate()" />
-      <div @click="sorting('id')">&#8645;</div>
-      <router-link to="/reports/invoices" class="preview-btn"> 👁️ Report</router-link>
-    </div>
-    <!-- Invoice Grid -->
-    <div v-if="invoices" class="customer-grid">
-      <div v-for="item in invoices" :key="item.id" class="customer-card">
-        <!-- Card Header -->
-        <div class="card-header">
-          <div class="customer-avatar">
-            {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
-          </div>
-          <div class="customer-info">
-            <h3 class="customer-name">{{ formatInvoiceId(item.id) }}</h3>
-            <span class="customer-type-badge">{{ item.customer.company_name }}</span>
-            <span>{{ item.customer.first_name }} {{ item.customer.last_name }}</span>
-          </div>
-          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
-            {{ item.is_active ? 'Aktiv' : 'Storniert' }}
-          </div>
-          <div class="status-badge total">
-            {{ formatCurrency(item.gross_total, item.currency) }}
-          </div>
-          <router-link :to="`/payments/create/${item.id}`" class="status-badge payment">Zahlung erfassen</router-link>
-        </div>
+      <div v-if="search_box && search_box.length < 4" class="hint">
+        Mindestens 2 Zeichen eingeben
+      </div>
 
-        <!-- Card Actions -->
-        <div class="card-actions">
-          <!-- <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn"> -->
-          <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+      <!-- Invoice Grid -->
+      <div v-if="invoices" class="list-grid">
+        <div v-for="item in invoices" :key="item.id" class="list-card">
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="list-awatar">
+              {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
+            </div>
+            <div class="list-info">
+              <h3 class="list-name">{{ formatInvoiceId(item.id) }}</h3>
+              <span class="list-type-badge">{{ item.customer.company_name }}</span>
+              <span>{{ item.customer.first_name }} {{ item.customer.last_name }}</span>
+            </div>
+            <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+              {{ item.is_active ? 'Aktiv' : 'Storniert' }}
+            </div>
+            <div class="status-badge total">
+              {{ formatCurrency(item.gross_total, item.currency) }}
+            </div>
+            <router-link :to="`/payments/create/${item.id}`" class="status-badge payment"
+              >Zahlung erfassen</router-link
             >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            Details
-          </router-link>
+          </div>
+
+          <!-- Card Actions -->
+          <div class="card-actions">
+            <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              Details
+            </router-link>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Empty State -->
-    <div v-if="!invoices || invoices.length === 0" class="empty-state">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
-      <h3>Keine Rechnungen</h3>
-      <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
+      <!-- Empty State -->
+      <div v-if="!invoices || invoices.length === 0" class="empty-state">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="64"
+          height="64"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <h3>Keine Rechnungen</h3>
+        <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -217,7 +230,7 @@ export default {
             customer: row.customer ? JSON.parse(row.customer) : null
           }))
           console.log('date', this.invoices)
-          await store.setStore('date_filter', JSON.parse(JSON.stringify(date))) //for back from details page
+          await store.setStore('date_filter', JSON.parse(JSON.stringify(date)))
         }
       } catch (error) {
         console.error(error)
@@ -245,9 +258,7 @@ export default {
 </script>
 
 <style scoped>
-/* Kunden CSS aynı şekilde uygulanıyor */
-
-.editor-panel {
+.main-container {
   width: 100%;
   margin: 0 auto;
   padding: 40px 24px;
@@ -257,7 +268,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 80%;
+  width: 100%;
   margin-bottom: 40px;
   flex-wrap: wrap;
   gap: 20px;
@@ -298,15 +309,54 @@ export default {
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
 }
 
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  width: 100%;
+}
 
-/* Grid & Cards */
-.customer-grid {
-  display: grid;
+.filter-input {
+  padding: 10px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.hint {
   width: 80%;
+  font-size: 11px;
+  color: #e53e3e;
+  margin-bottom: 12px;
+}
+
+.sort-btn {
+  padding: 10px 16px;
+  background: #edf2f7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+  background: #e2e8f0;
+}
+.list-grid {
+  display: grid;
+  width: 100%;
   gap: 24px;
 }
 
-.customer-card {
+.list-card {
   background: white;
   border-radius: 16px;
   padding: 24px;
@@ -315,7 +365,7 @@ export default {
   border: 1px solid #e2e8f0;
 }
 
-.customer-card:hover {
+.list-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
@@ -326,9 +376,10 @@ export default {
   gap: 16px;
   margin-bottom: 20px;
   position: relative;
+  min-height: 90px;
 }
 
-.customer-avatar {
+.list-awatar {
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -342,12 +393,12 @@ export default {
   flex-shrink: 0;
 }
 
-.customer-info {
+.list-info {
   flex: 1;
   min-width: 0;
 }
 
-.customer-name {
+.list-name {
   font-size: 18px;
   font-weight: 600;
   color: #2d3748;
@@ -357,7 +408,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-.customer-type-badge {
+.list-type-badge {
   display: inline-block;
   padding: 4px 12px;
   background: #edf2f7;
@@ -375,32 +426,25 @@ export default {
   position: absolute;
   top: 0;
   right: 0;
+  text-decoration: none;
 }
 
 .status-badge.active {
   background: #c6f6d5;
   color: #000;
 }
+
 .status-badge.inactive {
   background: #dc2626;
   color: #fff;
 }
 
-.status-badge.paid {
-  background: #c6f6d5;
-  color: #000;
-  top: 30px;
-}
-.status-badge.unpaid {
-  background: #dc2626;
-  color: #fff;
-  top: 30px;
-}
 .status-badge.total {
   background-color: #667eea;
   color: #fff;
   top: 30px;
 }
+
 .status-badge.payment {
   background-color: cadetblue;
   color: #fff;
@@ -425,8 +469,6 @@ export default {
   font-weight: 600;
   font-size: 14px;
   text-decoration: none;
-  border: none;
-  cursor: pointer;
   transition: all 0.2s ease;
 }
 
@@ -440,17 +482,6 @@ export default {
   transform: translateY(-1px);
 }
 
-.delete-btn {
-  background: #fff5f5;
-  color: #c53030;
-}
-
-.delete-btn:hover {
-  background: #fed7d7;
-  transform: translateY(-1px);
-}
-
-/* Empty State */
 .empty-state {
   text-align: center;
   padding: 80px 20px;
@@ -471,11 +502,5 @@ export default {
 .empty-state p {
   margin: 0;
   font-size: 14px;
-}
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
 }
 </style>

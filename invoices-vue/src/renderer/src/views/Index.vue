@@ -9,54 +9,62 @@
     </div>
 
     <!-- Dashboard Cards -->
-    <div v-if="tablesCount" class="customer-grid">
-      <!-- customers Card -->
-      <div class="customer-card" @click="goTo('customers')" style="cursor: pointer">
+    <div v-if="tablesCount" class="dashboard-grid">
+      <!-- dashboards Card -->
+      <div class="dashboard-card" @click="goTo('dashboards')" style="cursor: pointer">
         <div class="card-header">
-          <div class="customer-avatar">📦</div>
-          <div class="customer-info">
-            <h3 class="customer-name">Customers</h3>
-            <span class="customer-type-badge">Gesamt: {{ tablesCount.customers }}</span>
+          <div class="dashboard-avatar">👥</div>
+          <div class="dashboard-info">
+            <h3 class="dashboard-name">Kunden</h3>
+            <span class="dashboard-type-badge">Gesamt: {{ tablesCount.dashboards }}</span>
           </div>
         </div>
       </div>
 
       <!-- Rechnungen Card -->
-      <div class="customer-card" @click="goTo('invoices')" style="cursor: pointer">
+      <div class="dashboard-card" @click="goTo('invoices')" style="cursor: pointer">
         <div class="card-header">
-          <div class="customer-avatar">💶</div>
-          <div class="customer-info">
-            <h3 class="customer-name">Rechnungen</h3>
-            <span class="customer-type-badge">Gesamt: {{ tablesCount.invoices }}</span>
+          <div class="dashboard-avatar">💶</div>
+          <div class="dashboard-info">
+            <h3 class="dashboard-name">Rechnungen</h3>
+            <span class="dashboard-type-badge">Gesamt: {{ tablesCount.invoices }}</span>
           </div>
         </div>
       </div>
 
       <!-- Angebote Card -->
-      <div class="customer-card" @click="goTo('offers')" style="cursor: pointer">
+      <div class="dashboard-card" @click="goTo('offers')" style="cursor: pointer">
         <div class="card-header">
-          <div class="customer-avatar">📄</div>
-          <div class="customer-info">
-            <h3 class="customer-name">Angebote</h3>
-            <span class="customer-type-badge">Gesamt: {{ tablesCount.offers }}</span>
+          <div class="dashboard-avatar">📄</div>
+          <div class="dashboard-info">
+            <h3 class="dashboard-name">Angebote</h3>
+            <span class="dashboard-type-badge">Gesamt: {{ tablesCount.offers }}</span>
           </div>
         </div>
       </div>
 
       <!-- Aufträge Card -->
-      <div class="customer-card" @click="goTo('orders')" style="cursor: pointer">
+      <div class="dashboard-card" @click="goTo('orders')" style="cursor: pointer">
         <div class="card-header">
-          <div class="customer-avatar">📦</div>
-          <div class="customer-info">
-            <h3 class="customer-name">Aufträge</h3>
-            <span class="customer-type-badge">Gesamt: {{ tablesCount.orders }}</span>
+          <div class="dashboard-avatar">📦</div>
+          <div class="dashboard-info">
+            <h3 class="dashboard-name">Aufträge</h3>
+            <span class="dashboard-type-badge">Gesamt: {{ tablesCount.orders }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- Aufträge Card -->
+      <div class="dashboard-card" @click="goTo('reports')" style="cursor: pointer">
+        <div class="card-header">
+          <div class="dashboard-avatar">📊</div>
+          <div class="dashboard-info">
+            <h3 class="dashboard-name">Berichte</h3>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 export default {
   data() {
@@ -108,9 +116,6 @@ export default {
   font-weight: 700;
   color: #1a202c;
   margin: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
@@ -119,14 +124,14 @@ export default {
   font-size: 14px;
 }
 
-.customer-grid {
+.dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 24px;
   width: 80%;
 }
 
-.customer-card {
+.dashboard-card {
   background: white;
   border-radius: 16px;
   padding: 24px;
@@ -138,7 +143,7 @@ export default {
   gap: 16px;
 }
 
-.customer-card:hover {
+.dashboard-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
@@ -149,7 +154,7 @@ export default {
   gap: 16px;
 }
 
-.customer-avatar {
+.dashboard-avatar {
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -163,19 +168,19 @@ export default {
   flex-shrink: 0;
 }
 
-.customer-info {
+.dashboard-info {
   flex: 1;
   min-width: 0;
 }
 
-.customer-name {
+.dashboard-name {
   font-size: 18px;
   font-weight: 600;
   color: #2d3748;
   margin: 0 0 6px 0;
 }
 
-.customer-type-badge {
+.dashboard-type-badge {
   display: inline-block;
   padding: 4px 12px;
   background: #edf2f7;
@@ -186,11 +191,11 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .customer-grid {
+  .dashboard-grid {
     grid-template-columns: 1fr;
   }
 }
-.customer-grid {
+.dashboard-grid {
   display: grid;
   gap: 24px;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Küçük/orta ekran */
@@ -198,7 +203,7 @@ export default {
 }
 
 /* Kartlar */
-.customer-card {
+.dashboard-card {
   display: grid;
   grid-template-columns: auto 1fr; /* Avatar + içerik yan yana */
   align-items: start;
@@ -214,18 +219,18 @@ export default {
   height: auto; /* İçerik kadar */
 }
 
-.customer-card:hover {
+.dashboard-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 /* TAM EKRAN (>1600px): alt alta, tam genişlik */
 @media (min-width: 1600px) {
-  .customer-grid {
+  .dashboard-grid {
     grid-template-columns: 1fr; /* Tek sütun */
   }
 
-  .customer-card {
+  .dashboard-card {
     width: 100%; /* Tam genişlik */
   }
 }
