@@ -212,32 +212,6 @@ const routes = [
     meta: { title: 'Erinnerungsvorschau', auth: true }
   },
 
-  //deliveries
-  {
-    path: '/deliveries',
-    name: 'deliveries',
-    component: () => import('../views/deliveries/Index.vue'),
-    meta: { title: 'Lieferungen', auth: true }
-  },
-  {
-    path: '/deliveries/create',
-    name: 'deliveries-create',
-    component: () => import('../views/deliveries/Create.vue'),
-    meta: { title: 'Neue Lieferung', auth: true }
-  },
-  {
-    path: '/deliveries/details/:id',
-    name: 'deliveries-details',
-    component: () => import('../views/deliveries/Details.vue'),
-    meta: { title: 'Lieferungsdetails', auth: true }
-  },
-  {
-    path: '/deliveries/preview',
-    name: 'deliveries-preview',
-    component: () => import('../views/deliveries/Preview.vue'),
-    meta: { title: 'Lieferungsvorschau', auth: true }
-  },
-
   //about
   {
     path: '/about',

@@ -41,3 +41,12 @@ try {
 // } catch (err) {
 //   console.error(err.message)
 // }
+
+
+
+try {
+  const result = db.prepare(`DrOP TABLE IF EXISTS deliveries`).run()
+  console.log('invoices with early_payment_days:', result)
+} catch (error) {
+  console.error(error.message)
+}
