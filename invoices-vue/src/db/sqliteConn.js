@@ -36,7 +36,7 @@ try {
 // }
 
 // try {
-//   const result = db.prepare(`Alter Table reminders RENAME Column main_text TO warning_text;`).run() // 1 → customer id
+//   const result = db.prepare(`Alter Table payments Add Column payment_total REAL;`).run() // 1 → customer id
 //   console.log(result)
 // } catch (err) {
 //   console.error(err.message)
@@ -44,9 +44,22 @@ try {
 
 
 
-try {
-  const result = db.prepare(`DrOP TABLE IF EXISTS deliveries`).run()
-  console.log('invoices with early_payment_days:', result)
-} catch (error) {
-  console.error(error.message)
-}
+// try {
+//   const result = db.prepare(`DROP TABLE IF EXISTS payments`).run()
+//   console.log('invoices with early_payment_days:', result)
+// } catch (error) {
+//   console.error(error.message)
+// }
+
+// try {
+//   const result = db.prepare(`Select * from payments;`).all()
+//   console.log('payments add payment_amount:', result)
+// } catch (error) {
+//   console.error(error.message)
+// }
+
+// try {
+//   const result = db.prepare(`Delete From payments;`).run() // 1 → customer id
+// } catch (error) {
+//   console.error(error.message)
+// }

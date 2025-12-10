@@ -232,31 +232,45 @@ CREATE TABLE IF NOT EXISTS orders (
 //----------------------------------------------------------------------------------------------
 db.exec(`
 CREATE TABLE IF NOT EXISTS payments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
-    invoice_id INTEGER NOT NULL,                     -- Foreign key to invoices
-    customer_id INTEGER NOT NULL,                    -- Foreign key to customers
-
-    payment_date TEXT NOT NULL,                      -- Payment date
-    payment_amount REAL NOT NULL,                       -- Amount paid in this payment
-    previously_paid_amount INTEGER NOT NULL,
-    outstanding_amount REAL NOT NULL DEFAULT 0,      -- Remaining amount after this payment
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    
+    -- Payment info
+    is_early_paid INTEGER NOT NULL,
+    payment_date TEXT NOT NULL,
+    payment_amount REAL NOT NULL,
+    payment_total REAL NOT NULL,
+    payment_method TEXT NOT NULL,
+    payment_reference TEXT NOT NULL,
+    
+    -- Counterparty info
+    counterparty_name TEXT NOT NULL,
+    counterparty_iban TEXT NOT NULL,
+    counterparty_bic TEXT NOT NULL,
+    counterparty_bank TEXT NOT NULL,
+    
+    -- Additional info
+    notes TEXT,
+    file_name TEXT,
     payment_status TEXT NOT NULL,
-    payment_method TEXT NOT NULL,                    -- Payment method
-    payment_reference TEXT NOT NULL,                 -- Payment reference / transaction ID
     
-    counterparty_name TEXT NOT NULL,                 -- Counterparty name
-    counterparty_iban TEXT NOT NULL,                 -- Counterparty IBAN
-
-    notes TEXT,                                     -- Optional payment notes
-    file_name TEXT,                                 -- Optional file / receipt name
-
-    invoice TEXT NOT NULL,
+    -- Invoice relation info
+    invoice_id INTEGER NOT NULL,
+    invoice_currency TEXT NOT NULL,
+    invoice_customer_id INTEGER NOT NULL,
+    invoice_date TEXT NOT NULL,
+    invoice_due_date TEXT NOT NULL,
+    invoice_gross_total REAL NOT NULL,
+    invoice_total_after_discount REAL NOT NULL,
+    invoice_early_payment_days INTEGER NOT NULL,
+    invoice_early_payment_discount REAL NOT NULL,
+    invoice_early_payment_percentage REAL NOT NULL,
     
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Record creation timestamp
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Record update timestamp
+    -- Timestamps
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
-    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+    FOREIGN KEY (invoice_customer_id) REFERENCES customers(id) ON DELETE CASCADE
 );
 `);
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- Zahlung erfassen Panel -->
+    <!-- Payment Capture Panel -->
     <div v-if="payment" class="editor-panel">
       <div class="editor-header">
         <div class="editor-title">💳 {{ title }}</div>
@@ -10,19 +10,19 @@
       </div>
 
       <div>
-        <!-- Rechnung auswählen (readonly) -->
+        <!-- 1️⃣ Invoice Information (readonly) -->
         <div class="form-section">
           <div class="form-section-title">📄 Ausgewählte Rechnung</div>
           <div class="customer-details" style="margin-top: 16px">
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Rechnung-Nr.:</label>
-                <label class="form-input">{{ formatInvoiceId(payment.invoice.id) }}</label>
+                <label class="form-input">{{ formatInvoiceId(payment.invoice_id) }}</label>
               </div>
               <div class="form-group">
                 <label class="form-label">Kunden-Nr.:</label>
                 <label class="form-input">{{
-                  formatCustomerId(payment.invoice.customer_id)
+                  formatCustomerId(payment.invoice_customer_id)
                 }}</label>
               </div>
             </div>
@@ -30,40 +30,37 @@
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Rechnungsdatum</label>
-                <label class="form-input">{{ formatDate(payment.invoice.date) }}</label>
+                <label class="form-input">{{ formatDate(payment.invoice_date) }}</label>
               </div>
               <div class="form-group">
                 <label class="form-label">Fälligkeitsdatum</label>
-                <label class="form-input">{{ formatDate(payment.invoice.due_date) }}</label>
+                <label class="form-input">{{ formatDate(payment.invoice_due_date) }}</label>
               </div>
             </div>
 
             <div class="form-group">
               <label class="form-input">
                 <div>
-                  Gesamtsumme: {{ formatCurrency(payment.invoice.gross_total, payment.currency) }}
+                  Gesamtsumme:
+                  {{ formatCurrency(payment.invoice_gross_total, payment.invoice_currency) }}
                 </div>
                 <div>
                   Bereits gezahlt:
-                  {{ formatCurrency(payment.previously_paid_amount, payment.currency) }}
+                  {{ formatCurrency(payment.payment_total, payment.invoice_currency) }}
                 </div>
                 <div>
                   Offener Betrag:
-                  {{
-                    formatCurrency(
-                      payment.invoice.gross_total - (payment.previously_paid_amount || 0),
-                      payment.currency
-                    )
-                  }}
+                  {{ formatCurrency(outstanding, payment.invoice_currency) }}
                 </div>
               </label>
             </div>
           </div>
         </div>
 
-        <!-- Gegenpartei Informationen -->
+        <!-- 2️⃣ Counterparty Information -->
         <div class="form-section">
           <div class="form-section-title">🏦 Gegenpartei Informationen</div>
+
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Name der Gegenpartei</label>
@@ -74,24 +71,50 @@
                 placeholder="z.B. Kunde / Lieferant"
               />
             </div>
+
             <div class="form-group">
               <label class="form-label">IBAN der Gegenpartei</label>
+              <div style="display: flex; gap: 6px; align-items: center">
+                <span v-if="ibanCountryFlag" style="font-size: 22px">{{ ibanCountryFlag }}</span>
+                <input
+                  v-model="payment.counterparty_iban"
+                  type="text"
+                  class="form-input"
+                  placeholder="DE00 0000 0000 0000 0000 00"
+                  @input="onIbanInput"
+                />
+              </div>
+              <small v-if="ibanError" style="color: red">{{ ibanError }}</small>
+              <small v-if="ibanValid" style="color: green">✓ IBAN ist gültig.</small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">BIC / Swift (optional)</label>
               <input
-                v-model="payment.counterparty_iban"
+                v-model="payment.counterparty_bic"
                 type="text"
                 class="form-input"
-                placeholder="DE00 0000 0000 0000 0000 00"
+                placeholder="z.B. COBADEFFXXX"
+                @input="onBicInput"
               />
+              <small v-if="bicError" style="color: red">{{ bicError }}</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Bankname (automatisch)</label>
+              <input v-model="payment.counterparty_bank" type="text" class="form-input" readonly />
             </div>
           </div>
         </div>
 
-        <!-- Währung -->
+        <!-- 3️⃣ Currency -->
         <div class="form-section">
           <div class="form-section-title">💰 Währung</div>
           <div class="form-group">
             <label class="form-label">Waehrung</label>
-            <select v-model="payment.invoice.currency" class="form-input">
+            <select v-model="payment.invoice_currency" class="form-input">
               <option value="EUR.de-DE">EUR</option>
               <option value="USD.en-US">USD</option>
               <option value="GBP.en-GB">GBP</option>
@@ -106,12 +129,12 @@
           </div>
         </div>
 
-        <!-- Zahlungsdetails -->
+        <!-- 4️⃣ Payment Details -->
         <div class="form-section">
           <div class="form-section-title">💰 Zahlungsdetails</div>
 
           <div class="form-group">
-            <label class="form-label">Zahlungsdatum <span class="stars">*</span></label>
+            <label class="form-label">Zahlungsdatum *</label>
             <input
               v-model="payment.payment_date"
               type="date"
@@ -122,10 +145,10 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Betrag (€) <span class="stars">*</span></label>
+            <label class="form-label">Betrag (€) *</label>
             <input
-              ref="paid_amount"
-              v-model="payment.paid_amount"
+              ref="payment_amount"
+              v-model="payment.payment_amount"
               type="number"
               class="form-input"
               @input="updateOutstandingAmount"
@@ -135,12 +158,14 @@
           <div class="form-row">
             <div class="form-group">
               <small class="form-label">Rabbat</small>
-              <small v-if="payment.is_early_paid">{{ payment.invoice.early_payment_discount }}</small>
+              <small v-if="payment.is_early_paid">{{
+                payment.invoice.early_payment_discount
+              }}</small>
               <small v-else>0</small>
             </div>
             <div class="form-group">
               <small class="form-label">Offener Betrag</small>
-              <small>{{ payment.outstanding_amount }}</small>
+              <small>{{ formatCurrency(outstanding, payment.invoice_currency) }}</small>
             </div>
           </div>
 
@@ -156,6 +181,7 @@
                 <option>Scheck</option>
               </select>
             </div>
+
             <div class="form-group">
               <label class="form-label">Zahlungsreferenz</label>
               <input
@@ -174,6 +200,7 @@
               <input type="file" class="form-input" accept=".pdf,image/*" @change="loadImage" />
               <small class="form-hint">PDF, JPG, PNG</small>
             </div>
+
             <div class="form-group">
               <label class="form-label">Ausgewählte Datei</label>
               <img v-if="selectedImage" :src="selectedImage" alt="" class="payment-image" />
@@ -197,7 +224,7 @@
           </div>
         </div>
 
-        <!-- preview button -->
+        <!-- 5️⃣ Preview / Submit -->
         <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
       </div>
     </div>
@@ -206,19 +233,172 @@
 
 <script>
 import store from '../../store/store'
+
+// Small offline BIC → bank name table
+// Mini BIC directory: DE, CH, AT
+const bicDirectory = {
+  // Germany (DE)
+  MARKDEF1100: 'Sparkasse Mark Brandenburg',
+  BYLADEM1001: 'Bayerische Landesbank (Sparkasse Bayern)',
+  WELADEMMXXX: 'Sparkasse Wels',
+  NOLADE21XXX: 'Sparkasse KölnBonn',
+  SPKODEFFXXX: 'Sparkasse Ostholstein',
+  COLSDE33XXX: 'Sparkasse Köln',
+  SPKIDEFFXXX: 'Sparkasse Ilmenau',
+  MALADE51XXX: 'Sparkasse Mainz',
+  HELADEF1XXX: 'Sparkasse Hessen',
+  SPSNDE66XXX: 'Sparkasse Nürnberg',
+  SOLADES1XXX: 'Sparkasse Solingen',
+  SPSWDE33XXX: 'Sparkasse Wiesbaden',
+  SPKBSDE33XXX: 'Sparkasse Braunschweig',
+  BSPADEFFXXX: 'Sparkasse Paderborn-Detmold',
+  SPKHDE2HXXX: 'Sparkasse Hannover',
+  DUSSDEDDXXX: 'Stadtsparkasse Düsseldorf',
+  ESSEDE5FXXX: 'Sparkasse Essen',
+  WELADED1XXX: 'Sparkasse Wetzlar',
+  SSKMDEMMXXX: 'Sparkasse Mittelmosel',
+  BYLADEM1ERD: 'Sparkasse Erding-Dorfen',
+  SPBKDEFFXXX: 'Sparkasse Berlin',
+  NASEDE55XXX: 'Sparkasse Neumünster',
+  GENODEF1S12: 'Volksbank Stuttgart',
+  COBADEFFXXX: 'Commerzbank',
+  DEUTDEFFXXX: 'Deutsche Bank',
+  DRESDEFFXXX: 'Commerzbank (vormals Dresdner Bank)',
+  HYVEDEMMXXX: 'UniCredit Bank (HypoVereinsbank)',
+  SOGEDEFFXXX: 'Société Générale',
+  PBNKDEFFXXX: 'Postbank',
+  DEUTDEDBBER: 'Deutsche Bank Berlin',
+  DEUTDEFF500: 'Deutsche Bank Frankfurt',
+  INGDDEFFXXX: 'ING-DiBa',
+  CSDBDE71XXX: 'Santander Consumer Bank',
+  GENODEF1M01: 'Volksbank München',
+  GENODED1DKD: 'Volksbank Dortmund',
+  GENODEM1GLS: 'GLS Bank',
+  HASPDEHHXXX: 'Hamburg Commercial Bank',
+
+  // Switzerland (CH)
+  UBSWCHZH80A: 'UBS AG',
+  CRESCHZZ80A: 'Credit Suisse AG',
+  ZKBKCHZZ80A: 'Zürcher Kantonalbank',
+  SGBSCHF0XXX: 'Swissquote Bank',
+  RAIFCH22XXX: 'Raiffeisen Bank',
+  BCITCHMMXXX: 'Bank CIC (Suisse) SA',
+  // Austria (AT)
+  BKAUATWW: 'Bank Austria',
+  SPAAAT2LXXX: 'Erste Bank',
+  RZBAATWW: 'Raiffeisen Bank Austria',
+  VBOEATWW: 'Volksbank Österreich',
+  HYPOAT2LXXX: 'Hypo Bank Austria'
+}
+//DE56 6305 0000 1011 6244 74
+// IBAN country → emoji flag
+const countryFlags = {
+  // Europa (IBAN members)
+  AD: '🇦🇩', // Andorra
+  AE: '🇦🇪', // United Arab Emirates (non-EU IBAN)
+  AL: '🇦🇱', // Albania
+  AT: '🇦🇹', // Austria
+  AZ: '🇦🇿', // Azerbaijan
+  BA: '🇧🇦', // Bosnia and Herzegovina
+  BE: '🇧🇪', // Belgium
+  BG: '🇧🇬', // Bulgaria
+  BH: '🇧🇭', // Bahrain
+  BR: '🇧🇷', // Brazil
+  CH: '🇨🇭', // Switzerland
+  CR: '🇨🇷', // Costa Rica
+  CY: '🇨🇾', // Cyprus
+  CZ: '🇨🇿', // Czech Republic
+  DE: '🇩🇪', // Germany
+  DK: '🇩🇰', // Denmark
+  DO: '🇩🇴', // Dominican Republic
+  EE: '🇪🇪', // Estonia
+  ES: '🇪🇸', // Spain
+  FI: '🇫🇮', // Finland
+  FO: '🇫🇴', // Faroe Islands
+  FR: '🇫🇷', // France
+  GB: '🇬🇧', // United Kingdom
+  GE: '🇬🇪', // Georgia
+  GI: '🇬🇮', // Gibraltar
+  GL: '🇬🇱', // Greenland
+  GR: '🇬🇷', // Greece
+  GT: '🇬🇹', // Guatemala
+  HR: '🇭🇷', // Croatia
+  HU: '🇭🇺', // Hungary
+  IE: '🇮🇪', // Ireland
+  IL: '🇮🇱', // Israel
+  IQ: '🇮🇶', // Iraq
+  IS: '🇮🇸', // Iceland
+  IT: '🇮🇹', // Italy
+  JO: '🇯🇴', // Jordan
+  KW: '🇰🇼', // Kuwait
+  KZ: '🇰🇿', // Kazakhstan
+  LB: '🇱🇧', // Lebanon
+  LC: '🇱🇨', // Saint Lucia
+  LI: '🇱🇮', // Liechtenstein
+  LT: '🇱🇹', // Lithuania
+  LU: '🇱🇺', // Luxembourg
+  LV: '🇱🇻', // Latvia
+  MC: '🇲🇨', // Monaco
+  MD: '🇲🇩', // Moldova
+  ME: '🇲🇪', // Montenegro
+  MK: '🇲🇰', // North Macedonia
+  MR: '🇲🇷', // Mauritania
+  MT: '🇲🇹', // Malta
+  MU: '🇲🇺', // Mauritius
+  NL: '🇳🇱', // Netherlands
+  NO: '🇳🇴', // Norway
+  PK: '🇵🇰', // Pakistan
+  PL: '🇵🇱', // Poland
+  PS: '🇵🇸', // Palestine
+  PT: '🇵🇹', // Portugal
+  QA: '🇶🇦', // Qatar
+  RO: '🇷🇴', // Romania
+  RS: '🇷🇸', // Serbia
+  SA: '🇸🇦', // Saudi Arabia
+  SC: '🇸🇨', // Seychelles
+  SE: '🇸🇪', // Sweden
+  SI: '🇸🇮', // Slovenia
+  SK: '🇸🇰', // Slovakia
+  SM: '🇸🇲', // San Marino
+  ST: '🇸🇹', // São Tomé and Príncipe
+  SV: '🇸🇻', // El Salvador
+  TL: '🇹🇱', // Timor-Leste
+  TN: '🇹🇳', // Tunisia
+  TR: '🇹🇷', // Turkey
+  UA: '🇺🇦', // Ukraine
+  VA: '🇻🇦', // Vatican
+  VG: '🇻🇬', // British Virgin Islands
+  XK: '🇽🇰' // Kosovo
+}
+
 export default {
   inject: ['formatInvoiceId', 'formatCustomerId', 'formatDate', 'formatCurrency'],
+
   data() {
     return {
       title: 'Zahlung erfassen',
       payment: null,
-      selectedImage: ''
+      selectedImage: '',
+      ibanError: '',
+      ibanValid: false,
+      ibanCountryFlag: '',
+
+      bicError: ''
+    }
+  },
+
+  computed: {
+    outstanding() {
+      return (
+        this.payment.invoice_gross_total -
+        (this.payment.payment_amount + Number(this.payment.payment_total))
+      ).toFixed(2)
     }
   },
   mounted() {
-    this.getInvoice()
     this.getStore()
   },
+
   methods: {
     async getInvoice() {
       const id = this.$route.params.id
@@ -229,35 +409,43 @@ export default {
         if (!result.rows) return
         this.payment = {
           id: result.payment_id + 1,
+          is_early_paid: false,
           payment_date: '',
-          previously_paid_amount: result.previously_paid_amount || 0,
-          paid_amount: 0,
+          payment_amount: 0,
+          payment_total: Number(result.payment_total).toFixed(2),
           payment_method: 'Überweisung',
           payment_reference: '',
-          payment_status: 'partially_paid',
-          notes: '',
-          is_early_paid: false,
           counterparty_name: '',
           counterparty_iban: '',
+          counterparty_bic: '',
+          counterparty_bank: '',
+          notes: '',
           file_name: '',
-          invoice: result.rows
+          payment_status: 'partially_paid',
+          invoice_id: result.rows.id,
+          invoice_currency: result.rows.currency,
+          invoice_customer_id: result.rows.customer_id,
+          invoice_date: result.rows.date,
+          invoice_due_date: result.rows.due_date,
+          invoice_gross_total: result.rows.gross_total,
+          invoice_total_after_discount: result.rows.total_after_discount,
+          invoice_early_payment_days: result.rows.early_payment_days,
+          invoice_early_payment_discount: result.rows.early_payment_discount,
+          invoice_early_payment_percentage: result.rows.early_payment_percentage
         }
-
-        this.payment.outstanding_amount = (
-          this.payment.invoice.gross_total - this.payment.previously_paid_amount
-        ).toFixed(2)
-
-        console.log('rows', this.payment)
-        // console.log('payment', this.payment)
+        //from payments db
+        console.log('payments', result)
       } catch (error) {
         console.error(error)
       }
     },
 
     getStore() {
-      if (!store.state.payment) return
+      // return this.getInvoice()
+      if (!store.state.payment) return this.getInvoice()
       this.payment = JSON.parse(JSON.stringify(store.state.payment))
       this.selectedImage = this.payment.image_file
+      console.log('store payment', this.payment)
     },
 
     loadImage(event) {
@@ -271,34 +459,29 @@ export default {
       }
       reader.readAsDataURL(file)
     },
+
     updateOutstandingAmount() {
       if (!this.payment || !this.payment.invoice) return
 
-      // Tarih kontrolü
-      if (this.payment.payment_date && this.payment.invoice.due_date) {
-        const paymentDate = new Date(this.payment.payment_date)
-        const dueDate = new Date(this.payment.invoice.due_date)
-        const earlyPaymentDate = new Date(paymentDate)
-        earlyPaymentDate.setDate(
-          earlyPaymentDate.getDate() + (this.payment.invoice.early_payment_days || 0)
-        )
-        this.payment.is_early_paid = earlyPaymentDate < dueDate
-      }
-
-      // Outstanding amount hesaplama
-      const grossTotal = this.payment.invoice.gross_total || 0
-      const paidAmount = Number(this.payment.paid_amount || 0)
-      const earlyDiscount = this.payment.is_early_paid
-        ? Number(this.payment.invoice.early_payment_discount || 0)
-        : 0
-
-      this.payment.outstanding_amount = (grossTotal - paidAmount - earlyDiscount).toFixed(2)
+      // if (this.payment.payment_date && this.payment.invoice_due_date) {
+      //   const paymentDate = new Date(this.payment.payment_date)
+      //   const dueDate = new Date(this.payment.invoice_due_date)
+      //   const earlyPaymentDate = new Date(paymentDate)
+      //   earlyPaymentDate.setDate(
+      //     earlyPaymentDate.getDate() + (this.payment.invoice_early_payment_days || 0)
+      //   )
+      //   this.payment.is_early_paid = earlyPaymentDate < dueDate
+      // } else {
+      //   this.payment.is_early_paid = false
+      // }
     },
+
     checkInputPayment() {
-      if (!this.payment.paid_amount || this.payment.paid_amount <= 0) {
-        this.$refs.paid_amount.focus()
+      if (!this.payment.payment_amount || this.payment.payment_amount <= 0) {
+        this.$refs.payment_amount.focus()
         return false
       }
+      return true
     },
 
     checkIsPaid() {
@@ -313,7 +496,76 @@ export default {
         this.payment.is_partially_paid = 0
       }
     },
+    onIbanInput() {
+      let iban = this.payment.counterparty_iban.toUpperCase()
+      iban = iban.replace(/[^A-Z0-9]/g, '')
+      iban = iban.replace(/(.{4})/g, '$1 ').trim()
+      this.payment.counterparty_iban = iban
 
+      const country = iban.slice(0, 2)
+      this.ibanCountryFlag = countryFlags[country] || ''
+
+      const validation = this.validateIban(iban)
+      if (!validation.valid) {
+        this.ibanError = validation.message
+        this.ibanValid = false
+      } else {
+        this.ibanError = ''
+        this.ibanValid = true
+      }
+    },
+
+    validateIban(ibanRaw) {
+      const iban = ibanRaw.replace(/\s+/g, '').toUpperCase()
+
+      if (iban.length < 4) return { valid: false, message: 'IBAN ist zu kurz.' }
+      if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(iban))
+        return { valid: false, message: 'Ungültiges IBAN-Format.' }
+
+      // Rearrange IBAN for mod 97
+      const rearranged = iban.slice(4) + iban.slice(0, 4)
+
+      // Convert letters to numbers (A=10 ... Z=35)
+      let numericIban = ''
+      for (const ch of rearranged) {
+        numericIban += /[A-Z]/.test(ch) ? ch.charCodeAt(0) - 55 : ch
+      }
+
+      // Mod 97 calculation (string-safe)
+      let remainder = numericIban
+      while (remainder.length > 2) {
+        const block = remainder.slice(0, 9) // 9 digits safe for JS Number
+        remainder = (parseInt(block, 10) % 97).toString() + remainder.slice(block.length)
+      }
+
+      if (parseInt(remainder, 10) % 97 !== 1) {
+        return { valid: false, message: 'Die IBAN-Prüfsumme ist ungültig.' }
+      }
+
+      return { valid: true }
+    },
+
+    onBicInput() {
+      const bic = this.payment.counterparty_bic.toUpperCase().replace(/[^A-Z0-9]/g, '')
+      this.payment.counterparty_bic = bic
+
+      if (bic.length < 8) {
+        this.bicError = 'Ungültiger BIC. Mindestens 8 Zeichen.'
+        this.payment.counterparty_bank = ''
+        return
+      }
+
+      if (!/^[A-Z0-9]{8,11}$/.test(bic)) {
+        this.bicError = 'Ungültiges BIC-Format.'
+        this.payment.counterparty_bank = ''
+        return
+      }
+
+      this.bicError = ''
+
+      // Bank lookup
+      this.payment.counterparty_bank = bicDirectory[bic] || 'Unbekannte Bank'
+    },
     async submitStore() {
       if (!this.checkInputPayment()) return
       this.checkIsPaid()

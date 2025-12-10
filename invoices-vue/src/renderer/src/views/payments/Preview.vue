@@ -7,7 +7,7 @@
         <!-- Modal -->
         <div>
           <div class="modal">
-            <h3>Payment Details</h3>
+            <h3>Zahlungsdetails</h3>
             <table class="modal-table">
               <tbody>
                 <tr>
@@ -15,82 +15,84 @@
                   <td>{{ formatPaymentId(paymentPreview.id) }}</td>
                 </tr>
                 <tr>
-                  <td>Invoice ID</td>
+                  <td>Rechnungs-ID</td>
                   <td>{{ formatInvoiceId(paymentPreview.invoice_id) }}</td>
                 </tr>
                 <tr>
-                  <td>Customer ID</td>
-                  <td>{{ paymentPreview.customer_id }}</td>
+                  <td>Kunden-ID</td>
+                  <td>{{ formatCustomerId(paymentPreview.invoice_customer_id) }}</td>
                 </tr>
                 <tr>
-                  <td>Invoice Date</td>
-                  <td>{{ paymentPreview.invoice_date }}</td>
+                  <td>Rechnungsdatum</td>
+                  <td>{{ formatDate(paymentPreview.invoice_date) }}</td>
                 </tr>
                 <tr>
-                  <td>Invoice Due Date</td>
-                  <td>{{ paymentPreview.invoice_due_date }}</td>
+                  <td>Fälligkeitsdatum</td>
+                  <td>{{ formatDate(paymentPreview.invoice_due_date) }}</td>
                 </tr>
                 <tr>
-                  <td>Invoice Total</td>
-                  <td>
-                    {{ formatCurrency(paymentPreview.invoice_total, paymentPreview.currency) }}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Currency</td>
-                  <td>{{ paymentPreview.currency }}</td>
-                </tr>
-                <tr>
-                  <td>Payment Date</td>
+                  <td>Zahlungsdatum</td>
                   <td>{{ formatDate(paymentPreview.payment_date) }}</td>
                 </tr>
                 <tr>
-                  <td>Paid Amount</td>
+                  <td>Währung</td>
+                  <td>{{ paymentPreview.invoice_currency }}</td>
+                </tr>
+                <tr>
+                  <td>Rechnungsbetrag</td>
                   <td>
-                    {{ formatCurrency(paymentPreview.paid_amount, paymentPreview.currency) }}
+                    {{
+                      formatCurrency(
+                        paymentPreview.invoice_gross_total,
+                        paymentPreview.invoice_currency
+                      )
+                    }}
                   </td>
                 </tr>
                 <tr>
-                  <td>Outstanding Amount</td>
+                  <td>Bezahlter Betrag</td>
                   <td>
-                    {{ formatCurrency(paymentPreview.outstanding_amount, paymentPreview.currency) }}
+                    {{
+                      formatCurrency(paymentPreview.payment_amount, paymentPreview.invoice_currency)
+                    }}
                   </td>
                 </tr>
                 <tr>
-                  <td>Payment Method</td>
+                  <td>Offener Betrag</td>
+                  <td>
+                    {{ formatCurrency(outstanding, paymentPreview.invoice_currency) }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Zahlungsmethode</td>
                   <td>{{ paymentPreview.payment_method }}</td>
                 </tr>
                 <tr>
-                  <td>Payment Reference</td>
+                  <td>Zahlungsreferenz</td>
                   <td>{{ paymentPreview.payment_reference }}</td>
                 </tr>
                 <tr>
-                  <td>Counterparty Name</td>
+                  <td>Name der Gegenpartei</td>
                   <td>{{ paymentPreview.counterparty_name }}</td>
                 </tr>
                 <tr>
-                  <td>Counterparty IBAN</td>
+                  <td>IBAN der Gegenpartei</td>
                   <td>{{ paymentPreview.counterparty_iban }}</td>
                 </tr>
                 <tr>
-                  <td>Notes</td>
+                  <td>Notizen</td>
                   <td>{{ paymentPreview.notes }}</td>
                 </tr>
                 <tr>
-                  <td>Is Partially Paid</td>
-                  <td>{{ paymentPreview.is_partially_paid }}</td>
+                  <td>Zahlungsstatus</td>
+                  <td>{{ paymentPreview.payment_status }}</td>
                 </tr>
                 <tr>
-                  <td>Is Paid</td>
-                  <td>{{ paymentPreview.is_paid }}</td>
-                </tr>
-                <tr>
-                  <td>File Name</td>
+                  <td>Dateiname</td>
                   <td>{{ paymentPreview.file_name }}</td>
                 </tr>
               </tbody>
             </table>
-            <button class="close-button" @click="closePaymentModal">Close</button>
           </div>
         </div>
 
@@ -124,10 +126,11 @@
       :to="`/payments/create/${paymentPreview.invoice_id}`"
       class="back-link"
     >
-      ← Zurück zur Rechnungsdetails
+      ← Zurück zu den Rechnungsdetails
     </router-link>
   </div>
 </template>
+
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
@@ -155,6 +158,14 @@ export default {
       title: 'Zahlungbestätigung',
       paymentPreview: null,
       auth: null
+    }
+  },
+  computed: {
+    outstanding() {
+      return (
+        this.paymentPreview.invoice_gross_total -
+        (this.paymentPreview.payment_amount + Number(this.paymentPreview.total_paid_amount))
+      ).toFixed(2)
     }
   },
   mounted() {

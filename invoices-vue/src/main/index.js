@@ -740,7 +740,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
   try {
     //from invoices details
     if (table_name === 'invoices') {
-      let rows = db
+      const rows = db
         .prepare(
           `
             SELECT *
@@ -750,17 +750,16 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
         )
         .get(id)
 
-      let payments = db
+      const payments = db
         .prepare(
           `
             SELECT *
             FROM payments
-            WHERE invoice_id = ?
+            WHERE invoice_id = ? ORDER BY id DESC
           `
         )
         .all(id)
-      rows.payments = payments
-      return { success: true, rows }
+      return { success: true, rows, payments }
     }
 
     //from payments create
@@ -777,10 +776,10 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
       const payment_id =
         db.prepare(`SELECT id FROM payments As id ORDER BY id DESC LIMIT 1;`).get()?.id ?? 0
 
-      const previously_paid_amount =
-        db.prepare(`SELECT sum(previously_paid_amount) As total FROM payments WHERE invoice_id = ?`)
+      const payment_total =
+        db.prepare(`SELECT sum(payment_amount) As total FROM payments WHERE invoice_id = ?`).get(id)
           ?.total ?? 0
-      return { success: true, rows, payment_id, previously_paid_amount }
+      return { success: true, rows, payment_id, payment_total }
     }
 
     //from reminders create
@@ -1388,6 +1387,7 @@ ipcMain.handle('cancel-order', async (event, payload) => {
   }
 })
 
+//payments
 ipcMain.handle('add-payment', async (event, payload) => {
   if (!payload) return { success: false, message: 'No data provided' }
 
@@ -1398,44 +1398,56 @@ ipcMain.handle('add-payment', async (event, payload) => {
       .prepare(
         `
         INSERT INTO payments (
-          invoice_id,
-          customer_id,
-          invoice_date,
-          invoice_due_date,
-          currency,
-          invoice_total,
+          is_early_paid,
           payment_date,
-          paid_amount,
-          outstanding_amount,
+          payment_amount,
+          payment_total,
           payment_method,
           payment_reference,
           counterparty_name,
           counterparty_iban,
+          counterparty_bic,
+          counterparty_bank,
           notes,
-          is_partially_paid,
-          is_paid,
-          file_name
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          file_name,
+          payment_status,
+          invoice_id,
+          invoice_currency,
+          invoice_customer_id,
+          invoice_date,
+          invoice_due_date,
+          invoice_gross_total,
+          invoice_total_after_discount,
+          invoice_early_payment_days,
+          invoice_early_payment_discount,
+          invoice_early_payment_percentage
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
       .run(
-        payment.invoice_id,
-        payment.customer_id,
-        payment.invoice_date,
-        payment.invoice_due_date,
-        payment.currency,
-        payment.invoice_total,
+        payment.is_early_paid ? 1 : 0,
         payment.payment_date,
-        payment.paid_amount,
-        payment.outstanding_amount,
+        payment.payment_amount,
+        payment.payment_total,
         payment.payment_method,
         payment.payment_reference,
         payment.counterparty_name,
         payment.counterparty_iban,
+        payment.counterparty_bic,
+        payment.counterparty_bank,
         payment.notes,
-        payment.is_partially_paid ? 1 : 0,
-        payment.is_paid ? 1 : 0,
-        payment.file_name
+        payment.file_name,
+        payment.payment_status,
+        payment.invoice_id,
+        payment.invoice_currency,
+        payment.invoice_customer_id,
+        payment.invoice_date,
+        payment.invoice_due_date,
+        payment.invoice_gross_total,
+        payment.invoice_total_after_discount,
+        payment.invoice_early_payment_days,
+        payment.invoice_early_payment_discount,
+        payment.invoice_early_payment_percentage
       )
 
     // Save file if uploaded

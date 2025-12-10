@@ -7,100 +7,97 @@
         <!-- Modal -->
         <div>
           <div class="modal">
-            <h3>Payment Details</h3>
+            <h3>Zahlungsdetails</h3>
             <table class="modal-table">
               <tbody>
                 <tr>
                   <td>ID</td>
-                  <td>{{ payment.id }}</td>
+                  <td>{{ formatPaymentId(payment.id) }}</td>
                 </tr>
                 <tr>
-                  <td>Invoice ID</td>
-                  <td>{{ payment.invoice_id }}</td>
+                  <td>Rechnungs-ID</td>
+                  <td>{{ formatInvoiceId(payment.invoice_id) }}</td>
                 </tr>
                 <tr>
-                  <td>Customer ID</td>
-                  <td>{{ payment.customer_id }}</td>
+                  <td>Kunden-ID</td>
+                  <td>{{ formatCustomerId(payment.invoice_customer_id) }}</td>
+                </tr> 
+                <tr>
+                  <td>Rechnungsdatum</td>
+                  <td>{{ formatDate(payment.invoice_date) }}</td>
                 </tr>
                 <tr>
-                  <td>Invoice Date</td>
-                  <td>{{ payment.invoice_date }}</td>
+                  <td>Fälligkeitsdatum</td>
+                  <td>{{ formatDate(payment.invoice_due_date) }}</td>
                 </tr>
                 <tr>
-                  <td>Invoice Due Date</td>
-                  <td>{{ payment.invoice_due_date }}</td>
-                </tr>
-                <tr>
-                  <td>Invoice Total</td>
-                  <td>
-                    {{ formatCurrency(payment.invoice_total, payment.currency) }}
-                  </td>
-                </tr>
-                <tr>
-                  <td>Currency</td>
-                  <td>{{ payment.currency }}</td>
-                </tr>
-                <tr>
-                  <td>Payment Date</td>
+                  <td>Zahlungsdatum</td>
                   <td>{{ formatDate(payment.payment_date) }}</td>
                 </tr>
                 <tr>
-                  <td>Paid Amount</td>
+                  <td>Währung</td>
+                  <td>{{ payment.invoice_currency }}</td>
+                </tr>
+                
+                <tr>
+                  <td>Rechnungssumme</td>
                   <td>
-                    {{ formatCurrency(payment.paid_amount, payment.currency) }}
+                    {{ formatCurrency(payment.invoice_gross_total, payment.currency) }}
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td>Gezahlter Betrag</td>
+                  <td>
+                    {{ formatCurrency(payment.payment_amount, payment.invoice_currency) }}
                   </td>
                 </tr>
                 <tr>
-                  <td>Outstanding Amount</td>
+                  <td>Ausstehender Betrag</td>
                   <td>
-                    {{ formatCurrency(payment.outstanding_amount, payment.currency) }}
+                    {{ formatCurrency((payment.invoice_gross_total - payment.payment_amount).toFixed(2), payment.invoice_currency) }}
                   </td>
                 </tr>
                 <tr>
-                  <td>Payment Method</td>
+                  <td>Zahlungsmethode</td>
                   <td>{{ payment.payment_method }}</td>
                 </tr>
                 <tr>
-                  <td>Payment Reference</td>
+                  <td>Zahlungsreferenz</td>
                   <td>{{ payment.payment_reference }}</td>
                 </tr>
                 <tr>
-                  <td>Counterparty Name</td>
+                  <td>Name der Gegenpartei</td>
                   <td>{{ payment.counterparty_name }}</td>
                 </tr>
                 <tr>
-                  <td>Counterparty IBAN</td>
+                  <td>IBAN der Gegenpartei</td>
                   <td>{{ payment.counterparty_iban }}</td>
                 </tr>
                 <tr>
-                  <td>Notes</td>
+                  <td>Notizen</td>
                   <td>{{ payment.notes }}</td>
                 </tr>
                 <tr>
-                  <td>Is Partially Paid</td>
-                  <td>{{ payment.is_partially_paid }}</td>
+                  <td>Zahlungsstatus</td>
+                  <td>{{ payment.payment_status }}</td>
                 </tr>
                 <tr>
-                  <td>Is Paid</td>
-                  <td>{{ payment.is_paid }}</td>
-                </tr>
-                <tr>
-                  <td>File Name</td>
+                  <td>Dateiname</td>
                   <td>{{ payment.file_name }}</td>
                 </tr>
                 <tr>
-                  <td>Created At</td>
+                  <td>Erstellt am</td>
                   <td>{{ payment.created_at }}</td>
                 </tr>
                 <tr>
-                  <td>Updated At</td>
+                  <td>Aktualisiert am</td>
                   <td>{{ payment.updated_at }}</td>
                 </tr>
               </tbody>
             </table>
 
             <img :src="`/uploads/payments/${payment.file_name}`" :alt="`payment.file_name`" alt="" class="img">
-            <button class="close-button" @click="closePaymentModal">Close</button>
           </div>
         </div>
 
@@ -161,6 +158,14 @@ export default {
       auth: null
     }
   },
+  computed: {
+    outstanding() {
+      return (
+        this.payment.invoice_gross_total -
+        (this.payment.payment_amount + Number(this.payment.total_paid_amount))
+      ).toFixed(2)
+    }
+  },
   mounted() {
     this.getPayment()
     this.getAuth()
@@ -172,7 +177,6 @@ export default {
         const result = await window.api.getPaymentById(this.$route.params.id)
         if (!result.success) return
         this.payment = result.rows
-        console.log('payment-details', this.payment)
       } catch (error) {
         console.error(error)
       }

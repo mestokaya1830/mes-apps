@@ -281,8 +281,6 @@ export default {
   font-weight: 700;
   color: #1a202c;
   margin: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {

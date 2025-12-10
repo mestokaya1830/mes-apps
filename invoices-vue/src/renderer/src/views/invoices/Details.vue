@@ -56,7 +56,7 @@
             </div>
 
             <div v-else-if="!invoice.is_in_eu && invoice.vat_id" class="meta-row">
-              <span class="meta-label">VAT ID:</span>
+              <span class="meta-label">USt-IdNr.:</span>
               <span class="meta-value">{{ invoice.vat_id }}</span>
             </div>
           </div>
@@ -165,13 +165,13 @@
 
             <div v-else-if="invoice.is_eu_delivery" class="tax-note">
               ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß
-              <span>§4 Nr.1b UStG</span> (Europa içi)
+              <span>§4 Nr.1b UStG</span>
             </div>
           </div>
         </div>
 
         <!-- payment -->
-        <div  class="payment-terms-box">
+        <div class="payment-terms-box">
           <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
 
           <div class="payment-terms-content">
@@ -224,25 +224,34 @@
       </div>
 
       <!-- payment list -->
-      <div v-if="invoice.payments" class="customer-grid">
+      <div v-if="payments && payments.length" class="customer-grid">
         <table class="table-auto w-full border">
           <thead>
             <tr>
-              <th class="border px-2 py-1">ZahlungID</th>
-              <th class="border px-2 py-1">Payment Date</th>
-              <th class="border px-2 py-1">Invoice Total</th>
-              <th class="border px-2 py-1">Paid Amount</th>
-              <th class="border px-2 py-1">Outstanding</th>
+              <th class="border px-2 py-1">Zahlungs-ID</th>
+              <th class="border px-2 py-1">Zahlungsdatum</th>
+              <th class="border px-2 py-1">Rechnungssumme</th>
+              <th class="border px-2 py-1">Gezahlter Betrag</th>
+              <th class="border px-2 py-1">Ausstehend</th>
               <th class="border px-2 py-1">Details</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in invoice.payments" :key="item.id">
+            <tr v-for="item in payments" :key="item.id">
               <td class="border px-2 py-1">{{ formatPaymentId(item.id) }}</td>
               <td class="border px-2 py-1">{{ item.payment_date }}</td>
-              <td class="border px-2 py-1">{{ item.invoice_total }}</td>
-              <td class="border px-2 py-1">{{ item.paid_amount }}</td>
-              <td class="border px-2 py-1">{{ item.outstanding_amount }}</td>
+              <td class="border px-2 py-1">
+                {{ formatCurrency(item.invoice_gross_total, item.invoice_currency) }}
+              </td>
+              <td class="border px-2 py-1">
+                {{ formatCurrency(item.payment_amount, item.invoice_currency) }}
+              </td>
+              <td class="border px-2 py-1">
+                {{
+                  formatCurrency(outstanding, item.invoice_currency)
+                  
+                }}
+              </td>
               <td class="border px-2 py-1">
                 <router-link :to="'/payments/details/' + item.id" class="action-btn details-btn">
                   <svg
@@ -264,8 +273,8 @@
             </tr>
           </tbody>
         </table>
+        <router-link :to="`/reminders/create/${invoice.id}`">Mahnung erstellen</router-link>
       </div>
-      <router-link :to="`/reminders/create/${invoice.id}`">Mahnung erstellen</router-link>
       <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
@@ -298,6 +307,8 @@ export default {
     return {
       title: 'Rechnung',
       invoice: null,
+      payments: [],
+      total_paid_amount: 0,
       auth: null
     }
   },
@@ -321,6 +332,9 @@ export default {
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions)
         }
+        this.payments = result.payments
+        this.total_paid_amount = Number(result.total_paid_amount).toFixed(2)
+        console.log('Invoice Data:', result.payments)
       } catch (error) {
         console.error(error)
       }
@@ -735,7 +749,7 @@ tbody tr:hover {
 /* Buton basit stil */
 button {
   padding: 4px 8px;
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
@@ -750,7 +764,12 @@ button:hover {
 
 /* Responsive küçük ekranlar için */
 @media (max-width: 768px) {
-  table, thead, tbody, th, td, tr {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
     display: block;
   }
 
