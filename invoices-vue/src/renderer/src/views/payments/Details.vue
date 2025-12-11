@@ -21,7 +21,7 @@
                 <tr>
                   <td>Kunden-ID</td>
                   <td>{{ formatCustomerId(payment.invoice_customer_id) }}</td>
-                </tr> 
+                </tr>
                 <tr>
                   <td>Rechnungsdatum</td>
                   <td>{{ formatDate(payment.invoice_date) }}</td>
@@ -38,14 +38,14 @@
                   <td>Währung</td>
                   <td>{{ payment.invoice_currency }}</td>
                 </tr>
-                
+
                 <tr>
                   <td>Rechnungssumme</td>
                   <td>
                     {{ formatCurrency(payment.invoice_gross_total, payment.currency) }}
                   </td>
                 </tr>
-                
+
                 <tr>
                   <td>Gezahlter Betrag</td>
                   <td>
@@ -55,7 +55,12 @@
                 <tr>
                   <td>Ausstehender Betrag</td>
                   <td>
-                    {{ formatCurrency((payment.invoice_gross_total - payment.payment_amount).toFixed(2), payment.invoice_currency) }}
+                    {{
+                      formatCurrency(
+                        (payment.invoice_gross_total - payment.payment_amount).toFixed(2),
+                        payment.invoice_currency
+                      )
+                    }}
                   </td>
                 </tr>
                 <tr>
@@ -96,8 +101,12 @@
                 </tr>
               </tbody>
             </table>
-
-            <img :src="`/uploads/payments/${payment.file_name}`" :alt="`payment.file_name`" alt="" class="img">
+            <div v-if="payment.file_name" class="download-container">
+              <img :src="`/uploads/payments/${payment.file_name}`" alt="No image" class="img" />
+              <a :href="`/uploads/payments/${payment.file_name}`" :download="payment.file_name">
+                <button class="btn-download">Datei herunterladen</button>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -117,9 +126,12 @@
           </div>
         </div>
 
-        <FooterSidePreview />
+        <FooterSidePreview /> 
       </div>
 
+      <router-link :to="'/invoices/details/' + payment.invoice_id" class="back-link">Zuruckzahlung</router-link>
+
+      <!-- Actions Button -->
       <ActionsButtonPreview v-if="payment" :tableData="payment" sourcePage="details" />
     </div>
 
@@ -190,10 +202,10 @@ export default {
 </script>
 
 <style scoped>
-  .img {
-    width: 100px;
-    height: 100px;
-  }
+.img {
+  width: 200px;
+  height: 140px;
+}
 .preview-panel {
   width: 80%;
   background: white;
@@ -257,5 +269,20 @@ export default {
 }
 .close-button:hover {
   background-color: #a71d2a;
+}
+
+.download-container{
+display: flex;
+flex-direction: column;
+margin-top: 1rem;
+}
+.btn-download {
+  margin-top: 1rem;
+  padding: 6px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>

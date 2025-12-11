@@ -153,6 +153,7 @@
               class="form-input"
               @input="updateOutstandingAmount"
             />
+            <small v-if="paymentAmountError" class="form-warning">Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small>
           </div>
 
           <div class="form-row">
@@ -382,8 +383,8 @@ export default {
       ibanError: '',
       ibanValid: false,
       ibanCountryFlag: '',
-
-      bicError: ''
+      bicError: '',
+      paymentAmountError: false
     }
   },
 
@@ -412,7 +413,7 @@ export default {
           is_early_paid: false,
           payment_date: '',
           payment_amount: 0,
-          payment_total: Number(result.payment_total).toFixed(2),
+          payment_total: result.payment_total,
           payment_method: 'Überweisung',
           payment_reference: '',
           counterparty_name: '',
@@ -431,7 +432,8 @@ export default {
           invoice_total_after_discount: result.rows.total_after_discount,
           invoice_early_payment_days: result.rows.early_payment_days,
           invoice_early_payment_discount: result.rows.early_payment_discount,
-          invoice_early_payment_percentage: result.rows.early_payment_percentage
+          invoice_early_payment_percentage: result.rows.early_payment_percentage,
+          payment_total_from_db: result.payment_total //claulation again for back from preview
         }
         //from payments db
         console.log('payments', result)
@@ -444,6 +446,9 @@ export default {
       // return this.getInvoice()
       if (!store.state.payment) return this.getInvoice()
       this.payment = JSON.parse(JSON.stringify(store.state.payment))
+
+      //claulation again for back from preview
+      this.payment.payment_total = this.payment.payment_total_from_db || 0
       this.selectedImage = this.payment.image_file
       console.log('store payment', this.payment)
     },
@@ -484,18 +489,6 @@ export default {
       return true
     },
 
-    checkIsPaid() {
-      if (this.payment.outstanding_amount == 0) {
-        this.payment.is_paid = 1
-        this.payment.is_partially_paid = 0
-      } else if (this.payment.outstanding_amount < this.payment.invoice_total) {
-        this.payment.is_paid = 0
-        this.payment.is_partially_paid = 1
-      } else {
-        this.payment.is_paid = 0
-        this.payment.is_partially_paid = 0
-      }
-    },
     onIbanInput() {
       let iban = this.payment.counterparty_iban.toUpperCase()
       iban = iban.replace(/[^A-Z0-9]/g, '')
@@ -568,8 +561,18 @@ export default {
     },
     async submitStore() {
       if (!this.checkInputPayment()) return
-      this.checkIsPaid()
       this.payment.image_file = this.selectedImage
+      this.payment.payment_total += this.payment.payment_amount
+      if (this.payment.payment_total >= this.payment.invoice_gross_total) {
+        this.payment.is_paid = 1
+        this.payment.payment_status = 'paid'
+        this.payment.is_partially_paid = 0
+      }
+      if (this.payment.payment_total > this.payment.invoice_gross_total) {
+        this.$refs.payment_amount.focus()
+        this.paymentAmountError = true
+        return
+      }
       await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
       this.$router.push('/payments/preview')
     }
@@ -735,5 +738,10 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(26px);
+}
+
+.form-warning {
+  color: red;
+  margin-top: 10px;
 }
 </style>

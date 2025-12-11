@@ -163,8 +163,7 @@ export default {
   computed: {
     outstanding() {
       return (
-        this.paymentPreview.invoice_gross_total -
-        (this.paymentPreview.payment_amount + Number(this.paymentPreview.total_paid_amount))
+        this.paymentPreview.invoice_gross_total - this.paymentPreview.payment_total
       ).toFixed(2)
     }
   },

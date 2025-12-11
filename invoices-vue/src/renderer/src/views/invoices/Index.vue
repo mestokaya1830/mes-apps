@@ -85,10 +85,11 @@
             <div class="status-badge total">
               {{ formatCurrency(item.gross_total, item.currency) }}
             </div>
-            <router-link :to="`/payments/create/${item.id}`" class="status-badge payment"
-              >Zahlung erfassen</router-link
+              <router-link v-if="item.payment_status !== 'paid'" :to="`/payments/create/${item.id}`" class="status-badge payment"
+                >Zahlung erfassen</router-link
             >
-          </div>
+            <div v-else class="status-badge payment">Bezahlt</div>
+            </div>
 
           <!-- Card Actions -->
           <div class="card-actions">

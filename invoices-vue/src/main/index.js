@@ -717,10 +717,18 @@ ipcMain.handle('get-invoices', async () => {
     const rows = db
       .prepare(
         `
-          SELECT id, date, due_date, gross_total, is_active, customer
-          FROM invoices
-          WHERE is_active = 1
-          ORDER BY id DESC
+          SELECT 
+            i.id, 
+            i.date, 
+            i.due_date, 
+            i.gross_total, 
+            i.is_active, 
+            i.customer,
+            p.payment_status
+          FROM invoices i
+          LEFT JOIN payments p ON p.invoice_id = i.id
+          WHERE i.is_active = 1
+          ORDER BY i.id DESC
           LIMIT ?
         `
       )
@@ -1421,7 +1429,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
           invoice_early_payment_days,
           invoice_early_payment_discount,
           invoice_early_payment_percentage
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
       .run(

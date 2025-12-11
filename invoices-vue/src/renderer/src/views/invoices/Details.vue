@@ -248,8 +248,10 @@
               </td>
               <td class="border px-2 py-1">
                 {{
-                  formatCurrency(outstanding, item.invoice_currency)
-                  
+                  formatCurrency(
+                    item.invoice_gross_total - item.payment_total,
+                    item.invoice_currency
+                  )
                 }}
               </td>
               <td class="border px-2 py-1">
