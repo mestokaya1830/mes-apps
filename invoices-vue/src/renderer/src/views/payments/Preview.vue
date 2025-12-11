@@ -49,6 +49,29 @@
                     }}
                   </td>
                 </tr>
+                <tr v-if="paymentPreview.is_early_paid">
+                  <td>Rabatt</td>
+                  <td>
+                    {{
+                      formatCurrency(
+                        paymentPreview.invoice_early_payment_discount,
+                        paymentPreview.invoice_currency
+                      )
+                    }}
+                  </td>
+                </tr>
+                <tr v-if="paymentPreview.is_early_paid">
+                  <td>Gesamtbetrag nach Rabatt</td>
+                  <td>
+                    {{
+                      formatCurrency(
+                        paymentPreview.invoice_total_after_discount,
+                        paymentPreview.invoice_currency
+                      )
+                    }}
+                  </td>
+                </tr>
+
                 <tr>
                   <td>Bezahlter Betrag</td>
                   <td>
@@ -60,7 +83,7 @@
                 <tr>
                   <td>Offener Betrag</td>
                   <td>
-                    {{ formatCurrency(outstanding, paymentPreview.invoice_currency) }}
+                    {{ formatCurrency(this.paymentPreview.outstanding, paymentPreview.invoice_currency) }}
                   </td>
                 </tr>
                 <tr>
@@ -158,13 +181,6 @@ export default {
       title: 'Zahlungbestätigung',
       paymentPreview: null,
       auth: null
-    }
-  },
-  computed: {
-    outstanding() {
-      return (
-        this.paymentPreview.invoice_gross_total - this.paymentPreview.payment_total
-      ).toFixed(2)
     }
   },
   mounted() {

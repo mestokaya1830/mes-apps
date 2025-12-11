@@ -11,12 +11,12 @@
     <!-- Dashboard Cards -->
     <div v-if="tablesCount" class="dashboard-grid">
       <!-- dashboards Card -->
-      <div class="dashboard-card" @click="goTo('dashboards')" style="cursor: pointer">
+      <div class="dashboard-card" @click="goTo('customers')" style="cursor: pointer">
         <div class="card-header">
           <div class="dashboard-avatar">👥</div>
           <div class="dashboard-info">
             <h3 class="dashboard-name">Kunden</h3>
-            <span class="dashboard-type-badge">Gesamt: {{ tablesCount.dashboards }}</span>
+            <span class="dashboard-type-badge">Gesamt: {{ tablesCount.customers }}</span>
           </div>
         </div>
       </div>

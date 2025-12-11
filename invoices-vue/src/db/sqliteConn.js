@@ -36,7 +36,7 @@ try {
 // }
 
 // try {
-//   const result = db.prepare(`Alter Table payments Add Column payment_total REAL;`).run() // 1 → customer id
+//   const result = db.prepare(`Alter Table payments Add Column outstanding REAL;`).run() // 1 → customer id
 //   console.log(result)
 // } catch (err) {
 //   console.error(err.message)

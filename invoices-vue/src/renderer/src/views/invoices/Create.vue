@@ -573,7 +573,7 @@ export default {
   margin-top: 4px;
 }
 .editor-panel {
-  width: 70%;
+  width: 100%;
   background: white;
   padding: 30px;
   border-radius: 12px;

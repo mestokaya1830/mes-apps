@@ -45,6 +45,25 @@
                     {{ formatCurrency(payment.invoice_gross_total, payment.currency) }}
                   </td>
                 </tr>
+                <tr v-if="payment.is_early_paid">
+                  <td>Rabatt</td>
+                  <td>
+                    {{
+                      formatCurrency(
+                        payment.invoice_early_payment_discount,
+                        payment.invoice_currency
+                      )
+                    }}
+                  </td>
+                </tr>
+                <tr v-if="payment.is_early_paid">
+                  <td>Gesamtbetrag nach Rabatt</td>
+                  <td>
+                    {{
+                      formatCurrency(payment.invoice_total_after_discount, payment.invoice_currency)
+                    }}
+                  </td>
+                </tr>
 
                 <tr>
                   <td>Gezahlter Betrag</td>
@@ -55,12 +74,7 @@
                 <tr>
                   <td>Ausstehender Betrag</td>
                   <td>
-                    {{
-                      formatCurrency(
-                        (payment.invoice_gross_total - payment.payment_amount).toFixed(2),
-                        payment.invoice_currency
-                      )
-                    }}
+                    {{ formatCurrency(payment.outstanding, payment.invoice_currency) }}
                   </td>
                 </tr>
                 <tr>
@@ -126,10 +140,12 @@
           </div>
         </div>
 
-        <FooterSidePreview /> 
+        <FooterSidePreview />
       </div>
 
-      <router-link :to="'/invoices/details/' + payment.invoice_id" class="back-link">Zuruckzahlung</router-link>
+      <router-link :to="'/invoices/details/' + payment.invoice_id" class="back-link"
+        >Zuruckzahlung</router-link
+      >
 
       <!-- Actions Button -->
       <ActionsButtonPreview v-if="payment" :tableData="payment" sourcePage="details" />
@@ -271,10 +287,10 @@ export default {
   background-color: #a71d2a;
 }
 
-.download-container{
-display: flex;
-flex-direction: column;
-margin-top: 1rem;
+.download-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
 }
 .btn-download {
   margin-top: 1rem;

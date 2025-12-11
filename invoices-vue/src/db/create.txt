@@ -137,6 +137,7 @@ CREATE TABLE IF NOT EXISTS payments (
     payment_total REAL NOT NULL,
     payment_method TEXT NOT NULL,
     payment_reference TEXT NOT NULL,
+    outstanding INTEGER NOT NULL,
     
     -- Counterparty info
     counterparty_name TEXT NOT NULL,

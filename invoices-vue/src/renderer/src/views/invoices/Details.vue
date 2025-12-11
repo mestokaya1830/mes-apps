@@ -232,6 +232,8 @@
               <th class="border px-2 py-1">Zahlungsdatum</th>
               <th class="border px-2 py-1">Rechnungssumme</th>
               <th class="border px-2 py-1">Gezahlter Betrag</th>
+              <th class="border px-2 py-1">Rabatt</th>
+              <th class="border px-2 py-1">Gesamtbetrag nach Rabatt</th>
               <th class="border px-2 py-1">Ausstehend</th>
               <th class="border px-2 py-1">Details</th>
             </tr>
@@ -244,15 +246,16 @@
                 {{ formatCurrency(item.invoice_gross_total, item.invoice_currency) }}
               </td>
               <td class="border px-2 py-1">
+                {{ formatCurrency(item.invoice_early_payment_discount, item.invoice_currency) }}
+              </td>
+              <td class="border px-2 py-1">
+                {{ formatCurrency(item.invoice_total_after_discount, item.invoice_currency) }}
+              </td>
+              <td class="border px-2 py-1">
                 {{ formatCurrency(item.payment_amount, item.invoice_currency) }}
               </td>
               <td class="border px-2 py-1">
-                {{
-                  formatCurrency(
-                    item.invoice_gross_total - item.payment_total,
-                    item.invoice_currency
-                  )
-                }}
+                {{ formatCurrency(item.outstanding, item.invoice_currency) }}
               </td>
               <td class="border px-2 py-1">
                 <router-link :to="'/payments/details/' + item.id" class="action-btn details-btn">
