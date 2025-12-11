@@ -63,48 +63,14 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Name der Gegenpartei</label>
-              <input
-                v-model="payment.counterparty_name"
-                type="text"
-                class="form-input"
-                placeholder="z.B. Kunde / Lieferant"
+              <IbanComponent
+                v-model:localNamePartner="payment.counterparty_name"
+                v-model:iban="payment.counterparty_iban"
+                v-model:bic="payment.counterparty_bic"
+                @ibanValid="ibanValid = $event"
+                @bicValid="bicValid = $event"
+                @update:bank="setBank"
               />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">IBAN der Gegenpartei</label>
-              <div style="display: flex; gap: 6px; align-items: center">
-                <span v-if="ibanCountryFlag" style="font-size: 22px">{{ ibanCountryFlag }}</span>
-                <input
-                  v-model="payment.counterparty_iban"
-                  type="text"
-                  class="form-input"
-                  placeholder="DE00 0000 0000 0000 0000 00"
-                  @input="onIbanInput"
-                />
-              </div>
-              <small v-if="ibanError" style="color: red">{{ ibanError }}</small>
-              <small v-if="ibanValid" style="color: green">✓ IBAN ist gültig.</small>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">BIC / Swift (optional)</label>
-              <input
-                v-model="payment.counterparty_bic"
-                type="text"
-                class="form-input"
-                placeholder="z.B. COBADEFFXXX"
-                @input="onBicInput"
-              />
-              <small v-if="bicError" style="color: red">{{ bicError }}</small>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Bankname (automatisch)</label>
-              <input v-model="payment.counterparty_bank" type="text" class="form-input" readonly />
             </div>
           </div>
         </div>
@@ -153,7 +119,9 @@
               class="form-input"
               @input="updateOutstandingAmount"
             />
-            <small v-if="paymentAmountError" class="form-warning">Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small>
+            <small v-if="paymentAmountError" class="form-warning"
+              >Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small
+            >
           </div>
 
           <div class="form-row">
@@ -234,154 +202,26 @@
 
 <script>
 import store from '../../store/store'
-
-// Small offline BIC → bank name table
-// Mini BIC directory: DE, CH, AT
-const bicDirectory = {
-  // Germany (DE)
-  MARKDEF1100: 'Sparkasse Mark Brandenburg',
-  BYLADEM1001: 'Bayerische Landesbank (Sparkasse Bayern)',
-  WELADEMMXXX: 'Sparkasse Wels',
-  NOLADE21XXX: 'Sparkasse KölnBonn',
-  SPKODEFFXXX: 'Sparkasse Ostholstein',
-  COLSDE33XXX: 'Sparkasse Köln',
-  SPKIDEFFXXX: 'Sparkasse Ilmenau',
-  MALADE51XXX: 'Sparkasse Mainz',
-  HELADEF1XXX: 'Sparkasse Hessen',
-  SPSNDE66XXX: 'Sparkasse Nürnberg',
-  SOLADES1XXX: 'Sparkasse Solingen',
-  SPSWDE33XXX: 'Sparkasse Wiesbaden',
-  SPKBSDE33XXX: 'Sparkasse Braunschweig',
-  BSPADEFFXXX: 'Sparkasse Paderborn-Detmold',
-  SPKHDE2HXXX: 'Sparkasse Hannover',
-  DUSSDEDDXXX: 'Stadtsparkasse Düsseldorf',
-  ESSEDE5FXXX: 'Sparkasse Essen',
-  WELADED1XXX: 'Sparkasse Wetzlar',
-  SSKMDEMMXXX: 'Sparkasse Mittelmosel',
-  BYLADEM1ERD: 'Sparkasse Erding-Dorfen',
-  SPBKDEFFXXX: 'Sparkasse Berlin',
-  NASEDE55XXX: 'Sparkasse Neumünster',
-  GENODEF1S12: 'Volksbank Stuttgart',
-  COBADEFFXXX: 'Commerzbank',
-  DEUTDEFFXXX: 'Deutsche Bank',
-  DRESDEFFXXX: 'Commerzbank (vormals Dresdner Bank)',
-  HYVEDEMMXXX: 'UniCredit Bank (HypoVereinsbank)',
-  SOGEDEFFXXX: 'Société Générale',
-  PBNKDEFFXXX: 'Postbank',
-  DEUTDEDBBER: 'Deutsche Bank Berlin',
-  DEUTDEFF500: 'Deutsche Bank Frankfurt',
-  INGDDEFFXXX: 'ING-DiBa',
-  CSDBDE71XXX: 'Santander Consumer Bank',
-  GENODEF1M01: 'Volksbank München',
-  GENODED1DKD: 'Volksbank Dortmund',
-  GENODEM1GLS: 'GLS Bank',
-  HASPDEHHXXX: 'Hamburg Commercial Bank',
-
-  // Switzerland (CH)
-  UBSWCHZH80A: 'UBS AG',
-  CRESCHZZ80A: 'Credit Suisse AG',
-  ZKBKCHZZ80A: 'Zürcher Kantonalbank',
-  SGBSCHF0XXX: 'Swissquote Bank',
-  RAIFCH22XXX: 'Raiffeisen Bank',
-  BCITCHMMXXX: 'Bank CIC (Suisse) SA',
-  // Austria (AT)
-  BKAUATWW: 'Bank Austria',
-  SPAAAT2LXXX: 'Erste Bank',
-  RZBAATWW: 'Raiffeisen Bank Austria',
-  VBOEATWW: 'Volksbank Österreich',
-  HYPOAT2LXXX: 'Hypo Bank Austria'
-}
-//DE56 6305 0000 1011 6244 74
-// IBAN country → emoji flag
-const countryFlags = {
-  // Europa (IBAN members)
-  AD: '🇦🇩', // Andorra
-  AE: '🇦🇪', // United Arab Emirates (non-EU IBAN)
-  AL: '🇦🇱', // Albania
-  AT: '🇦🇹', // Austria
-  AZ: '🇦🇿', // Azerbaijan
-  BA: '🇧🇦', // Bosnia and Herzegovina
-  BE: '🇧🇪', // Belgium
-  BG: '🇧🇬', // Bulgaria
-  BH: '🇧🇭', // Bahrain
-  BR: '🇧🇷', // Brazil
-  CH: '🇨🇭', // Switzerland
-  CR: '🇨🇷', // Costa Rica
-  CY: '🇨🇾', // Cyprus
-  CZ: '🇨🇿', // Czech Republic
-  DE: '🇩🇪', // Germany
-  DK: '🇩🇰', // Denmark
-  DO: '🇩🇴', // Dominican Republic
-  EE: '🇪🇪', // Estonia
-  ES: '🇪🇸', // Spain
-  FI: '🇫🇮', // Finland
-  FO: '🇫🇴', // Faroe Islands
-  FR: '🇫🇷', // France
-  GB: '🇬🇧', // United Kingdom
-  GE: '🇬🇪', // Georgia
-  GI: '🇬🇮', // Gibraltar
-  GL: '🇬🇱', // Greenland
-  GR: '🇬🇷', // Greece
-  GT: '🇬🇹', // Guatemala
-  HR: '🇭🇷', // Croatia
-  HU: '🇭🇺', // Hungary
-  IE: '🇮🇪', // Ireland
-  IL: '🇮🇱', // Israel
-  IQ: '🇮🇶', // Iraq
-  IS: '🇮🇸', // Iceland
-  IT: '🇮🇹', // Italy
-  JO: '🇯🇴', // Jordan
-  KW: '🇰🇼', // Kuwait
-  KZ: '🇰🇿', // Kazakhstan
-  LB: '🇱🇧', // Lebanon
-  LC: '🇱🇨', // Saint Lucia
-  LI: '🇱🇮', // Liechtenstein
-  LT: '🇱🇹', // Lithuania
-  LU: '🇱🇺', // Luxembourg
-  LV: '🇱🇻', // Latvia
-  MC: '🇲🇨', // Monaco
-  MD: '🇲🇩', // Moldova
-  ME: '🇲🇪', // Montenegro
-  MK: '🇲🇰', // North Macedonia
-  MR: '🇲🇷', // Mauritania
-  MT: '🇲🇹', // Malta
-  MU: '🇲🇺', // Mauritius
-  NL: '🇳🇱', // Netherlands
-  NO: '🇳🇴', // Norway
-  PK: '🇵🇰', // Pakistan
-  PL: '🇵🇱', // Poland
-  PS: '🇵🇸', // Palestine
-  PT: '🇵🇹', // Portugal
-  QA: '🇶🇦', // Qatar
-  RO: '🇷🇴', // Romania
-  RS: '🇷🇸', // Serbia
-  SA: '🇸🇦', // Saudi Arabia
-  SC: '🇸🇨', // Seychelles
-  SE: '🇸🇪', // Sweden
-  SI: '🇸🇮', // Slovenia
-  SK: '🇸🇰', // Slovakia
-  SM: '🇸🇲', // San Marino
-  ST: '🇸🇹', // São Tomé and Príncipe
-  SV: '🇸🇻', // El Salvador
-  TL: '🇹🇱', // Timor-Leste
-  TN: '🇹🇳', // Tunisia
-  TR: '🇹🇷', // Turkey
-  UA: '🇺🇦', // Ukraine
-  VA: '🇻🇦', // Vatican
-  VG: '🇻🇬', // British Virgin Islands
-  XK: '🇽🇰' // Kosovo
-}
+import IbanComponent from '../../components/IbanComponent.vue'
 
 export default {
+  components: {
+    IbanComponent
+  },
   inject: ['formatInvoiceId', 'formatCustomerId', 'formatDate', 'formatCurrency'],
-
   data() {
     return {
       title: 'Zahlung erfassen',
-      payment: null,
+      payment: {
+        counterparty_name: '',
+        counterparty_iban: '',
+        counterparty_bic: '',
+        counterparty_bank: ''
+        // diğer alanlar
+      },
       selectedImage: '',
       ibanError: '',
-      ibanValid: false,
+      handleIban: false,
       ibanCountryFlag: '',
       bicError: '',
       paymentAmountError: false
@@ -488,76 +328,8 @@ export default {
       }
       return true
     },
-
-    onIbanInput() {
-      let iban = this.payment.counterparty_iban.toUpperCase()
-      iban = iban.replace(/[^A-Z0-9]/g, '')
-      iban = iban.replace(/(.{4})/g, '$1 ').trim()
-      this.payment.counterparty_iban = iban
-
-      const country = iban.slice(0, 2)
-      this.ibanCountryFlag = countryFlags[country] || ''
-
-      const validation = this.validateIban(iban)
-      if (!validation.valid) {
-        this.ibanError = validation.message
-        this.ibanValid = false
-      } else {
-        this.ibanError = ''
-        this.ibanValid = true
-      }
-    },
-
-    validateIban(ibanRaw) {
-      const iban = ibanRaw.replace(/\s+/g, '').toUpperCase()
-
-      if (iban.length < 4) return { valid: false, message: 'IBAN ist zu kurz.' }
-      if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(iban))
-        return { valid: false, message: 'Ungültiges IBAN-Format.' }
-
-      // Rearrange IBAN for mod 97
-      const rearranged = iban.slice(4) + iban.slice(0, 4)
-
-      // Convert letters to numbers (A=10 ... Z=35)
-      let numericIban = ''
-      for (const ch of rearranged) {
-        numericIban += /[A-Z]/.test(ch) ? ch.charCodeAt(0) - 55 : ch
-      }
-
-      // Mod 97 calculation (string-safe)
-      let remainder = numericIban
-      while (remainder.length > 2) {
-        const block = remainder.slice(0, 9) // 9 digits safe for JS Number
-        remainder = (parseInt(block, 10) % 97).toString() + remainder.slice(block.length)
-      }
-
-      if (parseInt(remainder, 10) % 97 !== 1) {
-        return { valid: false, message: 'Die IBAN-Prüfsumme ist ungültig.' }
-      }
-
-      return { valid: true }
-    },
-
-    onBicInput() {
-      const bic = this.payment.counterparty_bic.toUpperCase().replace(/[^A-Z0-9]/g, '')
-      this.payment.counterparty_bic = bic
-
-      if (bic.length < 8) {
-        this.bicError = 'Ungültiger BIC. Mindestens 8 Zeichen.'
-        this.payment.counterparty_bank = ''
-        return
-      }
-
-      if (!/^[A-Z0-9]{8,11}$/.test(bic)) {
-        this.bicError = 'Ungültiges BIC-Format.'
-        this.payment.counterparty_bank = ''
-        return
-      }
-
-      this.bicError = ''
-
-      // Bank lookup
-      this.payment.counterparty_bank = bicDirectory[bic] || 'Unbekannte Bank'
+    setBank(bankName) {
+      this.payment.counterparty_bank = bankName
     },
     async submitStore() {
       if (!this.checkInputPayment()) return
@@ -573,8 +345,9 @@ export default {
         this.paymentAmountError = true
         return
       }
-      await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
-      this.$router.push('/payments/preview')
+      console.log('submit payment', this.payment)
+      // await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
+      // this.$router.push('/payments/preview')
     }
   }
 }

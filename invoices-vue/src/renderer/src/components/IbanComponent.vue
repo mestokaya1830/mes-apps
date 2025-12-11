@@ -1,0 +1,268 @@
+<template>
+  <div class="iban-bic-component">
+    <div class="form-group">
+      <label class="form-label">Name der Gegenpartei</label>
+      <input
+        v-model="localNamePartner"
+        type="text"
+        class="form-input"
+        placeholder="z.B. Kunde / Lieferant"
+        @input="updateName"
+      />
+    </div>
+    <div class="form-group">
+      <label class="form-label">IBAN</label>
+      <input
+        type="text"
+        :value="iban"
+        placeholder="DE89 3704 0044 0532 0130 00"
+        class="form-input"
+        @input="handleIban($event.target.value)"
+      />
+      <span v-if="ibanCountryFlag" class="flag">{{ ibanCountryFlag }}</span>
+      <p class="error" v-if="ibanError">{{ ibanError }}</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">BIC</label>
+      <input
+        type="text"
+        :value="bic"
+        placeholder="DEUTDEFF500"
+        class="form-input"
+        @input="handleBic($event.target.value)"
+      />
+      <p class="error" v-if="bicError">{{ bicError }}</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Bankname (automatisch)</label>
+      <input type="text" :value="bankName" readonly class="form-input" />
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'IbanComponent',
+
+  data() {
+    return {
+      iban: '',
+      bic: '',
+      ibanError: '',
+      bicError: '',
+      ibanCountryFlag: '',
+      bankName: '',
+      localNamePartner: '',
+
+      // BIC directory
+      bicDirectory: {
+        MARKDEF1100: 'Sparkasse Mark Brandenburg',
+        BYLADEM1001: 'Bayerische Landesbank (Sparkasse Bayern)',
+        WELADEMMXXX: 'Sparkasse Wels',
+        NOLADE21XXX: 'Sparkasse KölnBonn',
+        SPKODEFFXXX: 'Sparkasse Ostholstein',
+        COLSDE33XXX: 'Sparkasse Köln',
+        SPKIDEFFXXX: 'Sparkasse Ilmenau',
+        MALADE51XXX: 'Sparkasse Mainz',
+        HELADEF1XXX: 'Sparkasse Hessen',
+        SPSNDE66XXX: 'Sparkasse Nürnberg',
+        SOLADES1XXX: 'Sparkasse Solingen',
+        SPSWDE33XXX: 'Sparkasse Wiesbaden',
+        SPKBSDE33XXX: 'Sparkasse Braunschweig',
+        BSPADEFFXXX: 'Sparkasse Paderborn-Detmold',
+        SPKHDE2HXXX: 'Sparkasse Hannover',
+        DUSSDEDDXXX: 'Stadtsparkasse Düsseldorf',
+        ESSEDE5FXXX: 'Sparkasse Essen',
+        WELADED1XXX: 'Sparkasse Wetzlar',
+        SSKMDEMMXXX: 'Sparkasse Mittelmosel',
+        BYLADEM1ERD: 'Sparkasse Erding-Dorfen',
+        SPBKDEFFXXX: 'Sparkasse Berlin',
+        NASEDE55XXX: 'Sparkasse Neumünster',
+        GENODEF1S12: 'Volksbank Stuttgart',
+        COBADEFFXXX: 'Commerzbank',
+        DEUTDEFFXXX: 'Deutsche Bank',
+        DRESDEFFXXX: 'Commerzbank (vormals Dresdner Bank)',
+        HYVEDEMMXXX: 'UniCredit Bank (HypoVereinsbank)',
+        SOGEDEFFXXX: 'Société Générale',
+        PBNKDEFFXXX: 'Postbank',
+        DEUTDEDBBER: 'Deutsche Bank Berlin',
+        DEUTDEFF500: 'Deutsche Bank Frankfurt',
+        INGDDEFFXXX: 'ING-DiBa',
+        CSDBDE71XXX: 'Santander Consumer Bank',
+        GENODEF1M01: 'Volksbank München',
+        GENODED1DKD: 'Volksbank Dortmund',
+        GENODEM1GLS: 'GLS Bank',
+        HASPDEHHXXX: 'Hamburg Commercial Bank'
+      },
+
+      // Country flags
+      countryFlags: {
+        DE: '🇩🇪',
+        AT: '🇦🇹',
+        CH: '🇨🇭',
+        AD: '🇦🇩',
+        AE: '🇦🇪',
+        AL: '🇦🇱',
+        AZ: '🇦🇿',
+        BA: '🇧🇦',
+        BE: '🇧🇪',
+        BG: '🇧🇬',
+        BH: '🇧🇭',
+        BR: '🇧🇷',
+        CR: '🇨🇷',
+        CY: '🇨🇾',
+        CZ: '🇨🇿',
+        DK: '🇩🇰',
+        DO: '🇩🇴',
+        EE: '🇪🇪',
+        ES: '🇪🇸',
+        FI: '🇫🇮',
+        FO: '🇫🇴',
+        FR: '🇫🇷',
+        GB: '🇬🇧',
+        GE: '🇬🇪',
+        GI: '🇬🇮',
+        GL: '🇬🇱',
+        GR: '🇬🇷',
+        GT: '🇬🇹',
+        HR: '🇭🇷',
+        HU: '🇭🇺',
+        IE: '🇮🇪',
+        IL: '🇮🇱',
+        IQ: '🇮🇶',
+        IS: '🇮🇸',
+        IT: '🇮🇹',
+        JO: '🇯🇴',
+        KW: '🇰🇼',
+        KZ: '🇰🇿',
+        LB: '🇱🇧',
+        LC: '🇱🇨',
+        LI: '🇱🇮',
+        LT: '🇱🇹',
+        LU: '🇱🇺',
+        LV: '🇱🇻',
+        MC: '🇲🇨',
+        MD: '🇲🇩',
+        ME: '🇲🇪',
+        MK: '🇲🇰',
+        MR: '🇲🇷',
+        MT: '🇲🇹',
+        MU: '🇲🇺',
+        NL: '🇳🇱',
+        NO: '🇳🇴',
+        PK: '🇵🇰',
+        PL: '🇵🇱',
+        PS: '🇵🇸',
+        PT: '🇵🇹',
+        QA: '🇶🇦',
+        RO: '🇷🇴',
+        RS: '🇷🇸',
+        SA: '🇸🇦',
+        SC: '🇸🇨',
+        SE: '🇸🇪',
+        SI: '🇸🇮',
+        SK: '🇸🇰',
+        SM: '🇸🇲',
+        ST: '🇸🇹',
+        SV: '🇸🇻',
+        TL: '🇹🇱',
+        TN: '🇹🇳',
+        TR: '🇹🇷',
+        UA: '🇺🇦',
+        VA: '🇻🇦',
+        VG: '🇻🇬',
+        XK: '🇽🇰'
+      }
+    }
+  },
+
+  // DE89370400440532013000
+  methods: {
+    updateName() {
+      this.$emit('update:localNamePartner', this.localNamePartner)
+    },
+    handleIban(input) {
+      let iban = input.toUpperCase().replace(/[^A-Z0-9]/g, '')
+      iban = iban.replace(/(.{4})/g, '$1 ').trim()
+      this.iban = iban
+
+      const country = iban.slice(0, 2)
+      this.ibanCountryFlag = this.countryFlags[country] || ''
+
+      const v = this.validateIban(iban)
+      this.ibanError = v.valid ? '' : v.message
+
+      // Parent'a gönder
+      this.$emit('update:iban', iban)
+      this.$emit('ibanValid', v.valid)
+    },
+
+    handleBic(input) {
+      const bic = input.toUpperCase().replace(/[^A-Z0-9]/g, '')
+      this.bic = bic
+
+      if (bic.length < 8 || bic.length > 11) {
+        this.bicError = 'Ungültiger BIC'
+        this.bankName = ''
+        this.$emit('update:bank', '')
+        this.$emit('bicValid', false)
+        this.$emit('update:bic', bic)
+        return
+      }
+
+      this.bicError = ''
+      this.bankName = this.bicDirectory[bic] || 'Unbekannte Bank'
+
+      // Parent'a gönder
+      this.$emit('update:bic', bic)
+      this.$emit('update:bank', this.bankName)
+      this.$emit('bicValid', true)
+    },
+
+    validateIban(ibanRaw) {
+      const iban = ibanRaw.replace(/\s+/g, '').toUpperCase()
+      if (iban.length < 4) return { valid: false, message: 'IBAN ist zu kurz.' }
+      if (!/^[A-Z]{2}\d{2}[A-Z0-9]+$/.test(iban))
+        return { valid: false, message: 'Ungültiges IBAN-Format.' }
+
+      const rearranged = iban.slice(4) + iban.slice(0, 4)
+      let numeric = ''
+      for (const ch of rearranged) numeric += /[A-Z]/.test(ch) ? ch.charCodeAt(0) - 55 : ch
+      let remainder = numeric
+      while (remainder.length > 2) {
+        const block = remainder.slice(0, 9)
+        remainder = (parseInt(block, 10) % 97).toString() + remainder.slice(block.length)
+      }
+      if (parseInt(remainder, 10) % 97 !== 1)
+        return { valid: false, message: 'Die IBAN-Prüfsumme ist ungültig.' }
+      return { valid: true }
+    }
+  }
+}
+</script>
+
+<style scoped>
+.error {
+  color: red;
+  font-size: 13px;
+}
+.flag {
+  margin-left: 6px;
+}
+.form-group {
+  margin-bottom: 12px;
+}
+.form-label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+.form-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+</style>
