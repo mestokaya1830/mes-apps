@@ -36,7 +36,7 @@ try {
 // }
 
 // try {
-//   const result = db.prepare(`Alter Table payments Add Column outstanding REAL;`).run() // 1 → customer id
+//   const result = db.prepare(`Alter Table payments DROP Column payment_status;`).run() // 1 → customer id
 //   console.log(result)
 // } catch (err) {
 //   console.error(err.message)
@@ -44,22 +44,12 @@ try {
 
 
 
+
 // try {
-//   const result = db.prepare(`DROP TABLE IF EXISTS payments`).run()
-//   console.log('invoices with early_payment_days:', result)
+//   const result = db.prepare(`Drop Table payments;`).run() // 1 → customer id
 // } catch (error) {
 //   console.error(error.message)
 // }
 
-// try {
-//   const result = db.prepare(`Select * from payments;`).all()
-//   console.log('payments add payment_amount:', result)
-// } catch (error) {
-//   console.error(error.message)
-// }
 
-// try {
-//   const result = db.prepare(`Delete From payments;`).run() // 1 → customer id
-// } catch (error) {
-//   console.error(error.message)
-// }
+

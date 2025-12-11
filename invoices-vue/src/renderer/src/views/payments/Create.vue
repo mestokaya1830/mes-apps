@@ -323,6 +323,7 @@ export default {
       const isEarly = earlyPaymentDate <= dueDate
       this.payment.is_early_paid = isEarly
       this.isPaymentAmountDisabled = isEarly
+      this.payment.payment_status = 'paid'
 
       if (isEarly) {
         this.payment.payment_amount =
@@ -330,7 +331,7 @@ export default {
           Number(this.payment.invoice_early_payment_discount) -
           Number(this.payment.payment_total)
       } else {
-        this.payment.payment_amount = 0
+        // this.payment.payment_amount = 0
       }
       this.calculateOutstanding()
     },

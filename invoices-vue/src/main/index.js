@@ -637,73 +637,67 @@ ipcMain.handle('add-invoice', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
   }
+
   try {
     const invoice = payload
     const info = db
       .prepare(
         `
-          INSERT INTO invoices (
-            customer_id,
-            customer,
-            is_active,
-
-            cancelled_by,
-            cancelled_at,
-            cancellation_reason,
-
-            date,
-            due_date,
-            service_date,
-
-            currency,
-            payment_terms,
-            payment_conditions,
-            early_payment_discount,
-            early_payment_percentage,
-            early_payment_days,
-            total_after_discount,
-
-            is_small_company,
-            is_reverse_charge,
-            is_eu_delivery,
-
-            positions,
-            net_total,
-            vat_total,
-            gross_total
-          ) VALUES (?, ?, ?, ?, ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `
+        INSERT INTO invoices (
+          customer_id,
+          customer,
+          is_active,
+          service_date,
+          date,
+          due_date,
+          currency,
+          payment_terms,
+          payment_conditions,
+          is_early_paid,
+          early_payment_discount,
+          early_payment_percentage,
+          early_payment_days,
+          is_small_company,
+          is_reverse_charge,
+          is_eu_delivery,
+          positions,
+          net_total,
+          vat_total,
+          gross_total,
+          payment_status,
+          cancelled_at,
+          cancelled_by,
+          cancellation_reason
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `
       )
       .run(
         invoice.customer_id,
-        JSON.stringify(invoice.customer) || null,
-        invoice.is_active,
-
-        invoice.cancelled_by,
-        invoice.cancelled_at,
-        invoice.cancellation_reason,
-
+        JSON.stringify(invoice.customer) || '{}',
+        invoice.is_active || 1,
+        invoice.service_date,
         invoice.date,
         invoice.due_date,
-        invoice.service_date,
-
         invoice.currency,
         invoice.payment_terms,
-        invoice.payment_conditions,
+        invoice.payment_conditions || '',
+        invoice.is_early_paid || 0,
         invoice.early_payment_discount,
-        invoice.early_payment_percentage,
-        invoice.early_payment_days,
-        invoice.total_after_discount,
-
-        invoice.is_small_company ? 1 : 0,
-        invoice.is_reverse_charge ? 1 : 0,
-        invoice.is_eu_delivery ? 1 : 0,
-
+        invoice.early_payment_percentage || 0,
+        invoice.early_payment_days || 0,
+        invoice.is_small_company || 0,
+        invoice.is_reverse_charge || 0,
+        invoice.is_eu_delivery || 0,
         JSON.stringify(invoice.positions || []),
-        invoice.net_total,
-        invoice.vat_total,
-        invoice.gross_total
+        invoice.net_total || 0,
+        invoice.vat_total || 0,
+        invoice.gross_total || 0,
+        invoice.payment_status || 'unpaid',
+        invoice.cancelled_at || '',
+        invoice.cancelled_by || '',
+        invoice.cancellation_reason || ''
       )
+
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -717,18 +711,10 @@ ipcMain.handle('get-invoices', async () => {
     const rows = db
       .prepare(
         `
-          SELECT 
-            i.id, 
-            i.date, 
-            i.due_date, 
-            i.gross_total, 
-            i.is_active, 
-            i.customer,
-            p.payment_status
-          FROM invoices i
-          LEFT JOIN payments p ON p.invoice_id = i.id
-          WHERE i.is_active = 1
-          ORDER BY i.id DESC
+          SELECT id, date, due_date, gross_total, is_active, customer
+          FROM invoices 
+          WHERE is_active = 1
+          ORDER BY id DESC
           LIMIT ?
         `
       )
@@ -775,7 +761,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
       let rows = db
         .prepare(
           `
-            SELECT id, customer_id, date, due_date, gross_total, early_payment_days, early_payment_percentage, early_payment_discount, total_after_discount, currency
+            SELECT id, customer_id, date, due_date, gross_total, early_payment_days, early_payment_percentage, early_payment_discount, currency, payment_status
             FROM invoices
             WHERE id = ?
           `
@@ -1029,6 +1015,207 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
     return { success: false, message: error.message }
   }
 })
+
+//payments
+ipcMain.handle('add-payment', async (event, payload) => {
+  if (!payload) return { success: false, message: 'No data provided' }
+
+  try {
+    const data = payload
+
+    const info = db
+      .prepare(
+        `
+        INSERT INTO payments (
+          id,
+          invoice_id,
+          customer_id,
+
+          payment_date,
+          payment_amount,
+          payment_method,
+          payment_reference,
+
+          counterparty_name,
+          counterparty_iban,
+          counterparty_bic,
+          counterparty_bank,
+
+          notes,
+          file_name,
+
+          created_at,
+          updated_at
+        ) VALUES (
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        )
+      `
+      )
+      .run(
+        null, // id (AUTOINCREMENT)
+
+        data.invoice_id, // NOT NULL
+        data.customer_id, // NOT NULL
+
+        data.payment_date, // NOT NULL
+        data.payment_amount, // NOT NULL
+        data.payment_method, // NOT NULL
+
+        data.payment_reference ?? '',
+
+        data.counterparty_name ?? '',
+        data.counterparty_iban ?? '',
+        data.counterparty_bic ?? '',
+        data.counterparty_bank ?? '',
+
+        data.notes ?? '',
+        data.file_name ?? '',
+
+        data.created_at ?? new Date().toISOString(),
+        data.updated_at ?? new Date().toISOString()
+      )
+
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-payment-by-id', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const rows = db
+      .prepare(
+        `
+          SELECT *
+          FROM payments
+          WHERE id = ?
+        `
+      )
+      .get(id)
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('delete-payment-by-id', async (event, id) => {
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    const info = db.prepare('DELETE FROM payments WHERE id = ?').run(id)
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+//reminders
+ipcMain.handle('add-reminder', async (event, payload) => {
+  console.log(payload)
+  const data = payload
+  if (!payload) return { success: false, message: 'No data provided' }
+
+  try {
+    const info = db
+      .prepare(
+        `
+        INSERT INTO reminders (
+          invoice_id,
+          customer_id,
+
+          is_sent,
+          is_cancelled,
+
+          level,
+          level_text,
+
+          reminder_date,
+          due_date_new,
+          reminder_fee,
+          late_interest,
+
+          intro_text,
+          warning_text,
+          closing_text,
+
+          sent_at,
+          sent_method,
+
+          proof_type,
+          proof_file_name,
+          proof_sent_at,
+
+          created_at,
+          updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `
+      )
+      .run(
+        data.invoice_id,
+        data.customer_id,
+
+        data.is_sent ? 1 : 0,
+        data.is_cancelled ? 1 : 0,
+
+        data.level,
+        data.level_text,
+
+        data.reminder_date,
+        data.due_date_new,
+        data.reminder_fee,
+        data.late_interest,
+
+        data.intro_text,
+        data.warning_text,
+        data.closing_text,
+
+        data.sent_at,
+        data.sent_method,
+
+        data.proof_type,
+        data.proof_file_name,
+        data.proof_sent_at
+      )
+
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+//reports
+ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
+  try {
+    console.log(startDate, endDate)
+    const rows = db
+      .prepare(
+        `SELECT 
+          i.*,
+          p.*
+        FROM invoices i
+        LEFT JOIN payments p 
+            ON p.invoice_id = i.id
+        WHERE i.date BETWEEN ? AND ?
+        ORDER BY i.date ASC, p.payment_date ASC;
+        `
+      )
+      .all(startDate, endDate)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 
 //offers
 ipcMain.handle('add-offer', async (event, data) => {
@@ -1395,312 +1582,3 @@ ipcMain.handle('cancel-order', async (event, payload) => {
   }
 })
 
-//payments
-ipcMain.handle('add-payment', async (event, payload) => {
-  if (!payload) return { success: false, message: 'No data provided' }
-
-  try {
-    const payment = payload
-    console.log(payment)
-    const info = db
-      .prepare(
-        `
-        INSERT INTO payments (
-          is_early_paid,
-          payment_date,
-          payment_amount,
-          payment_total,
-          payment_method,
-          payment_reference,
-          counterparty_name,
-          counterparty_iban,
-          counterparty_bic,
-          counterparty_bank,
-          notes,
-          file_name,
-          payment_status,
-          invoice_id,
-          invoice_currency,
-          invoice_customer_id,
-          invoice_date,
-          invoice_due_date,
-          invoice_gross_total,
-          invoice_total_after_discount,
-          invoice_early_payment_days,
-          invoice_early_payment_discount,
-          invoice_early_payment_percentage
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `
-      )
-      .run(
-        payment.is_early_paid ? 1 : 0,
-        payment.payment_date,
-        payment.payment_amount,
-        payment.payment_total,
-        payment.payment_method,
-        payment.payment_reference,
-        payment.counterparty_name,
-        payment.counterparty_iban,
-        payment.counterparty_bic,
-        payment.counterparty_bank,
-        payment.notes,
-        payment.file_name,
-        payment.payment_status,
-        payment.invoice_id,
-        payment.invoice_currency,
-        payment.invoice_customer_id,
-        payment.invoice_date,
-        payment.invoice_due_date,
-        payment.invoice_gross_total,
-        payment.invoice_total_after_discount,
-        payment.invoice_early_payment_days,
-        payment.invoice_early_payment_discount,
-        payment.invoice_early_payment_percentage
-      )
-
-    // Save file if uploaded
-    if (payment.image_file && payment.file_name) {
-      const base64Data = payment.image_file.includes(',')
-        ? payment.image_file.split(',')[1]
-        : payment.image_file
-      const buffer = Buffer.from(base64Data, 'base64')
-      const savePath = path.join(
-        app.getAppPath(),
-        'src/renderer/public/uploads/payments',
-        payment.file_name
-      )
-      await fs.promises.writeFile(savePath, buffer)
-    }
-
-    return { success: true, lastInsertId: info.lastInsertRowid }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('get-payment-by-id', async (event, id) => {
-  if (!id) {
-    return { success: false, message: 'No data provided' }
-  }
-  try {
-    const rows = db
-      .prepare(
-        `
-          SELECT *
-          FROM payments
-          WHERE id = ?
-        `
-      )
-      .get(id)
-
-    return { success: true, rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('delete-payment-by-id', async (event, id) => {
-  if (!id) {
-    return { success: false, message: 'No id provided' }
-  }
-  try {
-    const info = db.prepare('DELETE FROM payments WHERE id = ?').run(id)
-    return { success: true, lastInsertId: info.lastInsertRowid }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-//reminders
-ipcMain.handle('add-reminder', async (event, payload) => {
-  console.log(payload)
-  const data = payload
-  if (!payload) return { success: false, message: 'No data provided' }
-
-  try {
-    const info = db
-      .prepare(
-        `
-        INSERT INTO reminders (
-          invoice_id,
-          customer_id,
-
-          is_sent,
-          is_cancelled,
-
-          level,
-          level_text,
-
-          reminder_date,
-          due_date_new,
-          reminder_fee,
-          late_interest,
-
-          intro_text,
-          warning_text,
-          closing_text,
-
-          sent_at,
-          sent_method,
-
-          proof_type,
-          proof_file_name,
-          proof_sent_at,
-
-          created_at,
-          updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `
-      )
-      .run(
-        data.invoice_id,
-        data.customer_id,
-
-        data.is_sent ? 1 : 0,
-        data.is_cancelled ? 1 : 0,
-
-        data.level,
-        data.level_text,
-
-        data.reminder_date,
-        data.due_date_new,
-        data.reminder_fee,
-        data.late_interest,
-
-        data.intro_text,
-        data.warning_text,
-        data.closing_text,
-
-        data.sent_at,
-        data.sent_method,
-
-        data.proof_type,
-        data.proof_file_name,
-        data.proof_sent_at
-      )
-
-    return { success: true, lastInsertId: info.lastInsertRowid }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-//deliveries
-ipcMain.handle('add-delivery', async (event, data) => {
-  if (!data) return { success: false, message: 'No data provided' }
-
-  try {
-    const info = db
-      .prepare(
-        `
-        INSERT INTO deliveries (
-          order_id,
-          invoice_id,
-          customer_id,
-
-          customer,
-
-          date,
-
-          planned_delivery_date,
-          
-          status,
-          is_active,
-          is_cancelled,
-          
-          positions,
-
-          delivery_date,
-          delivered_by,
-          delivery_method,
-          tracking_number,
-          delivery_reference,
-          received_by,
-          received_at,
-
-          delivery_address,
-          delivery_postal_code,
-          delivery_city,
-          delivery_country,
-
-
-          delivered_total_cent,
-          remaining_total_cent,
-
-          note,
-          internal_note,
-
-          pdf_file_name,
-          proof_file_name,
-          proof_type,
-
-          created_at,
-          updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `
-      )
-      .run(
-        data.order_id,
-        data.invoice_id,
-        data.customer_id,
-        JSON.stringify(data.customer || {}),
-        data.delivery_number,
-        data.delivery_date,
-        data.planned_delivery_date,
-        data.status ?? 'pending',
-        data.is_active ?? 1,
-        data.is_cancelled,
-        data.delivered_by,
-        data.delivery_method,
-        data.tracking_number,
-        data.delivery_reference,
-        data.received_by,
-        data.received_at,
-        data.delivery_address,
-        data.delivery_postal_code,
-        data.delivery_city,
-        data.delivery_country,
-        JSON.stringify(data.positions || {}),
-        data.delivered_total_cent,
-        data.remaining_total_cent,
-        data.note,
-        data.internal_note,
-        data.pdf_file_name,
-        data.proof_file_name,
-        data.proof_type
-      )
-
-    return { success: true, lastInsertId: info.lastInsertRowid }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
-//reports
-ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
-  try {
-    console.log(startDate, endDate)
-    const rows = db
-      .prepare(
-        `SELECT 
-          i.*,
-          p.*
-        FROM invoices i
-        LEFT JOIN payments p 
-            ON p.invoice_id = i.id
-        WHERE i.date BETWEEN ? AND ?
-        ORDER BY i.date ASC, p.payment_date ASC;
-        `
-      )
-      .all(startDate, endDate)
-    return { success: true, rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
