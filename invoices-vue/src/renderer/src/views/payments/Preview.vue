@@ -16,19 +16,19 @@
                 </tr>
                 <tr>
                   <td>Rechnungs-ID</td>
-                  <td>{{ formatInvoiceId(paymentPreview.invoice_id) }}</td>
+                  <td>{{ formatInvoiceId(paymentPreview.invoice.id) }}</td>
                 </tr>
                 <tr>
                   <td>Kunden-ID</td>
-                  <td>{{ formatCustomerId(paymentPreview.invoice_customer_id) }}</td>
+                  <td>{{ formatCustomerId(paymentPreview.invoice.customer_id) }}</td>
                 </tr>
                 <tr>
                   <td>Rechnungsdatum</td>
-                  <td>{{ formatDate(paymentPreview.invoice_date) }}</td>
+                  <td>{{ formatDate(paymentPreview.invoice.date) }}</td>
                 </tr>
                 <tr>
                   <td>Fälligkeitsdatum</td>
-                  <td>{{ formatDate(paymentPreview.invoice_due_date) }}</td>
+                  <td>{{ formatDate(paymentPreview.invoice.due_date) }}</td>
                 </tr>
                 <tr>
                   <td>Zahlungsdatum</td>
@@ -36,26 +36,26 @@
                 </tr>
                 <tr>
                   <td>Währung</td>
-                  <td>{{ paymentPreview.invoice_currency }}</td>
+                  <td>{{ paymentPreview.invoice.currency }}</td>
                 </tr>
                 <tr>
                   <td>Rechnungsbetrag</td>
                   <td>
                     {{
                       formatCurrency(
-                        paymentPreview.invoice_gross_total,
-                        paymentPreview.invoice_currency
+                        paymentPreview.invoice.gross_total,
+                        paymentPreview.invoice.currency
                       )
                     }}
                   </td>
                 </tr>
-                <tr v-if="paymentPreview.is_early_paid">
+                <tr v-if="paymentPreview.invoice.is_early_paid">
                   <td>Rabatt</td>
                   <td>
                     {{
                       formatCurrency(
-                        paymentPreview.invoice_early_payment_discount,
-                        paymentPreview.invoice_currency
+                        paymentPreview.invoice.early_payment_discount,
+                        paymentPreview.invoice.currency
                       )
                     }}
                   </td>
@@ -65,8 +65,8 @@
                   <td>
                     {{
                       formatCurrency(
-                        paymentPreview.invoice_total_after_discount,
-                        paymentPreview.invoice_currency
+                        paymentPreview.invoice.total_after_discount,
+                        paymentPreview.invoice.currency
                       )
                     }}
                   </td>
@@ -76,14 +76,14 @@
                   <td>Bezahlter Betrag</td>
                   <td>
                     {{
-                      formatCurrency(paymentPreview.payment_amount, paymentPreview.invoice_currency)
+                      formatCurrency(paymentPreview.payment_amount, paymentPreview.invoice.currency)
                     }}
                   </td>
                 </tr>
                 <tr>
                   <td>Offener Betrag</td>
                   <td>
-                    {{ formatCurrency(this.paymentPreview.outstanding, paymentPreview.invoice_currency) }}
+                    {{ formatCurrency(this.paymentPreview.outstanding, paymentPreview.invoice.currency) }}
                   </td>
                 </tr>
                 <tr>
@@ -146,7 +146,7 @@
 
     <router-link
       v-if="paymentPreview"
-      :to="`/payments/create/${paymentPreview.invoice_id}`"
+      :to="`/payments/create/${paymentPreview.invoice.id}`"
       class="back-link"
     >
       ← Zurück zu den Rechnungsdetails

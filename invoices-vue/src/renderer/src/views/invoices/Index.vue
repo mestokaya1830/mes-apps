@@ -26,7 +26,7 @@
       </div>
 
       <div class="filter-container">
-        <select v-model="categories_filter" class="filter-input" @change="filterCategories">
+        <select v-model="categories_filter" class="form-input" @change="filterCategories">
           <option value="" disabled>Kategorie</option>
           <option value="all">Alle</option>
           <option value="active">Aktiv</option>
@@ -38,7 +38,7 @@
 
         <input
           v-model="search_box"
-          class="filter-input"
+          class="form-input"
           placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
           @input="searchInvoice"
         />
@@ -47,14 +47,14 @@
           ref="date_box_start"
           v-model="date_box_start"
           type="date"
-          class="filter-input"
-          @input="filterDate()"
+          class="form-input"
+          @input="formDate()"
         />
         <input
           ref="date_box_end"
           v-model="date_box_end"
           type="date"
-          class="filter-input"
+          class="form-input"
           @input="filterDate()"
         />
         <div class="sort-btn" @click="sorting('id')">&#8645;</div>
@@ -260,7 +260,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .main-container {
   width: 100%;
   margin: 0 auto;
@@ -338,18 +338,7 @@ export default {
   margin-bottom: 12px;
 }
 
-.sort-btn {
-  padding: 10px 16px;
-  background: #edf2f7;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.2s ease;
-}
 
-.sort-btn:hover {
-  background: #e2e8f0;
-}
 .list-grid {
   display: grid;
   width: 100%;

@@ -200,11 +200,13 @@ export default {
   },
   methods: {
     async getPayment() {
+      console.log(this.$route.params.id)
       if (!this.$route.params.id) return
       try {
         const result = await window.api.getPaymentById(this.$route.params.id)
         if (!result.success) return
-        this.payment = result.rows
+        this.payment = result.data.payment
+        console.log(result)
       } catch (error) {
         console.error(error)
       }

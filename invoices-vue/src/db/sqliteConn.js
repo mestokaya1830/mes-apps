@@ -36,7 +36,7 @@ try {
 // }
 
 // try {
-//   const result = db.prepare(`Alter Table payments DROP Column payment_status;`).run() // 1 → customer id
+//   const result = db.prepare(`Alter Table payments ADD Column invoice TEXT;`).run() // 1 → customer id
 //   console.log(result)
 // } catch (err) {
 //   console.error(err.message)

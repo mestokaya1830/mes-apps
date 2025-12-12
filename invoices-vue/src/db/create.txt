@@ -101,7 +101,8 @@ CREATE TABLE IF NOT EXISTS customers (
 //     payment_terms INTEGER NOT NULL,
 //     payment_conditions TEXT DEFAULT '',
     
-//     early_payment_discount INTEGER DEFAULT 0,         -- 0 = yok, 1 = var
+//     is_early_paid INTEGER DEFAULT 0,         
+//     early_payment_discount INTEGER DEFAULT 0,         
 //     early_payment_percentage REAL DEFAULT 0,
 //     early_payment_days INTEGER DEFAULT 0,
     
@@ -133,6 +134,7 @@ CREATE TABLE IF NOT EXISTS customers (
 //     invoice_id INTEGER NOT NULL,                        -- invoice ile ilişki
 //     customer_id INTEGER NOT NULL,
 
+//     invoice TEXT NOT NULL,
 //     payment_date TEXT NOT NULL,
 //     payment_amount REAL NOT NULL,
 //     payment_method TEXT NOT NULL,

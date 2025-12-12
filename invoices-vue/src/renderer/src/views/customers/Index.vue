@@ -33,7 +33,7 @@
           placeholder="Suce..."
           @input="searchFilter()"
         />
-        <div @click="sorting('id')">&#8645;</div>
+        <div class="sort-btn" @click="sorting('id')">&#8645;</div>
       </div>
       <!-- Customer Cards -->
       <div class="customer-grid">

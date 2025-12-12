@@ -698,7 +698,7 @@ ipcMain.handle('add-invoice', async (event, payload) => {
         invoice.cancellation_reason || ''
       )
 
-    return { success: true, lastInsertId: info.lastInsertRowid }
+    return { success: true, last_id: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -825,7 +825,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
 
     switch (category) {
       case 'all':
-        query = `SELECT id, date, due_date, gross_total, is_active, customer
+        query = `SELECT id, date, due_date, gross_total, is_active, payment_status, customer
           FROM invoices
           ORDER BY id DESC
           LIMIT ?`
@@ -833,7 +833,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
         break
 
       case 'active':
-        query = `SELECT id, date, due_date, gross_total, is_active, customer
+        query = `SELECT id, date, due_date, gross_total, is_active, payment_status, customer
           FROM invoices
           WHERE is_active = 1
           ORDER BY id DESC
@@ -853,19 +853,16 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
       case 'is_paid':
         query = `
             SELECT
-                i.id,
-                i.date,
-                i.due_date,
-                i.gross_total,
-                i.is_active,
-                i.customer
-            FROM invoices i
-            WHERE EXISTS (
-                SELECT 1
-                FROM payments p
-                WHERE p.invoice_id = i.id AND p.is_paid = 1
-            )
-            ORDER BY i.id DESC
+              id,
+              date,
+              due_date,
+              gross_total,
+              is_active,
+              payment_status,
+              customer
+            FROM invoices
+            WHERE  payment_status = 'paid' AND is_active = 1
+            ORDER BY id DESC
             LIMIT ?;
           `
         rows = db.prepare(query).all(limit)
@@ -874,19 +871,16 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
       case 'is_not_paid':
         query = `
             SELECT
-                i.id,
-                i.date,
-                i.due_date,
-                i.gross_total,
-                i.is_active,
-                i.customer
-            FROM invoices i
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM payments p
-                WHERE p.invoice_id = i.id AND p.is_paid = 1
-            )
-            ORDER BY i.id DESC
+              id,
+              date,
+              due_date,
+              gross_total,
+              is_active,
+              payment_status,
+              customer
+            FROM invoices
+            WHERE  payment_status = 'unpaid' AND is_active = 1
+            ORDER BY id DESC
             LIMIT ?;
           `
         rows = db.prepare(query).all(limit)
@@ -895,23 +889,17 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
       case 'is_partially_paid':
         query = `
               SELECT
-                  i.id,
-                  i.date,
-                  i.due_date,
-                  i.gross_total,
-                  i.is_active,
-                  i.customer
-              FROM invoices i
-              WHERE i.is_active = 1
-                AND EXISTS (
-                    SELECT 1
-                    FROM payments p
-                    WHERE p.invoice_id = i.id
-                      AND p.is_paid = 0
-                      AND p.is_partially_paid = 1
-                )
-              ORDER BY i.id DESC
-              LIMIT ?;
+              id,
+              date,
+              due_date,
+              gross_total,
+              is_active,
+              payment_status,
+              customer
+            FROM invoices
+            WHERE  payment_status = 'partially_paid' AND is_active = 1
+            ORDER BY id DESC
+            LIMIT ?;
             `
         rows = db.prepare(query).all(limit)
         break
@@ -945,6 +933,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
             due_date,
             gross_total,
             is_active,
+            payment_status,
             customer
           FROM invoices
           WHERE (
@@ -963,7 +952,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
 
         rows = db
           .prepare(
-            `SELECT id, date, due_date, gross_total, is_active, customer
+            `SELECT id, date, due_date, gross_total, is_active, payment_status, customer
             FROM invoices
             WHERE id BETWEEN ? AND ? AND is_active = 1
             ORDER BY id DESC LIMIT ?`
@@ -972,7 +961,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
       } else {
         rows = db
           .prepare(
-            `SELECT id, date, due_date, gross_total, is_active, customer
+            `SELECT id, date, due_date, gross_total, is_active,  payment_status, customer
             FROM invoices
             WHERE id + 0 LIKE ? AND is_active = 1
             ORDER BY id DESC LIMIT ?`
@@ -1002,6 +991,7 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
           due_date,
           gross_total,
           is_active,
+          payment_status,
           customer
         FROM invoices
         WHERE date BETWEEN ? AND ?
@@ -1031,6 +1021,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
           invoice_id,
           customer_id,
 
+          customer,
           payment_date,
           payment_amount,
           payment_method,
@@ -1047,7 +1038,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
           created_at,
           updated_at
         ) VALUES (
-          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
       `
       )
@@ -1057,6 +1048,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
         data.invoice_id, // NOT NULL
         data.customer_id, // NOT NULL
 
+        JSON.stringify(data.customer || {}),
         data.payment_date, // NOT NULL
         data.payment_amount, // NOT NULL
         data.payment_method, // NOT NULL

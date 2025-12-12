@@ -214,7 +214,7 @@
                   class="form-input"
                 />
                 <div v-if="error.service_period_end" class="error">
-                  {{ error.service_period_end}}
+                  {{ error.service_period_end }}
                 </div>
               </div>
             </div>
@@ -389,12 +389,14 @@ export default {
         customer: null,
         customer_id: null,
         is_active: 1,
+        payment_status: 'unpaid',
         date: '',
         due_date: '',
         service_date: '',
         currency: 'EUR.de-DE',
         payment_terms: 14,
         payment_conditions: 'z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss.',
+        is_early_payment: false,
         early_payment_days: 7,
         early_payment_percentage: 2,
         early_payment_discount: 0,
@@ -419,7 +421,7 @@ export default {
       )
       const gross_total = net_total + vat_total
 
-      let early_payment_discount = 0  
+      let early_payment_discount = 0
       if (this.early_payment_input) {
         early_payment_discount = (gross_total * this.invoice.early_payment_percentage) / 100
       }
@@ -450,10 +452,9 @@ export default {
         }
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
-        this.invoice.id = result.data.last_id
+        this.invoice.id = result.data.last_id + 1
         this.invoice.customer = result.data.customer
 
-        console.log('Customer data loaded:', this.invoice.customer)
       } catch (error) {
         console.error(error)
       }

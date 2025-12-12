@@ -17,6 +17,7 @@ body {
 .form-input[type='date'] {
   position: relative;
   cursor: pointer;
+  height: 38px;
 }
 
 .form-input[type='date']::-webkit-calendar-picker-indicator {
@@ -389,6 +390,18 @@ textarea {
   width: 100%;
   resize: vertical;
   min-height: 100px;
+}
+.sort-btn {
+  padding: 10px 16px;
+  background: #edf2f7;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+  background: #e2e8f0;
 }
 @media (max-width: 640px) {
   .profile-edit {

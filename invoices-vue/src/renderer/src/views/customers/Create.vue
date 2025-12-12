@@ -335,7 +335,7 @@ export default {
 }
 /* EDITOR PANEL */
 .editor-panel {
-  width: 70%;
+  width: 100%;
   background: white;
   padding: 30px;
   border-radius: 12px;
@@ -346,6 +346,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 2px solid #e5e7eb;
