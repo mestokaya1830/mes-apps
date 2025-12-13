@@ -85,11 +85,14 @@
             <div class="status-badge total">
               {{ formatCurrency(item.gross_total, item.currency) }}
             </div>
-              <router-link v-if="item.payment_status !== 'paid'" :to="`/payments/create/${item.id}`" class="status-badge payment"
-                >Zahlung erfassen</router-link
+            <router-link
+              v-if="item.payment_status !== 'paid'"
+              :to="`/payments/create/${item.id}`"
+              class="status-badge payment"
+              >Zahlung erfassen</router-link
             >
             <div v-else class="status-badge payment">Bezahlt</div>
-            </div>
+          </div>
 
           <!-- Card Actions -->
           <div class="card-actions">
@@ -337,7 +340,6 @@ export default {
   color: #e53e3e;
   margin-bottom: 12px;
 }
-
 
 .list-grid {
   display: grid;

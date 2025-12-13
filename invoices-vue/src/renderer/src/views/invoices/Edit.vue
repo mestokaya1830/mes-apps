@@ -20,6 +20,7 @@
                 class="form-input"
                 placeholder="Datum der Stornierung auswählen"
               />
+              <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
             </div>
 
             <div class="form-group">
@@ -30,6 +31,7 @@
                 class="form-input"
                 placeholder="Name der Person, die storniert"
               />
+              <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
             </div>
 
             <div class="form-group">
@@ -39,6 +41,9 @@
                 class="form-input"
                 placeholder="Grund der Stornierung hier eingeben"
               ></textarea>
+              <div v-if="error.cancellation_reason" class="error">
+                {{ error.cancellation_reason }}
+              </div>
             </div>
 
             <button @click="updateInvoice" class="btn btn-cancel">Stornieren</button>
@@ -58,13 +63,40 @@ export default {
   inject: ['formatInvoiceId'],
   data() {
     return {
-      title: 'Rechnung bearbeiten',
+      title: 'Zahlung bearbeiten',
       cancelled_by: '',
       cancelled_at: '',
-      cancellation_reason: ''
+      cancellation_reason: '',
+      error: {}
     }
   },
   methods: {
+    checkInputs() {
+      if (!this.cancelled_at.trim()) {
+        this.error.cancelled_at = 'Bitte ein Datum auswählen'
+        return false
+      } else {
+        this.error.cancelled_at = ''
+      }
+
+      // Name prüfen
+      if (!this.cancelled_by.trim() || this.cancelled_by.length < 3) {
+        this.error.cancelled_by = 'Bitte einen Namen mit mindestens 3 Zeichen eingeben'
+        return false
+      } else {
+        this.error.cancelled_by = ''
+      }
+
+      // Grund prüfen
+      if (!this.cancellation_reason.trim() || this.cancellation_reason.length < 5) {
+        this.error.cancellation_reason = 'Bitte einen Grund mit mindestens 5 Zeichen eingeben'
+        return false
+      } else {
+        this.error.cancellation_reason = ''
+      }
+
+      return true
+    },
     async updateInvoice() {
       const id = this.$route.params.id
       const data = {
@@ -74,15 +106,21 @@ export default {
         cancelled_by: this.cancled_by,
         cancelled_at: this.cancelled_at
       }
+      if (!this.checkInputs()) return
       const result = await window.api.cancelInvoice(data)
       if (result.success) {
-        this.$router.push('/invoices/details/' + id)
+        this.$router.push('/invoices')
       }
     }
   }
 }
 </script>
 <style>
+.error {
+  color: red;
+  font-size: 12px;
+  margin-top: 4px;
+}
 .custom-row {
   display: flex;
   flex-direction: column;
@@ -90,7 +128,7 @@ export default {
 }
 /* PREVIEW PANEL */
 .preview-panel {
-  width: 80%;
+  width: 100%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

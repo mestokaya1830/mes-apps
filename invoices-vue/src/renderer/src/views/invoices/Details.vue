@@ -37,7 +37,7 @@
             <!-- Service date -->
             <div v-if="invoice.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(invoice.date) }}</span>
+              <span class="meta-value">{{ formatDate(invoice.service_date) }}</span>
             </div>
 
             <div class="meta-row">
@@ -133,25 +133,6 @@
             }}</span>
           </div>
 
-          <!-- <div
-            v-if="invoice.payment && invoice.payment.paid_amount && invoice.payment.paid_amount > 0"
-            class="total-row paid"
-          >
-            <span class="total-label">✓ Bereits bezahlt:</span>
-            <span class="total-value">
-              - {{ formatCurrency(invoice.payment.paid_amount, invoice.currency) }}
-            </span>
-          </div> -->
-          <!-- <div
-            v-if="invoice.summary && invoice.summary.outstanding > 0"
-            class="total-row outstanding"
-          >
-            <span class="total-label">⚠️ Offener Betrag:</span>
-            <span class="total-value">{{
-              formatCurrency(invoice.summary.outstanding, invoice.currency)
-            }}</span>
-          </div> -->
-
           <div class="preview-section">
             <div v-if="invoice.is_small_company" class="tax-note small-company">
               ⚠️ Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
@@ -180,10 +161,11 @@
               {{ invoice.payment_terms }} Tage netto (fällig bis {{ formatDate(invoice.due_date) }})
             </div>
 
-            <div v-if="invoice.early_payment_days > 0" class="payment-term-item skonto-highlight">
+            <div v-if="invoice.is_early_payment" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
               {{ invoice.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
-              {{ invoice.early_payment_days }} Tagen (bis {{ invoice.due_date }})
+              {{ invoice.early_payment_days }} Tagen (bis
+              {{ formatDate(invoice.early_payment_date) }})
               <div class="skonto-amount">
                 <span
                   >Skonto-Betrag:
@@ -191,7 +173,7 @@
                 >
                 <span
                   >Zahlbetrag:
-                  {{ formatCurrency(invoice.total_after_discount, invoice.currency) }}</span
+                  {{ formatCurrency(invoice.gross_total_after_discount, invoice.currency) }}</span
                 >
               </div>
             </div>
@@ -228,36 +210,36 @@
         <table class="table-auto w-full border">
           <thead>
             <tr>
-              <th class="border px-2 py-1">Zahlungs-ID</th>
-              <th class="border px-2 py-1">Zahlungsdatum</th>
-              <th class="border px-2 py-1">Rechnungssumme</th>
-              <th class="border px-2 py-1">Gezahlter Betrag</th>
-              <th class="border px-2 py-1">Rabatt</th>
-              <th class="border px-2 py-1">Gesamtbetrag nach Rabatt</th>
-              <th class="border px-2 py-1">Ausstehend</th>
-              <th class="border px-2 py-1">Details</th>
+              <th class="payment-head">Zahlungs-ID</th>
+              <th class="payment-head">Zahlungsdatum</th>
+              <th class="payment-head">Rechnungssumme</th>
+              <th class="payment-head">Rabatt</th>
+              <th class="payment-head">Gesamtbetrag nach Rabatt</th>
+              <th class="payment-head">Gezahlter Betrag</th>
+              <th class="payment-head">Ausstehend</th>
+              <th class="payment-head">Details</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody v-if="payments">
             <tr v-for="item in payments" :key="item.id">
-              <td class="border px-2 py-1">{{ formatPaymentId(item.id) }}</td>
-              <td class="border px-2 py-1">{{ item.payment_date }}</td>
-              <td class="border px-2 py-1">
-                {{ formatCurrency(item.invoice_gross_total, item.invoice_currency) }}
+              <td class="payment-row">{{ formatPaymentId(item.id) }}</td>
+              <td class="payment-row">{{ formatDate(item.payment_date) }}</td>
+              <td class="payment-row">
+                {{ formatCurrency(item.invoice.gross_total, item.invoice.currency) }}
               </td>
-              <td class="border px-2 py-1">
-                {{ formatCurrency(item.invoice_early_payment_discount, item.invoice_currency) }}
+              <td class="payment-row">
+                {{ formatCurrency(item.invoice.early_payment_discount, item.invoice.currency) }}
               </td>
-              <td class="border px-2 py-1">
-                {{ formatCurrency(item.invoice_total_after_discount, item.invoice_currency) }}
+              <td class="payment-row">
+                {{ formatCurrency(item.invoice.gross_total_after_discount, item.invoice.currency) }}
               </td>
-              <td class="border px-2 py-1">
-                {{ formatCurrency(item.payment_amount, item.invoice_currency) }}
+              <td class="payment-row">
+                {{ formatCurrency(item.payment_amount, item.invoice.currency) }}
               </td>
-              <td class="border px-2 py-1">
-                {{ formatCurrency(item.outstanding, item.invoice_currency) }}
+              <td class="payment-row">
+                {{ formatCurrency(item.invoice.outstanding, item.invoice.currency) }}
               </td>
-              <td class="border px-2 py-1">
+              <td class="payment-row">
                 <router-link :to="'/payments/details/' + item.id" class="action-btn details-btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -337,9 +319,14 @@ export default {
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions)
         }
-        this.payments = result.payments
-        this.total_paid_amount = Number(result.total_paid_amount).toFixed(2)
-        console.log('Invoice Data:', result.payments)
+        this.payments = result.payments.map((item) => {
+          return {
+            ...item,
+            invoice: JSON.parse(item.invoice)
+          }
+        })
+        // this.total_paid_amount = Number(result.total_paid_amount).toFixed(2)
+        console.log('Invoice Data:', this.invoice)
       } catch (error) {
         console.error(error)
       }
@@ -355,6 +342,16 @@ export default {
 }
 </script>
 <style>
+.payment-head {
+  font-weight: 600;
+  color: var(--lightColor);
+  font-size: 14px;
+}
+.payment-row {
+  font-weight: 600;
+  color: var(--midColor);
+  font-size: 12px;
+}
 .custom-row {
   display: flex;
   flex-direction: column;

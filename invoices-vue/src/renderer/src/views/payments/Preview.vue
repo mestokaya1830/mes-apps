@@ -65,7 +65,7 @@
                   <td>
                     {{
                       formatCurrency(
-                        paymentPreview.invoice.total_after_discount,
+                        paymentPreview.invoice.gross_total_after_discount,
                         paymentPreview.invoice.currency
                       )
                     }}
@@ -83,7 +83,7 @@
                 <tr>
                   <td>Offener Betrag</td>
                   <td>
-                    {{ formatCurrency(this.paymentPreview.outstanding, paymentPreview.invoice.currency) }}
+                    {{ formatCurrency(this.paymentPreview.invoice.outstanding, paymentPreview.invoice.currency) }}
                   </td>
                 </tr>
                 <tr>

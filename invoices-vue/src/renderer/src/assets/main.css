@@ -32,7 +32,7 @@ body {
 
 /* İkonu tekrar görünür yapmak için */
 .form-input[type='date']::after {
-  content: '📅';
+  content: '🗓️';
   position: absolute;
   right: 10px;
   top: 50%;

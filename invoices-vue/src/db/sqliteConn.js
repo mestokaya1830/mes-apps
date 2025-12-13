@@ -36,20 +36,10 @@ try {
 // }
 
 // try {
-//   const result = db.prepare(`Alter Table payments ADD Column invoice TEXT;`).run() // 1 → customer id
+//   const result = db
+//     .prepare(`Alter Table invoices ADD Column early_payment_date TEXT DEFAULT NULL;`)
+//     .run() // 1 → customer id
 //   console.log(result)
 // } catch (err) {
 //   console.error(err.message)
 // }
-
-
-
-
-// try {
-//   const result = db.prepare(`Drop Table payments;`).run() // 1 → customer id
-// } catch (error) {
-//   console.error(error.message)
-// }
-
-
-

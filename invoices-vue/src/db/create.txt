@@ -1,303 +1,361 @@
-//users
-db.exec(`
+PRAGMA foreign_keys = ON;
+
+--users
 CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY,                         -- Primary key
-    gender TEXT NOT NULL,                           -- Gender
-    first_name TEXT NOT NULL,                       -- First name
-    last_name TEXT NOT NULL,                        -- Last name
-    password TEXT NOT NULL,                         -- User password
-    email TEXT UNIQUE NOT NULL,                     -- Email address
-    phone TEXT NOT NULL,                            -- Phone number
-    address TEXT NOT NULL,                          -- Street address
-    postal_code TEXT NOT NULL,                      -- Postal code
-    city TEXT NOT NULL,                             -- City
-    state TEXT NOT NULL,                            -- State / Region
-    country TEXT DEFAULT 'Deutschland',             -- Country
-    website TEXT,                                   -- Optional website
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  gender TEXT NOT NULL,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  password TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  phone TEXT DEFAULT NULL,
+  address TEXT DEFAULT NULL,
+  postal_code TEXT DEFAULT NULL,
+  city TEXT DEFAULT NULL,
+  state TEXT DEFAULT NULL,
+  country TEXT DEFAULT 'Deutschland',
+  website TEXT DEFAULT NULL,
 
-    company_name TEXT NOT NULL,                     -- Company name
-    company_details TEXT NOT NULL,                  -- Company details / description
-    company_signature TEXT NOT NULL,                -- Company type signature (GmbH, AG, etc.)
-    contact_person TEXT,                            -- Contact person (e.g., CEO)
+  company_name TEXT DEFAULT NULL,
+  company_details TEXT DEFAULT '{}',
+  company_signature TEXT DEFAULT NULL,
+  contact_person TEXT DEFAULT '{}',
 
-    tax_number TEXT NOT NULL,                       -- Tax number
-    tax_office TEXT,                                -- Optional tax office
-    vat_id TEXT,                                    -- VAT ID
-    court_registration TEXT,                        -- Optional court registration number
-    court_location TEXT,                            -- Court location (Amtsgericht)
+  tax_number TEXT DEFAULT NULL,
+  tax_office TEXT DEFAULT NULL,
+  vat_id TEXT DEFAULT NULL,
+  court_registration TEXT DEFAULT NULL,
+  court_location TEXT DEFAULT NULL,
 
-    logo TEXT NOT NULL,                             -- Logo file path
-    image_type TEXT NOT NULL,                       -- Logo image type
+  logo BLOB DEFAULT NULL,
+  image_type TEXT DEFAULT NULL,
 
-    bank_name TEXT NOT NULL,                        -- Bank name
-    bic TEXT NOT NULL,                              -- Bank BIC / SWIFT
-    iban TEXT NOT NULL,                             -- Bank IBAN
-    bank_account_holder TEXT NOT NULL,             -- Account holder name
+  bank_name TEXT DEFAULT NULL,
+  bic TEXT DEFAULT NULL,
+  iban TEXT DEFAULT NULL,
+  bank_account_holder TEXT DEFAULT NULL,
 
-    invoice_approved TEXT NOT NULL,                -- Invoice approval status
+  invoice_approved INTEGER NOT NULL DEFAULT 0,
 
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP  -- Record update timestamp
+  created_at DATETIME DEFAULT (datetime('now')),
+  updated_at DATETIME DEFAULT (datetime('now'))
 );
-`);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+CREATE TRIGGER IF NOT EXISTS trg_users_updated_at
+AFTER UPDATE ON users
+BEGIN
+  UPDATE users SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+
+--tokens
+CREATE TABLE IF NOT EXISTS tokens (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  token TEXT UNIQUE NOT NULL,
+  user_id INTEGER NOT NULL,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME DEFAULT (datetime('now')),
+  FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_tokens_user_id ON tokens(user_id);
 
 
 
-
-//tokens
-db.exec(`CREATE TABLE tokens (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    token TEXT UNIQUE NOT NULL,
-    user_id INTEGER,
-    expires_at DATETIME NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);`)
-
-//--------------------------------------------------------------------------------------------------
-//customers
-db.exec(`
 CREATE TABLE IF NOT EXISTS customers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,          -- Primary key
-    is_active INTEGER NOT NULL DEFAULT 1,          -- Active status (1 = active, 0 = inactive)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  is_active INTEGER NOT NULL DEFAULT 1,
 
-    company_type TEXT NOT NULL,                     -- Company type (GmbH, AG, etc.)
-    company_name TEXT NOT NULL,                     -- Company name
+  company_type TEXT DEFAULT NULL,
+  company_name TEXT DEFAULT NULL,
 
-    first_name TEXT NOT NULL,                       -- Contact first name
-    last_name TEXT NOT NULL,                        -- Contact last name
-    full_name TEXT NOT NULL,                        -- Full name (concatenated)
+  first_name TEXT DEFAULT NULL,
+  last_name TEXT DEFAULT NULL,
+  full_name TEXT GENERATED ALWAYS AS (COALESCE(first_name,'') || ' ' || COALESCE(last_name,'')) VIRTUAL,
 
-    email TEXT NOT NULL,                            -- Email address
-    phone TEXT NOT NULL,                            -- Phone number
-    website TEXT NOT NULL,
-    address TEXT NOT NULL,                          -- Street address
-    postal_code TEXT NOT NULL,                      -- Postal code
-    city TEXT NOT NULL,                             -- City
-    country TEXT NOT NULL,                          -- Country
+  email TEXT DEFAULT NULL,
+  phone TEXT DEFAULT NULL,
+  website TEXT DEFAULT NULL,
+  address TEXT DEFAULT NULL,
+  postal_code TEXT DEFAULT NULL,
+  city TEXT DEFAULT NULL,
+  country TEXT DEFAULT 'Deutschland',
 
-    tax_number TEXT NOT NULL,                       -- Tax number
-    vat_id TEXT NOT NULL,                           -- VAT ID
+  tax_number TEXT DEFAULT NULL,
+  vat_id TEXT DEFAULT NULL,
 
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP  -- Record update timestamp
+  created_at DATETIME DEFAULT (datetime('now')),
+  updated_at DATETIME DEFAULT (datetime('now'))
 );
-`);
+
+CREATE INDEX IF NOT EXISTS idx_customers_full_name ON customers(full_name);
+
+CREATE TRIGGER IF NOT EXISTS trg_customers_updated_at
+AFTER UPDATE ON customers
+BEGIN
+  UPDATE customers SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
 
 
-//---------------------------------------------------------------------------------------------------
-//invoices
-// db.exec(`CREATE TABLE IF NOT EXISTS invoices (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     customer_id INTEGER NOT NULL,
-//     customer TEXT NOT NULL,
-//     is_active INTEGER DEFAULT 1,
-    
-//     -- Invoice info
-//     service_date TEXT NOT NULL,
-//     date TEXT NOT NULL,
-//     due_date TEXT NOT NULL,
-//     currency TEXT NOT NULL,
-    
-//     payment_terms INTEGER NOT NULL,
-//     payment_conditions TEXT DEFAULT '',
-    
-//     is_early_paid INTEGER DEFAULT 0,         
-//     early_payment_discount INTEGER DEFAULT 0,         
-//     early_payment_percentage REAL DEFAULT 0,
-//     early_payment_days INTEGER DEFAULT 0,
-    
-//     is_small_company INTEGER DEFAULT 0,
-//     is_reverse_charge INTEGER DEFAULT 0,
-//     is_eu_delivery INTEGER DEFAULT 0,
-    
-//     positions TEXT NOT NULL,                            -- JSON/text of invoice positions
-//     net_total REAL NOT NULL,
-//     vat_total REAL NOT NULL,
-//     gross_total REAL NOT NULL,
-    
-//     payment_status TEXT DEFAULT 'unpaid',              -- unpaid / partially_paid / paid
-    
-//     cancelled_at TEXT DEFAULT '',
-//     cancelled_by TEXT DEFAULT '',
-//     cancellation_reason TEXT DEFAULT '',
-    
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    
-//     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
-// );
-// `)
+-- invoices
+CREATE TABLE IF NOT EXISTS invoices (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL,
+  customer_snapshot TEXT NOT NULL DEFAULT '{}',
 
-// db.exec(`CREATE TABLE IF NOT EXISTS payments (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    
-//     invoice_id INTEGER NOT NULL,                        -- invoice ile ilişki
-//     customer_id INTEGER NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 1,
 
-//     invoice TEXT NOT NULL,
-//     payment_date TEXT NOT NULL,
-//     payment_amount REAL NOT NULL,
-//     payment_method TEXT NOT NULL,
-//     payment_reference TEXT DEFAULT '',
-    
-//     -- Counterparty info
-//     counterparty_name TEXT DEFAULT '',
-//     counterparty_iban TEXT DEFAULT '',
-//     counterparty_bic TEXT DEFAULT '',
-//     counterparty_bank TEXT DEFAULT '',
-    
-//     -- Additional info
-//     notes TEXT DEFAULT '',
-//     file_name TEXT DEFAULT '',
-    
-//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    
-//     FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
-//     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
-// );
-// `)
+  service_date TEXT NOT NULL,
+  date TEXT NOT NULL,
+  due_date TEXT DEFAULT NULL,
 
-//--------------------------------------------------------------------------------------------
-db.exec(`
+  currency TEXT NOT NULL DEFAULT 'EUR.de-DE',
+
+  payment_terms INTEGER NOT NULL DEFAULT 14,
+  payment_conditions TEXT DEFAULT NULL,
+
+  is_early_payment INTEGER NOT NULL DEFAULT 0,
+  early_payment_discount REAL NOT NULL DEFAULT 0,
+  early_payment_percentage REAL NOT NULL DEFAULT 0,
+  early_payment_days INTEGER NOT NULL DEFAULT 0,
+  early_payment_date TEXT DEFAULT NULL,
+
+  is_small_company INTEGER NOT NULL DEFAULT 0,
+  is_reverse_charge INTEGER NOT NULL DEFAULT 0,
+  is_eu_delivery INTEGER NOT NULL DEFAULT 0,
+
+  positions TEXT NOT NULL DEFAULT '[]',
+
+  net_total REAL NOT NULL DEFAULT 0,
+  vat_total REAL NOT NULL DEFAULT 0,
+  gross_total REAL NOT NULL DEFAULT 0,
+  gross_total_after_discount REAL NOT NULL DEFAULT 0,
+
+  payment_status TEXT NOT NULL DEFAULT 'unpaid',
+  CHECK (payment_status IN ('unpaid','partially_paid','paid')),
+
+  cancelled_at TEXT DEFAULT NULL,
+  cancelled_by TEXT DEFAULT NULL,
+  cancellation_reason TEXT DEFAULT NULL,
+
+  created_at DATETIME DEFAULT (datetime('now')),
+  updated_at DATETIME DEFAULT (datetime('now')),
+
+  FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_invoices_customer_id ON invoices(customer_id);
+CREATE INDEX IF NOT EXISTS idx_invoices_date ON invoices(date);
+
+CREATE TRIGGER IF NOT EXISTS trg_invoices_updated_at
+AFTER UPDATE ON invoices
+BEGIN
+  UPDATE invoices SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+
+-- payments
+CREATE TABLE IF NOT EXISTS payments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+  invoice_id INTEGER NOT NULL,
+  customer_id INTEGER NOT NULL,
+
+  invoice_snapshot TEXT NOT NULL DEFAULT '{}',
+  payment_date TEXT NOT NULL,
+  payment_amount REAL NOT NULL DEFAULT 0,
+  payment_method TEXT DEFAULT NULL,
+  payment_reference TEXT DEFAULT NULL,
+
+  counterparty_name TEXT DEFAULT NULL,
+  counterparty_iban TEXT DEFAULT NULL,
+  counterparty_bic TEXT DEFAULT NULL,
+  counterparty_bank TEXT DEFAULT NULL,
+
+  notes TEXT DEFAULT NULL,
+  file_name TEXT DEFAULT NULL,
+
+  created_at DATETIME DEFAULT (datetime('now')),
+  updated_at DATETIME DEFAULT (datetime('now')),
+
+  FOREIGN KEY(invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+  FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_payments_invoice_id ON payments(invoice_id);
+
+CREATE TRIGGER IF NOT EXISTS trg_payments_updated_at
+AFTER UPDATE ON payments
+BEGIN
+  UPDATE payments SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+
+-- reminders
 CREATE TABLE IF NOT EXISTS reminders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    invoice_id INTEGER NOT NULL,                     -- Foreign key to invoices
-    customer_id INTEGER NOT NULL,                    -- Foreign key to customers
+  invoice_id INTEGER NOT NULL,
+  customer_id INTEGER NOT NULL,
 
-    invoice TEXT NOT NULL,
-    
-    is_sent INTEGER NOT NULL DEFAULT 0,             -- 1 = sent to customer
-    is_cancelled INTEGER NOT NULL DEFAULT 0,        -- 1 = cancelled / voided
+  invoice_snapshot TEXT NOT NULL DEFAULT '{}',
 
-    level INTEGER NOT NULL,                          -- Reminder level (0 = first, 1 = 1st reminder, 2 = 2nd, 3 = final)
-    level_text TEXT NOT NULL,                        -- Reminder text for level ("Zahlungserinnerung", "1. Mahnung", etc.)
+  is_sent INTEGER NOT NULL DEFAULT 0,
+  is_cancelled INTEGER NOT NULL DEFAULT 0,
 
-    reminder_date TEXT NOT NULL,                     -- Official reminder date (PDF date)
-    due_date_new TEXT NOT NULL,                      -- New due date (+days)
-    reminder_fee INTEGER NOT NULL DEFAULT 0,        -- Reminder fee in cents (e.g., 500 = €5.00)
-    late_interest INTEGER NOT NULL DEFAULT 0,       -- Late interest total
+  level INTEGER NOT NULL DEFAULT 0,
+  level_text TEXT DEFAULT NULL,
 
-    intro_text TEXT NOT NULL DEFAULT '',            -- Introduction text
-    warning_text TEXT NOT NULL DEFAULT '',             -- Main body text
-    closing_text TEXT NOT NULL DEFAULT '',          -- Closing text
+  reminder_date TEXT DEFAULT NULL,
+  due_date_new TEXT DEFAULT NULL,
 
-    sent_at TEXT,                                   -- Actual sending date (email/post)
-    sent_method TEXT,                               -- Method sent ('email', 'post', 'einschreiben', 'portal')
+  reminder_fee REAL NOT NULL DEFAULT 0,
+  late_interest REAL NOT NULL DEFAULT 0,
 
-    proof_type TEXT,                                -- Proof type ('email', 'post', 'einschreiben', 'portal')
-    proof_file_name TEXT,                           -- Proof file name (receipt, screenshot, etc.)
-    proof_sent_at TEXT,                             -- Proof date (receipt date, etc.)
+  intro_text TEXT DEFAULT NULL,
+  warning_text TEXT DEFAULT NULL,
+  closing_text TEXT DEFAULT NULL,
 
-    created_at TEXT DEFAULT (datetime('now')),      -- Record creation timestamp
-    updated_at TEXT DEFAULT (datetime('now')),      -- Record update timestamp
+  sent_at TEXT DEFAULT NULL,
+  sent_method TEXT DEFAULT NULL,
 
-    FOREIGN KEY(invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
-    FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE CASCADE
+  proof_type TEXT DEFAULT NULL,
+  proof_file_name TEXT DEFAULT NULL,
+  proof_sent_at TEXT DEFAULT NULL,
+
+  created_at DATETIME DEFAULT (datetime('now')),
+  updated_at DATETIME DEFAULT (datetime('now')),
+
+  FOREIGN KEY(invoice_id) REFERENCES invoices(id) ON DELETE CASCADE,
+  FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE CASCADE
 );
-`);
 
-//-----------------------------------------------------------------------------------------------
-db.exec(`
+CREATE INDEX IF NOT EXISTS idx_reminders_invoice_id ON reminders(invoice_id);
+
+CREATE TRIGGER IF NOT EXISTS trg_reminders_updated_at
+AFTER UPDATE ON reminders
+BEGIN
+  UPDATE reminders SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+
+-- offers
 CREATE TABLE IF NOT EXISTS offers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,           -- Primary key
-    customer_id INTEGER NOT NULL,                   -- Foreign key to customers
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER NOT NULL,
 
-    date TEXT NOT NULL,                             -- Offer creation date
-    valid_until TEXT NOT NULL,                      -- Offer validity date
-    
-    customer JSON NOT NULL,                         -- Customer info stored as JSON
-    contact_person TEXT,                            -- Contact person for the offer
+  date TEXT NOT NULL,
+  valid_until TEXT DEFAULT NULL,
 
-    subject TEXT NOT NULL,                          -- Offer subject / description
-    currency TEXT NOT NULL,                         -- Currency code
-    payment_terms TEXT NOT NULL,                    -- Payment terms description
-    delivery_terms TEXT NOT NULL,                   -- Delivery terms
-    delivery_time TEXT NOT NULL,                    -- Delivery time description
+  customer_snapshot TEXT NOT NULL DEFAULT '{}',
+  contact_person TEXT DEFAULT NULL,
 
-    positions TEXT NOT NULL,                        -- Offer positions stored as JSON/text
-    net_total INTEGER NOT NULL,                     -- Net total amount
-    vat_total INTEGER NOT NULL,                     -- VAT total amount
-    gross_total INTEGER NOT NULL,                   -- Gross total amount
+  subject TEXT DEFAULT NULL,
+  currency TEXT NOT NULL DEFAULT 'EUR.de-DE',
+  payment_terms TEXT DEFAULT NULL,
+  delivery_terms TEXT DEFAULT NULL,
+  delivery_time TEXT DEFAULT NULL,
 
-    status TEXT NOT NULL,                            -- Offer status (draft, accepted, rejected)
-    status_by TEXT,
-    status_date TEXT,
-    status_comments TEXT,
-    is_active INTEGER NOT NULL DEFAULT 1,          -- Active flag
-    is_legal INTEGER NOT NULL DEFAULT 1,           -- Legally binding flag
+  positions TEXT NOT NULL DEFAULT '[]',
+  net_total REAL NOT NULL DEFAULT 0,
+  vat_total REAL NOT NULL DEFAULT 0,
+  gross_total REAL NOT NULL DEFAULT 0,
 
-    introduction_text TEXT NOT NULL,                -- Introduction text for the offer
-    closing_text TEXT NOT NULL,                     -- Closing text for the offer
-    notes TEXT NOT NULL,                            -- Public notes
-    
-    internal_notes TEXT,                            -- Internal notes (private)
+  status TEXT NOT NULL DEFAULT 'draft',
+  status_by TEXT DEFAULT NULL,
+  status_date TEXT DEFAULT NULL,
+  status_comments TEXT DEFAULT NULL,
 
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record creation timestamp
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- Record update timestamp
+  is_active INTEGER NOT NULL DEFAULT 1,
+  is_legal INTEGER NOT NULL DEFAULT 0,
 
-    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT
+  introduction_text TEXT DEFAULT NULL,
+  closing_text TEXT DEFAULT NULL,
+  notes TEXT DEFAULT NULL,
+  internal_notes TEXT DEFAULT NULL,
+
+  created_at DATETIME DEFAULT (datetime('now')),
+  updated_at DATETIME DEFAULT (datetime('now')),
+
+  FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE RESTRICT
 );
-`);
-//----------------------------------------------------------------------------------------------------------
-db.exec(`
+
+CREATE INDEX IF NOT EXISTS idx_offers_customer_id ON offers(customer_id);
+
+CREATE TRIGGER IF NOT EXISTS trg_offers_updated_at
+AFTER UPDATE ON offers
+BEGIN
+  UPDATE offers SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+
+-- orders
 CREATE TABLE IF NOT EXISTS orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_id INTEGER,
-    customer TEXT DEFAULT '{}',
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  customer_id INTEGER DEFAULT NULL,
+  customer_snapshot TEXT DEFAULT '{}',
 
-    date TEXT DEFAULT '',
-    validity_date TEXT DEFAULT '',
-    service_period_start TEXT DEFAULT '',
-    service_period_end TEXT DEFAULT '',
+  date TEXT DEFAULT NULL,
+  validity_date TEXT DEFAULT NULL,
+  service_period_start TEXT DEFAULT NULL,
+  service_period_end TEXT DEFAULT NULL,
+  delivery_date TEXT DEFAULT NULL,
 
-    status TEXT DEFAULT 'pending',
-    status_date TEXT DEFAULT '',
-    status_by TEXT DEFAULT '',
-    status_comments TEXT DEFAULT '',
+  status TEXT DEFAULT 'pending',
+  status_date TEXT DEFAULT NULL,
+  status_by TEXT DEFAULT NULL,
+  status_comments TEXT DEFAULT NULL,
 
-    is_active INTEGER DEFAULT 1,
-    cancelled_at TEXT DEFAULT '',
-    cancelled_by TEXT DEFAULT '',
-    cancellation_reason TEXT DEFAULT '',
+  is_active INTEGER DEFAULT 1,
+  cancelled_at TEXT DEFAULT NULL,
+  cancelled_by TEXT DEFAULT NULL,
+  cancellation_reason TEXT DEFAULT NULL,
 
-    delivery_terms TEXT DEFAULT '',
-    delivery_address TEXT DEFAULT '',
-    delivery_postal_code TEXT DEFAULT '',
-    delivery_city TEXT DEFAULT '',
-    delivery_country TEXT DEFAULT 'Deutschland',
-    delivery_date TEXT DEFAULT '',
-    shipping_method TEXT DEFAULT '',
+  delivery_terms TEXT DEFAULT NULL,
+  delivery_address TEXT DEFAULT NULL,
+  delivery_postal_code TEXT DEFAULT NULL,
+  delivery_city TEXT DEFAULT NULL,
+  delivery_country TEXT DEFAULT 'Deutschland',
+  shipping_method TEXT DEFAULT NULL,
 
-    payment_terms INTEGER DEFAULT 14,
-    payment_method TEXT DEFAULT '',
-    payment_conditions TEXT DEFAULT '',
-    payment_reference TEXT DEFAULT '',
-    currency TEXT DEFAULT 'EUR.de-DE',
-    net_total INTEGER DEFAULT 0,
-    vat_total INTEGER DEFAULT 0,
-    gross_total INTEGER DEFAULT 0,
+  payment_terms INTEGER DEFAULT 14,
+  payment_method TEXT DEFAULT NULL,
+  payment_conditions TEXT DEFAULT NULL,
+  payment_reference TEXT DEFAULT NULL,
+  currency TEXT DEFAULT 'EUR.de-DE',
 
+  net_total REAL DEFAULT 0,
+  vat_total REAL DEFAULT 0,
+  gross_total REAL DEFAULT 0,
 
-    positions TEXT DEFAULT '[]',
-    customer_reference TEXT DEFAULT '',
-    attachments TEXT DEFAULT '[]',
-    priority TEXT DEFAULT '',
-    internal_status_notes TEXT DEFAULT '',
+  positions TEXT DEFAULT '[]',
+  customer_reference TEXT DEFAULT NULL,
+  attachments TEXT DEFAULT '[]',
 
-    intro_text TEXT DEFAULT '',
-    customer_notes TEXT DEFAULT '',
-    internal_notes TEXT DEFAULT '',
-    closing_text TEXT DEFAULT '',
+  priority TEXT DEFAULT NULL,
+  internal_status_notes TEXT DEFAULT NULL,
 
-    sent_at TEXT DEFAULT '',
-    sent_method TEXT DEFAULT '',
+  intro_text TEXT DEFAULT NULL,
+  customer_notes TEXT DEFAULT NULL,
+  internal_notes TEXT DEFAULT NULL,
+  closing_text TEXT DEFAULT NULL,
 
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now')),
+  sent_at TEXT DEFAULT NULL,
+  sent_method TEXT DEFAULT NULL,
 
-    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE RESTRICT
+  created_at DATETIME DEFAULT (datetime('now')),
+  updated_at DATETIME DEFAULT (datetime('now')),
+
+  FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE RESTRICT
 );
-`);
 
+CREATE INDEX IF NOT EXISTS idx_orders_customer_id ON orders(customer_id);
+
+CREATE TRIGGER IF NOT EXISTS trg_orders_updated_at
+AFTER UPDATE ON orders
+BEGIN
+  UPDATE orders SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
+-- End of schema

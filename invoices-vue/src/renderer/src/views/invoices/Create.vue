@@ -280,6 +280,7 @@
             </div>
           </div>
         </div>
+        <div v-if="error.positions" class="error">{{ error.positions }}</div>
         <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
       </div>
 
@@ -303,7 +304,7 @@
           <label for="skonto-checkbox" class="switch">
             <input
               id="skonto-checkbox"
-              v-model="early_payment_input"
+              v-model="invoice.is_early_payment"
               type="checkbox"
               class="switch-checkbox"
             />
@@ -313,7 +314,7 @@
             <strong>Skonto gewähren</strong>
           </div>
         </div>
-        <div v-if="early_payment_input" class="form-row">
+        <div v-if="invoice.is_early_payment" class="form-row">
           <div class="form-group">
             <label class="form-label">Skonto (%)</label>
             <input
@@ -363,7 +364,7 @@
           <div class="positions-total-item">
             <label class="form-label">Endpreis(€)</label>
             <div class="form-result-item">
-              {{ summary.total_after_discount }}
+              {{ summary.gross_total_after_discount }}
             </div>
           </div>
         </div>
@@ -382,32 +383,38 @@ export default {
   data() {
     return {
       title: 'Rechnung erstellen',
-      early_payment_input: false,
       error: {},
       invoice: {
-        id: 0, //will come from db
+        id: 0,
         customer: null,
         customer_id: null,
         is_active: 1,
-        payment_status: 'unpaid',
+
         date: '',
         due_date: '',
         service_date: '',
+
+        payment_status: 'unpaid',
         currency: 'EUR.de-DE',
         payment_terms: 14,
         payment_conditions: 'z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss.',
-        is_early_payment: false,
+
+        is_early_payment: 0,
         early_payment_days: 7,
         early_payment_percentage: 2,
         early_payment_discount: 0,
-        is_small_company: false,
-        is_reverse_charge: false,
-        is_eu_delivery: false,
+        early_payment_date: null,
+
+        is_small_company: 0,
+        is_reverse_charge: 0,
+        is_eu_delivery: 0,
+
         positions: [],
+
         net_total: 0,
         vat_total: 0,
         gross_total: 0,
-        total_after_discount: 0
+        gross_total_after_discount: 0
       }
     }
   },
@@ -422,7 +429,7 @@ export default {
       const gross_total = net_total + vat_total
 
       let early_payment_discount = 0
-      if (this.early_payment_input) {
+      if (this.invoice.is_early_payment) {
         early_payment_discount = (gross_total * this.invoice.early_payment_percentage) / 100
       }
       return {
@@ -430,17 +437,16 @@ export default {
         vat_total,
         gross_total,
         early_payment_discount,
-        total_after_discount: gross_total - early_payment_discount
+        gross_total_after_discount: gross_total - early_payment_discount
       }
     }
   },
   mounted() {
-    this.getCustomer()
     this.getStore()
   },
   methods: {
     async getStore() {
-      if (!store.state.invoice) return
+      if (!store.state.invoice) return await this.getCustomer()
       this.invoice = JSON.parse(JSON.stringify(store.state.invoice))
     },
     async getCustomer() {
@@ -452,9 +458,9 @@ export default {
         }
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
+        console.log(result.data)
         this.invoice.id = result.data.last_id + 1
         this.invoice.customer = result.data.customer
-
       } catch (error) {
         console.error(error)
       }
@@ -463,7 +469,7 @@ export default {
       if (!current) return
       for (const item in this.invoice[current]) {
         if (item !== current) {
-          this.invoice[item] = false
+          this.invoice[item] = 0
         }
       }
       this.calculateVatAsCompanyType()
@@ -502,6 +508,7 @@ export default {
         vat: 19,
         unit_total: 0
       })
+      this.error.positions = ''
     },
     deletePosition(index) {
       if (!this.invoice.positions) return
@@ -531,24 +538,35 @@ export default {
       this.invoice.positions[index].unit_total = total.toFixed(2)
       this.invoice.positions[index].vat_unit = (base * (vat / 100)).toFixed(2)
     },
-    setDueDate() {
+    setNewDates() {
       if (!this.invoice.date) return
+      //due date
       const date = new Date(this.invoice.date)
       date.setDate(date.getDate() + this.invoice.payment_terms)
       this.invoice.due_date = date.toISOString().split('T')[0]
+
+      //early payment date
+      if (!this.invoice.is_early_payment) return
+      const early_payment_date = new Date(this.invoice.date)
+      early_payment_date.setDate(early_payment_date.getDate() + this.invoice.early_payment_days)
+      this.invoice.early_payment_date = early_payment_date.toISOString().split('T')[0]
+
     },
     async submitStore() {
-      if (!this.invoice) return
-      console.time('commit')
-      this.setDueDate()
+      if (this.invoice.positions.length === 0) {
+        this.error.positions = 'Es muss mindestens eine Position hinzugefügt werden.'
+        return
+      }
+      this.setNewDates()
       this.invoice.customer_id = this.invoice.customer.id
       this.invoice.net_total = this.summary.net_total
       this.invoice.vat_total = this.summary.vat_total
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
-      this.invoice.total_after_discount = this.summary.total_after_discount
+      this.invoice.gross_total_after_discount = this.summary.gross_total_after_discount
       if (
         !this.checkServiceDates(
+          //comt from app provider
           this.invoice.service_date,
           this.invoice.date,
           'service_date',
@@ -560,7 +578,6 @@ export default {
 
       await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
       this.$router.push('/invoices/preview')
-      console.timeEnd('commit')
     }
   }
 }

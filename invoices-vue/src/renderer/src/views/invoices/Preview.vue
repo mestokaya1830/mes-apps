@@ -41,9 +41,7 @@
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{
-                formatCustomerId(invoicePreview.customer.id)
-              }}</span>
+              <span class="meta-value">{{ formatCustomerId(invoicePreview.customer.id) }}</span>
             </div>
 
             <div
@@ -187,13 +185,11 @@
               {{ formatDate(invoicePreview.due_date) }})
             </div>
 
-            <div
-              v-if="invoicePreview.early_payment_days"
-              class="payment-term-item skonto-highlight"
-            >
+            <div v-if="invoicePreview.is_early_payment" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
               {{ invoicePreview.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
-              {{ invoicePreview.early_payment_days }} Tagen (bis {{ invoicePreview.due_date }})
+              {{ invoicePreview.early_payment_days }} Tagen (bis
+              {{ formatDate(invoicePreview.early_payment_date) }})
               <div class="skonto-amount">
                 <span
                   >Skonto-Betrag:
@@ -204,7 +200,10 @@
                 <span
                   >Zahlbetrag:
                   {{
-                    formatCurrency(invoicePreview.total_after_discount, invoicePreview.currency)
+                    formatCurrency(
+                      invoicePreview.gross_total_after_discount,
+                      invoicePreview.currency
+                    )
                   }}</span
                 >
               </div>
@@ -294,7 +293,7 @@ export default {
 <style>
 /* PREVIEW PANEL */
 .preview-panel {
-  width: 80%;
+  width: 100%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
