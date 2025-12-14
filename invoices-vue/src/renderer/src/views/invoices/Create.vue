@@ -386,16 +386,16 @@ export default {
       error: {},
       invoice: {
         id: 0,
-        customer: null,
-        customer_id: null,
         is_active: 1,
+        customer_id: null,
+        customer: null,
 
-        date: '',
-        due_date: '',
-        service_date: '',
+        service_date: null,
+        date: null,
+        due_date: null,
 
-        payment_status: 'unpaid',
         currency: 'EUR.de-DE',
+
         payment_terms: 14,
         payment_conditions: 'z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss.',
 
@@ -414,7 +414,9 @@ export default {
         net_total: 0,
         vat_total: 0,
         gross_total: 0,
-        gross_total_after_discount: 0
+        gross_total_after_discount: 0,
+
+        payment_status: 'unpaid'
       }
     }
   },
