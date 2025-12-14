@@ -26,14 +26,15 @@
       </div>
 
       <div class="filter-container">
-        <select v-model="categories_filter" class="form-input" @change="filterCategories">
+        <select v-model="categories_filter" class="form-input select" @change="filterCategories">
           <option value="" disabled>Kategorie</option>
           <option value="all">Alle</option>
           <option value="active">Aktiv</option>
           <option value="canceled">Storniert</option>
           <option value="is_paid">Bezahlt</option>
-          <option value="is_not_paid">Unbezahlt</option>
           <option value="is_partially_paid">Teilweise bezahlt</option>
+          <option value="overdue">Überfällig</option>
+          <option value="is_early_paid">Frühzahlung</option>
         </select>
 
         <input
@@ -86,12 +87,21 @@
               {{ formatCurrency(item.gross_total, item.currency) }}
             </div>
             <router-link
-              v-if="item.payment_status !== 'paid'"
+              v-if="item.payment_status !== 'paid' && item.is_active === 1"
               :to="`/payments/create/${item.id}`"
               class="status-badge payment"
               >Zahlung erfassen</router-link
             >
-            <div v-else class="status-badge payment">Bezahlt</div>
+            <div
+              v-if="item.payment_status === 'paid' && item.is_active === 1"
+              class="status-badge paid"
+            >
+              Bezahlt
+            </div>
+
+            <div v-if="item.is_active === 0" class="status-badge canceled">
+              <small>Storniert am: {{ formatDate(item.cancelled_at) }}</small>
+            </div>
           </div>
 
           <!-- Card Actions -->
@@ -440,9 +450,20 @@ export default {
 }
 
 .status-badge.payment {
-  background-color: cadetblue;
+  background-color: darkorange;
   color: #fff;
   top: 60px;
+}
+.status-badge.paid {
+  background-color: lightseagreen;
+  color: #fff;
+  top: 60px;
+}
+.status-badge.canceled {
+  background-color: none;
+  color: #444;
+  top: 70px;
+  font-size: 16px;
 }
 
 .card-actions {
@@ -497,4 +518,5 @@ export default {
   margin: 0;
   font-size: 14px;
 }
+
 </style>

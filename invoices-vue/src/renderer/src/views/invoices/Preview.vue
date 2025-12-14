@@ -185,11 +185,14 @@
               {{ formatDate(invoicePreview.due_date) }})
             </div>
 
-            <div v-if="invoicePreview.is_early_payment" class="payment-term-item skonto-highlight">
+            <div
+              v-if="invoicePreview.early_payment_offer"
+              class="payment-term-item skonto-highlight"
+            >
               <strong>💰 Skonto:</strong>
               {{ invoicePreview.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
               {{ invoicePreview.early_payment_days }} Tagen (bis
-              {{ formatDate(invoicePreview.early_payment_date) }})
+              {{ formatDate(invoicePreview.early_payment_deadline) }})
               <div class="skonto-amount">
                 <span
                   >Skonto-Betrag:

@@ -304,7 +304,7 @@
           <label for="skonto-checkbox" class="switch">
             <input
               id="skonto-checkbox"
-              v-model="invoice.is_early_payment"
+              v-model="invoice.early_payment_offer"
               type="checkbox"
               class="switch-checkbox"
             />
@@ -314,7 +314,7 @@
             <strong>Skonto gewähren</strong>
           </div>
         </div>
-        <div v-if="invoice.is_early_payment" class="form-row">
+        <div v-if="invoice.early_payment_offer" class="form-row">
           <div class="form-group">
             <label class="form-label">Skonto (%)</label>
             <input
@@ -399,11 +399,11 @@ export default {
         payment_terms: 14,
         payment_conditions: 'z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss.',
 
-        is_early_payment: 0,
+        early_payment_offer: 0,
         early_payment_days: 7,
         early_payment_percentage: 2,
         early_payment_discount: 0,
-        early_payment_date: null,
+        early_payment_deadline: null,
 
         is_small_company: 0,
         is_reverse_charge: 0,
@@ -429,7 +429,7 @@ export default {
       const gross_total = net_total + vat_total
 
       let early_payment_discount = 0
-      if (this.invoice.is_early_payment) {
+      if (this.invoice.early_payment_offer) {
         early_payment_discount = (gross_total * this.invoice.early_payment_percentage) / 100
       }
       return {
@@ -546,11 +546,12 @@ export default {
       this.invoice.due_date = date.toISOString().split('T')[0]
 
       //early payment date
-      if (!this.invoice.is_early_payment) return
-      const early_payment_date = new Date(this.invoice.date)
-      early_payment_date.setDate(early_payment_date.getDate() + this.invoice.early_payment_days)
-      this.invoice.early_payment_date = early_payment_date.toISOString().split('T')[0]
-
+      if (!this.invoice.early_payment_offer) return
+      const early_payment_deadline = new Date(this.invoice.date)
+      early_payment_deadline.setDate(
+        early_payment_deadline.getDate() + this.invoice.early_payment_days
+      )
+      this.invoice.early_payment_deadline = early_payment_deadline.toISOString().split('T')[0]
     },
     async submitStore() {
       if (this.invoice.positions.length === 0) {

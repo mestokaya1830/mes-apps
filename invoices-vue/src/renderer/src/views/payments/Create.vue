@@ -102,6 +102,7 @@
             <label class="form-label">Zahlungsdatum *</label>
             <!-- Payment Date Input -->
             <input
+              ref="payment_date"
               v-model="payment.payment_date"
               type="date"
               class="form-input"
@@ -211,8 +212,7 @@ export default {
       ibanCountryFlag: '',
       bicError: '',
       paymentAmountError: false,
-      isPaymentAmountDisabled: false,
-      is_early_paid: false
+      isPaymentAmountDisabled: false
     }
   },
 
@@ -228,7 +228,6 @@ export default {
         const data = { id, table_name: 'payments' }
         const result = await window.api.getInvoiceById(data)
         if (!result.rows) return
-        console.log('payments', result)
         this.payment = {
           id: result.payment_id + 1,
           invoice_id: result.rows.id,
@@ -254,8 +253,7 @@ export default {
     },
 
     async getStore() {
-      // return this.getInvoice()
-      console.log('store payment', store.state.payment)
+      // await store.clearStore('payment')
       if (!store.state.payment) return await this.getInvoice()
       this.payment = JSON.parse(JSON.stringify(store.state.payment))
       this.selectedImage = this.payment.image_file
@@ -298,7 +296,7 @@ export default {
     },
 
     checkEarlyPayment() {
-      if (!this.payment.invoice.is_early_payment) return
+      if (!this.payment.invoice.early_payment_offer) return
       this.isCalculating = true // Flag'i aç
 
       const paymentDate = this.payment.payment_date ? new Date(this.payment.payment_date) : null
@@ -334,24 +332,40 @@ export default {
       })
     },
 
-    checkInputPayment() {
-      if (this.payment.payment_amount <= 0) {
+    setBank(bankName) {
+      this.payment.counterparty_bank = bankName
+    },
+    checkPaymentAmount() {
+      if (this.payment.payment_amount < 0) {
         this.$refs.payment_amount.focus()
         return false
       }
       return true
     },
-    setBank(bankName) {
-      this.payment.counterparty_bank = bankName
-    },
-    async submitStore() {
-      if (!this.checkInputPayment()) return
-      this.payment.image_file = this.selectedImage
-      if (this.payment.payment_total > this.payment.invoice.gross_total) {
+    setPaymentStatus() {
+      if (this.payment.invoice.outstanding < 0) {
         this.$refs.payment_amount.focus()
         this.paymentAmountError = true
+        return false
+      }
+      if (this.payment.invoice.outstanding === 0) {
+        this.payment.invoice.payment_status = 'paid'
+      } else {
+        this.payment.invoice.payment_status = 'partially_paid'
+      }
+    },
+    checkPaymentDate() {
+      if (!this.payment.payment_date) {
+        this.$refs.payment_date.focus()
         return
       }
+      return true
+    },
+    async submitStore() {
+      if (!this.checkPaymentDate()) return
+      if (!this.checkPaymentAmount()) return
+      if (this.setPaymentStatus()) return
+      this.payment.image_file = this.selectedImage
       await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
       this.$router.push('/payments/preview')
     }

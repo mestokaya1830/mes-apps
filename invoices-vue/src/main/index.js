@@ -653,11 +653,13 @@ ipcMain.handle('add-invoice', async (event, payload) => {
           currency,
           payment_terms,
           payment_conditions,
-          is_early_payment,
+          early_payment_offer,
           early_payment_discount,
           early_payment_percentage,
           early_payment_days,
-          early_payment_date,
+          early_payment_deadline,
+          early_payment_discount_applied,
+          paid_at,
           is_small_company,
           is_reverse_charge,
           is_eu_delivery,
@@ -670,7 +672,7 @@ ipcMain.handle('add-invoice', async (event, payload) => {
           cancelled_at,
           cancelled_by,
           cancellation_reason
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
       .run(
@@ -683,11 +685,13 @@ ipcMain.handle('add-invoice', async (event, payload) => {
         invoice.currency,
         invoice.payment_terms,
         invoice.payment_conditions || '',
-        invoice.is_early_payment ? 1 : 0,
+        invoice.early_payment_offer ? 1 : 0,
         invoice.early_payment_discount,
         invoice.early_payment_percentage || 0,
         invoice.early_payment_days || 0,
-        invoice.early_payment_date || null,
+        invoice.early_payment_deadline || null,
+        invoice.early_payment_discount_applied ? 1 : 0,
+        invoice.paid_at || null,
         invoice.is_small_company ? 1 : 0,
         invoice.is_reverse_charge ? 1 : 0,
         invoice.is_eu_delivery ? 1 : 0,
@@ -715,7 +719,7 @@ ipcMain.handle('get-invoices', async () => {
     const rows = db
       .prepare(
         `
-          SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, customer
+          SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, payment_status, customer
           FROM invoices 
           WHERE is_active = 1 AND payment_status != 'paid'
           ORDER BY id DESC
@@ -765,7 +769,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
       let rows = db
         .prepare(
           `
-            SELECT id, customer_id, date, due_date, gross_total, gross_total_after_discount, is_early_payment, early_payment_days, early_payment_percentage, early_payment_discount, currency, payment_status
+            SELECT id, customer_id, date, due_date, gross_total, gross_total_after_discount, early_payment_offer, early_payment_days, early_payment_percentage, early_payment_discount, currency, payment_status
             FROM invoices
             WHERE id = ?
           `
@@ -829,7 +833,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
 
     switch (category) {
       case 'all':
-        query = `SELECT id, date, due_date, gross_total,gross_total_after_discount, is_active, payment_status, customer
+        query = `SELECT id, date, due_date, gross_total,gross_total_after_discount, is_active, payment_status, cancelled_at, customer
           FROM invoices
           ORDER BY id DESC
           LIMIT ?`
@@ -839,14 +843,14 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
       case 'active':
         query = `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, payment_status, customer
           FROM invoices
-          WHERE is_active = 1
+          WHERE is_active = 1 AND payment_status != 'paid'
           ORDER BY id DESC
           LIMIT ?`
         rows = db.prepare(query).all(limit)
         break
 
       case 'canceled':
-        query = `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, customer
+        query = `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, cancelled_at, customer
           FROM invoices
           WHERE is_active = 0
           ORDER BY id DESC
@@ -872,24 +876,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
         rows = db.prepare(query).all(limit)
         break
 
-      case 'is_not_paid':
-        query = `
-            SELECT
-              id,
-              date,
-              due_date,
-              gross_total,
-              is_active,
-              payment_status,
-              customer
-            FROM invoices
-            WHERE  payment_status = 'unpaid' AND is_active = 1
-            ORDER BY id DESC
-            LIMIT ?;
-          `
-        rows = db.prepare(query).all(limit)
-        break
-
       case 'is_partially_paid':
         query = `
               SELECT
@@ -908,6 +894,25 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
         rows = db.prepare(query).all(limit)
         break
 
+      case 'overdue':
+        query = `
+               SELECT
+                    id,
+                    date,
+                    due_date,
+                    gross_total,
+                    is_active,
+                    payment_status,
+                    customer
+                FROM invoices
+                WHERE DATE(due_date) < DATE('now', 'localtime')
+                  AND payment_status != 'paid'
+                  AND is_active = 1
+                ORDER BY id DESC
+                LIMIT ?
+               `
+        rows = db.prepare(query).all(limit)
+        break
       default:
         query = `SELECT * FROM invoices WHERE is_active = 1 AND payment_status != 'paid' ORDER BY id DESC LIMIT ?`
         rows = db.prepare(query).all(limit)
@@ -1063,10 +1068,12 @@ ipcMain.handle('add-payment', async (event, payload) => {
         data.file_name ?? '',
 
         JSON.stringify(data.invoice)
+      )
+
+    db.prepare('UPDATE invoices SET payment_status = ? WHERE id = ?').run(
+      data.invoice.payment_status,
+      data.invoice.id
     )
-    
-    console.log(JSON.stringify(data.invoice).id)
-    console.log(JSON.stringify(data.invoice))
 
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
@@ -1208,7 +1215,6 @@ ipcMain.handle('document-report', async (data, tableName, startDate, endDate) =>
     return { success: false, message: err.message }
   }
 })
-
 
 //offers
 ipcMain.handle('add-offer', async (event, data) => {
@@ -1574,4 +1580,3 @@ ipcMain.handle('cancel-order', async (event, payload) => {
     return { success: false, message: err.message }
   }
 })
-

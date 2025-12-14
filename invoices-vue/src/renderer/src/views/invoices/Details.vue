@@ -161,11 +161,11 @@
               {{ invoice.payment_terms }} Tage netto (fällig bis {{ formatDate(invoice.due_date) }})
             </div>
 
-            <div v-if="invoice.is_early_payment" class="payment-term-item skonto-highlight">
+            <div v-if="invoice.early_payment_offer" class="payment-term-item skonto-highlight">
               <strong>💰 Skonto:</strong>
               {{ invoice.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
               {{ invoice.early_payment_days }} Tagen (bis
-              {{ formatDate(invoice.early_payment_date) }})
+              {{ formatDate(invoice.early_payment_deadline) }})
               <div class="skonto-amount">
                 <span
                   >Skonto-Betrag:

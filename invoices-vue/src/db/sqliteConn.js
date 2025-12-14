@@ -16,30 +16,3 @@ try {
 process.on('exit', () => db.close())
 
 export default db
-
-try {
-  const rows = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
-  console.log('Tables', rows)
-} catch (err) {
-  console.error(err.message)
-}
-
-// db.exec('PRAGMA foreign_keys = ON;')//default off
-
-
-// try {
-//   const result = db.prepare(`PRAGMA table_info(invoices);`).all()
-//   const fields = result.map((r) => r.name)
-//   console.log(fields)
-// } catch (err) {
-//   console.error(err.message)
-// }
-
-// try {
-//   const result = db
-//     .prepare(`Alter Table invoices ADD Column early_payment_date TEXT DEFAULT NULL;`)
-//     .run() // 1 → customer id
-//   console.log(result)
-// } catch (err) {
-//   console.error(err.message)
-// }
