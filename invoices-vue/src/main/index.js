@@ -1168,16 +1168,16 @@ ipcMain.handle('get-payment-by-id', async (event, id) => {
 })
 
 ipcMain.handle('cancel-payment-by-id', async (event, id) => {
-  // if (!id) {
-  //   return { success: false, message: 'No id provided' }
-  // }
-  // try {
-  //   const info = db.prepare('DELETE FROM payments WHERE id = ?').run(id)
-  //   return { success: true, lastInsertId: info.lastInsertRowid }
-  // } catch (err) {
-  //   console.error('DB error:', err.message)
-  //   return { success: false, message: err.message }
-  // }
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    const info = db.prepare('UPDATE payments SET is_active = 0 WHERE id = ?').run(id)
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })
 
 //reminders
@@ -1422,16 +1422,16 @@ ipcMain.handle('get-offer-by-id', async (event, id) => {
 })
 
 ipcMain.handle('cancel-offer-by-id', async (event, id) => {
-  // if (!id) {
-  //   return { success: false, message: 'No id provided' }
-  // }
-  // try {
-  //   const info = db.prepare('DELETE FROM offers WHERE id = ?').run(id)
-  //   return { success: true, lastInsertId: info.lastInsertRowid }
-  // } catch (err) {
-  //   console.error('DB error:', err.message)
-  //   return { success: false, message: err.message }
-  // }
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    const info = db.prepare('UPDATE offers SET is_active = 0 WHERE id = ?').run(id)
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })
 
 ipcMain.handle('update-offer-by-id', async (event, payload) => {
@@ -1634,7 +1634,16 @@ ipcMain.handle('get-orders', async () => {
 })
 
 ipcMain.handle('cancel-order-by-id', async (event, id) => {
- 
+  if (!id) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    const info = db.prepare('UPDATE orders SET is_active = 0 WHERE id = ?').run(id)
+    return { success: true, lastInsertId: info.lastInsertRowid }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
 })
 
 ipcMain.handle('cancel-order', async (event, payload) => {
