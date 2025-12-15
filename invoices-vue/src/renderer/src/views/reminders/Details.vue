@@ -1,22 +1,22 @@
 <template>
   <div>
-    <div class="preview-panel" v-if="remeinder && auth">
+    <div v-if="reminder && auth" class="preview-panel">
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
         <!-- customers -->
-        <div v-if="remeinder" class="recipient">
+        <div class="recipient">
           <div class="recipient-address">
             <div class="recipient-title">Empfänger</div>
             <div class="company-name-subtitle">
-              {{ remeinder.selected_invoice.customer.company_name }}
+              {{ reminder.customer.company_name }}
             </div>
-            <div class="meta-label">{{ remeinder.selected_invoice.customer.address }}</div>
+            <div class="meta-label">{{ reminder.customer.address }}</div>
             <div class="meta-label">
-              {{ remeinder.selected_invoice.customer.postal_code }}
-              {{ remeinder.selected_invoice.customer.city }}<br />
-              {{ remeinder.selected_invoice.customer.country }}
+              {{ reminder.customer.postal_code }}
+              {{ reminder.customer.city }}<br />
+              {{ reminder.customer.country }}
             </div>
           </div>
           <!-- recipient details -->
@@ -25,72 +25,76 @@
 
             <div class="meta-row">
               <span class="meta-label">Mahnung-Nr.:</span>
-              <span class="meta-value">{{ formatRemeinderId }}</span>
+              <span class="meta-value">{{ formatReminderId(reminder.id) }}</span>
             </div>
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
-              <span class="meta-value">{{ formatInvoiceId }}</span>
+              <span class="meta-value">{{ formatInvoiceId(reminder.invoice_id) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(remeinder.date) }}</span>
+              <span class="meta-value">{{ formatDate(reminder.date) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
-              <span class="meta-value">{{ formatCustomerId }}</span>
+              <span class="meta-value">{{ formatCustomerId(reminder.customer.id) }}</span>
             </div>
 
             <div class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ remeinder.selected_invoice.customer.vat_id }}</span>
+              <span class="meta-value">{{ reminder.customer.vat_id || '' }}</span>
             </div>
           </div>
         </div>
 
-        Subject
-        <!-- <div class="subject">{{ remeinder.subject }}</div> -->
-
         <!-- Content -->
         <div>
           <p class="greeting">Sehr geehrte Damen und Herren,</p>
-          <p v-if="remeinder?.intro_text">{{ remeinder.intro_text }}</p>
+          <p v-if="reminder?.intro_text">{{ reminder.intro_text }}</p>
         </div>
 
         <!-- remeinders Details -->
-        <div class="remeinders-details">
-          <h3>📄 Offene Rechnung(en)</h3>
-          <table class="remeinders-table">
-            <thead>
-              <tr>
-                <th>Rechnungsnummer</th>
-                <th>Rechnungsdatum</th>
-                <th>Fälligkeitsdatum</th>
-                <th>Betrag</th>
-              </tr>
-            </thead>
-            <!-- <tbody>
-              <tr v-for="item in remeinder" :key="item.id">
-                <td>{{ item.id }}</td>
-                <td>{{ formatDate(item.date) }}</td>
-                <td>{{ formatDate(item.due_date) }}</td>
-                <td>{{ formatCurrency(item.amount) }}</td>
-              </tr>
-              <tr v-if="item.reminder_fee > 0">
-                <td colspan="3">Mahngebühr:</td>
-                <td>{{ formatCurrency(item.remeinder_fee) }}</td>
-              </tr>
-              <tr v-if="item.late_fee > 0">
-                <td colspan="3">Verzugszinsen:</td>
-                <td>{{ formatCurrency(item.late_fee) }}</td>
-              </tr>
-              <tr class="total-row">
-                <td colspan="3">Offener Gesamtbetrag:</td>
-                <td>{{ formatCurrency(getTotalAmount()) }}</td>
-              </tr>
-            </tbody> -->
-          </table>
+        <div class="reminders-card">
+          <h3 class="reminders-title">📄 Offene Rechnung(en)</h3>
+
+          <div class="info-row">
+            <span>Rechnungsnummer</span>
+            <span>{{ formatInvoiceId(reminder.invoice.id) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span>Rechnungsdatum</span>
+            <span>{{ formatDate(reminder.invoice.date) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span>Fälligkeitsdatum</span>
+            <span>{{ formatDate(reminder.invoice.due_date) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span>Betrag</span>
+            <span>{{ formatCurrency(reminder.invoice.gross_total) }}</span>
+          </div>
+
+          <div class="info-row muted">
+            <span>Mahngebühr</span>
+            <span>{{ formatCurrency(reminder.reminder_fee) }}</span>
+          </div>
+
+          <div class="info-row muted">
+            <span>Verzugszinsen</span>
+            <span>{{ formatCurrency(reminder.late_interest) }}</span>
+          </div>
+
+          <div class="info-row total">
+            <span>Offener Gesamtbetrag</span>
+            <span>
+              {{ formatCurrency(setTotalAmount, reminder.invoice.currency) }}
+            </span>
+          </div>
         </div>
 
         <!-- Bank Info -->
@@ -103,30 +107,24 @@
             <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span>
             <span class="bank-value">{{ auth.bic }}</span>
-            <span class="bank-label">Verwen..:</span>
-            <span class="bank-value">{{
-              remeinder.selected_invoice.payment.verwendungszweck
-            }}</span>
-            <span class="bank-value">Zahlungsziel: {{ remeinder.payment_deadline }}</span>
+            <span class="bank-value">Zahlungsziel: {{ reminder.payment_deadline }}</span>
           </div>
         </div>
 
-        <!-- Warning Box (für 2. und 3. remeinder) -->
-        <div v-if="remeinder?.level >= 2" class="warning-box">
-          <div v-if="remeinder.level === 2">
+        <!-- Warning Box -->
+        <div v-if="reminder?.level >= 2" class="warning-box">
+          <div v-if="reminder.level === '2'">
             <strong>⚠️ Wichtiger Hinweis:</strong><br />
-            <p>{{ remeinder.warning_text }}</p>
+            <p>{{ reminder.warning_text }}</p>
           </div>
-          <div v-if="remeinder.level === 3">
-            <strong>🚨 Letzte remeinder:</strong><br />
-            <p>{{ remeinder.warning_text }}</p>
+          <div v-if="reminder.level === '3'">
+            <strong>🚨 Letzte Mahnung:</strong><br />
+            <p>{{ reminder.warning_text }}</p>
           </div>
         </div>
 
-        <div class="remeinder-content">
-          <p v-if="remeinder?.closing_text">
-            {{ remeinder.closing_text }}
-          </p>
+        <div class="reminder-content">
+          <p v-if="reminder?.closing_text">{{ reminder.closing_text }}</p>
         </div>
 
         <!-- Closing -->
@@ -143,14 +141,9 @@
         <!-- Footer -->
         <FooterSidePreview />
       </div>
-      <ActionsButtonPreview
-        v-if="remeinder.selected_invoice.customer"
-        tableName="remeinders"
-        :tableData="reemeindersPreview"
-        sourcePage="details"
-      />
+      <ActionsButtonPreview v-if="reminder" :tableData="reminder" sourcePage="preview" />
     </div>
-    <router-link to="/remeinders/create" class="back-link">
+    <router-link v-if="reminder" :to="`/reminders/create/${reminder.invoice_id}`" class="back-link">
       ← Zurück zur Rechnungserstellung
     </router-link>
   </div>
@@ -160,68 +153,56 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/preview/ActionsButtonPreview.vue'
+import ActionsButtonPreview from '../../components/reminders/ActionsButtonPreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
-  name: 'Remeinder',
+  name: 'ReminderDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
     ActionsButtonPreview,
     FooterSidePreview
   },
-  inject: ['formatCustomerId', 'formatDate', 'formatCurrency'],
+  inject: [
+    'formatCustomerId',
+    'formatInvoiceId',
+    'formatReminderId',
+    'formatDate',
+    'formatCurrency'
+  ],
   data() {
     return {
-      title: 'Mahnungs Vorschau',
-      remeinder: null,
+      title: 'Mahnungsdetails',
+      reminder: null,
       auth: null
     }
   },
   computed: {
-    formatInvoiceId() {
-      if (!this.remeinder.selected_invoice || !this.remeinder.selected_invoice.id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(this.remeinder.selected_invoice.id).padStart(5, '0')}`
-    },
-    formatRemeinderId() {
-      if (!this.remeinder || !this.remeinder.id) return ''
-      const year = new Date().getFullYear()
-      return `MAH-${year}-${String(this.remeinder.id).padStart(5, '0')}`
-    },
-    formatCustomerId() {
-      if (!this.remeinder.selected_invoice.customer || !this.remeinder.selected_invoice.customer.id)
-        return ''
-      const year = new Date().getFullYear()
-      return `MAH-${year}-${String(this.remeinder.selected_invoice.customer.id).padStart(5, '0')}`
+    setTotalAmount() {
+      if (!this.reminder) return
+      return (
+        this.reminder.invoice.gross_total + this.reminder.reminder_fee + this.reminder.late_interest
+      )
     }
   },
   mounted() {
-    this.getRemeinder()
+    this.getreminder()
     this.getAuth()
   },
   methods: {
-    async getRemeinder() {
-      const id = this.$route.params.id
-      try {
-        const result = await window.api.getDocumentById(id, 'remeinders')
-        console.log(result)
-        this.remeinder = {
-          ...result.rows,
-          selected_invoice: JSON.parse(result.rows.selected_invoice)
-        }
-      } catch (error) {
-        console.error(error)
+    async getreminder() {
+      if (!store.state.reminder) return
+      const result = await window.api.getReminderById(this.$route.params.id)
+      this.reminder = {
+        ...result.rows,
+        invoice: this.formatInvoiceId(result.rows.invoice),
+        customer: this.formatCustomerId(result.rows.customer)
       }
     },
     getAuth() {
-      if (store.state.auth) {
-        this.auth = store.state.auth
-        console.log(this.auth)
-      } else {
-        console.warn('No auth data in store')
-      }
+      if (!store.state.auth) return
+      this.auth = store.state.auth
     }
   }
 }
@@ -229,7 +210,7 @@ export default {
 <style>
 /* PREVIEW PANEL */
 .preview-panel {
-  width: 80%;
+  width: 100%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -509,5 +490,53 @@ export default {
   white-space: pre-wrap;
   font-size: 12px;
   color: #666;
+}
+.reminders-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.reminders-title {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.info-row span:last-child {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Daha az önemli satırlar */
+.info-row.muted {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Toplam */
+.info-row.total {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 2px solid #e5e7eb;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.info-row.total span:last-child {
+  color: #0369a1;
 }
 </style>

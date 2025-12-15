@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS offers (
   date TEXT NOT NULL,
   valid_until TEXT DEFAULT NULL,
 
-  customer_snapshot TEXT NOT NULL DEFAULT '{}',
+  customer TEXT NOT NULL DEFAULT '{}',
   contact_person TEXT DEFAULT NULL,
 
   subject TEXT DEFAULT NULL,
@@ -32,6 +32,10 @@ CREATE TABLE IF NOT EXISTS offers (
   closing_text TEXT DEFAULT NULL,
   notes TEXT DEFAULT NULL,
   internal_notes TEXT DEFAULT NULL,
+
+  cancelled_at TEXT DEFAULT NULL,
+  cancelled_by TEXT DEFAULT NULL,
+  cancellation_reason TEXT DEFAULT NULL,
 
   created_at DATETIME DEFAULT (datetime('now')),
   updated_at DATETIME DEFAULT (datetime('now')),

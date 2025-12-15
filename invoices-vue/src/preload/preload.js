@@ -36,27 +36,30 @@ contextBridge.exposeInMainWorld('api', {
   searchInvoices: async (term) => ipcRenderer.invoke('search-invoices', term),
   filterInvoicesDate: async (date) => ipcRenderer.invoke('filter-invoices-date', date),
 
+  //payment
+  addPayment: (data) => ipcRenderer.invoke('add-payment', data),
+  getPaymentById: (id) => ipcRenderer.invoke('get-payment-by-id', id),
+  cancelPaymentById: (id) => ipcRenderer.invoke('cancel-payment-by-id', id),
+
+  //reminder
+  addReminder: (data) => ipcRenderer.invoke('add-reminder', data),
+  getReminderById: (id) => ipcRenderer.invoke('get-reminder-by-id', id),
+  cancelReminderById: (id) => ipcRenderer.invoke('cancel-reminder-by-id', id),
+
+  //reports
+  // documentReport: async (data) => ipcRenderer.invoke('document-report', data),
+
   //offer
   addOffer: async (data) => ipcRenderer.invoke('add-offer', data),
   getOffers: async (data) => ipcRenderer.invoke('get-offers', data),
   getOfferById: async (id) => ipcRenderer.invoke('get-offer-by-id', id),
-  deleteOfferById: async (id) => ipcRenderer.invoke('delete-offer-by-id', id),
   updateOfferById: async (data) => ipcRenderer.invoke('update-offer-by-id', data),
+  cancelOfferById: async (id) => ipcRenderer.invoke('cancel-offer-by-id', id),
 
   //order
   addOrder: async (data) => ipcRenderer.invoke('add-order', data),
   getOrders: async (data) => ipcRenderer.invoke('get-orders', data),
   getOrderById: async (id) => ipcRenderer.invoke('get-order-by-id', id),
-  deleteOrderById: async (id) => ipcRenderer.invoke('delete-order-by-id', id),
-  cancelOrder: async (data) => ipcRenderer.invoke('cancel-order', data),
-
-  //payment
-  addPayment: (data) => ipcRenderer.invoke('add-payment', data),
-  getPaymentById: (id) => ipcRenderer.invoke('get-payment-by-id', id),
-  deletePaymentById: (id) => ipcRenderer.invoke('delete-payment-by-id', id),
-
-
-  //reminder
-  addReminder: (data) => ipcRenderer.invoke('add-reminder', data),
-  // documentReport: async (data) => ipcRenderer.invoke('document-report', data)
+  updateOrderById: async (data) => ipcRenderer.invoke('update-order-by-id', data),
+  cancelOrder: async (data) => ipcRenderer.invoke('cancel-order', data)
 })

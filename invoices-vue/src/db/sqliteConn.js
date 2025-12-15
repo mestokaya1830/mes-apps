@@ -16,3 +16,11 @@ try {
 process.on('exit', () => db.close())
 
 export default db
+
+// try {
+//   db.prepare('Alter table offers ADD column cancelled_by TEXT DEFAULT NULL').run()
+//   db.prepare('Alter table offers ADD column cancelled_at TEXT DEFAULT NULL').run()
+//   db.prepare('Alter table offers ADD column cancelled_reason TEXT DEFAULT NULL').run()
+// } catch (error) {
+//   console.error(error)
+// }

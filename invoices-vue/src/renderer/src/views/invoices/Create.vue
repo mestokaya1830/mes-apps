@@ -23,7 +23,7 @@
               ref="service_date"
               v-model="invoice.service_date"
               type="date"
-              class="form-input"
+              class="form-input date"
               required
               @input="error.service_date = ''"
             />
@@ -35,7 +35,7 @@
               ref="date"
               v-model="invoice.date"
               type="date"
-              class="form-input"
+              class="form-input date"
               required
               @input="error.date = ''"
             />
@@ -199,7 +199,7 @@
                   ref="service_period_start"
                   v-model="item.service_period_start"
                   type="date"
-                  class="form-input"
+                  class="form-input date"
                 />
                 <div v-if="error.service_period_start" class="error">
                   {{ error.service_period_start }}
@@ -211,7 +211,7 @@
                   ref="service_period_end"
                   v-model="item.service_period_end"
                   type="date"
-                  class="form-input"
+                  class="form-input date"
                 />
                 <div v-if="error.service_period_end" class="error">
                   {{ error.service_period_end }}
@@ -399,15 +399,15 @@ export default {
         payment_terms: 14,
         payment_conditions: 'z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss.',
 
-        early_payment_offer: 0,
+        early_payment_offer: false,
         early_payment_days: 7,
         early_payment_percentage: 2,
         early_payment_discount: 0,
         early_payment_deadline: null,
 
-        is_small_company: 0,
-        is_reverse_charge: 0,
-        is_eu_delivery: 0,
+        is_small_company: false,
+        is_reverse_charge: false,
+        is_eu_delivery: false,
 
         positions: [],
 

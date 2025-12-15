@@ -18,6 +18,10 @@ CREATE TABLE IF NOT EXISTS payments (
   notes TEXT DEFAULT NULL,
   file_name TEXT DEFAULT NULL,
 
+  cancelled_at TEXT DEFAULT NULL,
+  cancelled_by TEXT DEFAULT NULL,
+  cancellation_reason TEXT DEFAULT NULL,
+
   created_at DATETIME DEFAULT (datetime('now')),
   updated_at DATETIME DEFAULT (datetime('now')),
 

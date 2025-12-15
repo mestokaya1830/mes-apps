@@ -14,13 +14,13 @@
 body {
   font-family: 'Poppins', sans-serif;
 }
-.form-input[type='date'] {
+.date {
   position: relative;
   cursor: pointer;
   height: 38px;
 }
 
-.form-input[type='date']::-webkit-calendar-picker-indicator {
+.date::-webkit-calendar-picker-indicator {
   position: absolute;
   top: 0;
   left: 0;
@@ -31,7 +31,7 @@ body {
 }
 
 /* İkonu tekrar görünür yapmak için */
-.form-input[type='date']::after {
+.date::after {
   content: '🗓️';
   position: absolute;
   right: 10px;

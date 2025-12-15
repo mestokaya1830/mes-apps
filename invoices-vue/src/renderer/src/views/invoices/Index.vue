@@ -35,6 +35,8 @@
           <option value="is_partially_paid">Teilweise bezahlt</option>
           <option value="overdue">Überfällig</option>
           <option value="is_early_paid">Frühzahlung</option>
+          <option value="is_early_paid">Frühzahlung</option>
+          <option value="is_reminded">Erinnert</option>
         </select>
 
         <input
@@ -86,17 +88,21 @@
             <div class="status-badge total">
               {{ formatCurrency(item.gross_total, item.currency) }}
             </div>
+
             <router-link
               v-if="item.payment_status !== 'paid' && item.is_active === 1"
               :to="`/payments/create/${item.id}`"
               class="status-badge payment"
               >Zahlung erfassen</router-link
             >
+
             <div
               v-if="item.payment_status === 'paid' && item.is_active === 1"
               class="status-badge paid"
             >
+              <span v-if="item.paid_at && item.paid_at < item.due_date">⏰</span>
               Bezahlt
+              <span v-if="item.early_paid_discount_applied">💰</span>
             </div>
 
             <div v-if="item.is_active === 0" class="status-badge canceled">
@@ -185,7 +191,6 @@ export default {
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
-        console.log(this.invoices)
       } catch (error) {
         console.error(error)
       }
@@ -448,7 +453,11 @@ export default {
   color: #fff;
   top: 30px;
 }
-
+.status-badge.early-paid {
+  background-color: none;
+  color: #fff;
+  padding: 0 10px;
+}
 .status-badge.payment {
   background-color: darkorange;
   color: #fff;
@@ -518,5 +527,4 @@ export default {
   margin: 0;
   font-size: 14px;
 }
-
 </style>

@@ -12,11 +12,11 @@
             <div class="company-name-subtitle">
               {{ reminderPreview.customer.company_name }}
             </div>
-            <div class="meta-label">{{ reminderPreview.customer.address || '[Adres Yok]' }}</div>
+            <div class="meta-label">{{ reminderPreview.customer.address }}</div>
             <div class="meta-label">
-              {{ reminderPreview.customer.postal_code || '[PLZ]' }}
-              {{ reminderPreview.customer.city || '[Şehir]' }}<br />
-              {{ reminderPreview.customer.country || '[Ülke]' }}
+              {{ reminderPreview.customer.postal_code }}
+              {{ reminderPreview.customer.city }}<br />
+              {{ reminderPreview.customer.country }}
             </div>
           </div>
           <!-- recipient details -->
@@ -44,7 +44,7 @@
 
             <div class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ reminderPreview.customer.vat_id || '[VAT Yok]' }}</span>
+              <span class="meta-value">{{ reminderPreview.customer.vat_id || '' }}</span>
             </div>
           </div>
         </div>
@@ -56,46 +56,45 @@
         </div>
 
         <!-- remeinders Details -->
-        <div class="remeinders-details">
-          <h3>📄 Offene Rechnung(en)</h3>
-          <table class="remeinders-table">
-            <thead>
-              <tr>
-                <th>Rechnungsnummer</th>
-                <th>Rechnungsdatum</th>
-                <th>Fälligkeitsdatum</th>
-                <th>Betrag</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{{ formatInvoiceId(reminderPreview.invoice_id) }}</td>
-                <td>{{ formatDate(reminderPreview.invoice_date) }}</td>
-                <td>{{ formatDate(reminderPreview.invoice_due_date) }}</td>
-                <td>{{ formatCurrency(reminderPreview.invoice_total) }}</td>
-              </tr>
-              <tr v-if="reminderPreview.reminder_fee > 0">
-                <td colspan="3">Mahngebühr:</td>
-                <td>{{ formatCurrency(reminderPreview.reminder_fee) }}</td>
-              </tr>
-              <tr v-if="reminderPreview.late_interest > 0">
-                <td colspan="3">Verzugszinsen:</td>
-                <td>{{ formatCurrency(reminderPreview.late_interest) }}</td>
-              </tr>
-              <tr class="total-row">
-                <td colspan="3">Offener Gesamtbetrag:</td>
-                <td>
-                  {{
-                    formatCurrency(
-                      reminderPreview.invoice_total +
-                        reminderPreview.reminder_fee +
-                        reminderPreview.late_interest
-                    )
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="reminders-card">
+          <h3 class="reminders-title">📄 Offene Rechnung(en)</h3>
+
+          <div class="info-row">
+            <span>Rechnungsnummer</span>
+            <span>{{ formatInvoiceId(reminderPreview.invoice.id) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span>Rechnungsdatum</span>
+            <span>{{ formatDate(reminderPreview.invoice.date) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span>Fälligkeitsdatum</span>
+            <span>{{ formatDate(reminderPreview.invoice.due_date) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span>Betrag</span>
+            <span>{{ formatCurrency(reminderPreview.invoice.gross_total) }}</span>
+          </div>
+
+          <div class="info-row muted">
+            <span>Mahngebühr</span>
+            <span>{{ formatCurrency(reminderPreview.reminder_fee) }}</span>
+          </div>
+
+          <div class="info-row muted">
+            <span>Verzugszinsen</span>
+            <span>{{ formatCurrency(reminderPreview.late_interest) }}</span>
+          </div>
+
+          <div class="info-row total">
+            <span>Offener Gesamtbetrag</span>
+            <span>
+              {{ formatCurrency(setTotalAmount, reminderPreview.invoice.currency) }}
+            </span>
+          </div>
         </div>
 
         <!-- Bank Info -->
@@ -148,7 +147,6 @@
         sourcePage="preview"
       />
     </div>
-    {{ reminderPreview }}
     <router-link
       v-if="reminderPreview"
       :to="`/reminders/create/${reminderPreview.invoice_id}`"
@@ -188,6 +186,16 @@ export default {
       auth: null
     }
   },
+  computed: {
+    setTotalAmount() {
+      if (!this.reminderPreview) return
+      return (
+        this.reminderPreview.invoice.gross_total +
+        this.reminderPreview.reminder_fee +
+        this.reminderPreview.late_interest
+      )
+    }
+  },
   mounted() {
     this.getReminderPreview()
     this.getAuth()
@@ -196,7 +204,7 @@ export default {
     getReminderPreview() {
       if (!store.state.reminder) return
       this.reminderPreview = store.state.reminder
-      console.log(this.reminderPreview)
+      console.log('preview', this.reminderPreview)
     },
     getAuth() {
       if (!store.state.auth) return
@@ -208,7 +216,7 @@ export default {
 <style>
 /* PREVIEW PANEL */
 .preview-panel {
-  width: 80%;
+  width: 100%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -489,4 +497,53 @@ export default {
   font-size: 12px;
   color: #666;
 }
+.reminders-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.reminders-title {
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.info-row span:last-child {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Daha az önemli satırlar */
+.info-row.muted {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Toplam */
+.info-row.total {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 2px solid #e5e7eb;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.info-row.total span:last-child {
+  color: #0369a1;
+}
+
 </style>

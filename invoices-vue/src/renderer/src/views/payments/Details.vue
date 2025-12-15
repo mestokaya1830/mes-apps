@@ -20,15 +20,15 @@
                 </tr>
                 <tr>
                   <td>Kunden-ID</td>
-                  <td>{{ formatCustomerId(payment.invoice_customer_id) }}</td>
+                  <td>{{ formatCustomerId(payment.customer_id) }}</td>
                 </tr>
                 <tr>
                   <td>Rechnungsdatum</td>
-                  <td>{{ formatDate(payment.invoice_date) }}</td>
+                  <td>{{ formatDate(payment.invoice.date) }}</td>
                 </tr>
                 <tr>
                   <td>Fälligkeitsdatum</td>
-                  <td>{{ formatDate(payment.invoice_due_date) }}</td>
+                  <td>{{ formatDate(payment.invoice.due_date) }}</td>
                 </tr>
                 <tr>
                   <td>Zahlungsdatum</td>
@@ -36,7 +36,7 @@
                 </tr>
                 <tr>
                   <td>Währung</td>
-                  <td>{{ payment.invoice_currency }}</td>
+                  <td>{{ payment.invoice.currency }}</td>
                 </tr>
 
                 <tr>
@@ -51,7 +51,7 @@
                     {{
                       formatCurrency(
                         payment.invoice_early_payment_discount,
-                        payment.invoice_currency
+                        payment.invoice.currency
                       )
                     }}
                   </td>
@@ -60,7 +60,7 @@
                   <td>Gesamtbetrag nach Rabatt</td>
                   <td>
                     {{
-                      formatCurrency(payment.invoice_total_after_discount, payment.invoice_currency)
+                      formatCurrency(payment.invoice_total_after_discount, payment.invoice.currency)
                     }}
                   </td>
                 </tr>
@@ -68,13 +68,13 @@
                 <tr>
                   <td>Gezahlter Betrag</td>
                   <td>
-                    {{ formatCurrency(payment.payment_amount, payment.invoice_currency) }}
+                    {{ formatCurrency(payment.payment_amount, payment.invoice.currency) }}
                   </td>
                 </tr>
                 <tr>
                   <td>Ausstehender Betrag</td>
                   <td>
-                    {{ formatCurrency(payment.outstanding, payment.invoice_currency) }}
+                    {{ formatCurrency(payment.outstanding, payment.invoice.currency) }}
                   </td>
                 </tr>
                 <tr>
@@ -205,8 +205,11 @@ export default {
       try {
         const result = await window.api.getPaymentById(this.$route.params.id)
         if (!result.success) return
-        this.payment = result.data.payment
-        console.log(result)
+        console.log('patment- details', result)
+        this.payment = {
+          ...result.rows,
+          invoice: JSON.parse(result.rows.invoice)
+        }
       } catch (error) {
         console.error(error)
       }
@@ -225,7 +228,7 @@ export default {
   height: 140px;
 }
 .preview-panel {
-  width: 80%;
+  width: 100%;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);

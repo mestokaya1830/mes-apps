@@ -105,7 +105,7 @@
               ref="payment_date"
               v-model="payment.payment_date"
               type="date"
-              class="form-input"
+              class="form-input date"
               @change="checkEarlyPayment"
             />
             <small class="form-hint">Datum des Zahlungseingangs</small>
@@ -130,7 +130,7 @@
           <div class="form-row">
             <div class="form-group">
               <small class="form-label">Rabbat</small>
-              <small v-if="is_early_paid">{{ payment.invoice.early_payment_discount }}</small>
+              <small v-if="is_early_payment_selected">{{ payment.invoice.early_payment_discount }}</small>
               <small v-else>0</small>
             </div>
             <div class="form-group">
@@ -212,7 +212,8 @@ export default {
       ibanCountryFlag: '',
       bicError: '',
       paymentAmountError: false,
-      isPaymentAmountDisabled: false
+      isPaymentAmountDisabled: false,
+      is_early_payment_selected: false
     }
   },
 
@@ -233,6 +234,7 @@ export default {
           invoice_id: result.rows.id,
           customer_id: result.rows.customer_id,
           payment_date: '',
+          payment_amount: '',
           payment_total: result.payment_total,
           payment_method: 'Überweisung',
           payment_reference: '',
@@ -285,7 +287,7 @@ export default {
 
       let outstanding
 
-      if (this.is_early_paid) {
+      if (this.is_early_payment_selected) {
         outstanding = 0
       } else {
         outstanding = gross - (paid + amount)
@@ -310,14 +312,15 @@ export default {
       const earlyPaymentDate = new Date(paymentDate)
       earlyPaymentDate.setDate(earlyPaymentDate.getDate() + earlyDays)
       if (earlyPaymentDate <= dueDate) {
-        this.is_early_paid = true
+        this.is_early_payment_selected = true
       }
 
-      if (this.is_early_paid) {
+      if (this.is_early_payment_selected) {
         this.isPaymentAmountDisabled = true
         this.payment.payment_amount = Number(grossTotal - earlyDiscount - paidTotal).toFixed(2)
         this.payment.invoice.outstanding = 0
         this.payment.invoice.gross_total_after_discount = this.payment.payment_amount
+        this.payment.invoice.early_paid_discount_applied = 1
       } else {
         this.isPaymentAmountDisabled = false
         this.payment.payment_amount = null

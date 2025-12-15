@@ -5,6 +5,29 @@
         <div class="editor-title">📝{{ title }}</div>
       </div>
 
+      <!-- 4. Send Info -->
+      <div class="form-section">
+        <div class="form-group">
+          <label class="form-label">Sent At</label>
+          <input v-model="reminder.date" type="datetime-local" class="form-input date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sent Method</label>
+          <select v-model="reminder.sent_method" class="form-input">
+            <option value="" disabled>Wählen</option>
+            <option value="email">Email</option>
+            <option value="post">Post</option>
+            <option value="einschreiben">Einschreiben</option>
+            <option value="portal">Portal</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Zahlungsnachweis</label>
+        <input v-model="reminder.proof_type" type="text" class="form-input" />
+      </div>
+
       <!-- 1. Level -->
       <div class="form-section">
         <label class="form-label">💼 Betreff (Level)</label>
@@ -64,46 +87,6 @@
           <label class="form-label">📝 Endtext</label>
           <textarea v-model="reminder.closing_text" class="form-input"></textarea>
         </div>
-
-        <!-- if you want dealine as stron writing -->
-        <!-- <div class="form-group">
-          <label class="form-label">📝 Endtext</label>
-          <div class="form-input" v-html="reminder.closing_text"></div>
-        </div> -->
-      </div>
-
-      <!-- 4. Send Info -->
-      <div class="form-section">
-        <div class="form-group">
-          <label class="form-label">Sent At</label>
-          <input v-model="reminder.sent_at" type="datetime-local" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sent Method</label>
-          <select v-model="reminder.sent_method" class="form-input">
-            <option value="" disabled>Wählen</option>
-            <option value="email">Email</option>
-            <option value="post">Post</option>
-            <option value="einschreiben">Einschreiben</option>
-            <option value="portal">Portal</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- 5. Proof Info -->
-      <div class="form-section">
-        <div class="form-group">
-          <label class="form-label">Proof Type</label>
-          <input v-model="reminder.proof_type" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Proof File Name</label>
-          <input v-model="reminder.proof_file_name" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Proof Sent At</label>
-          <input v-model="reminder.proof_sent_at" type="datetime-local" class="form-input" />
-        </div>
       </div>
 
       <!-- Vorschau Button -->
@@ -122,25 +105,20 @@ export default {
       title: 'Zahlungserinnerung',
       reminder: {
         id: '',
-        invoice_id: '',
-        invoice_date: '',
-        invoice_due_date: '',
-        invoice_total: 0,
-        paid_total: 0,
-        customer: null,
-        date: '2025-01-22',
+        invoice_id: '', //for foreign key
+        customer_id: '', //for foreign key
+        date: null,
         level: '',
-        payment_deadline: '',
+        proof_type: 'Zahlungserinnerung',
         reminder_fee: 0,
         late_interest: 0,
         intro_text: '',
         closing_text: '',
         warning_text: '',
-        sent_at: '',
         sent_method: '',
-        proof_type: '',
-        proof_file_name: '',
-        proof_sent_at: ''
+        payment_deadline: '',
+        customer: null,
+        invoice: null
       },
       introTexts: [
         null,
@@ -163,7 +141,6 @@ export default {
     }
   },
   mounted() {
-    if (!store.state.reminder) return this.getInvoice()
     this.getStore()
   },
   methods: {
@@ -178,10 +155,10 @@ export default {
       )
     },
     async getStore() {
-      if (store.state.reminder) {
-        this.reminder = JSON.parse(JSON.stringify(store.state.reminder))
-        this.updateTexts()
-      }
+      // await store.clearStore('reminder')
+      if (!store.state.reminder) return this.getInvoice()
+      this.reminder = JSON.parse(JSON.stringify(store.state.reminder))
+      this.updateTexts()
     },
     async getInvoice() {
       const data = {
@@ -189,17 +166,15 @@ export default {
         table_name: 'reminders'
       }
       const result = await window.api.getInvoiceById(data)
-      console.log('create-reminder', result)
       if (!result.success) return
-      this.reminder.id = result.reminder_id
-      this.reminder.invoice_id = result.rows.id
-      this.reminder.invoice_date = result.rows.date
-      this.reminder.invoice_due_date = result.rows.due_date
-      this.reminder.invoice_total = result.rows.total_after_discount
-      // this.reminder.paid_total = result.paid_total.total || 0
+      this.reminder.invoice = result.rows
       this.reminder.customer = JSON.parse(result.rows.customer)
+      this.reminder.id = result.reminder_id + 1
+      this.reminder.invoice_id = this.reminder.invoice.id
+      this.reminder.customer_id = this.reminder.customer.id
+
       this.updateTexts()
-      console.log('create-reminder', this.reminder)
+      console.log('create-reminder', result)
     },
     submitStore() {
       if (!this.reminder) return
@@ -210,10 +185,10 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 /* EDITOR PANEL */
 .editor-panel {
-  width: 70%;
+  width: 100%;
   background: white;
   padding: 30px;
   border-radius: 12px;

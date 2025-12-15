@@ -292,7 +292,7 @@ export default {
   ],
   data() {
     return {
-      title: 'Rechnung',
+      title: 'Rechnungdetails',
       invoice: null,
       payments: [],
       total_paid_amount: 0,
@@ -763,7 +763,6 @@ button {
 button:hover {
   background-color: #0056b3;
 }
-
 /* Responsive küçük ekranlar için */
 @media (max-width: 768px) {
   table,
