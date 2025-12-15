@@ -204,6 +204,7 @@
 
         <FooterSidePreview />
       </div>
+      <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
 
       <!-- payment list -->
       <div v-if="payments && payments.length" class="customer-grid">
@@ -262,7 +263,48 @@
         </table>
         <router-link :to="`/reminders/create/${invoice.id}`">Mahnung erstellen</router-link>
       </div>
-      <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
+
+      <!-- reminders list -->
+      <div v-if="reminders && reminders.length" class="customer-grid">
+        <table class="table-auto w-full border">
+          <thead>
+            <tr>
+              <th class="payment-head">Mahnungs-ID</th>
+              <th class="payment-head">Mahnungsdatum</th>
+              <th class="payment-head">Mahnfrist</th>
+              <th class="payment-head">Details</th>
+            </tr>
+          </thead>
+          <tbody v-if="reminders">
+            <tr v-for="item in reminders" :key="item.id">
+              <td class="payment-row">{{ formatReminderId(item.id) }}</td>
+              <td class="payment-row">{{ formatDate(item.date) }}</td>
+              <td class="payment-row">
+                {{item.payment_deadline}}
+              </td>
+
+              <td class="payment-row">
+                <router-link :to="'/reminders/details/' + item.id" class="action-btn details-btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  Details
+                </router-link>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
   </div>
@@ -287,6 +329,7 @@ export default {
     'formatPaymentId',
     'formatInvoiceId',
     'formatCustomerId',
+    'formatReminderId',
     'formatDate',
     'formatCurrency'
   ],
@@ -295,6 +338,7 @@ export default {
       title: 'Rechnungdetails',
       invoice: null,
       payments: [],
+      reminders: [],
       total_paid_amount: 0,
       auth: null
     }
@@ -325,8 +369,8 @@ export default {
             invoice: JSON.parse(item.invoice)
           }
         })
-        // this.total_paid_amount = Number(result.total_paid_amount).toFixed(2)
-        console.log('Invoice Data:', this.invoice)
+        this.reminders = result.reminders
+        console.log('reminders Data:', this.reminders)
       } catch (error) {
         console.error(error)
       }

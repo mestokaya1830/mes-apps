@@ -17,6 +17,12 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
+     <button v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active" class="btn btn-edit">
+        <router-link :to="`/reminders/edit/${tableData.id}`">
+          <span class="nav-icon">✏</span>
+          <span>Bearbeiten</span>
+        </router-link>
+      </button>
     </div>
   </div>
 </template>

@@ -17,9 +17,11 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button v-if="sourcePage !== 'preview'" class="btn btn-delete" @click="deletePayment">
-        <span class="nav-icon">🖨</span>
-        <span>Loschen</span>
+      <button v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active" class="btn btn-edit">
+        <router-link :to="`/payments/edit/${tableData.id}`">
+          <span class="nav-icon">✏</span>
+          <span>Bearbeiten</span>
+        </router-link>
       </button>
     </div>
   </div>
@@ -86,12 +88,6 @@ export default {
       } catch (error) {
         console.error(error)
       }
-    },
-    deletePayment() {
-      if (!this.tableData) return
-      const result = window.api.deletePaymentById(this.tableData.id)
-      if (!result.success) return
-      this.$router.push('/invoices/details/' + this.tableData.invoice_id)
     }
   }
 }

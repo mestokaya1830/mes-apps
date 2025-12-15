@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS payments (
 
   invoice_id INTEGER NOT NULL,
   customer_id INTEGER NOT NULL,
+  is_active INTEGER DEFAULT 1,
 
   invoice_snapshot TEXT NOT NULL DEFAULT '{}',
   payment_date TEXT NOT NULL,

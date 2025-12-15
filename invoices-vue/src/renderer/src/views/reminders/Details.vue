@@ -141,7 +141,7 @@
         <!-- Footer -->
         <FooterSidePreview />
       </div>
-      <ActionsButtonPreview v-if="reminder" :tableData="reminder" sourcePage="preview" />
+      <ActionsButtonPreview v-if="reminder" :tableData="reminder" sourcePage="details" />
     </div>
     <router-link v-if="reminder" :to="`/reminders/create/${reminder.invoice_id}`" class="back-link">
       ← Zurück zur Rechnungserstellung

@@ -46,7 +46,7 @@
               </div>
             </div>
 
-            <button @click="updateInvoice" class="btn btn-cancel">Stornieren</button>
+            <button @click="updateReminder" class="btn btn-cancel">Stornieren</button>
           </div>
         </div>
       </div>
@@ -59,11 +59,11 @@
 
 <script>
 export default {
-  name: 'InvoiceEdit',
-  inject: ['formatInvoiceId'],
+  name: 'ReminderEdit',
+  inject: ['formatReminderId'],
   data() {
     return {
-      title: 'Rechnung bearbeiten',
+      title: 'Mahnung bearbeiten',
       cancelled_by: '',
       cancelled_at: '',
       cancellation_reason: '',
@@ -97,7 +97,7 @@ export default {
 
       return true
     },
-    async updateInvoice() {
+    async updateReminder() {
       const id = this.$route.params.id
       const data = {
         id: id,
@@ -107,7 +107,7 @@ export default {
         cancelled_at: this.cancelled_at
       }
       if (!this.checkInputs()) return
-      const result = await window.api.cancelInvoice(data)
+      const result = await window.api.cancelReminder(data)
       if (result.success) {
         this.$router.push('/invoices')
       }

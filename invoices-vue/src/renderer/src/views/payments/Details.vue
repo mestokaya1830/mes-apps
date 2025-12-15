@@ -32,7 +32,7 @@
                 </tr>
                 <tr>
                   <td>Zahlungsdatum</td>
-                  <td>{{ formatDate(payment.payment_date) }}</td>
+                  <td>{{ formatDate(payment.date) }}</td>
                 </tr>
                 <tr>
                   <td>Währung</td>

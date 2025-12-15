@@ -102,8 +102,8 @@
             <label class="form-label">Zahlungsdatum *</label>
             <!-- Payment Date Input -->
             <input
-              ref="payment_date"
-              v-model="payment.payment_date"
+              ref="date"
+              v-model="payment.date"
               type="date"
               class="form-input date"
               @change="checkEarlyPayment"
@@ -231,9 +231,10 @@ export default {
         if (!result.rows) return
         this.payment = {
           id: result.payment_id + 1,
+          date: null,
           invoice_id: result.rows.id,
           customer_id: result.rows.customer_id,
-          payment_date: '',
+          is_active: 1,
           payment_amount: '',
           payment_total: result.payment_total,
           payment_method: 'Überweisung',
@@ -301,7 +302,7 @@ export default {
       if (!this.payment.invoice.early_payment_offer) return
       this.isCalculating = true // Flag'i aç
 
-      const paymentDate = this.payment.payment_date ? new Date(this.payment.payment_date) : null
+      const paymentDate = this.payment.date ? new Date(this.payment.date) : null
       const dueDate = this.payment.invoice.due_date ? new Date(this.payment.invoice.due_date) : null
 
       const earlyDays = this.payment.invoice.early_payment_days || 0
@@ -358,8 +359,8 @@ export default {
       }
     },
     checkPaymentDate() {
-      if (!this.payment.payment_date) {
-        this.$refs.payment_date.focus()
+      if (!this.payment.date) {
+        this.$refs.date.focus()
         return
       }
       return true

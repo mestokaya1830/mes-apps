@@ -107,6 +107,7 @@ export default {
         id: '',
         invoice_id: '', //for foreign key
         customer_id: '', //for foreign key
+        is_active: 1,
         date: null,
         level: '',
         proof_type: 'Zahlungserinnerung',

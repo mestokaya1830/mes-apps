@@ -761,7 +761,17 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
           `
         )
         .all(id)
-      return { success: true, rows, payments }
+
+      const reminders = db
+        .prepare(
+          `
+            SELECT id, date, payment_deadline
+            FROM reminders
+            WHERE invoice_id = ? ORDER BY id DESC
+          `
+        )
+        .all(id)
+      return { success: true, rows, payments, reminders }
     }
 
     //from payments create
@@ -796,7 +806,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
         )
         .get(id)
       const reminder_id =
-        db.prepare(`SELECT id FROM reminders ORDER BY id DESC LIMIT 1`).get()?.id ?? 0
+        db.prepare(`SELECT * FROM reminders ORDER BY id DESC LIMIT 1`).get()?.id ?? 0
       return { success: true, rows, reminder_id }
     }
   } catch (err) {
@@ -1087,10 +1097,12 @@ ipcMain.handle('add-payment', async (event, payload) => {
       .prepare(
         `
         INSERT INTO payments (
+          is_active,
+          date,
+
           invoice_id,
           customer_id,
 
-          payment_date,
           payment_amount,
           payment_method,
           payment_reference,
@@ -1105,15 +1117,17 @@ ipcMain.handle('add-payment', async (event, payload) => {
 
           invoice
         ) VALUES (
-          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
       `
       )
       .run(
+        data.is_active ? 1 : 0,
+        data.date,
+
         data.invoice_id,
         data.customer_id,
 
-        data.payment_date,
         data.payment_amount,
         data.payment_method,
         data.payment_reference ?? '',
@@ -1133,7 +1147,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
       'UPDATE invoices SET payment_status = ?, paid_at = ?, early_paid_discount_applied = ? WHERE id = ?'
     ).run(
       data.invoice.payment_status,
-      data.payment_date,
+      data.date,
       data.invoice.early_paid_discount_applied,
       data.invoice.id
     )
@@ -1155,7 +1169,7 @@ ipcMain.handle('get-payment-by-id', async (event, id) => {
         `
           SELECT *
           FROM payments
-          WHERE id = ?
+          WHERE id = ? AND is_active = 1
         `
       )
       .get(id)
@@ -1191,8 +1205,8 @@ ipcMain.handle('add-reminder', async (event, payload) => {
       .prepare(
         `
         INSERT INTO reminders (
+          is_active,
           date,
-
           invoice_id,
           customer_id,
 
@@ -1215,10 +1229,11 @@ ipcMain.handle('add-reminder', async (event, payload) => {
           cancelled_at,
           cancelled_by,
           cancellation_reason
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
       .run(
+        data.is_active ? 1 : 0,
         data.date,
 
         data.invoice_id,
@@ -1262,7 +1277,7 @@ ipcMain.handle('get-reminder-by-id', async (event, id) => {
         `
           SELECT *
           FROM reminders
-          WHERE id = ?
+          WHERE id = ? AND is_active = 1
         `
       )
       .get(id)
