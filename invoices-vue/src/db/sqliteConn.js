@@ -28,7 +28,8 @@ export default db
 // }
 
 // try {
-//   db.prepare('Alter table invoices DROP column is_reminder').run()
+//   db.prepare('Drop table if exists offers').run()
 // } catch (error) {
 //   console.error(error)
 // }
+

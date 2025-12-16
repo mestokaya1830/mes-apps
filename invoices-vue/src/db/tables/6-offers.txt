@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS offers (
   valid_until TEXT DEFAULT NULL,
 
   customer TEXT NOT NULL DEFAULT '{}',
-  contact_person TEXT DEFAULT NULL,
 
   subject TEXT DEFAULT NULL,
   currency TEXT NOT NULL DEFAULT 'EUR.de-DE',
@@ -22,7 +21,6 @@ CREATE TABLE IF NOT EXISTS offers (
 
   status TEXT NOT NULL DEFAULT 'draft',
   status_by TEXT DEFAULT NULL,
-  status_date TEXT DEFAULT NULL,
   status_comments TEXT DEFAULT NULL,
 
   is_active INTEGER NOT NULL DEFAULT 1,

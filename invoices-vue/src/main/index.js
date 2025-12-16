@@ -1450,7 +1450,6 @@ ipcMain.handle('add-offer', async (event, data) => {
           gross_total,
 
           status,
-          status_date,
           is_active,
           is_legal,
 
@@ -1459,39 +1458,38 @@ ipcMain.handle('add-offer', async (event, data) => {
           notes,
           
           internal_notes
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
       .run(
         data.customer_id,
 
         data.date,
-        data.valid_until,
+        data.valid_until || null,
 
         JSON.stringify(data.customer || {}),
-        data.contact_person,
+        data.contact_person || '',
 
         data.subject,
         data.currency,
-        data.payment_terms,
-        data.delivery_terms,
-        data.delivery_time,
+        data.payment_terms || '',
+        data.delivery_terms || '',
+        data.delivery_time || '',
 
         JSON.stringify(data.positions || []),
-        data.net_total,
-        data.vat_total,
-        data.gross_total,
+        data.net_total || 0,
+        data.vat_total || 0,
+        data.gross_total || 0,
 
-        data.status,
-        data.status_date,
+        data.status || 'draft',
         data.is_active ? 1 : 0,
         data.is_legal ? 1 : 0,
 
-        data.introduction_text,
-        data.closing_text,
-        data.notes,
+        data.introduction_text || '',
+        data.closing_text || '',
+        data.notes || '',
 
-        data.internal_notes
+        data.internal_notes || ''
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }

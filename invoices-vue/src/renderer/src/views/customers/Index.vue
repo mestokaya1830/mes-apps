@@ -35,17 +35,18 @@
         />
         <div class="sort-btn" @click="sorting('id')">&#8645;</div>
       </div>
+
       <!-- Customer Cards -->
-      <div class="customer-grid">
-        <div v-for="item in customers" :key="item.id" class="customer-card">
+      <div class="list-grid">
+        <div v-for="item in customers" :key="item.id" class="list-card">
           <div class="card-header">
-            <div class="customer-avatar">
-              {{ setAvatar(item.first_name, item.last_name) }}
+            <div class="list-avatar">
+              {{ avatarStyle(item.first_name, item.last_name) }}
             </div>
-            <div class="customer-info">
-              <h3 class="customer-name">{{ item.first_name }} {{ item.last_name }}</h3>
-              <label>{{ formatCustomerId(item.id) }}</label>
-              <span class="customer-type-badge">{{ item.company_type || 'Standard' }}</span>
+            <div class="list-info">
+              <h3 class="list-id">{{ formatCustomerId(item.id) }}</h3>
+              <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span> <br />
+              <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
             </div>
             <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
               {{ item.is_active ? 'Active' : 'Inactive' }}
@@ -145,25 +146,6 @@
               </svg>
               Details
             </router-link>
-            <button class="action-btn delete-btn" @click="deleteCustomer(item.id)">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path
-                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                ></path>
-              </svg>
-              Löschen
-            </button>
           </div>
         </div>
       </div>
@@ -218,20 +200,7 @@ export default {
         console.error(error)
       }
     },
-    async deleteCustomer(id) {
-      if (!id) return
-      if (confirm('Sind Sie sicher, dass Sie diesen Kunden löschen möchten? ✅')) {
-        try {
-          const result = await window.api.deleteCustomerById(id)
-          if (!result.success) return
-          this.getCustomers()
-        } catch (error) {
-          console.error(error)
-        }
-      }
-    },
-    setAvatar(firstName, lastName) {
-      if (!firstName && !lastName) return
+    avatarStyle(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
@@ -246,7 +215,7 @@ export default {
         return
       }
       const result = await window.api.searchCustomers(term)
-    if(!result.success) return
+      if (!result.success) return
       this.customers = result.rows
     },
     sorting(key) {
@@ -260,251 +229,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.main-container {
-  width: 100%;
-  margin: 0 auto;
-  padding: 40px 24px;
-}
-/* Header */
-.editor-header-block {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.subtitle {
-  color: #718096;
-  margin: 8px 0 0 0;
-  font-size: 14px;
-}
-
-.add-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 12px;
-  text-decoration: none;
-  font-weight: 600;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-  transition: all 0.3s ease;
-}
-
-.add-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-}
-
-/* Customer Grid */
-.customer-grid {
-  display: grid;
-  width: 100%;
-  /* grid-template-columns: repeat(auto-fill, minmax(750px, 1fr)); */
-  gap: 24px;
-}
-
-.customer-card {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
-}
-
-.customer-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.customer-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 700;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.customer-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.customer-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #2d3748;
-  margin: 0 0 6px 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.customer-type-badge {
-  display: inline-block;
-  padding: 4px 12px;
-  background: #edf2f7;
-  color: #4a5568;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.status-badge {
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.status-badge.active {
-  background: #c6f6d5;
-  color: #22543d;
-}
-
-.status-badge.inactive {
-  background: #fed7d7;
-  color: #742a2a;
-}
-
-/* Card Actions */
-.card-actions {
-  display: flex;
-  gap: 12px;
-  padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
-}
-
-.action-btn {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.details-btn {
-  background: #edf2f7;
-  color: #2d3748;
-}
-
-.details-btn:hover {
-  background: #e2e8f0;
-  transform: translateY(-1px);
-}
-
-.delete-btn {
-  background: #fff5f5;
-  color: #c53030;
-}
-
-.delete-btn:hover {
-  background: #fed7d7;
-  transform: translateY(-1px);
-}
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 80px 20px;
-  color: #718096;
-}
-
-.empty-state svg {
-  opacity: 0.3;
-  margin-bottom: 20px;
-}
-
-.empty-state h3 {
-  font-size: 20px;
-  color: #2d3748;
-  margin: 0 0 8px 0;
-}
-
-.empty-state p {
-  margin: 0;
-  font-size: 14px;
-}
-.filter-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-/* Responsive */
-@media (max-width: 768px) {
-  .container {
-    padding: 24px 16px;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .title {
-    font-size: 24px;
-  }
-
-  .add-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .customer-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-actions {
-    flex-direction: column;
-  }
-
-  .action-btn {
-    width: 100%;
-  }
-}
-</style>

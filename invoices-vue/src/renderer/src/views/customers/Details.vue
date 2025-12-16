@@ -2,9 +2,7 @@
   <div>
     <div v-if="customer" class="editor-panel">
       <div class="editor-header-block">
-        <div class="editor-title">
-          📝 {{ title }}
-        </div>
+        <div class="editor-title">📝 {{ title }}</div>
       </div>
 
       <div class="customer-info">
@@ -18,7 +16,7 @@
         <p><strong>Adresse:</strong> {{ customer.address }}</p>
         <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
         {{ counts }}
-<!-- 
+        <!-- 
         <p><strong>Gesamt Rechnungen:</strong> {{ customer.total_invoices }}</p>
         <p><strong>Bezahlt:</strong> {{ customer.total_paid }}</p>
         <p><strong>Unbezahlt:</strong> {{ customer.total_unpaid }}</p>
@@ -27,6 +25,26 @@
         <p><strong>Bestellungen:</strong> {{ customer.total_orders }}</p>
         <p><strong>Angebote:</strong> {{ customer.total_offers }}</p>
         <p><strong>Erinnerungen:</strong> {{ customer.total_reminders }}</p> -->
+
+        <button class="action-btn delete-btn" @click="deleteCustomer(item.id)">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            ></path>
+          </svg>
+          Löschen
+        </button>
       </div>
     </div>
   </div>
@@ -52,10 +70,20 @@ export default {
         if (!result.success) return
         this.customer = result.data.customer
         this.counts = result.data.counts
-        console.log(result.data.customer)
-        console.log(result.data.counts)
       } catch (error) {
         console.error(error)
+      }
+    },
+    async deleteCustomer(id) {
+      if (!id) return
+      if (confirm('Sind Sie sicher, dass Sie diesen Kunden löschen möchten? ✅')) {
+        try {
+          const result = await window.api.deleteCustomerById(id)
+          if (!result.success) return
+          this.getCustomers()
+        } catch (error) {
+          console.error(error)
+        }
       }
     }
   }
