@@ -2,8 +2,10 @@
 CREATE TABLE IF NOT EXISTS invoices (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   is_active INTEGER NOT NULL DEFAULT 1,
+  is_reminder INTEGER NOT NULL DEFAULT 0,
   customer_id INTEGER NOT NULL,
-  customer_snapshot TEXT NOT NULL DEFAULT '{}',
+  
+  customer TEXT NOT NULL DEFAULT '{}',
 
 
   service_date TEXT NOT NULL,

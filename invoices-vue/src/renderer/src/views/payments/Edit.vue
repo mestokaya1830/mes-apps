@@ -8,8 +8,8 @@
         <div class="form-section">
           <div class="custom-row">
             <div class="form-group">
-              <label for="">Rechnung-Nr.:</label>
-              <label class="form-input">{{ formatInvoiceId($route.params.id) }}</label>
+              <label for="">Zahlung-Nr.:</label>
+              <label class="form-input">{{ formatPaymentId($route.params.id) }}</label>
             </div>
 
             <div class="form-group">
@@ -52,7 +52,7 @@
       </div>
     </div>
     <router-link :to="`/invoices/details/${$route.params.id}`" class="back-link">
-      ← Zurück zur Rechnungsdetails
+      ← Zurück zur Zahlungsdetails
     </router-link>
   </div>
 </template>
@@ -64,8 +64,8 @@ export default {
   data() {
     return {
       title: 'Zahlung bearbeiten',
-      cancelled_by: '',
       cancelled_at: '',
+      cancelled_by: '',
       cancellation_reason: '',
       error: {}
     }
@@ -98,16 +98,15 @@ export default {
       return true
     },
     async updatePayment() {
-      const id = this.$route.params.id
       const data = {
-        id: id,
-        is_active: 0,
-        cancellation_reason: this.cancellation_reason,
-        cancelled_by: this.cancled_by,
-        cancelled_at: this.cancelled_at
+        id: this.$route.query.id,
+        invoice_id: this.$route.query.invoice_id,
+        cancelled_at: this.cancelled_at,
+        cancelled_by: this.cancelled_by,
+        cancellation_reason: this.cancellation_reason
       }
       if (!this.checkInputs()) return
-      const result = await window.api.cancelPayment(data)
+      const result = await window.api.cancelPaymentById(data)
       if (result.success) {
         this.$router.push('/invoices')
       }

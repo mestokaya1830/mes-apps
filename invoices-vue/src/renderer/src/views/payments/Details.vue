@@ -42,7 +42,7 @@
                 <tr>
                   <td>Rechnungssumme</td>
                   <td>
-                    {{ formatCurrency(payment.invoice_gross_total, payment.currency) }}
+                    {{ formatCurrency(payment.invoice.gross_total, payment.currency) }}
                   </td>
                 </tr>
                 <tr v-if="payment.is_early_paid">
@@ -50,7 +50,7 @@
                   <td>
                     {{
                       formatCurrency(
-                        payment.invoice_early_payment_discount,
+                        payment.invoice.early_payment_discount,
                         payment.invoice.currency
                       )
                     }}
@@ -60,7 +60,7 @@
                   <td>Gesamtbetrag nach Rabatt</td>
                   <td>
                     {{
-                      formatCurrency(payment.invoice_total_after_discount, payment.invoice.currency)
+                      formatCurrency(payment.invoice.total_after_discount, payment.invoice.currency)
                     }}
                   </td>
                 </tr>
@@ -74,7 +74,7 @@
                 <tr>
                   <td>Ausstehender Betrag</td>
                   <td>
-                    {{ formatCurrency(payment.outstanding, payment.invoice.currency) }}
+                    {{ formatCurrency(payment.invoice.gross_total - payment.payment_amount, payment.invoice.currency) }}
                   </td>
                 </tr>
                 <tr>
@@ -99,11 +99,11 @@
                 </tr>
                 <tr>
                   <td>Zahlungsstatus</td>
-                  <td>{{ payment.payment_status }}</td>
+                  <td>{{ payment.invoice.payment_status }}</td>
                 </tr>
                 <tr>
                   <td>Dateiname</td>
-                  <td>{{ payment.file_name }}</td>
+                  <td>{{ payment.invoice.file_name }}</td>
                 </tr>
                 <tr>
                   <td>Erstellt am</td>
@@ -200,7 +200,6 @@ export default {
   },
   methods: {
     async getPayment() {
-      console.log(this.$route.params.id)
       if (!this.$route.params.id) return
       try {
         const result = await window.api.getPaymentById(this.$route.params.id)

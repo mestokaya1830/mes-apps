@@ -757,21 +757,27 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
           `
             SELECT *
             FROM payments
-            WHERE invoice_id = ? ORDER BY id DESC
+            WHERE invoice_id = ? AND is_active = 1 ORDER BY id DESC
           `
         )
         .all(id)
+      const payment_total =
+        db
+          .prepare(
+            `SELECT sum(payment_amount) As total FROM payments WHERE invoice_id = ? AND is_active = 1`
+          )
+          .get(id)?.total ?? 0
 
       const reminders = db
         .prepare(
           `
             SELECT id, date, payment_deadline
             FROM reminders
-            WHERE invoice_id = ? ORDER BY id DESC
+            WHERE invoice_id = ? AND is_active = 1 ORDER BY id DESC
           `
         )
         .all(id)
-      return { success: true, rows, payments, reminders }
+      return { success: true, rows, payments, payment_total, reminders }
     }
 
     //from payments create
@@ -781,7 +787,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
           `
             SELECT id, customer_id, date, due_date, paid_at, gross_total, gross_total_after_discount, early_payment_offer, early_payment_days, early_payment_percentage, early_payment_discount, currency, payment_status
             FROM invoices
-            WHERE id = ?
+            WHERE id = ? AND is_active = 1
           `
         )
         .get(id)
@@ -789,8 +795,11 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
         db.prepare(`SELECT id FROM payments As id ORDER BY id DESC LIMIT 1;`).get()?.id ?? 0
 
       const payment_total =
-        db.prepare(`SELECT sum(payment_amount) As total FROM payments WHERE invoice_id = ?`).get(id)
-          ?.total ?? 0
+        db
+          .prepare(
+            `SELECT sum(payment_amount) As total FROM payments WHERE invoice_id = ? AND is_active = 1`
+          )
+          .get(id)?.total ?? 0
       return { success: true, rows, payment_id, payment_total }
     }
 
@@ -956,6 +965,7 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
         rows = db.prepare(query).all(limit)
 
         break
+
       case 'is_reminded':
         query = `
                SELECT
@@ -1112,12 +1122,16 @@ ipcMain.handle('add-payment', async (event, payload) => {
           counterparty_bic,
           counterparty_bank,
 
+          cancelled_at,
+          cancelled_by,
+          cancellation_reason,
+
           notes,
           file_name,
 
           invoice
         ) VALUES (
-          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
       `
       )
@@ -1136,6 +1150,10 @@ ipcMain.handle('add-payment', async (event, payload) => {
         data.counterparty_iban ?? '',
         data.counterparty_bic ?? '',
         data.counterparty_bank ?? '',
+
+        data.cancelled_at ?? '',
+        data.cancelled_by ?? '',
+        data.cancellation_reason ?? '',
 
         data.notes ?? '',
         data.file_name ?? '',
@@ -1181,13 +1199,50 @@ ipcMain.handle('get-payment-by-id', async (event, id) => {
   }
 })
 
-ipcMain.handle('cancel-payment-by-id', async (event, id) => {
-  if (!id) {
+ipcMain.handle('cancel-payment-by-id', async (event, payload) => {
+  if (!payload) {
     return { success: false, message: 'No id provided' }
   }
   try {
-    const info = db.prepare('UPDATE payments SET is_active = 0 WHERE id = ?').run(id)
-    return { success: true, lastInsertId: info.lastInsertRowid }
+    db.transaction(() => {
+      const { id, invoice_id, cancelled_at, cancelled_by, cancellation_reason } = payload
+
+      db.prepare(
+        `
+            UPDATE payments
+            SET is_active = 0,
+                cancelled_at = ?,
+                cancelled_by = ?,
+                cancellation_reason = ?
+            WHERE id = ?
+          `
+      ).run(cancelled_at, cancelled_by, cancellation_reason, id)
+
+      const hasActivePayment = db
+        .prepare(
+          `
+            SELECT 1
+            FROM payments
+            WHERE invoice_id = ?
+              AND is_active = 1
+              AND id != ?
+            LIMIT 1
+          `
+        )
+        .get(invoice_id, id)
+
+      if (!hasActivePayment) {
+        db.prepare(
+          `
+            UPDATE invoices
+            SET payment_status = 'unpaid'
+            WHERE id = ?
+          `
+        ).run(invoice_id)
+      }
+    })()
+
+    return { success: true }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1196,7 +1251,6 @@ ipcMain.handle('cancel-payment-by-id', async (event, id) => {
 
 //reminders
 ipcMain.handle('add-reminder', async (event, payload) => {
-  console.log(payload)
   const data = payload
   if (!payload) return { success: false, message: 'No data provided' }
 
@@ -1260,6 +1314,9 @@ ipcMain.handle('add-reminder', async (event, payload) => {
         data.cancellation_reason
       )
 
+    if (info.lastInsertRowid) {
+      db.prepare('UPDATE invoices SET is_reminded = 1 WHERE id = ?').run(data.invoice_id)
+    }
     return { success: true, last_id: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -1288,6 +1345,57 @@ ipcMain.handle('get-reminder-by-id', async (event, id) => {
     return { success: false, message: err.message }
   }
 })
+
+ipcMain.handle('cancel-reminder-by-id', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No id provided' }
+  }
+  try {
+    db.transaction(() => {
+      const { id, invoice_id, cancelled_at, cancelled_by, cancellation_reason } = payload
+
+      db.prepare(
+        `
+            UPDATE reminders
+            SET is_active = 0,
+                cancelled_at = ?,
+                cancelled_by = ?,
+                cancellation_reason = ?
+            WHERE id = ?
+          `
+      ).run(cancelled_at, cancelled_by, cancellation_reason, id)
+
+      const hasActiveReminder = db
+        .prepare(
+          `
+            SELECT 1
+            FROM reminders
+            WHERE invoice_id = ?
+              AND is_active = 1
+              AND id != ?
+            LIMIT 1
+          `
+        )
+        .get(invoice_id, id)
+
+      if (!hasActiveReminder) {
+        db.prepare(
+          `
+            UPDATE invoices
+            SET is_reminded = 0
+            WHERE id = ?
+          `
+        ).run(invoice_id)
+      }
+    })()
+
+    return { success: true }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 //reports
 ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
   try {

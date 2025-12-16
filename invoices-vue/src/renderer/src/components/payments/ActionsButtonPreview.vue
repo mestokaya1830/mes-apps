@@ -17,8 +17,16 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active" class="btn btn-edit">
-        <router-link :to="`/payments/edit/${tableData.id}`">
+      <button
+        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        class="btn btn-edit"
+      >
+        <router-link
+          :to="{
+            path: '/payments/edit/' + tableData.id,
+            query: { id: tableData.id, invoice_id: tableData.invoice.id }
+          }"
+        >
           <span class="nav-icon">✏</span>
           <span>Bearbeiten</span>
         </router-link>
@@ -92,12 +100,13 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 30px;
   height: auto;
+  margin-top: 30px;
 }
 
 .btn {
@@ -135,15 +144,14 @@ export default {
   color: #fff;
   border: 1px solid #e2e8f0;
 }
-.btn-delete {
-  background: red;
+.btn-edit {
+  background: gold;
   color: #fff;
   border: 1px solid #e2e8f0;
 }
 .btn-primary:hover,
 .btn-secondary:hover,
-.btn-print:hover
-.btn-delete:hover {
+.btn-print:hover .btn-edit:hover {
   filter: brightness(0.9);
 }
 .nav-icon {

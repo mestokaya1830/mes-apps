@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS reminders (
 
   invoice_id INTEGER NOT NULL, --//for foreign key
   customer_id INTEGER NOT NULL, --//for foreign key
-  is_active INTEGER DEFAULT 1,
+  is_active INTEGER NOT NULL DEFAULT 1,
 
   customer TEXT DEFAULT NULL,
   invoice TEXT DEFAULT NULL,

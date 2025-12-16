@@ -17,8 +17,18 @@ process.on('exit', () => db.close())
 
 export default db
 
+
+
 // try {
-//   db.prepare('Update payments Set is_active = 1 where id = 118').run()
+//   const result = db.prepare(`PRAGMA table_info(invoices);`).all()
+//   const fields = result.map((r) => r.name)
+//   console.log(fields)
+// } catch (err) {
+//   console.error(err.message)
+// }
+
+// try {
+//   db.prepare('Alter table invoices DROP column is_reminder').run()
 // } catch (error) {
 //   console.error(error)
 // }

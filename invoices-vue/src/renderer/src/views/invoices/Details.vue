@@ -217,14 +217,13 @@
               <th class="payment-head">Rabatt</th>
               <th class="payment-head">Gesamtbetrag nach Rabatt</th>
               <th class="payment-head">Gezahlter Betrag</th>
-              <th class="payment-head">Ausstehend</th>
               <th class="payment-head">Details</th>
             </tr>
           </thead>
           <tbody v-if="payments">
             <tr v-for="item in payments" :key="item.id">
               <td class="payment-row">{{ formatPaymentId(item.id) }}</td>
-              <td class="payment-row">{{ formatDate(item.payment_date) }}</td>
+              <td class="payment-row">{{ formatDate(item.date) }}</td>
               <td class="payment-row">
                 {{ formatCurrency(item.invoice.gross_total, item.invoice.currency) }}
               </td>
@@ -237,9 +236,7 @@
               <td class="payment-row">
                 {{ formatCurrency(item.payment_amount, item.invoice.currency) }}
               </td>
-              <td class="payment-row">
-                {{ formatCurrency(item.invoice.outstanding, item.invoice.currency) }}
-              </td>
+
               <td class="payment-row">
                 <router-link :to="'/payments/details/' + item.id" class="action-btn details-btn">
                   <svg
@@ -261,8 +258,23 @@
             </tr>
           </tbody>
         </table>
-        <router-link :to="`/reminders/create/${invoice.id}`">Mahnung erstellen</router-link>
+        <div class="outstanding">
+          <label for="">Summe: </label>
+          <span>
+            {{ formatCurrency(invoice.gross_total, invoice.currency) }}
+          </span>
+          <label for=""> Bereitbezahlt: </label>
+          <span>
+           {{ formatCurrency(payment_total, invoice.currency) }}
+          </span>
+          <label for="">Restbetrag: </label>
+          <span>
+            {{ formatCurrency(invoice.gross_total - payment_total, invoice.currency) }}
+          </span>
+        </div>
       </div>
+
+      <router-link :to="`/reminders/create/${invoice.id}`">Mahnung erstellen</router-link>
 
       <!-- reminders list -->
       <div v-if="reminders && reminders.length" class="customer-grid">
@@ -280,7 +292,7 @@
               <td class="payment-row">{{ formatReminderId(item.id) }}</td>
               <td class="payment-row">{{ formatDate(item.date) }}</td>
               <td class="payment-row">
-                {{item.payment_deadline}}
+                {{ item.payment_deadline }}
               </td>
 
               <td class="payment-row">
@@ -305,6 +317,8 @@
           </tbody>
         </table>
       </div>
+
+      
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
   </div>
@@ -339,7 +353,7 @@ export default {
       invoice: null,
       payments: [],
       reminders: [],
-      total_paid_amount: 0,
+      payment_total: 0,
       auth: null
     }
   },
@@ -369,8 +383,10 @@ export default {
             invoice: JSON.parse(item.invoice)
           }
         })
+        this.payment_total = result.payment_total
         this.reminders = result.reminders
-        console.log('reminders Data:', this.reminders)
+        console.log('result:', result)
+        console.log('invoice Data:', this.invoice)
       } catch (error) {
         console.error(error)
       }
@@ -806,6 +822,22 @@ button {
 /* Buton hover efekti */
 button:hover {
   background-color: #0056b3;
+}
+.outstanding {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  margin-top: 30px;
+  padding-right: 20px;
+}
+.outstanding > label {
+  margin:0 10px;
+  font-weight: bold;
+  color: #444;
+}
+.outstanding > span {
+  color: red;
 }
 /* Responsive küçük ekranlar için */
 @media (max-width: 768px) {

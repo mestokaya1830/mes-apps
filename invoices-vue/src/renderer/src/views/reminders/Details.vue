@@ -192,13 +192,13 @@ export default {
   },
   methods: {
     async getreminder() {
-      if (!store.state.reminder) return
       const result = await window.api.getReminderById(this.$route.params.id)
       this.reminder = {
         ...result.rows,
-        invoice: this.formatInvoiceId(result.rows.invoice),
-        customer: this.formatCustomerId(result.rows.customer)
+        invoice: JSON.parse(result.rows.invoice),
+        customer: JSON.parse(result.rows.customer)
       }
+      console.log('reminder Data:', this.reminder)
     },
     getAuth() {
       if (!store.state.auth) return

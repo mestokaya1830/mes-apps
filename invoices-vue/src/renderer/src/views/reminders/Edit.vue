@@ -9,7 +9,7 @@
           <div class="custom-row">
             <div class="form-group">
               <label for="">Rechnung-Nr.:</label>
-              <label class="form-input">{{ formatInvoiceId($route.params.id) }}</label>
+              <label class="form-input">{{ formatReminderId($route.params.id) }}</label>
             </div>
 
             <div class="form-group">
@@ -17,7 +17,7 @@
               <input
                 v-model="cancelled_at"
                 type="date"
-                class="form-input"
+                class="form-input date"
                 placeholder="Datum der Stornierung auswählen"
               />
               <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
@@ -98,16 +98,15 @@ export default {
       return true
     },
     async updateReminder() {
-      const id = this.$route.params.id
       const data = {
-        id: id,
-        is_active: 0,
-        cancellation_reason: this.cancellation_reason,
-        cancelled_by: this.cancled_by,
-        cancelled_at: this.cancelled_at
+        id: this.$route.query.id,
+        invoice_id: this.$route.query.invoice_id,
+        cancelled_at: this.cancelled_at,
+        cancelled_by: this.cancelled_by,
+        cancellation_reason: this.cancellation_reason
       }
       if (!this.checkInputs()) return
-      const result = await window.api.cancelReminder(data)
+      const result = await window.api.cancelReminderById(data)
       if (result.success) {
         this.$router.push('/invoices')
       }

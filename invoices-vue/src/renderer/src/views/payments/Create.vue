@@ -50,7 +50,7 @@
                 </div>
                 <div>
                   Offener Betrag:
-                  {{ formatCurrency(payment.invoice.outstanding, payment.invoice.currency) }}
+                  {{ formatCurrency(outstanding, payment.invoice.currency) }}
                 </div>
               </label>
             </div>
@@ -130,14 +130,15 @@
           <div class="form-row">
             <div class="form-group">
               <small class="form-label">Rabbat</small>
-              <small v-if="is_early_payment_selected">{{ payment.invoice.early_payment_discount }}</small>
+              <small v-if="is_early_payment_selected">{{
+                payment.invoice.early_payment_discount
+              }}</small>
               <small v-else>0</small>
             </div>
             <div class="form-group">
               <small class="form-label">Offener Betrag</small>
-              <small>{{
-                formatCurrency(payment.invoice.outstanding, payment.invoice.currency)
-              }}</small>
+              {{ outstanding }}
+              <small>{{ formatCurrency((outstanding-payment.payment_amount), payment.invoice.currency) }}</small>
             </div>
           </div>
 
@@ -247,7 +248,7 @@ export default {
           file_name: '',
           invoice: result.rows
         }
-        this.payment.invoice.outstanding = result.rows.gross_total - result.payment_total
+        this.outstanding = result.rows.gross_total - result.payment_total
         //from payments db
         console.log('payments', this.payment)
       } catch (error) {
@@ -294,8 +295,7 @@ export default {
         outstanding = gross - (paid + amount)
       }
 
-      this.payment.invoice.outstanding = Number(outstanding)
-      return this.payment.invoice.outstanding
+      return Number(outstanding)
     },
 
     checkEarlyPayment() {
@@ -319,7 +319,7 @@ export default {
       if (this.is_early_payment_selected) {
         this.isPaymentAmountDisabled = true
         this.payment.payment_amount = Number(grossTotal - earlyDiscount - paidTotal).toFixed(2)
-        this.payment.invoice.outstanding = 0
+        this.outstanding = 0
         this.payment.invoice.gross_total_after_discount = this.payment.payment_amount
         this.payment.invoice.early_paid_discount_applied = 1
       } else {
@@ -327,7 +327,7 @@ export default {
         this.payment.payment_amount = null
         this.payment.invoice.early_payment_discount = 0
         this.payment.invoice.gross_total_after_discount = 0
-        this.payment.invoice.outstanding = grossTotal - paidTotal
+        this.outstanding = grossTotal - paidTotal
       }
 
       this.$nextTick(() => {
@@ -347,12 +347,12 @@ export default {
       return true
     },
     setPaymentStatus() {
-      if (this.payment.invoice.outstanding < 0) {
+      if (this.outstanding < 0) {
         this.$refs.payment_amount.focus()
         this.paymentAmountError = true
         return false
       }
-      if (this.payment.invoice.outstanding === 0) {
+      if (this.outstanding === 0) {
         this.payment.invoice.payment_status = 'paid'
       } else {
         this.payment.invoice.payment_status = 'partially_paid'

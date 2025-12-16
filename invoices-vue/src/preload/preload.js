@@ -39,12 +39,12 @@ contextBridge.exposeInMainWorld('api', {
   //payment
   addPayment: (data) => ipcRenderer.invoke('add-payment', data),
   getPaymentById: (id) => ipcRenderer.invoke('get-payment-by-id', id),
-  cancelPaymentById: (id) => ipcRenderer.invoke('cancel-payment-by-id', id),
+  cancelPaymentById: (data) => ipcRenderer.invoke('cancel-payment-by-id', data),
 
   //reminder
   addReminder: (data) => ipcRenderer.invoke('add-reminder', data),
   getReminderById: (id) => ipcRenderer.invoke('get-reminder-by-id', id),
-  cancelReminderById: (id) => ipcRenderer.invoke('cancel-reminder-by-id', id),
+  cancelReminderById: (data) => ipcRenderer.invoke('cancel-reminder-by-id', data),
 
   //reports
   // documentReport: async (data) => ipcRenderer.invoke('document-report', data),

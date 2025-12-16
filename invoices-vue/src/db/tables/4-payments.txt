@@ -1,12 +1,13 @@
+
 CREATE TABLE IF NOT EXISTS payments (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  date TEXT NOT NULL,
 
   invoice_id INTEGER NOT NULL,
   customer_id INTEGER NOT NULL,
   is_active INTEGER DEFAULT 1,
 
-  invoice_snapshot TEXT NOT NULL DEFAULT '{}',
-  payment_date TEXT NOT NULL,
+  invoice TEXT NOT NULL DEFAULT '{}',
   payment_amount REAL NOT NULL DEFAULT 0,
   payment_method TEXT DEFAULT NULL,
   payment_reference TEXT DEFAULT NULL,
