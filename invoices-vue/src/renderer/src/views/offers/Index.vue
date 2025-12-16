@@ -24,7 +24,7 @@
           <span>Neues Angebot erstellen</span>
         </router-link>
       </div>
-  
+
       <div class="filter-container">
         <input
           v-model="search_box"
@@ -33,9 +33,9 @@
           class="form-input"
           @input="searchOffer()"
         />
-        <input v-model="date_box_start" type="date" @change="dateFilter()" class="date"/>
-        <input v-model="date_box_end" type="date" @change="dateFilter()" class="date"/>
-        <div @click="sorting('id')" class="sort-btn">&#8645;</div>
+        <input v-model="date_box_start" type="date" @change="dateFilter()" class="date" />
+        <input v-model="date_box_end" type="date" @change="dateFilter()" class="date" />
+        <div class="sort-btn" @click="sorting('id')">&#8645;</div>
       </div>
 
       <!-- Offers Grid -->
@@ -53,14 +53,16 @@
             <div class="status-badge">
               {{
                 item.status === 'draft'
-                  ? 'Ausstehend'
-                  : item.status === 'accept'
-                    ? 'Akzeptiert'
-                    : 'Nicht akzeptiert'
+                  ? 'Entwurf'
+                  : item.status === 'sent'
+                    ? 'Gesendet'
+                    : item.status === 'accepted'
+                      ? 'Angenommen'
+                      : 'Abgelehnt'
               }}
             </div>
           </div>
-  
+
           <!-- Card Actions -->
           <div class="card-actions">
             <router-link :to="'/offers/details/' + item.id" class="action-btn details-btn">
@@ -79,28 +81,10 @@
               </svg>
               Details
             </router-link>
-            <button class="action-btn delete-btn" @click="deleteOffer(item.id)">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path
-                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-                ></path>
-              </svg>
-              Löschen
-            </button>
           </div>
         </div>
       </div>
-  
+
       <!-- Empty State -->
       <div v-if="offers" class="empty-state">
         <svg
@@ -122,7 +106,6 @@
         <p>Erstellen Sie neue Angebote, um sie hier zu sehen.</p>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -150,20 +133,9 @@ export default {
           ...item,
           customer: JSON.parse(item.customer)
         }))
+        console.log(this.offers)
       } catch (error) {
         console.error(error)
-      }
-    },
-    async deleteOffer(id) {
-      console.log(id)
-      if (confirm('Sind Sie sicher, dass Sie dieses Angebot löschen möchten?')) {
-        try {
-          const result = await window.api.deleteOfferById(id)
-          if (result.success) this.getOffers()
-          this.$router.push('/offers')
-        } catch (error) {
-          console.error(error)
-        }
       }
     },
     getInitials(firstName, lastName) {

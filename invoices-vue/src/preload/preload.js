@@ -53,8 +53,9 @@ contextBridge.exposeInMainWorld('api', {
   addOffer: async (data) => ipcRenderer.invoke('add-offer', data),
   getOffers: async (data) => ipcRenderer.invoke('get-offers', data),
   getOfferById: async (id) => ipcRenderer.invoke('get-offer-by-id', id),
+  getOfferByStatus: async (id) => ipcRenderer.invoke('get-offer-by-status', id),
   updateOfferById: async (data) => ipcRenderer.invoke('update-offer-by-id', data),
-  cancelOfferById: async (id) => ipcRenderer.invoke('cancel-offer-by-id', id),
+  cancelOffer: async (id) => ipcRenderer.invoke('cancel-offer', id),
 
   //order
   addOrder: async (data) => ipcRenderer.invoke('add-order', data),

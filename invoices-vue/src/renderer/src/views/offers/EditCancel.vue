@@ -9,7 +9,7 @@
           <div class="custom-row">
             <div class="form-group">
               <label for="">Rechnung-Nr.:</label>
-              <label class="form-input">{{ formatInvoiceId($route.params.id) }}</label>
+              <label class="form-input">{{ formatOfferId($route.params.id) }}</label>
             </div>
 
             <div class="form-group">
@@ -46,24 +46,24 @@
               </div>
             </div>
 
-            <button @click="updateInvoice" class="btn btn-cancel">Stornieren</button>
+            <button @click="updateOffer" class="btn btn-cancel">Stornieren</button>
           </div>
         </div>
       </div>
     </div>
-    <router-link :to="`/invoices/details/${$route.params.id}`" class="back-link">
-      ← Zurück zur Rechnungsdetails
+    <router-link :to="`/offers/details/${$route.params.id}`" class="back-link">
+      ← Zurück zur Angebotsdetails
     </router-link>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'InvoiceEdit',
-  inject: ['formatInvoiceId'],
+  name: 'OfferEdit',
+  inject: ['formatOfferId'],
   data() {
     return {
-      title: 'Rechnung stornieren',
+      title: 'Angebot stornieren',
       cancelled_by: '',
       cancelled_at: '',
       cancellation_reason: '',
@@ -97,7 +97,7 @@ export default {
 
       return true
     },
-    async updateInvoice() {
+    async updateOffer() {
       const id = this.$route.params.id
       const data = {
         id: id,
@@ -107,9 +107,9 @@ export default {
         cancelled_at: this.cancelled_at
       }
       if (!this.checkInputs()) return
-      const result = await window.api.cancelInvoice(data)
+      const result = await window.api.cancelOffer(data)
       if (result.success) {
-        this.$router.push('/invoices')
+        this.$router.push('/offers')
       }
     }
   }

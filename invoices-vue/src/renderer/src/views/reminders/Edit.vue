@@ -63,7 +63,7 @@ export default {
   inject: ['formatReminderId'],
   data() {
     return {
-      title: 'Mahnung bearbeiten',
+      title: 'Mahnung stornieren',
       cancelled_by: '',
       cancelled_at: '',
       cancellation_reason: '',

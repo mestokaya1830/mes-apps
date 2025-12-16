@@ -17,12 +17,25 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button v-if="tableData.id" class="btn">
+      <button
+        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        class="btn btn-edit"
+      >
         <router-link :to="`/offers/edit/${tableData.id}`">
           <span class="nav-icon">✏</span>
           <span>Bearbeiten</span>
         </router-link>
       </button>
+      <button
+        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        class="btn btn-edit"
+      >
+        <router-link :to="`/offers/edit-cancel/${tableData.id}`">
+          <span class="nav-icon">✏</span>
+          <span>Stornieren</span>
+        </router-link>
+      </button>
+      
     </div>
   </div>
 </template>
@@ -74,6 +87,18 @@ export default {
         this.$router.push('/offers')
       }
     },
+    async cancelOffer(id) {
+      console.log(id)
+      if (confirm('Sind Sie sicher, dass Sie dieses Angebot löschen möchten?')) {
+        try {
+          const result = await window.api.cancelOfferById(id)
+          if (result.success) this.getOffers()
+          this.$router.push('/offers')
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    },
     printDocument() {
       this.clearStore()
       window.print()
@@ -96,8 +121,8 @@ export default {
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 30px;
   height: auto;
+  margin-top: 30px;
 }
 
 .btn {
@@ -135,9 +160,21 @@ export default {
   color: #fff;
   border: 1px solid #e2e8f0;
 }
+.btn-edit{
+  background: gold;
+  color: #fff;
+  border: 1px solid #e2e8f0;
+}
+.btn-cancel {
+  background: #ef4444;
+  color: #fff;
+  border: 1px solid #e2e8f0;
+}
 .btn-primary:hover,
 .btn-secondary:hover,
-.btn-print:hover {
+.btn-print:hover
+.btn-edit:hover
+.btn-cancel:hover {
   filter: brightness(0.9);
 }
 .nav-icon {

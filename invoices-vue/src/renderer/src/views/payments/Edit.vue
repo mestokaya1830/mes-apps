@@ -63,7 +63,7 @@ export default {
   inject: ['formatPaymentId'],
   data() {
     return {
-      title: 'Zahlung bearbeiten',
+      title: 'Zahlung stornieren',
       cancelled_at: '',
       cancelled_by: '',
       cancellation_reason: '',

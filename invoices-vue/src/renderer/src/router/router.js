@@ -99,7 +99,7 @@ const routes = [
     path: '/invoices/edit/:id',
     name: 'invoices-edit',
     component: () => import('../views/invoices/Edit.vue'),
-    meta: { title: 'Rechnung bearbeiten', auth: true }
+    meta: { title: 'Rechnung stornieren', auth: true }
   },
   {
     path: '/invoices/preview',
@@ -125,7 +125,7 @@ const routes = [
     path: '/payments/edit/:id',
     name: 'payments-edit',
     component: () => import('../views/payments/Edit.vue'),
-    meta: { title: 'Zahlung bearbeiten', auth: true }
+    meta: { title: 'Zahlung stornieren', auth: true }
   },
   {
     path: '/payments/preview',
@@ -151,7 +151,7 @@ const routes = [
     path: '/reminders/edit/:id',
     name: 'reminders-edit',
     component: () => import('../views/reminders/Edit.vue'),
-    meta: { title: 'Mahnung bearbeiten', auth: true }
+    meta: { title: 'Mahnung stornieren', auth: true }
   },
   {
     path: '/reminders/preview',
@@ -184,6 +184,12 @@ const routes = [
     name: 'offers-edit',
     component: () => import('../views/offers/Edit.vue'),
     meta: { title: 'Angebot bearbeiten', auth: true }
+  },
+  {
+    path: '/offers/edit-cancel/:id',
+    name: 'offers-edit-cancel',
+    component: () => import('../views/offers/EditCancel.vue'),
+    meta: { title: 'Angebot stornieren', auth: true }
   },
   {
     path: '/offers/preview',

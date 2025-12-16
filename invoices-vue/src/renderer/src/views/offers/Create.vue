@@ -53,6 +53,39 @@
         </div>
       </div>
 
+      <!-- status -->
+      <div class="form-section">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select v-model="offer.status" class="form-input">
+            <option value="draft">Entwurf</option>
+            <option value="sent">Gesendet</option>
+            <option value="accepted">Angenommen</option>
+            <option value="rejected">Abgelehnt</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Status geändert von</label>
+          <input
+            v-model="offer.status_by"
+            type="text"
+            class="form-input"
+            placeholder="z. B. Max Mustermann"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Statuskommentar</label>
+          <textarea
+            v-model="offer.status_comments"
+            class="form-input"
+            rows="2"
+            placeholder="Interne Anmerkung zum Status"
+          ></textarea>
+        </div>
+      </div>
+
       <!-- Customer -->
       <div v-if="offer.customer" class="form-section">
         <div class="form-section-title">👤 Kundendaten</div>
@@ -96,7 +129,6 @@
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
-          <label class="form-label">Waehrung</label>
           <select v-model="offer.currency" class="form-input">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
@@ -218,7 +250,7 @@
 
         <div class="form-group">
           <label class="form-label">Lieferzeit</label>
-          <input v-model="offer.delivery_time" type="date" class="form-input" />
+          <input v-model="offer.delivery_time" type="date" class="form-input date" />
         </div>
 
         <div class="form-group">

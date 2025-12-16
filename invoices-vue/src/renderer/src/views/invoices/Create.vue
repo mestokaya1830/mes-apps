@@ -156,7 +156,6 @@
       <div class="form-section">
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
-          <label class="form-label">Waehrung</label>
           <select v-model="invoice.currency" class="form-input">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
