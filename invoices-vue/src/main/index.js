@@ -1591,7 +1591,6 @@ ipcMain.handle('cancel-offer', async (event, payload) => {
   }
 })
 
-
 // /orders
 ipcMain.handle('add-order', async (event, payload) => {
   if (!payload) return { success: false, message: 'No data provided' }
@@ -1870,5 +1869,22 @@ ipcMain.handle('cancel-order', async (event, payload) => {
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
+  }
+})
+
+ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
+  try {
+    // const savePath = '/media/username/USB/invoice-pdfs'
+    // const savePath = path.join(app.getPath('userData'), 'pdf-storage')// in home->username-> .config folder
+    const savePath = path.join(app.getPath('downloads'), 'invoice-pdfs')
+    if (!fs.existsSync(savePath)) fs.mkdirSync(savePath)
+
+    const filePath = path.join(savePath, `${fileName}.pdf`)
+    fs.writeFileSync(filePath, Buffer.from(buffer))
+
+    console.log('PDF Saved:', filePath)
+    // Burada audit log veya DB işlemi yapılabilir
+  } catch (err) {
+    console.error('PDF Error:', err)
   }
 })

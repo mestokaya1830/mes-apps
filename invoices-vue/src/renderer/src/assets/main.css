@@ -1673,6 +1673,14 @@ button:hover {
   }
 }
 
+.create-reminder{
+  width: fit-content;
+  margin: 20px 0;
+  padding: 12px;
+  margin-left: auto;
+  font-size: 14px;
+  background-color: cadetblue;
+}
 @media (max-width: 640px) {
   .profile-edit {
     padding: 1.5rem;

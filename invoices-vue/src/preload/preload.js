@@ -62,5 +62,14 @@ contextBridge.exposeInMainWorld('api', {
   getOrders: async (data) => ipcRenderer.invoke('get-orders', data),
   getOrderById: async (id) => ipcRenderer.invoke('get-order-by-id', id),
   updateOrderById: async (data) => ipcRenderer.invoke('update-order-by-id', data),
-  cancelOrder: async (data) => ipcRenderer.invoke('cancel-order', data)
+  cancelOrder: async (data) => ipcRenderer.invoke('cancel-order', data),
+
+  saveInvoicePDF: (pdfBlob, fileName) => {
+    pdfBlob.arrayBuffer().then((buffer) => {
+      ipcRenderer.send('save-invoice-pdf', {
+        buffer,
+        fileName
+      })
+    })
+  }
 })

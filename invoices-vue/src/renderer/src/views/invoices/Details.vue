@@ -204,7 +204,13 @@
 
         <FooterSidePreview />
       </div>
-      <ActionsButtonPreview v-if="invoice" :tableData="invoice" sourcePage="details" />
+
+      <ActionsButtonPreview
+        v-if="invoice"
+        :tableData="invoice"
+        :fileName="actionFileName"
+        sourcePage="details"
+      />
 
       <!-- payment list -->
       <div v-if="payments && payments.length" class="customer-grid">
@@ -265,7 +271,7 @@
           </span>
           <label for=""> Bereitbezahlt: </label>
           <span>
-           {{ formatCurrency(payment_total, invoice.currency) }}
+            {{ formatCurrency(payment_total, invoice.currency) }}
           </span>
           <label for="">Restbetrag: </label>
           <span>
@@ -274,7 +280,9 @@
         </div>
       </div>
 
-      <router-link :to="`/reminders/create/${invoice.id}`">Mahnung erstellen</router-link>
+      <router-link :to="`/reminders/create/${invoice.id}`" class="btn create-reminder"
+        >Mahnung erstellen</router-link
+      >
 
       <!-- reminders list -->
       <div v-if="reminders && reminders.length" class="customer-grid">
@@ -317,8 +325,6 @@
           </tbody>
         </table>
       </div>
-
-      
     </div>
     <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
   </div>
@@ -355,6 +361,12 @@ export default {
       reminders: [],
       payment_total: 0,
       auth: null
+    }
+  },
+  computed: {
+    actionFileName() {
+      if (!this.invoice) return
+      return this.formatInvoiceId(this.invoice.id)
     }
   },
   mounted() {

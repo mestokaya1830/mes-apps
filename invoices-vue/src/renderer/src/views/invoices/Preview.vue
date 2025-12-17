@@ -243,6 +243,7 @@
       <ActionsButtonPreview
         v-if="invoicePreview"
         :tableData="invoicePreview"
+        :fileName="actionFileName"
         sourcePage="preview"
       />
     </div>
@@ -274,6 +275,12 @@ export default {
       title: 'Rechnungbestätigung',
       invoicePreview: null,
       auth: null
+    }
+  },
+  computed: {
+    actionFileName() {
+      if (!this.invoicePreview) return
+      return this.formatInvoiceId(this.invoicePreview.id)
     }
   },
   mounted() {

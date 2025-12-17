@@ -17,7 +17,10 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active" class="btn btn-cancel">
+      <button
+        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        class="btn btn-cancel"
+      >
         <router-link :to="`/invoices/edit/${tableData.id}`">
           <span class="nav-icon">✏</span>
           <span>Stornieren</span>
@@ -37,6 +40,10 @@ export default {
       required: true
     },
     sourcePage: {
+      type: String,
+      required: true
+    },
+    fileName: {
       type: String,
       required: true
     }
@@ -64,22 +71,21 @@ export default {
       }
 
       html2pdf().set(options).from(element).save()
-      this.clearStore()
+      this.savePdf()
     },
     async saveInvoice() {
       if (this.tableData) {
         const result = await window.api.addInvoice(JSON.parse(JSON.stringify(this.tableData)))
         if (!result.success) return
-        this.clearStore()
+        this.savePdf()
         this.$router.push('/invoices')
       }
     },
     printDocument() {
-      this.clearStore()
+      this.savePdf()
       window.print()
     },
     sendEmail() {
-      this.clearStore()
       console.log(this.email)
     },
     async clearStore() {
@@ -88,6 +94,29 @@ export default {
       } catch (error) {
         console.error(error)
       }
+    },
+    async savePdf() {
+      console.log(this.fileName)
+      await this.$nextTick()
+      const element = document.querySelector('.printable')
+      if (!element) return
+
+      const options = {
+        margin: 16,
+        filename: this.fileName + '.pdf',
+        image: { type: 'png', quality: 0.95 },
+        html2canvas: { scale: 1.5, useCORS: true, logging: false, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }
+
+      html2pdf()
+        .set(options)
+        .from(element)
+        .outputPdf('blob')
+        .then((blob) => {
+          window.api.saveInvoicePDF(blob, this.fileName)
+          this.clearStore()
+        })
     }
   }
 }
@@ -115,7 +144,6 @@ export default {
   margin: 0 10px;
 }
 
-
 .btn-primary {
   background: #22c55e;
   color: white;
@@ -140,7 +168,7 @@ export default {
 
 .btn-edit {
   background: #facc15;
-  color: black; 
+  color: black;
   border: 1px solid #e2e8f0;
 }
 
