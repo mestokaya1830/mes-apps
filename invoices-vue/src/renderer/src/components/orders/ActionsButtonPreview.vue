@@ -101,12 +101,13 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 30px;
   height: auto;
+  margin-top: 30px;
 }
 
 .btn {
@@ -166,6 +167,7 @@ export default {
 .btn-cancel:hover {
   filter: brightness(0.9);
 }
+
 .nav-icon {
   margin-right: 8px;
 }

@@ -116,6 +116,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .action-buttons {
   display: flex;
