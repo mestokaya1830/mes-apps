@@ -28,8 +28,9 @@ export default db
 // }
 
 // try {
-//   db.prepare('Drop table if exists offers').run()
+//   db.prepare('Drop table if exists orders').run()
 // } catch (error) {
 //   console.error(error)
 // }
+
 

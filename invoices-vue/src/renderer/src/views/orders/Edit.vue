@@ -1,53 +1,164 @@
 <template>
-  <div v-if="$route.params.id">
-    <div class="preview-panel">
+  <div>
+    <div class="editor-panel">
       <div class="printable">
-        <!-- Header -->
         <h2>{{ title }}</h2>
 
         <div class="form-section">
-          <div class="custom-row">
-            <div class="form-group">
-              <label for="">Auftrags-Nr.:</label>
-              <label class="form-input">{{ formatOrderId($route.params.id) }}</label>
+          <!-- Status -->
+          <div class="form-group">
+            <div v-if="order.status === 'accepted' || order.status === 'rejected'">
+              <h4>Status:</h4>
+              <div class="form-input disabled">
+                {{
+                  order.status === 'accepted'
+                    ? 'Angenommen'
+                    : order.status === 'rejected'
+                      ? 'Abgelehnt'
+                      : order.status
+                }}
+                <small class="text-muted d-block">Status kann nicht mehr geändert werden.</small>
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="">Storniert am</label>
-              <input
-                v-model="cancelled_at"
-                type="date"
-                class="form-input"
-                placeholder="Datum der Stornierung auswählen"
-              />
+            <div v-else>
+              <label class="form-label">Status</label>
+              <select v-model="order.status" class="form-input">
+                <option value="" disabled>Status auswählen</option>
+                <option value="draft" :disabled="order.status !== 'sent' ? true : true">
+                  Entwurf
+                </option>
+                <option value="sent" :disabled="order.status !== 'draft'">Gesendet</option>
+                <option value="accepted" :disabled="order.status !== 'sent'">Angenommen</option>
+                <option value="rejected" :disabled="order.status !== 'sent'">Abgelehnt</option>
+              </select>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label for="">Storniert von</label>
-              <input
-                v-model="cancelled_by"
-                type="text"
-                class="form-input"
-                placeholder="Name der Person, die storniert"
-              />
+          <!-- Status by -->
+          <div class="form-group">
+            <label class="form-label">Bearbeitet von:</label>
+            <input
+              v-model="order.status_by"
+              type="text"
+              placeholder="Name der bearbeitenden Person eingeben"
+            />
+          </div>
+
+          <!-- Status date -->
+          <div class="form-group">
+            <label class="form-label">Bearbeitet am:</label>
+            <input v-model="order.status_date" type="date" class="form-input date" />
+          </div>
+
+          <!-- Status comments -->
+          <div class="form-group">
+            <label class="form-label">Kommentare:</label>
+            <textarea
+              v-model="order.status_comments"
+              class="form-input"
+              placeholder="Kommentare oder Notizen hier eingeben"
+            ></textarea>
+          </div>
+
+          <!-- Subject -->
+          <div class="form-group">
+            <label class="form-label">Betreff / Subject:</label>
+            <input v-model="order.subject" type="text" class="form-input" />
+          </div>
+
+          <!-- Lieferdaten + Versand -->
+          <div class="form-section">
+            <div class="form-section-title">📦 Lieferung & Versand</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Gesendet am</label>
+                <input v-model="order.sent_at" type="date" class="form-input date" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Liefertermin</label>
+                <input v-model="order.delivery_date" type="date" class="form-input date" />
+              </div>
             </div>
-
-            <div class="form-group">
-              <label for="">Stornierungsgrund</label>
-              <textarea
-                v-model="cancellation_reason"
-                class="form-input"
-                placeholder="Grund der Stornierung hier eingeben"
-              ></textarea>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Lieferadresse</label>
+                <input v-model="order.delivery_address" type="text" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">PLZ</label>
+                <input v-model="order.delivery_postal_code" type="text" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Stadt</label>
+                <input v-model="order.delivery_city" type="text" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Land</label>
+                <input v-model="order.delivery_country" type="text" class="form-input" />
+              </div>
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Versandart:</label>
+                <select v-model="order.shipping_method" class="form-input">
+                  <option value="" disabled>Bitte auswählen</option>
+                  <option value="dhl">DHL</option>
+                  <option value="hermes">Hermes</option>
+                  <option value="ups">UPS</option>
+                  <option value="dpd">DPD</option>
+                  <option value="gls">GLS</option>
+                  <option value="email">E-Mail</option>
+                  <option value="pickup">Selbstabholung</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-            <button @click="updateOrder" class="btn btn-cancel">Stornieren</button>
+          <!-- Payment details -->
+          <div class="form-group">
+            <label class="form-label">Zahlungsbedingungen (Tage):</label>
+            <input v-model="order.payment_terms" type="number" class="form-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zahlungsart</label>
+            <select v-model="order.payment_method" class="form-input">
+              <option value="" disabled>Bitte auswählen</option>
+              <option>Überweisung</option>
+              <option>Bar</option>
+              <option>PayPal</option>
+              <option>Kreditkarte</option>
+              <option>Lastschrift</option>
+              <option>Scheck</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zahlungsreferenz:</label>
+            <input v-model="order.payment_reference" type="text" class="form-input" />
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label class="form-label">Kundenhinweise:</label>
+            <textarea v-model="order.customer_notes" class="form-input"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Interne Hinweise:</label>
+            <textarea v-model="order.internal_notes" class="form-input"></textarea>
           </div>
         </div>
       </div>
+
+      <button
+        :disabled="original_status == 'accepted' || original_status == 'rejected'"
+        class="btn btn-update"
+        @click="updateOrder"
+      >
+        Speichern
+      </button>
     </div>
+
     <router-link :to="`/orders/details/${$route.params.id}`" class="back-link">
-      ← Zurück zur Auftragsdetails
+      ← Zurück zu den Bestelldetails
     </router-link>
   </div>
 </template>
@@ -55,402 +166,62 @@
 <script>
 export default {
   name: 'OrderEdit',
-  inject: ['formatOrderId'],
-
   data() {
     return {
       title: 'Auftrag bearbeiten',
-      cancelled_by: '',
-      cancelled_at: '',
-      cancellation_reason: ''
+      order: {
+        status: '',
+        status_by: '',
+        status_date: '',
+        status_comments: '',
+        subject: '',
+        delivery_address: '',
+        delivery_postal_code: '',
+        delivery_city: '',
+        delivery_country: '',
+        shipping_method: '',
+        payment_terms: 14,
+        payment_method: '',
+        payment_reference: '',
+        customer_notes: '',
+        internal_notes: ''
+      },
+      original_status: ''
     }
   },
+  mounted() {
+    this.getOrder()
+  },
   methods: {
+    async getOrder() {
+      const result = await window.api.getOrderById(this.$route.params.id)
+      if (!result.success) return
+      const o = result.rows
+      this.order.status = o.status
+      this.order.status_by = o.status_by
+      this.order.status_date = o.status_date
+      this.order.status_comments = o.status_comments
+      this.order.subject = o.subject
+      this.order.delivery_address = o.delivery_address
+      this.order.delivery_postal_code = o.delivery_postal_code
+      this.order.delivery_city = o.delivery_city
+      this.order.delivery_country = o.delivery_country
+      this.order.shipping_method = o.shipping_method
+      this.order.payment_terms = o.payment_terms
+      this.order.payment_method = o.payment_method
+      this.order.payment_reference = o.payment_reference
+      this.order.customer_notes = o.customer_notes
+      this.order.internal_notes = o.internal_notes
+      this.original_status = o.status
+    },
+
     async updateOrder() {
-      const id = this.$route.params.id
-      const data = {
-        id: id,
-        is_active: 0,
-        cancellation_reason: this.cancellation_reason,
-        cancelled_by: this.cancled_by,
-        cancelled_at: this.cancelled_at
-      }
-      console.log(data)
-      const result = await window.api.cancelOrder(data)
+      const data = { id: this.$route.params.id, ...this.order }
+      const result = await window.api.updateOrderById(data)
       if (result.success) {
-        this.$router.push('/orders/details/' + id)
+        this.$router.push('/orders/details/' + this.$route.params.id)
       }
     }
   }
 }
 </script>
-<style>
-.custom-row {
-  display: flex;
-  flex-direction: column;
-  height: auto;
-}
-/* PREVIEW PANEL */
-.preview-panel {
-  width: 80%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: auto;
-  padding: 20px;
-  top: 20px;
-}
-
-/* RECIPIENT */
-.recipient {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-.recipient-address {
-  font-weight: 600;
-  color: var(--lightColor);
-  font-size: 12px;
-}
-
-/* META INFO */
-.meta-row {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  margin-bottom: 4px;
-}
-
-.meta-label {
-  font-weight: 600;
-  color: var(--lightColor);
-  font-size: 12px;
-}
-
-.meta-value {
-  color: var(--midColor);
-  font-size: 12px;
-}
-
-/* INTRO */
-.intro-text {
-  margin-bottom: 16px;
-  line-height: 1.6;
-  font-size: 10px;
-}
-
-.btn {
-  flex: 1;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  margin: 0 10px;
-}
-.btn-payment {
-  background: #3b82f6;
-  color: white;
-  width: 100%;
-  margin-bottom: 20px;
-}
-.btn-cancel {
-  background: #ef4444;
-  color: white;
-  margin-left: auto;
-  margin-top: 10px;
-}
-.btn-text {
-  text-decoration: none !important;
-  box-shadow: none;
-}
-/* BANK + CONTACT BOX */
-.bank-box {
-  background: #f1f5f9;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid transparent;
-}
-
-.bank-info {
-  display: grid;
-  grid-template-columns: 50px 1fr;
-  gap: 4px;
-  line-height: 1.6;
-  font-size: 12px;
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
-
-.bank-label {
-  color: #444;
-}
-
-.bank-value {
-  font-weight: 600;
-  color: #333;
-}
-
-/* BACK LINK */
-.back-link {
-  display: inline-block;
-  cursor: pointer;
-  margin: 40px 0;
-  font-size: 18px;
-  color: #3b82f6;
-  text-decoration: none;
-  border: 1px solid #3b82f6;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-.back-link:hover {
-  text-decoration: underline;
-}
-
-/* Positions Table */
-.positions-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 30px;
-  font-size: 10pt;
-}
-
-.positions-table thead {
-  background: #f8f9fa;
-}
-
-.positions-table th {
-  padding: 10px 8px;
-  text-align: left;
-  font-size: 9pt;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #333;
-}
-
-.positions-table th.center,
-.positions-table td.center {
-  text-align: center;
-}
-
-.positions-table th.right,
-.positions-table td.right {
-  text-align: right;
-}
-
-.positions-table tbody tr {
-  border-bottom: 1px solid #e9ecef;
-}
-
-.positions-table td {
-  padding: 12px 8px;
-  vertical-align: top;
-}
-
-.position-title {
-  font-weight: 600;
-  color: #000;
-  margin-bottom: 4px;
-}
-
-.position-description {
-  font-size: 9pt;
-  color: #666;
-  margin-top: 4px;
-}
-
-.position-service-period {
-  font-size: 8pt;
-  color: #888;
-  margin-top: 4px;
-  font-style: italic;
-}
-
-/* recipient Title */
-.recipient-title {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #94a3b8;
-  margin-bottom: 16px;
-}
-
-/* Summary Section */
-.summary-section {
-  display: flex;
-  flex-direction: column;
-  margin-left: auto;
-  width: 300px;
-  margin-bottom: 40px;
-}
-
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  font-size: 10pt;
-}
-
-.total-row.subtotal {
-  font-size: 11pt;
-  font-weight: 700;
-}
-
-.total-row.paid {
-  color: #16a34a;
-  font-weight: 700;
-}
-
-.total-row.outstanding {
-  color: #dc2626;
-  font-weight: 700;
-}
-
-.total-label {
-  font-weight: 500;
-}
-
-.total-value {
-  font-weight: 600;
-  text-align: right;
-}
-
-/* Tax Notes */
-.tax-note {
-  margin-top: 20px;
-  padding: 12px 16px;
-  border-radius: 4px;
-  font-size: 9pt;
-  line-height: 1.5;
-}
-
-.small-company {
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  color: #856404;
-}
-
-/* Subject Line */
-.subject-line {
-  margin: 20px 0;
-  padding: 12px;
-  background-color: #f8f9fa;
-  border-left: 4px solid #0066cc;
-  font-size: 14px;
-}
-
-/* Payment Terms */
-.payment-terms-box {
-  margin: 30px 0;
-  padding: 20px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-}
-
-.payment-terms-title {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 15px;
-  color: #0066cc;
-}
-
-.payment-terms-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.payment-term-item {
-  font-size: 13px;
-  line-height: 1.6;
-  padding: 8px 0;
-}
-
-.payment-term-item strong {
-  color: #333;
-  display: block;
-  margin-bottom: 4px;
-}
-
-.skonto-highlight {
-  background-color: #e7f3ff;
-  padding: 12px;
-  border-radius: 6px;
-  border-left: 3px solid #0066cc;
-}
-
-.skonto-amount {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #0066cc;
-  font-weight: 600;
-}
-
-.payment-conditions-text {
-  margin-top: 6px;
-  padding: 10px;
-  background-color: white;
-  border-radius: 4px;
-  border: 1px solid #dee2e6;
-  white-space: pre-wrap;
-  font-size: 12px;
-  color: #666;
-}
-
-/* FORM GROUPS */
-.form-section {
-  margin-bottom: 24px;
-  padding: 20px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.form-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.form-row-4 {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: #4b5563;
-  margin-bottom: 4px;
-}
-
-.form-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: inherit;
-}
-</style>

@@ -46,7 +46,7 @@
               </div>
             </div>
 
-            <button @click="updateInvoice" class="btn btn-cancel">Stornieren</button>
+            <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
           </div>
         </div>
       </div>

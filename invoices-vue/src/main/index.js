@@ -1553,28 +1553,6 @@ ipcMain.handle('cancel-offer-by-id', async (event, id) => {
   }
 })
 
-ipcMain.handle('update-offer-by-id', async (event, payload) => {
-  if (!payload) {
-    return { success: false, message: 'No data provided' }
-  }
-  try {
-    const { id, status, status_by, status_comments } = payload
-    const info = db
-      .prepare(
-        `
-          UPDATE offers
-          SET status = ?, status_by = ?, status_comments = ?
-          WHERE id = ?
-        `
-      )
-      .run(status, status_by, status_comments, id)
-    return { success: true, lastInsertId: info.lastInsertRowid }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
 ipcMain.handle('get-offer-by-status', async (event, id) => {
   if (!id) {
     return { success: false, message: 'No data provided' }
@@ -1614,7 +1592,7 @@ ipcMain.handle('cancel-offer', async (event, payload) => {
 })
 
 
-//orders
+// /orders
 ipcMain.handle('add-order', async (event, payload) => {
   if (!payload) return { success: false, message: 'No data provided' }
 
@@ -1629,6 +1607,8 @@ ipcMain.handle('add-order', async (event, payload) => {
           customer_id,
           customer,
 
+          subject,
+
           date,
           validity_date,
           service_period_start,
@@ -1636,7 +1616,6 @@ ipcMain.handle('add-order', async (event, payload) => {
           delivery_date,
 
           status,
-          status_date,
           status_by,
           status_comments,
 
@@ -1675,16 +1654,14 @@ ipcMain.handle('add-order', async (event, payload) => {
           created_at,
           updated_at
         ) VALUES (
-          ?, ?, ?, ?, ?, ?, ?, ?,
-          ?, ?, ?, ?,
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?,
           ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
-          ?, ?,
-          ?, ?
+          ?, ?, ?, ?
         )
       `
       )
@@ -1694,6 +1671,8 @@ ipcMain.handle('add-order', async (event, payload) => {
         data.customer_id,
         JSON.stringify(data.customer || {}),
 
+        data.subject,
+
         data.date,
         data.validity_date,
         data.service_period_start,
@@ -1701,7 +1680,6 @@ ipcMain.handle('add-order', async (event, payload) => {
         data.delivery_date,
 
         data.status ?? 'pending',
-        data.status_date,
         data.status_by,
         data.status_comments,
 
@@ -1737,8 +1715,8 @@ ipcMain.handle('add-order', async (event, payload) => {
         data.sent_at,
         data.sent_method,
 
-        data.created_at,
-        data.updated_at
+        data.created_at ?? new Date().toISOString(),
+        data.updated_at ?? new Date().toISOString()
       )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -1785,6 +1763,81 @@ ipcMain.handle('get-orders', async () => {
       )
       .all(limit)
     return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('update-order-by-id', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const {
+      id,
+      status,
+      status_by,
+      status_date,
+      status_comments,
+      subject,
+      delivery_address,
+      delivery_postal_code,
+      delivery_city,
+      delivery_country,
+      shipping_method,
+      payment_terms,
+      payment_method,
+      payment_reference,
+      customer_notes,
+      internal_notes
+    } = payload
+
+    const info = db
+      .prepare(
+        `
+        UPDATE orders
+        SET
+          status = ?,
+          status_by = ?,
+          status_date = ?,
+          status_comments = ?,
+          subject = ?,
+          delivery_address = ?,
+          delivery_postal_code = ?,
+          delivery_city = ?,
+          delivery_country = ?,
+          shipping_method = ?,
+          payment_terms = ?,
+          payment_method = ?,
+          payment_reference = ?,
+          customer_notes = ?,
+          internal_notes = ?,
+          updated_at = datetime('now')
+        WHERE id = ?
+        `
+      )
+      .run(
+        status,
+        status_by,
+        status_date,
+        status_comments,
+        subject,
+        delivery_address,
+        delivery_postal_code,
+        delivery_city,
+        delivery_country,
+        shipping_method,
+        payment_terms,
+        payment_method,
+        payment_reference,
+        customer_notes,
+        internal_notes,
+        id
+      )
+
+    return { success: true, changes: info.changes }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }

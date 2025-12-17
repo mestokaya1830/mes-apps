@@ -17,10 +17,10 @@
         <span class="nav-icon">🖨</span>
         <span>Drucken</span>
       </button>
-      <button v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active" class="btn btn-edit">
+      <button v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active" class="btn btn-cancel">
         <router-link :to="`/invoices/edit/${tableData.id}`">
           <span class="nav-icon">✏</span>
-          <span>Bearbeiten</span>
+          <span>Stornieren</span>
         </router-link>
       </button>
     </div>
@@ -115,36 +115,52 @@ export default {
   margin: 0 10px;
 }
 
+
 .btn-primary {
   background: #22c55e;
   color: white;
 }
+
+.btn-secondary {
+  background: #3b82f6;
+  color: white;
+  border: 1px solid #e2e8f0;
+}
+
 .btn-pdf {
-  background: #2263c5;
+  background: #1e40af;
   color: white;
 }
 
-.btn-secondary {
-  background: cornflowerblue;
-  color: #fff;
+.btn-print {
+  background: #0ea5e9;
+  color: white;
   border: 1px solid #e2e8f0;
 }
 
-.btn-print {
-  background: cadetblue;
-  color: #fff;
+.btn-edit {
+  background: #facc15;
+  color: black; 
   border: 1px solid #e2e8f0;
 }
-.btn-edit{
-  background: gold;
-  color: #fff;
+
+.btn-cancel {
+  background: #ef4444;
+  color: white;
   border: 1px solid #e2e8f0;
 }
+
 .btn-primary:hover,
 .btn-secondary:hover,
-.btn-print:hover
-.btn-edit:hover {
+.btn-pdf:hover,
+.btn-print:hover,
+.btn-edit:hover,
+.btn-cancel:hover {
   filter: brightness(0.9);
+}
+
+.nav-icon {
+  margin-right: 8px;
 }
 .nav-icon {
   margin-right: 8px;

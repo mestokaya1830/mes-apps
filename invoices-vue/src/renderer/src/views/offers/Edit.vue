@@ -13,7 +13,7 @@
         <div class="form-section">
           <div class="form-group">
             <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
-              <h4>Status: {{ offer.status }}</h4>
+              <h4>Status:</h4>
               <div class="form-input disabled">
                 {{
                   offer.status === 'accepted'

@@ -8,8 +8,8 @@
         <div class="form-section">
           <div class="custom-row">
             <div class="form-group">
-              <label for="">Rechnung-Nr.:</label>
-              <label class="form-input">{{ formatOfferId($route.params.id) }}</label>
+              <label for="">Auftrags-Nr.:</label>
+              <label class="form-input">{{ formatOrderId($route.params.id) }}</label>
             </div>
 
             <div class="form-group">
@@ -46,13 +46,13 @@
               </div>
             </div>
 
-            <button @click="updateOffer" class="btn btn-cancel">Aktualisieren</button>
+            <button @click="updateOrder" class="btn btn-cancel">Aktualisieren</button>
           </div>
         </div>
       </div>
     </div>
-    <router-link :to="`/offers/details/${$route.params.id}`" class="back-link">
-      ← Zurück zur Angebotsdetails
+    <router-link :to="`/orders/details/${$route.params.id}`" class="back-link">
+      ← Zurück zur Auftragsdetails
     </router-link>
   </div>
 </template>
@@ -60,10 +60,10 @@
 <script>
 export default {
   name: 'OfferEdit',
-  inject: ['formatOfferId'],
+  inject: ['formatOrderId'],
   data() {
     return {
-      title: 'Angebot stornieren',
+      title: 'Auftrag stornieren',
       cancelled_by: '',
       cancelled_at: '',
       cancellation_reason: '',
@@ -97,7 +97,7 @@ export default {
 
       return true
     },
-    async updateOffer() {
+    async updateOrder() {
       const id = this.$route.params.id
       const data = {
         id: id,
@@ -107,9 +107,9 @@ export default {
         cancelled_at: this.cancelled_at
       }
       if (!this.checkInputs()) return
-      const result = await window.api.cancelOffer(data)
+      const result = await window.api.cancelOrder(data)
       if (result.success) {
-        this.$router.push('/offers')
+        this.$router.push('/orders')
       }
     }
   }

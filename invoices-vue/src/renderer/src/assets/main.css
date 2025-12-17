@@ -40,7 +40,10 @@ body {
   font-size: 18px;
   pointer-events: none;
 }
-
+a{
+  text-decoration: none;
+  color: #fff;
+}
 .form-container {
   display: flex;
   align-items: center;
@@ -195,7 +198,7 @@ input.error {
   font-weight: 600;
 }
 .signup-link a:hover {
-  text-decoration: underline;
+  filter: brightness(80);
 }
 .register-form {
   width: 100%;
@@ -1626,6 +1629,15 @@ button:hover {
   font-size: 13px;
   font-family: inherit;
 }
+.status{
+  margin-top: 40px;
+}
+.status-pending { background: #3498db; color: #fff;}
+.status-confirmed { background: #2ecc71; }
+.status-preparing { background: #f1c40f; color: #000; }
+.status-shipped { background: #9b59b6; }
+.status-delivered { background: #27ae60; }
+.status-cancelled { background: #e74c3c; }
 /* Responsive küçük ekranlar için */
 @media (max-width: 768px) {
   table,

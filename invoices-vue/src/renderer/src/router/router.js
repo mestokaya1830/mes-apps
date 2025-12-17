@@ -224,6 +224,12 @@ const routes = [
     meta: { title: 'Auftrag bearbeiten', auth: true }
   },
   {
+    path: '/orders/edit-cancel/:id',
+    name: 'orders-edit-cancel',
+    component: () => import('../views/orders/EditCancel.vue'),
+    meta: { title: 'Auftrag stornieren', auth: true }
+  },
+  {
     path: '/orders/preview',
     name: 'orders-preview',
     component: () => import('../views/orders/Preview.vue'),
