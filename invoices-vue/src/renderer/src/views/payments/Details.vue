@@ -74,7 +74,12 @@
                 <tr>
                   <td>Ausstehender Betrag</td>
                   <td>
-                    {{ formatCurrency(payment.invoice.gross_total - payment.payment_amount, payment.invoice.currency) }}
+                    {{
+                      formatCurrency(
+                        payment.invoice.gross_total - payment.payment_amount,
+                        payment.invoice.currency
+                      )
+                    }}
                   </td>
                 </tr>
                 <tr>
@@ -148,7 +153,12 @@
       >
 
       <!-- Actions Button -->
-      <ActionsButtonPreview v-if="payment" :tableData="payment" sourcePage="details" />
+      <ActionsButtonPreview
+        v-if="payment"
+        :tableData="payment"
+        :fileName="actionFileName"
+        sourcePage="details"
+      />
     </div>
 
     <!-- <router-link :to="`/invoices/details/${payment.invoice_id}`" class="back-link">
@@ -192,6 +202,10 @@ export default {
         this.payment.invoice_gross_total -
         (this.payment.payment_amount + Number(this.payment.total_paid_amount))
       ).toFixed(2)
+    },
+    actionFileName() {
+      if (!this.payment) return
+      return this.formatPaymentId(this.payment.id)
     }
   },
   mounted() {
@@ -220,89 +234,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.img {
-  width: 200px;
-  height: 140px;
-}
-.preview-panel {
-  width: 100%;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  height: auto;
-  padding: 20px;
-  top: 20px;
-}
-/* Payments Table */
-.payments-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-  font-family: Arial, sans-serif;
-}
-.payments-table th {
-  background-color: #f3f3f3;
-  font-weight: bold;
-  padding: 8px;
-  text-align: left;
-  border-bottom: 2px solid #ccc;
-}
-.payments-table td {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-}
-.payments-table tbody tr:hover {
-  background-color: #fafafa;
-}
-.payments-table button {
-  padding: 4px 8px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-.payments-table button:hover {
-  background-color: #0056b3;
-}
-
-.modal-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0.5rem;
-}
-.modal-table td {
-  padding: 6px;
-  border-bottom: 1px solid #eee;
-}
-.close-button {
-  margin-top: 1rem;
-  padding: 6px 12px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.close-button:hover {
-  background-color: #a71d2a;
-}
-
-.download-container {
-  display: flex;
-  flex-direction: column;
-  margin-top: 1rem;
-}
-.btn-download {
-  margin-top: 1rem;
-  padding: 6px 12px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-</style>

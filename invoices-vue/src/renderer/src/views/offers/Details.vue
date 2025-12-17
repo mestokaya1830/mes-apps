@@ -204,9 +204,14 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Action Buttons -->
-      <ActionsButtonPreview v-if="offer" :tableData="offer" sourcePage="details" />
+      <ActionsButtonPreview
+        v-if="offer"
+        :tableData="offer"
+        :fileName="actionFileName"
+        sourcePage="details"
+      />
     </div>
 
     <router-link to="/offers" class="back-link"> ← Zurück zur Angebotsliste </router-link>
@@ -231,6 +236,12 @@ export default {
       title: 'Angebot-Details',
       offer: null,
       auth: null
+    }
+  },
+  computed: {
+    actionFileName() {
+      if (!this.offer) return
+      return this.formatOfferId(this.offer.id)
     }
   },
   mounted() {

@@ -287,7 +287,12 @@
       </div>
 
       <!-- Actions -->
-      <ActionsButtonPreview v-if="orderPreview" :tableData="orderPreview" sourcePage="preview" />
+      <ActionsButtonPreview
+        v-if="orderPreview"
+        :tableData="orderPreview"
+        :fileName="actionFileName"
+        sourcePage="preview"
+      />
     </div>
 
     <router-link to="/orders/create" class="back-link">← Zurück zur Auftragsliste</router-link>
@@ -343,6 +348,10 @@ export default {
       if (terms === 'vorkasse') return 'Prepayment'
       if (terms === 0) return 'Due immediately'
       return `Due within ${terms} days`
+    },
+    actionFileName() {
+      if (!this.orderPreview) return
+      return this.formatOrderd(this.orderPreview.id)
     }
   },
   mounted() {
