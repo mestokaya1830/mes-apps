@@ -102,21 +102,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.form-btn {
-  margin-top: 2rem;
-}
-.profile-logo {
-  width: 100%;
-  object-fit: contain;
-  border-radius: 5px;
-  cursor: pointer;
-}
-#logo {
-  display: none;
-}
-.logo {
-  cursor: pointer;
-}
-</style>

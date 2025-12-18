@@ -32,13 +32,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.contact-box {
-  background: #f1f5f9;
-  margin: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid transparent;
-}
-</style>

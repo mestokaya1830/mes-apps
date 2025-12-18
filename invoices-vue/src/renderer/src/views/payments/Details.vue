@@ -169,10 +169,10 @@
 
 <script>
 import store from '../../store/store'
-import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
-import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
+import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import PaymentActions from '../../components/preview/PaymentActions.vue'
-import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'PaymentDetails',

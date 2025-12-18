@@ -30,26 +30,3 @@ export default {
   }
 }
 </script>
-<style>
-.home-btn {
-  position: fixed;
-  top: 105px;
-  right: 40px;
-  background: #667eea;
-  color: white;
-  padding: 12px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.home-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-}
-</style>

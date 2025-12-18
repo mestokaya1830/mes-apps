@@ -1868,19 +1868,19 @@ ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
 ipcMain.handle('document-report', async (event, payload) => {
   try {
     const { start, end } = payload
-    const invoices = db
+    const rows = db
       .prepare(
         `SELECT * FROM invoices WHERE date BETWEEN ? AND ? AND is_active = 1 ORDER BY id DESC`
       )
       .all(start, end)
 
-    const rows = invoices.map((item) => {
-      const payments = db
-        .prepare(`SELECT * FROM payments WHERE invoice_id = ? AND is_active = 1 ORDER BY id ASC`)
-        .all(item.id)
+    // const rows = invoices.map((item) => {
+    //   const payments = db
+    //     .prepare(`SELECT * FROM payments WHERE invoice_id = ? AND is_active = 1 ORDER BY id ASC`)
+    //     .all(item.id)
 
-      return {...item, payments }
-    })
+    //   return {...item, payments }
+    // })
 
     return { success: true, rows }
   } catch (err) {
