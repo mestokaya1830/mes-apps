@@ -33,8 +33,8 @@
           class="form-input"
           @input="searchOffer()"
         />
-        <input v-model="date_box_start" type="date" @change="dateFilter()" class="date" />
-        <input v-model="date_box_end" type="date" @change="dateFilter()" class="date" />
+        <input v-model="date_box_start" type="date" @change="dateFilter()" class="form-input date" />
+        <input v-model="date_box_end" type="date" @change="dateFilter()" class="form-input date" />
         <div class="sort-btn" @click="sorting('id')">&#8645;</div>
       </div>
 

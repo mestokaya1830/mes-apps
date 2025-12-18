@@ -1,212 +1,226 @@
 <template>
-  <div>
-    <div class="editor-panel">
-      <h1>
-        {{ title }}
-        <h2 v-if="reportsLength">{{ reportsLength }}</h2>
-      </h1>
-      <select v-model="date_range" class="form-input" @change="rangeDateFilter">
-        <option value="" disabled selected>Waehle Daten</option>
-        <option value="1">Diesen Monat</option>
-        <option value="3">Letzte 3 Monate</option>
-        <option value="6">Letzte 6 Monate</option>
-        <option value="12">Letztes Jahr</option>
-      </select>
+  <div class="editor-panel">
+    <h3 class="editor-header">{{ title }}</h3>
 
-      <div class="form-section">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="">Von</label>
-            <input
-              v-model="date_box_start"
-              ref="date_box_start"
-              type="date"
-              class="form-input"
-              @change="flexDateFilter()"
-            />
-          </div>
-          <div class="form-group">
-            <label for="">Bis</label>
-            <input
-              v-model="date_box_end"
-              ref="date_box_end"
-              type="date"
-              class="form-input"
-              @change="flexDateFilter()"
-            />
-          </div>
+    <!-- DATE RANGE SELECT -->
+    <select v-model="date_range" class="form-input" @change="rangeDateFilter">
+      <option disabled value="">Wähle Daten</option>
+      <option value="1">Diesen Monat</option>
+      <option value="3">Letzte 3 Monate</option>
+      <option value="6">Letzte 6 Monate</option>
+      <option value="12">Letztes Jahr</option>
+    </select>
+
+    <!-- DATE INPUTS -->
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Von</label>
+          <input
+            ref="date_box_start"
+            v-model="date_box_start"
+            type="date"
+            class="form-input date"
+            @change="flexDateFilter"
+          />
+        </div>
+        <div class="form-group">
+          <label>Bis</label>
+          <input
+            ref="date_box_end"
+            v-model="date_box_end"
+            type="date"
+            class="form-input date"
+            @change="flexDateFilter"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div v-if="is_ready">
+      <!-- HEADER -->
+      <div class="report-header">
+        <div>
+          <h2>Rechnungsliste</h2>
+          <p class="report-period">Zeitraum: {{ selectedPeriad }}</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-secondary">📊 Excel Export</button>
+          <button class="btn-export" @click="print">🖨️ Drucken</button>
         </div>
       </div>
 
-      <div v-if="is_ready" class="report-container printable">
-        <div class="report-header">
-          <div>
-            <h2>{{ title }}</h2>
-            <p class="report-period">Zeitraum: {{ period.start }} - {{ period.end }}</p>
-          </div>
-          <button class="btn-export" @click="printReport">🖨️ Drucken</button>
-        </div>
-
-        <div class="summary-section">
-          <div class="summary-cards">
-            <div class="summary-card">
-              <div class="card-icon">📄</div>
-              <div class="card-content">
-                <p class="card-label">Gesamt Rechnungen</p>
-                <h3 class="card-value">{{ reportsLength }}</h3>
-                <p class="card-detail">Total Betrag: {{ formatCurrency(summaryTotals.total) }}</p>
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="card-icon">✅</div>
-              <div class="card-content">
-                <p class="card-label">Bezahlt</p>
-                <h3 class="card-value">{{ summaryTotals.paidCount }}</h3>
-                <p class="card-detail">Betrag: {{ formatCurrency(summaryTotals.paidAmount) }}</p>
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="card-icon">⏳</div>
-              <div class="card-content">
-                <p class="card-label">Ausstehend</p>
-                <h3 class="card-value">{{ summaryTotals.outstandingCount }}</h3>
-                <p class="card-detail">
-                  Betrag: {{ formatCurrency(summaryTotals.outstandingAmount) }}
-                </p>
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="card-icon">💳</div>
-              <div class="card-content">
-                <p class="card-label">Teilweise bezahlt</p>
-                <h3 class="card-value">{{ summaryTotals.partialPaidCount }}</h3>
-                <p class="card-detail">
-                  Betrag: {{ formatCurrency(summaryTotals.partialPaidAmount) }}
-                </p>
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="card-icon">⚠️</div>
-              <div class="card-content">
-                <p class="card-label">Überfällig</p>
-                <h3 class="card-value">{{ summaryTotals.overdueCount }}</h3>
-                <p class="card-detail">Betrag: {{ formatCurrency(summaryTotals.overdueAmount) }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="chart-container">
-            <h1>Chart</h1>
+      <!-- SUMMARY -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon">📄</div>
+          <div class="card-content">
+            <p class="card-label">Gesamt Rechnungen</p>
+            <h3 class="card-value">{{ reports.length }}</h3>
+            <p class="card-detail">Total Betrag: {{ formatCurrency(grossTotal) }}</p>
           </div>
         </div>
 
-        <div class="table-section">
-          <h3>Detaillierte Rechnungsliste</h3>
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th>Rechnungsnr.</th>
-                <th>Datum</th>
-                <th>Kunde</th>
-                <th>Nettobetrag</th>
-                <th>MwSt</th>
-                <th>Bruttobetrag</th>
-                <th>Teilweise bezahlt</th>
-                <th>Offener Betrag</th>
-                <th>Fälligkeit</th>
-                <th>Zahlungsstatus</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody v-if="reports">
-              <tr v-for="item in reports" :key="item.id">
-                <td>
-                  <strong>{{ formatInvoiceId(item.id) }}</strong>
-                </td>
-                <td>{{ formatDate(item.date) }}</td>
-                <td>{{ item.customer.company_name }}</td>
-                <td class="amount">{{ formatCurrency(item.summary.subtotal) }}</td>
-                <td class="amount">{{ formatCurrency(item.summary.vat_amount) }}</td>
-                <td class="amount">
-                  <strong>{{ formatCurrency(item.summary.total) }}</strong>
-                </td>
-                <td class="amount">
-                  <strong>{{ formatCurrency(item.summary.partial_paid) }}</strong>
-                </td>
-                <td class="amount">
-                  <strong>{{ formatCurrency(item.summary.outstanding) }}</strong>
-                </td>
-                <td>{{ formatDate(item.due_date) }}</td>
-                <td>
-                  <span :class="getPaymentClass(item)">{{
-                    item.is_active ? 'Paid' : 'Unpaid'
-                  }}</span>
-                </td>
-                <td>{{ item.is_active ? 'Aktiv' : 'Inaktiv' }}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr class="total-row">
-                <td colspan="3"><strong>SUMME</strong></td>
-                <td class="amount">
-                  <strong>{{ formatCurrency(summaryTotals.total) }}</strong>
-                </td>
-                <td class="amount"></td>
-                <td class="amount">
-                  <strong>{{ formatCurrency(summaryTotals.total) }}</strong>
-                </td>
-                <td class="amount">
-                  <strong>{{ formatCurrency(summaryTotals.partialPaidAmount) }}</strong>
-                </td>
-                <td class="amount">
-                  <strong>{{ formatCurrency(summaryTotals.outstandingAmount) }}</strong>
-                </td>
-                <td colspan="3"></td>
-              </tr>
-            </tfoot>
-          </table>
+        <div class="summary-card">
+          <div class="card-icon">✅</div>
+          <div class="card-content">
+            <p class="card-label">Bezahlt</p>
+            <h3 class="card-value">{{ paidCount }}</h3>
+            <!-- <p class="card-detail">Betrag: {{ formatCurrency(totalPaid) }}</p> -->
+          </div>
         </div>
+
+        <!-- <div class="summary-card">
+          <div class="card-icon">⏳</div>
+          <div class="card-content">
+            <p class="card-label">Ausstehend</p>
+            <h3 class="card-value">{{ summaryTotals.outstandingCount }}</h3>
+            <p class="card-detail">Betrag: {{ formatCurrency(summaryTotals.outstandingAmount) }}</p>
+          </div>
+        </div> -->
+
+        <!-- <div class="summary-card">
+          <div class="card-icon">💳</div>
+          <div class="card-content">
+            <p class="card-label">Teilweise bezahlt</p>
+            <h3 class="card-value">{{ summaryTotals.partialPaidCount }}</h3>
+            <p class="card-detail">Betrag: {{ formatCurrency(summaryTotals.partialPaidAmount) }}</p>
+          </div>
+        </div> -->
+
+        <!-- <div class="summary-card">
+          <div class="card-icon">⚠️</div>
+          <div class="card-content">
+            <p class="card-label">Überfällig</p>
+            <h3 class="card-value">{{ summaryTotals.overdueCount }}</h3>
+            <p class="card-detail">Betrag: {{ formatCurrency(summaryTotals.overdueAmount) }}</p>
+          </div>
+        </div> -->
       </div>
+
+      <!-- TABS -->
+      <div class="filter-tabs">
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          class="filter-tab"
+          :class="{ active: activeTab === tab.key }"
+          @click="activeTab = tab.key"
+        >
+          {{ tab.label }}
+          <span class="tab-count">{{ tab.count }}</span>
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <!-- <div class="table-container">
+      <table class="report-table">
+        <tbody>
+          <tr v-for="invoice in filteredInvoices" :key="invoice.number">
+            <td class="invoice-number">{{ invoice.number }}</td>
+            <td>{{ invoice.date }}</td>
+            <td class="customer-name">{{ invoice.customer }}</td>
+            <td>{{ invoice.dueDate }}</td>
+            <td class="center">{{ invoice.vat }}%</td>
+            <td class="amount">{{ formatCurrency(invoice.net) }}</td>
+            <td class="amount">{{ formatCurrency(invoice.vatAmount) }}</td>
+            <td class="amount">{{ formatCurrency(invoice.gross) }}</td>
+            <td>
+              <span class="status" :class="invoice.status">
+                {{ statusText(invoice.status) }}
+              </span>
+            </td>
+            <td>{{ invoice.paymentDate || '-' }}</td>
+            <td>
+              <div class="action-buttons">
+                <button v-for="btn in actions" :key="btn" class="action-btn">
+                  {{ btn }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div> -->
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'InvoicesListReport',
-  inject: ['formatCustomerId', 'formatDate', 'formatCurrency'],
+  name: 'InvoiceReport',
+  inject: ['formatDate', 'formatCurrency'],
   data() {
     return {
-      title: 'Rechnungsliste',
-      reports: [],
+      title: 'Rechnungsbericht',
+      reports: null,
       date_range: '',
       date_box_start: '',
       date_box_end: '',
       period: { start: '', end: '' },
       is_ready: false,
-      reportsLength: 0,
-      summaryTotals: {
-        total: 0,
-        paidCount: 0,
-        paidAmount: 0,
-        outstandingCount: 0,
-        outstandingAmount: 0,
-        partialPaidCount: 0,
-        partialPaidAmount: 0,
-        overdueCount: 0,
-        overdueAmount: 0
-      }
+      activeTab: 'all',
+
+      actions: ['👁️', '✏️', '📧'],
+
+      tabs: [
+        { key: 'all', label: 'Alle', count: 24 },
+        { key: 'paid', label: 'Bezahlt', count: 18 },
+        { key: 'unpaid', label: 'Ausstehend', count: 4 },
+        { key: 'overdue', label: 'Überfällig', count: 2 }
+      ],
+
+      // summaryCards: [
+      //   { icon: '📄', label: 'Gesamt Rechnungen', value: this.reports.length, detail: 'Im Zeitraum' },
+      //   { icon: '✅', label: 'Bezahlt', value: 18, detail: '75%' },
+      //   { icon: '⏳', label: 'Ausstehend', value: 4, detail: '17%' },
+      //   { icon: '⚠️', label: 'Überfällig', value: 2, detail: '8%' }
+      // ],
+
+      invoices: [
+        {
+          number: 'RE-2025-0124',
+          date: '15.11.2025',
+          customer: 'Müller GmbH',
+          dueDate: '29.11.2025',
+          vat: 19,
+          net: 2100,
+          vatAmount: 399,
+          gross: 2499,
+          status: 'paid',
+          paymentDate: '17.11.2025'
+        },
+        {
+          number: 'RE-2025-0123',
+          date: '12.11.2025',
+          customer: 'Schmidt AG',
+          dueDate: '26.11.2025',
+          vat: 19,
+          net: 1500,
+          vatAmount: 285,
+          gross: 1785,
+          status: 'unpaid'
+        }
+      ]
+    }
+  },
+  computed: {
+    selectedPeriad() {
+      if (!this.period) return
+      return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
+    },
+    grossTotal() {
+      let total = this.reports.reduce((a, b) => a + b.gross_total, 0)
+      console.log(total)
+      return total
+    },
+    paidCount() {
+      let count = this.reports.filter((item) => item.payment_status === 'paid')
+      console.log(count)
+      return count.length
     }
   },
   methods: {
-    formatInvoiceId(id) {
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(id).padStart(5, '0')}`
-    },
     async rangeDateFilter() {
       if (!this.date_range) return
       const today = new Date()
@@ -215,6 +229,8 @@ export default {
       this.date_box_start = startDate.toISOString().slice(0, 10)
       this.date_box_end = endDate.toISOString().slice(0, 10)
       this.getReport()
+      this.date_box_start = ''
+      this.date_box_end = ''
     },
     flexDateFilter() {
       if (!this.date_box_start) return this.$refs.date_box_start.focus()
@@ -227,68 +243,37 @@ export default {
     },
     async getReport() {
       if (!this.date_box_start || !this.date_box_end) return
-      const result = await window.api.documentReport(
-        'invoices',
-        this.date_box_start,
-        this.date_box_end
-      )
+      console.log(this.date_box_start, this.date_box_end)
+      const data = {
+        start: this.date_box_start,
+        end: this.date_box_end
+      }
+      const result = await window.api.documentReport(data)
       if (!result.success) return
-
       this.reports = result.rows.map((row) => ({
         ...row,
         customer: JSON.parse(row.customer),
-        terms: JSON.parse(row.terms),
-        positions: JSON.parse(row.positions),
-        summary: JSON.parse(row.summary),
-        tax_options: JSON.parse(row.tax_options)
+        positions: JSON.parse(row.positions)
       }))
 
-      this.period.start = this.date_box_start
-      this.period.end = this.date_box_end
-      this.is_ready = true
-      this.calculateSummary()
-    },
-    calculateSummary() {
-      const totals = {
-        total: 0,
-        paidCount: 0,
-        paidAmount: 0,
-        outstandingCount: 0,
-        outstandingAmount: 0,
-        partialPaidCount: 0,
-        partialPaidAmount: 0,
-        overdueCount: 0,
-        overdueAmount: 0
+      this.period = {
+        start: this.date_box_start,
+        end: this.date_box_end
       }
-
-      const todayStr = new Date().toISOString().slice(0, 10)
-
-      this.reports.forEach((item) => {
-        const s = item.summary
-        totals.total += Number(s.total)
-        totals.paidAmount += Number(s.paid_amount)
-        totals.outstandingAmount += Number(s.outstanding)
-        totals.partialPaidAmount += Number(s.partial_paid)
-        console.log(item)
-
-        if (s.paid_amount >= s.total) totals.paidCount++
-        else if (s.partial_paid > 0) totals.partialPaidCount++
-        else totals.outstandingCount++
-
-        if (item.due_date < todayStr && s.outstanding > 0)
-          (totals.overdueCount++, (totals.overdueAmount += Number(s.outstanding)))
-      })
-
-      this.reportsLength = this.reports.length
-      this.summaryTotals = totals
+      this.is_ready = true
+      console.log(this.reports)
+      // this.calculateSummary()
     },
-    getPaymentClass(item) {
-      const today = new Date().toISOString().slice(0, 10)
-      if (item.summary.paid_amount >= item.summary.total) return 'paid'
-      else if (item.due_date < today) return 'overdue'
-      else return 'pending'
+    statusText(status) {
+      return {
+        paid: 'Bezahlt',
+        unpaid: 'Ausstehend',
+        overdue: 'Überfällig',
+        draft: 'Entwurf'
+      }[status]
     },
-    printReport() {
+
+    print() {
       window.print()
     }
   }
@@ -296,59 +281,6 @@ export default {
 </script>
 
 <style>
-.paid {
-  color: green;
-}
-.overdue {
-  color: red;
-}
-.pading {
-  color: yellow;
-}
-.editor-panel {
-  max-width: 1400px;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;
-}
-
-.form-section {
-  margin-bottom: 24px;
-  padding: 20px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 12px;
-  font-weight: 500;
-  color: #4b5563;
-  margin-bottom: 4px;
-}
-
-.form-input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 13px;
-  margin-bottom: 16px;
-}
-
 .report-container {
   margin-top: 30px;
 }
@@ -559,8 +491,8 @@ export default {
 .table-container {
   background: white;
   border-radius: 8px;
-  overflow: hidden;
   border: 1px solid #e5e7eb;
+  overflow-x: auto;
 }
 
 .report-table {

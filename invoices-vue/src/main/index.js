@@ -1396,30 +1396,6 @@ ipcMain.handle('cancel-reminder-by-id', async (event, payload) => {
   }
 })
 
-//reports
-ipcMain.handle('document-report', async (data, tableName, startDate, endDate) => {
-  try {
-    console.log(startDate, endDate)
-    const rows = db
-      .prepare(
-        `SELECT 
-          i.*,
-          p.*
-        FROM invoices i
-        LEFT JOIN payments p 
-            ON p.invoice_id = i.id
-        WHERE i.date BETWEEN ? AND ?
-        ORDER BY i.date ASC, p.payment_date ASC;
-        `
-      )
-      .all(startDate, endDate)
-    return { success: true, rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
 //offers
 ipcMain.handle('add-offer', async (event, data) => {
   console.log(data)
@@ -1886,5 +1862,31 @@ ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
     // Burada audit log veya DB işlemi yapılabilir
   } catch (err) {
     console.error('PDF Error:', err)
+  }
+})
+
+//reports
+ipcMain.handle('document-report', async (event, payload) => {
+  try {
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT 
+          i.*,
+          COALESCE(SUM(p.payment_amount), 0) as total_paid_from_payments,
+          COUNT(p.id) as payment_count
+        FROM invoices i
+        LEFT JOIN payments p 
+            ON p.invoice_id = i.id AND p.is_active = 1
+        WHERE i.date BETWEEN ? AND ? AND i.is_active = 1
+        GROUP BY i.id
+        ORDER BY i.date DESC;
+        `
+      )
+      .all(start, end)
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
   }
 })

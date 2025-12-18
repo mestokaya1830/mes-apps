@@ -83,7 +83,7 @@
                 <tr>
                   <td>Offener Betrag</td>
                   <td>
-                    {{ formatCurrency(this.paymentPreview.invoice.outstanding, paymentPreview.invoice.currency) }}
+                    {{ formatCurrency(outstanding, paymentPreview.invoice.currency) }}
                   </td>
                 </tr>
                 <tr>
@@ -137,7 +137,7 @@
         <FooterSidePreview />
       </div>
 
-      <ActionsButtonPreview
+      <PaymentActions
         v-if="paymentPreview"
         :tableData="paymentPreview"
         :fileName="actionFileName"
@@ -159,7 +159,7 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/payments/ActionsButtonPreview.vue'
+import PaymentActions from '../../components/preview/PaymentActions.vue'
 import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
 
 export default {
@@ -167,7 +167,7 @@ export default {
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview,
+    PaymentActions,
     FooterSidePreview
   },
   inject: [
@@ -185,6 +185,10 @@ export default {
     }
   },
   computed: {
+    outstanding() {
+      if (!this.paymentPreview) return
+      return this.paymentPreview.invoice.gross_total - this.paymentPreview.payment_amount
+    },
     actionFileName() {
       if (!this.paymentPreview) return
       return this.formatPaymentId(this.paymentPreview.id)

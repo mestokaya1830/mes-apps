@@ -46,9 +46,6 @@ contextBridge.exposeInMainWorld('api', {
   getReminderById: (id) => ipcRenderer.invoke('get-reminder-by-id', id),
   cancelReminderById: (data) => ipcRenderer.invoke('cancel-reminder-by-id', data),
 
-  //reports
-  // documentReport: async (data) => ipcRenderer.invoke('document-report', data),
-
   //offer
   addOffer: async (data) => ipcRenderer.invoke('add-offer', data),
   getOffers: async (data) => ipcRenderer.invoke('get-offers', data),
@@ -64,6 +61,7 @@ contextBridge.exposeInMainWorld('api', {
   updateOrderById: async (data) => ipcRenderer.invoke('update-order-by-id', data),
   cancelOrder: async (data) => ipcRenderer.invoke('cancel-order', data),
 
+  //save pdf
   saveInvoicePDF: (pdfBlob, fileName) => {
     pdfBlob.arrayBuffer().then((buffer) => {
       ipcRenderer.send('save-invoice-pdf', {
@@ -71,5 +69,8 @@ contextBridge.exposeInMainWorld('api', {
         fileName
       })
     })
-  }
+  },
+
+  //reports
+  documentReport: async (data) => ipcRenderer.invoke('document-report', data)
 })

@@ -240,7 +240,7 @@
         <FooterSidePreview />
       </div>
 
-      <ActionsButtonPreview
+      <InvoiceActions
         v-if="invoicePreview"
         :tableData="invoicePreview"
         :fileName="actionFileName"
@@ -256,18 +256,18 @@
 
 <script>
 import store from '../../store/store.js'
-import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
-import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/invoices/ActionsButtonPreview.vue'
-import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
+import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
+import InvoiceActions from '../../components/preview/InvoiceActions.vue'
 
 export default {
   name: 'InvoicePreview',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview,
-    FooterSidePreview
+    FooterSidePreview,
+    InvoiceActions
   },
   inject: ['formatCustomerId', 'formatDate', 'formatCurrency', 'formatInvoiceId'],
   data() {

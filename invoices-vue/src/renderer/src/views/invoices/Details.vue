@@ -205,7 +205,7 @@
         <FooterSidePreview />
       </div>
 
-      <ActionsButtonPreview
+      <InvoiceActions
         v-if="invoice"
         :tableData="invoice"
         :fileName="actionFileName"
@@ -332,17 +332,17 @@
 
 <script>
 import store from '../../store/store.js'
-import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
-import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/invoices/ActionsButtonPreview.vue'
-import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
+import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
+import InvoiceActions from '../../components/preview/InvoiceActions.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'InvoicesDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview,
+    InvoiceActions,
     FooterSidePreview
   },
   inject: [
@@ -398,7 +398,7 @@ export default {
         this.payment_total = result.payment_total
         this.reminders = result.reminders
         console.log('result:', result)
-        console.log('invoice Data:', this.invoice)
+        console.log('invoice Data:', this.payments)
       } catch (error) {
         console.error(error)
       }

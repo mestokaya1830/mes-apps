@@ -34,3 +34,10 @@ export default db
 // }
 
 
+// try {
+//   const result = db.prepare(`Select Count(*) As count from invoices where payment_status = 'paid';`).get().count
+
+//   console.log(result)
+// } catch (error) {
+//   console.error(error)
+// }

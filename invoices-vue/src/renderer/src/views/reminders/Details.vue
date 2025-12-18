@@ -141,7 +141,7 @@
         <!-- Footer -->
         <FooterSidePreview />
       </div>
-      <ActionsButtonPreview v-if="reminder" :tableData="reminder" :fileName="actionFileName" sourcePage="details" />
+      <RemiderActions v-if="reminder" :tableData="reminder" :fileName="actionFileName" sourcePage="details" />
     </div>
     <router-link v-if="reminder" :to="`/reminders/create/${reminder.invoice_id}`" class="back-link">
       ← Zurück zur Rechnungserstellung
@@ -153,7 +153,7 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/reminders/ActionsButtonPreview.vue'
+import RemiderActions from '../../components/preview/RemiderActions.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
@@ -161,7 +161,7 @@ export default {
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview,
+    RemiderActions,
     FooterSidePreview
   },
   inject: [

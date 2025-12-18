@@ -1,43 +1,49 @@
 <template>
-  <div class="iban-bic-component">
-    <div class="form-group">
-      <label class="form-label">Name der Gegenpartei</label>
-      <input
-        v-model="localNamePartner"
-        type="text"
-        class="form-input"
-        placeholder="z.B. Kunde / Lieferant"
-        @input="updateName"
-      />
-    </div>
-    <div class="form-group">
-      <label class="form-label">IBAN</label>
-      <input
-        type="text"
-        :value="iban"
-        placeholder="DE89 3704 0044 0532 0130 00"
-        class="form-input"
-        @input="handleIban($event.target.value)"
-      />
-      <span v-if="ibanCountryFlag" class="flag">{{ ibanCountryFlag }}</span>
-      <p class="error" v-if="ibanError">{{ ibanError }}</p>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">BIC</label>
-      <input
-        type="text"
-        :value="bic"
-        placeholder="DEUTDEFF500"
-        class="form-input"
-        @input="handleBic($event.target.value)"
-      />
-      <p class="error" v-if="bicError">{{ bicError }}</p>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Bankname (automatisch)</label>
-      <input type="text" :value="bankName" readonly class="form-input" />
+  <div>
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Name der Gegenpartei</label>
+          <input
+            v-model="localNamePartner"
+            type="text"
+            class="form-input"
+            placeholder="z.B. Kunde / Lieferant"
+            @input="updateName"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">IBAN</label>
+          <input
+            type="text"
+            :value="iban"
+            placeholder="DE89 3704 0044 0532 0130 00"
+            class="form-input"
+            @input="handleIban($event.target.value)"
+          />
+          <span v-if="ibanCountryFlag" class="flag">{{ ibanCountryFlag }}</span>
+          <p class="error" v-if="ibanError">{{ ibanError }}</p>
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">BIC</label>
+          <input
+            type="text"
+            :value="bic"
+            placeholder="DEUTDEFF500"
+            class="form-input"
+            @input="handleBic($event.target.value)"
+          />
+          <p class="error" v-if="bicError">{{ bicError }}</p>
+        </div>
+  
+        <div class="form-group">
+          <label class="form-label">Bankname (automatisch)</label>
+          <input type="text" :value="bankName" readonly class="form-input" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -242,27 +248,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.error {
-  color: red;
-  font-size: 13px;
-}
-.flag {
-  margin-left: 6px;
-}
-.form-group {
-  margin-bottom: 12px;
-}
-.form-label {
-  display: block;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-.form-input {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-</style>

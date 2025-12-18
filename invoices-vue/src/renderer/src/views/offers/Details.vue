@@ -206,7 +206,7 @@
       </div>
 
       <!-- Action Buttons -->
-      <ActionsButtonPreview
+      <OfferActions
         v-if="offer"
         :tableData="offer"
         :fileName="actionFileName"
@@ -221,14 +221,14 @@
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import ActionsButtonPreview from '../../components/offers/ActionsButtonPreview.vue'
+import OfferActions from '../../components/preview/OfferActions.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 export default {
   name: 'OfferDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview
+    OfferActions
   },
   inject: ['formatOfferId', 'formatCustomerId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {

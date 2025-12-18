@@ -153,7 +153,7 @@
       >
 
       <!-- Actions Button -->
-      <ActionsButtonPreview
+      <PaymentActions
         v-if="payment"
         :tableData="payment"
         :fileName="actionFileName"
@@ -171,7 +171,7 @@
 import store from '../../store/store'
 import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/payments/ActionsButtonPreview.vue'
+import PaymentActions from '../../components/preview/PaymentActions.vue'
 import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
 
 export default {
@@ -179,7 +179,7 @@ export default {
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview,
+    PaymentActions,
     FooterSidePreview
   },
   inject: [

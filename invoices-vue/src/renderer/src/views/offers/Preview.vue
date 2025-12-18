@@ -261,7 +261,7 @@
       </div>
 
       <!-- Action Buttons -->
-      <ActionsButtonPreview
+      <OfferActions
         v-if="offerPreview"
         :tableData="offerPreview"
         :fileName="actionFileName"
@@ -276,14 +276,14 @@
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import ActionsButtonPreview from '../../components/offers/ActionsButtonPreview.vue'
+import OfferActions from '../../components/preview/OfferActions.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 export default {
   name: 'OfferPreview',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview
+    OfferActions
   },
   inject: ['formatCustomerId', 'formatOfferId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {

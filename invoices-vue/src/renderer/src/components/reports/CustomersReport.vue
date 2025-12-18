@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="editor-panel">
-      <h1>
+      <h3 class="editor-header">
         {{ title }}
         <h2 v-if="reportsLength">{{ reportsLength }}</h2>
-      </h1>
+      </h3>
       <select v-model="report_static_date" class="form-input" @change="getStaticDate">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>

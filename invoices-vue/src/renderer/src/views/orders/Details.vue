@@ -274,7 +274,7 @@
       </div>
 
       <!-- Actions -->
-      <ActionsButtonPreview
+      <OrderActions
         v-if="order"
         :tableData="order"
         :fileName="actionFileName"
@@ -290,7 +290,7 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
-import ActionsButtonPreview from '../../components/orders/ActionsButtonPreview.vue'
+import OrderActions from '../../components/preview/OrderActions.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
@@ -298,7 +298,7 @@ export default {
   components: {
     HeaderSidePreview,
     FooterSidePreview,
-    ActionsButtonPreview,
+    OrderActions,
     ContactPersonPreview
   },
   inject: ['formatOrderId', 'formatCustomerId', 'formatCurrency', 'formatDate'],

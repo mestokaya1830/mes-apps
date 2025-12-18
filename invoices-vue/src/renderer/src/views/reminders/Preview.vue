@@ -141,7 +141,7 @@
         <!-- Footer -->
         <FooterSidePreview />
       </div>
-      <ActionsButtonPreview
+      <RemiderActions
         v-if="reminderPreview"
         :tableData="reminderPreview"
         :fileName="actionFileName"
@@ -162,7 +162,7 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import ActionsButtonPreview from '../../components/reminders/ActionsButtonPreview.vue'
+import RemiderActions from '../../components/preview/RemiderActions.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
@@ -170,7 +170,7 @@ export default {
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    ActionsButtonPreview,
+    RemiderActions,
     FooterSidePreview
   },
   inject: [

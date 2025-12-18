@@ -298,19 +298,19 @@
               >Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto</small
             >
           </div>
-        </div>
-        <div class="form-option">
-          <label for="skonto-checkbox" class="switch">
-            <input
-              id="skonto-checkbox"
-              v-model="invoice.early_payment_offer"
-              type="checkbox"
-              class="switch-checkbox"
-            />
-            <span class="slider round"></span>
-          </label>
-          <div class="option-text">
-            <strong>Skonto gewähren</strong>
+          <div class="switch-container">
+            <label for="skonto-checkbox" class="switch">
+              <input
+                id="skonto-checkbox"
+                v-model="invoice.early_payment_offer"
+                type="checkbox"
+                class="switch-checkbox"
+              />
+              <span class="slider round"></span>
+            </label>
+            <div class="switch-text">
+              <strong>Skonto gewähren</strong>
+            </div>
           </div>
         </div>
         <div v-if="invoice.early_payment_offer" class="form-row">
@@ -459,7 +459,6 @@ export default {
         }
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
-        console.log(result.data)
         this.invoice.id = result.data.last_id + 1
         this.invoice.customer = result.data.customer
       } catch (error) {

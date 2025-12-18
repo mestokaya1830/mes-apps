@@ -1,23 +1,23 @@
 <template>
   <div>
     <div class="editor-panel">
-      <h1>{{ title }}</h1>
-      <div class="form-row">
+      <h2>{{ title }}</h2>
+      <div class="form-section">
         <select v-model="report_type" class="form-input">
           <option value="" disabled>Waehle Bericht</option>
-          <option value="Umsatzbericht">Umsatzbericht</option>
-          <option value="Zahlungsstatus">Zahlungsstatus</option>
           <option value="Kundenbezogener">Kundenbezogener Bericht</option>
-          <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
           <option value="Rechnungsliste">Rechnungsliste</option>
+          <option value="Zahlungsstatus">Zahlungsstatus</option>
+          <option value="Umsatzbericht">Umsatzbericht</option>
+          <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
         </select>
+        <SalesReport v-if="report_type == 'Umsatzbericht'" />
+        <PaymentsReport v-if="report_type == 'Zahlungsstatus'" />
+        <CustomersReport v-if="report_type == 'Kundenbezogener'" />
+        <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
+        <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
       </div>
 
-      <SalesReport v-if="report_type == 'Umsatzbericht'" />
-      <PaymentsReport v-if="report_type == 'Zahlungsstatus'" />
-      <CustomersReport v-if="report_type == 'Kundenbezogener'" />
-      <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
-      <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
     </div>
   </div>
 </template>
@@ -48,7 +48,7 @@ export default {
 </script>
 <style>
 .editor-panel {
-  max-width: 1400px;
+  width: 100%;
   background: white;
   padding: 30px;
   border-radius: 12px;
