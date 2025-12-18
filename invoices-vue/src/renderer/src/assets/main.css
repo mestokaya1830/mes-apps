@@ -1433,7 +1433,7 @@ input:checked + .slider:before {
 }
 
 /* TABLE */
-.table-container {
+.report-table-container {
   overflow-x: auto;
 }
 
@@ -1467,7 +1467,7 @@ input:checked + .slider:before {
   background: #f3f4f6;
 }
 
-.sort-icon {
+.report-sort-icon {
   font-size: 10px;
   margin-left: 4px;
   color: #9ca3af;
@@ -1484,15 +1484,14 @@ input:checked + .slider:before {
 .report-table td {
   padding: 12px 8px;
   color: #374151;
-  white-space: nowrap; /* İçerik tek satırda */
+  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis; /* Uzun metinler için ... */
+  text-overflow: ellipsis;
 }
 
-/* Sütun genişlikleri - Daha optimize */
 .report-table th:nth-child(1),
 .report-table td:nth-child(1) {
-  width: 120px; /* ID daha dar */
+  width: 120px;
   min-width: 120px;
 }
 
@@ -1510,8 +1509,8 @@ input:checked + .slider:before {
 
 .report-table th:nth-child(4),
 .report-table td:nth-child(4) {
-  width: 90px;
-  min-width: 90px;
+  width: 110px;
+  min-width: 110px;
 }
 
 .report-table th:nth-child(5),
@@ -1558,32 +1557,10 @@ input:checked + .slider:before {
 }
 
 
-.amount {
-  text-align: right;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums; /* Sayılar düzgün hizalansın */
-}
-
-
 .action-buttons {
   display: flex;
   gap: 4px;
   justify-content: center;
-}
-
-.action-btn {
-  padding: 6px 10px;
-  background: none;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s;
-}
-
-.action-btn:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
 }
 
 .report-table-satus-badge {
@@ -1751,7 +1728,7 @@ input:checked + .slider:before {
 }
 
 /* TABS */
-.filter-tabs {
+.report-filter-tabs {
   display: flex;
   gap: 8px;
   margin-bottom: 20px;
@@ -1759,7 +1736,7 @@ input:checked + .slider:before {
   padding-bottom: 8px;
 }
 
-.filter-tab {
+.report-filter-tab {
   padding: 8px 20px;
   background: none;
   border: none;
@@ -1771,15 +1748,15 @@ input:checked + .slider:before {
   transition: all 0.2s;
 }
 
-.filter-tab.active {
+.report-filter-tab.active {
   color: #3b82f6;
   border-bottom-color: #3b82f6;
 }
 
-.filter-tab:hover {
+.report-filter-tab:hover {
   color: #1f2937;
 }
-.tab-count {
+.report-tab-count {
   background: #e5e7eb;
   padding: 2px 8px;
   border-radius: 10px;
@@ -1787,7 +1764,7 @@ input:checked + .slider:before {
   margin-left: 6px;
 }
 
-.filter-tab.active .tab-count {
+.report-filter-tab.active .tab-count {
   background: #dbeafe;
   color: #1e40af;
 }
@@ -1796,37 +1773,35 @@ input:checked + .slider:before {
 }
 .report-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  flex-direction: column;
   border-bottom: 2px solid #e5e7eb;
 }
-
-.report-header h2 {
-  font-size: 24px;
-  color: #1f2937;
+.report-title {
+  font-size: 18px;
+  color: #444;
+  margin-top: 30px;
+  margin-bottom: 10px;
 }
-
 .report-period {
-  color: #6b7280;
+  color: #666;
   font-size: 14px;
-  margin: 4px 0 0 0;
 }
 
-.report-summary-section {
+.report-summary-container {
   display: flex;
-  margin-bottom: 30px;
+  justify-content: space-between;
+  margin: 30px 0;
 }
 /* SUMMARY CARDS */
-.report-summary-container {
-  width: 50%;
+.report-summary-section {
+  width: 30%;
   gap: 20px;
 }
-.chart-container {
+.report-chart-section {
   display: flex;
   justify-content: center;
-  width: 50%;
+  width: 70%;
+  gap: 20px;
 }
 .report-summary-card {
   padding: 24px;

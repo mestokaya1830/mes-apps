@@ -1,157 +1,156 @@
 <template>
   <div>
-    <div class="editor-panel">
-      <h3 class="editor-header">{{ title }}</h3>
+    <div class="form-section">
+      <div class="form-group">
+        <select v-model="date_range" class="form-input" @change="rangeDateFilter">
+         <option disabled value="">Wähle Daten</option>
+         <option value="1">Diesen Monat</option>
+         <option value="3">Letzte 3 Monate</option>
+         <option value="6">Letzte 6 Monate</option>
+         <option value="12">Letztes Jahr</option>
+       </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Von</label>
+          <input
+            ref="date_box_start"
+            v-model="date_box_start"
+            type="date"
+            class="form-input date"
+            @change="flexDateFilter"
+          />
+        </div>
+        <div class="form-group">
+          <label>Bis</label>
+          <input
+            ref="date_box_end"
+            v-model="date_box_end"
+            type="date"
+            class="form-input date"
+            @change="flexDateFilter"
+          />
+        </div>
+      </div>
+    </div>
 
-      <!-- DATE RANGE SELECT -->
-      <select v-model="date_range" class="form-input" @change="rangeDateFilter">
-        <option disabled value="">Wähle Daten</option>
-        <option value="1">Diesen Monat</option>
-        <option value="3">Letzte 3 Monate</option>
-        <option value="6">Letzte 6 Monate</option>
-        <option value="12">Letztes Jahr</option>
-      </select>
+    <div v-if="is_ready" class="report-container">
+      <!-- HEADER -->
+      <div class="report-header">
+        <label class="report-title">{{ title }}</label>
+        <label class="report-period">Zeitraum: {{ selectedPeriad }}</label>
+      </div>
 
-      <!-- DATE INPUTS -->
-      <div class="form-section">
-        <div class="form-row">
-          <div class="form-group">
-            <label>Von</label>
-            <input
-              ref="date_box_start"
-              v-model="date_box_start"
-              type="date"
-              class="form-input date"
-              @change="flexDateFilter"
-            />
+      <div class="report-summary-container">
+        <div class="report-summary-section">
+          <div class="report-summary-cards">
+            <div class="report-summary-card">
+              <div class="report-card-icon">📄</div>
+              <div class="report-card-content">
+                <p class="report-card-label">Gesamt Rechnungen</p>
+                <h3 class="report-card-value">{{ reports.length }}</h3>
+                <p class="report-card-detail">Total Betrag: {{ formatCurrency(total) }}</p>
+              </div>
+            </div>
+  
+            <div class="report-summary-card">
+              <div class="report-card-icon">✅</div>
+              <div class="report-card-content">
+                <p class="report-card-label">Bezahlt</p>
+                <h3 class="report-card-value">{{ paidCount }}</h3>
+                <p class="report-card-detail">Betrag: {{ formatCurrency(paidTotal) }}</p>
+              </div>
+            </div>
+  
+            <div class="report-summary-card">
+              <div class="report-card-icon">⏳</div>
+              <div class="report-card-content">
+                <p class="report-card-label">Ausstehend</p>
+                <h3 class="report-card-value">{{ outstandingCount }}</h3>
+                <p class="report-card-detail">Betrag: {{ formatCurrency(outstandingTotal) }}</p>
+              </div>
+            </div>
+  
+            <div class="report-summary-card">
+              <div class="report-card-icon">💳</div>
+              <div class="report-card-content">
+                <p class="report-card-label">Teilweise bezahlt</p>
+                <h3 class="report-card-value">{{ partiallyPaidCount }}</h3>
+                <p class="report-card-detail">Betrag: {{ formatCurrency(partiallyPaidTotal) }}</p>
+              </div>
+            </div>
+  
+            <div class="report-summary-card">
+              <div class="report-card-icon">⚠️</div>
+              <div class="report-card-content">
+                <p class="report-card-label">Überfällig</p>
+                <h3 class="report-card-value">{{ overdueCount }}</h3>
+                <p class="report-card-detail">Betrag: {{ formatCurrency(overdueTotal) }}</p>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Bis</label>
-            <input
-              ref="date_box_end"
-              v-model="date_box_end"
-              type="date"
-              class="form-input date"
-              @change="flexDateFilter"
-            />
-          </div>
+        </div>
+          <div class="report-chart-section">
+            <h2>Chart</h2>
         </div>
       </div>
 
-      <div v-if="is_ready" class="report-container">
-        <!-- HEADER -->
-        <div class="report-header">
-          <div>
-            <h2>Rechnungsliste</h2>
-            <p class="report-period">Zeitraum: {{ selectedPeriad }}</p>
-          </div>
-        </div>
+      <!-- TABS -->
+      <div class="report-filter-tabs">
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          class="report-filter-tab"
+          :class="{ active: activeTab === tab.key }"
+          @click="activeTab = tab.key"
+        >
+          {{ tab.label }}
+          <span class="report-tab-count">{{ tab.count }}</span>
+        </button>
+      </div>
 
-        <!-- SUMMARY -->
-        <div class="summary-cards">
-          <div class="summary-card">
-            <div class="card-icon">📄</div>
-            <div class="card-content">
-              <p class="card-label">Gesamt Rechnungen</p>
-              <h3 class="card-value">{{ reports.length }}</h3>
-              <p class="card-detail">Total Betrag: {{ formatCurrency(total) }}</p>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="card-icon">✅</div>
-            <div class="card-content">
-              <p class="card-label">Bezahlt</p>
-              <h3 class="card-value">{{ paidCount }}</h3>
-              <p class="card-detail">Betrag: {{ formatCurrency(paidTotal) }}</p>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="card-icon">⏳</div>
-            <div class="card-content">
-              <p class="card-label">Ausstehend</p>
-              <h3 class="card-value">{{ outstandingCount }}</h3>
-              <p class="card-detail">Betrag: {{ formatCurrency(outstandingTotal) }}</p>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="card-icon">💳</div>
-            <div class="card-content">
-              <p class="card-label">Teilweise bezahlt</p>
-              <h3 class="card-value">{{ partiallyPaidCount }}</h3>
-              <p class="card-detail">Betrag: {{ formatCurrency(partiallyPaidTotal) }}</p>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="card-icon">⚠️</div>
-            <div class="card-content">
-              <p class="card-label">Überfällig</p>
-              <h3 class="card-value">{{ overdueCount }}</h3>
-              <p class="card-detail">Betrag: {{ formatCurrency(overdueTotal) }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- TABS -->
-        <div class="filter-tabs">
-          <button
-            v-for="tab in tabs"
-            :key="tab.key"
-            class="filter-tab"
-            :class="{ active: activeTab === tab.key }"
-            @click="activeTab = tab.key"
-          >
-            {{ tab.label }}
-            <span class="tab-count">{{ tab.count }}</span>
-          </button>
-        </div>
-
-        <!-- TABLE -->
-        <div class="table-container">
-          <table class="report-table printable">
-            <thead>
-              <tr>
-                <th class="sortable">Rechnungsnr. <span class="sort-icon">▼</span></th>
-                <th class="sortable">Datum <span class="sort-icon">▼</span></th>
-                <th>Kunde</th>
-                <th class="sortable">Fälligkeits <span class="sort-icon">▼</span></th>
-                <th class="center">MwSt</th>
-                <th class="sortable amount">Netto <span class="sort-icon">▼</span></th>
-                <th class="sortable amount">MwSt-Betrag <span class="sort-icon">▼</span></th>
-                <th class="sortable amount">Brutto <span class="sort-icon">▼</span></th>
-                <th>Status</th>
-                <th>Zahlungsdatum</th>
-                <th>Aktionen</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in filteredReports" :key="item.id">
-                <td class="item-id">{{ formatInvoiceId(item.id) }}</td>
-                <td>{{ formatDate(item.date) }}</td>
-                <td class="table-customer-id">{{ item.customer_id }}</td>
-                <td>{{ formatDate(item.due_date) }}</td>
-                <td class="center">{{ item.vat }}%</td>
-                <td class="amount">{{ formatCurrency(item.net_total) }}</td>
-                <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
-                <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
-                <td>
-                  <span class="report-table-satus-badge" :class="item.payment_status">
-                    {{ statusText(item.payment_status) }}
-                  </span>
-                </td>
-                <td>{{ item.paid_at || '---------------' }}</td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="action-btn">👁️</button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <!-- TABLE -->
+      <div class="report-table-container">
+        <table class="report-table printable">
+          <thead>
+            <tr>
+              <th class="sortable">Rechnungsnr. <span class="report-sort-icon">▼</span></th>
+              <th class="sortable">Datum <span class="report-sort-icon">▼</span></th>
+              <th>Kunde</th>
+              <th class="sortable">Fälligkeits <span class="report-sort-icon">▼</span></th>
+              <th class="center">MwSt</th>
+              <th class="sortable amount">Netto <span class="report-sort-icon">▼</span></th>
+              <th class="sortable amount">MwSt-Betrag <span class="report-sort-icon">▼</span></th>
+              <th class="sortable amount">Brutto <span class="report-sort-icon">▼</span></th>
+              <th>Status</th>
+              <th>Zahlungsdatum</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in filteredReports" :key="item.id">
+              <td class="item-id">{{ formatInvoiceId(item.id) }}</td>
+              <td>{{ formatDate(item.date) }}</td>
+              <td class="table-customer-id">{{ item.customer_id }}</td>
+              <td>{{ formatDate(item.due_date) }}</td>
+              <td class="center">{{ item.vat }}%</td>
+              <td class="amount">{{ formatCurrency(item.net_total) }}</td>
+              <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
+              <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
+              <td>
+                <span class="report-table-satus-badge" :class="item.payment_status">
+                  {{ statusText(item.payment_status) }}
+                </span>
+              </td>
+              <td>{{ item.paid_at || '---------------' }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-btn">👁️</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -269,8 +268,6 @@ export default {
       this.date_box_start = startDate.toISOString().slice(0, 10)
       this.date_box_end = endDate.toISOString().slice(0, 10)
       this.getReport()
-      this.date_box_start = ''
-      this.date_box_end = ''
     },
     flexDateFilter() {
       if (!this.date_box_start) return this.$refs.date_box_start.focus()

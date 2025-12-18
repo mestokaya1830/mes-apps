@@ -1,16 +1,18 @@
 <template>
   <div>
-    <div class="editor-panel">
+    <div class="report-panel">
       <h2>{{ title }}</h2>
       <div class="form-section">
-        <select v-model="report_type" class="form-input">
-          <option value="" disabled>Waehle Bericht</option>
-          <option value="Kundenbezogener">Kundenbezogener Bericht</option>
-          <option value="Rechnungsliste">Rechnungsliste</option>
-          <option value="Zahlungsstatus">Zahlungsstatus</option>
-          <option value="Umsatzbericht">Umsatzbericht</option>
-          <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
-        </select>
+        <div class="form-group">
+          <select v-model="report_type" class="form-input">
+            <option value="" disabled>Waehle Bericht</option>
+            <option value="Kundenbezogener">Kundenbezogener Bericht</option>
+            <option value="Rechnungsliste">Rechnungsliste</option>
+            <option value="Zahlungsstatus">Zahlungsstatus</option>
+            <option value="Umsatzbericht">Umsatzbericht</option>
+            <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
+          </select>
+        </div>
         <SalesReport v-if="report_type == 'Umsatzbericht'" />
         <PaymentsReport v-if="report_type == 'Zahlungsstatus'" />
         <CustomersReport v-if="report_type == 'Kundenbezogener'" />
