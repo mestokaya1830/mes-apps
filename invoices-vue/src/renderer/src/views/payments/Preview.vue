@@ -49,7 +49,7 @@
                     }}
                   </td>
                 </tr>
-                <tr v-if="paymentPreview.invoice.is_early_paid">
+                <tr v-if="paymentPreview.invoice.early_paid_discount_applied">
                   <td>Rabatt</td>
                   <td>
                     {{
@@ -60,7 +60,7 @@
                     }}
                   </td>
                 </tr>
-                <tr v-if="paymentPreview.is_early_paid">
+                <tr v-if="paymentPreview.invoice.early_paid_discount_applied">
                   <td>Gesamtbetrag nach Rabatt</td>
                   <td>
                     {{
@@ -157,10 +157,10 @@
 
 <script>
 import store from '../../store/store.js'
-import HeaderSidePreview from '../../components/invoices/HeaderSidePreview.vue'
-import ContactPersonPreview from '../../components/invoices/ContactPersonPreview.vue'
+import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
+import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import PaymentActions from '../../components/preview/PaymentActions.vue'
-import FooterSidePreview from '../../components/invoices/FooterSidePreview.vue'
+import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'PaymentPreview',
@@ -187,7 +187,14 @@ export default {
   computed: {
     outstanding() {
       if (!this.paymentPreview) return
-      return this.paymentPreview.invoice.gross_total - this.paymentPreview.payment_amount
+      if (this.paymentPreview.invoice.early_paid_discount_applied) {
+        return (
+          this.paymentPreview.invoice.gross_total_after_discount -
+          this.paymentPreview.payment_amount
+        )
+      } else {
+        return this.paymentPreview.invoice.gross_total - this.paymentPreview.payment_amount
+      }
     },
     actionFileName() {
       if (!this.paymentPreview) return

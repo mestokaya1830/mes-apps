@@ -95,7 +95,6 @@
         <div class="form-section">
           <div class="form-section-title">💰 Zahlungsdetails</div>
           <div class="form-row">
-
             <div class="form-group">
               <label class="form-label">Zahlungsdatum *</label>
               <!-- Payment Date Input -->
@@ -108,7 +107,7 @@
               />
               <small class="form-hint">Datum des Zahlungseingangs</small>
             </div>
-  
+
             <div class="form-group">
               <label class="form-label">Betrag (€) *</label>
               <input
@@ -133,12 +132,11 @@
                 </div>
                 <div class="form-group">
                   <small class="form-label">Offener Betrag</small>
-                  <small>{{ formatCurrency((outstanding-payment.payment_amount), payment.invoice.currency) }}</small>
+                  <small>{{ formatCurrency(setOutstanding, payment.invoice.currency) }}</small>
                 </div>
               </div>
             </div>
           </div>
-
 
           <div class="form-row">
             <div class="form-group">
@@ -212,10 +210,14 @@ export default {
       paymentAmountError: false,
       isPaymentAmountDisabled: false,
       is_early_payment_selected: false,
-      outstanding: 0,
+      outstanding: 0
     }
   },
-
+  computed: {
+    setOutstanding() {
+      return this.outstanding - this.payment.payment_amount
+    }
+  },
   mounted() {
     this.getStore()
   },
@@ -247,8 +249,6 @@ export default {
           invoice: result.rows
         }
         this.outstanding = result.rows.gross_total - result.payment_total
-        //from payments db
-        console.log('payments', this.payment)
       } catch (error) {
         console.error(error)
       }
@@ -260,7 +260,7 @@ export default {
       this.payment = JSON.parse(JSON.stringify(store.state.payment))
       this.outstanding = this.payment.invoice.gross_total - this.payment.payment_total
       this.selectedImage = this.payment.image_file
-      console.log('store payment', this.payment)
+      this.checkEarlyPayment()
     },
 
     loadImage(event) {
@@ -287,46 +287,41 @@ export default {
       let amount = Number(this.payment.payment_amount) || 0
 
       let outstanding
-
       if (this.is_early_payment_selected) {
         outstanding = 0
       } else {
         outstanding = gross - (paid + amount)
       }
-      
+
       return Number(outstanding)
     },
 
     checkEarlyPayment() {
       if (!this.payment.invoice.early_payment_offer) return
-      this.isCalculating = true // Flag'i aç
+      this.isCalculating = true
 
-      const paymentDate = this.payment.date ? new Date(this.payment.date) : null
-      const dueDate = this.payment.invoice.due_date ? new Date(this.payment.invoice.due_date) : null
+      const {
+        early_payment_days: earlyDays = 0,
+        gross_total: grossTotal = 0,
+        gross_total_after_discount: earlyTotal = 0,
+        date: invoiceDateRaw
+      } = this.payment.invoice
 
-      const earlyDays = this.payment.invoice.early_payment_days || 0
-      const earlyDiscount = this.payment.invoice.early_payment_discount || 0
-      const grossTotal = this.payment.invoice.gross_total || 0
-      const paidTotal = this.payment.payment_total || 0
+      const invoiceDate = invoiceDateRaw && new Date(invoiceDateRaw)
+      const paymentDate = this.payment.date && new Date(this.payment.date)
 
-      const earlyPaymentDate = new Date(paymentDate)
-      earlyPaymentDate.setDate(earlyPaymentDate.getDate() + earlyDays)
-      if (earlyPaymentDate <= dueDate) {
-        this.is_early_payment_selected = true
-      }
+      const earlyPaymentDate = invoiceDate && new Date(invoiceDate)
+      earlyPaymentDate?.setDate(earlyPaymentDate.getDate() + earlyDays)
+
+      this.is_early_payment_selected = paymentDate <= earlyPaymentDate
+
+      this.payment.invoice.early_paid_discount_applied = this.is_early_payment_selected
+      this.isPaymentAmountDisabled = this.is_early_payment_selected
+      this.outstanding = this.is_early_payment_selected ? earlyTotal : grossTotal
 
       if (this.is_early_payment_selected) {
-        this.isPaymentAmountDisabled = true
-        this.payment.payment_amount = Number(grossTotal - earlyDiscount - paidTotal).toFixed(2)
-        this.outstanding = 0
-        this.payment.invoice.gross_total_after_discount = this.payment.payment_amount
-        this.payment.invoice.early_paid_discount_applied = 1
-      } else {
-        this.isPaymentAmountDisabled = false
-        this.payment.payment_amount = null
-        this.payment.invoice.early_payment_discount = 0
-        this.payment.invoice.gross_total_after_discount = 0
-        this.outstanding = grossTotal - paidTotal
+        this.payment.payment_amount = earlyTotal
+        this.payment.invoice.paid_at = paymentDate
       }
 
       this.$nextTick(() => {
@@ -371,4 +366,3 @@ export default {
   }
 }
 </script>
-

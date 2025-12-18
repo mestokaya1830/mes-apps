@@ -66,7 +66,7 @@
           <div class="card-content">
             <p class="card-label">Bezahlt</p>
             <h3 class="card-value">{{ paidCount }}</h3>
-            <!-- <p class="card-detail">Betrag: {{ formatCurrency(totalPaid) }}</p> -->
+            <p class="card-detail">Betrag: {{ formatCurrency(totalPaid) }}</p>
           </div>
         </div>
 
@@ -211,13 +211,15 @@ export default {
     },
     grossTotal() {
       let total = this.reports.reduce((a, b) => a + b.gross_total, 0)
-      console.log(total)
       return total
     },
     paidCount() {
       let count = this.reports.filter((item) => item.payment_status === 'paid')
-      console.log(count)
       return count.length
+    },
+    totalPaid() {
+      let total = this.reports.reduce((a, b) => a + b.paid_amount, 0)
+      return total
     }
   },
   methods: {
@@ -243,18 +245,13 @@ export default {
     },
     async getReport() {
       if (!this.date_box_start || !this.date_box_end) return
-      console.log(this.date_box_start, this.date_box_end)
       const data = {
         start: this.date_box_start,
         end: this.date_box_end
       }
       const result = await window.api.documentReport(data)
       if (!result.success) return
-      this.reports = result.rows.map((row) => ({
-        ...row,
-        customer: JSON.parse(row.customer),
-        positions: JSON.parse(row.positions)
-      }))
+      console.log(result)
 
       this.period = {
         start: this.date_box_start,

@@ -785,7 +785,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
       let rows = db
         .prepare(
           `
-            SELECT id, customer_id, date, due_date, paid_at, gross_total, gross_total_after_discount, early_payment_offer, early_payment_days, early_payment_percentage, early_payment_discount, currency, payment_status
+            SELECT id, customer_id, date, due_date, gross_total, gross_total_after_discount, early_payment_offer, early_payment_days, early_payment_discount, early_paid_discount_applied, currency, payment_status
             FROM invoices
             WHERE id = ? AND is_active = 1
           `
@@ -1007,7 +1007,6 @@ ipcMain.handle('search-invoices', async (event, term) => {
     let limit = 50
     let rows = []
     if (isNaN(term) && !term.includes('-')) {
-      console.log(term)
       rows = db
         .prepare(
           `SELECT 
@@ -1028,7 +1027,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
                   OR json_extract(customer, '$.last_name') LIKE '${term}%'
                   OR json_extract(customer, '$.company_name') LIKE '${term}%'
                 )
-                AND is_active = 1 AND payment_status != 'paid'
+                AND is_active = 1
           ORDER BY id DESC
           LIMIT ?`
         )
@@ -1041,7 +1040,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
           .prepare(
             `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
             FROM invoices
-            WHERE id BETWEEN ? AND ? AND is_active = 1 AND payment_status != 'paid'
+            WHERE id BETWEEN ? AND ? AND is_active = 1
             ORDER BY id DESC LIMIT ?`
           )
           .all(start, end, limit)
@@ -1050,7 +1049,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
           .prepare(
             `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active,  payment_status, early_payment_offer, early_paid_discount_applied, customer
             FROM invoices
-            WHERE id + 0 LIKE ? AND is_active = 1 AND payment_status != 'paid'
+            WHERE id + 0 LIKE ? AND is_active = 1
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, limit)
@@ -1166,7 +1165,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
     ).run(
       data.invoice.payment_status,
       data.date,
-      data.invoice.early_paid_discount_applied,
+      data.invoice.early_paid_discount_applied ? 1 : 0,
       data.invoice.id
     )
 
@@ -1869,21 +1868,20 @@ ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
 ipcMain.handle('document-report', async (event, payload) => {
   try {
     const { start, end } = payload
-    const rows = db
+    const invoices = db
       .prepare(
-        `SELECT 
-          i.*,
-          COALESCE(SUM(p.payment_amount), 0) as total_paid_from_payments,
-          COUNT(p.id) as payment_count
-        FROM invoices i
-        LEFT JOIN payments p 
-            ON p.invoice_id = i.id AND p.is_active = 1
-        WHERE i.date BETWEEN ? AND ? AND i.is_active = 1
-        GROUP BY i.id
-        ORDER BY i.date DESC;
-        `
+        `SELECT * FROM invoices WHERE date BETWEEN ? AND ? AND is_active = 1 ORDER BY id DESC`
       )
       .all(start, end)
+
+    const rows = invoices.map((item) => {
+      const payments = db
+        .prepare(`SELECT * FROM payments WHERE invoice_id = ? AND is_active = 1 ORDER BY id ASC`)
+        .all(item.id)
+
+      return {...item, payments }
+    })
+
     return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)
