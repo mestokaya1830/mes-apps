@@ -1583,7 +1583,7 @@ input:checked + .slider:before {
 
 .report-table-satus-badge.overdue {
   color: #f1f1f1;
-  background: #991b1b;
+  background: #eb0505;
 }
 
 .report-table-satus-badge.partially-paid {
@@ -1802,6 +1802,9 @@ input:checked + .slider:before {
   justify-content: center;
   width: 70%;
   gap: 20px;
+}
+.report-summary-chart{
+  width: 80%;
 }
 .report-summary-card {
   padding: 24px;

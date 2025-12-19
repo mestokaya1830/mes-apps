@@ -3,12 +3,12 @@
     <div class="form-section">
       <div class="form-group">
         <select v-model="date_range" class="form-input" @change="rangeDateFilter">
-         <option disabled value="">Wähle Daten</option>
-         <option value="1">Diesen Monat</option>
-         <option value="3">Letzte 3 Monate</option>
-         <option value="6">Letzte 6 Monate</option>
-         <option value="12">Letztes Jahr</option>
-       </select>
+          <option disabled value="">Wähle Daten</option>
+          <option value="1">Diesen Monat</option>
+          <option value="3">Letzte 3 Monate</option>
+          <option value="6">Letzte 6 Monate</option>
+          <option value="12">Letztes Jahr</option>
+        </select>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -52,7 +52,7 @@
                 <p class="report-card-detail">Total Betrag: {{ formatCurrency(total) }}</p>
               </div>
             </div>
-  
+
             <div class="report-summary-card">
               <div class="report-card-icon">✅</div>
               <div class="report-card-content">
@@ -61,7 +61,7 @@
                 <p class="report-card-detail">Betrag: {{ formatCurrency(paidTotal) }}</p>
               </div>
             </div>
-  
+
             <div class="report-summary-card">
               <div class="report-card-icon">⏳</div>
               <div class="report-card-content">
@@ -70,7 +70,7 @@
                 <p class="report-card-detail">Betrag: {{ formatCurrency(outstandingTotal) }}</p>
               </div>
             </div>
-  
+
             <div class="report-summary-card">
               <div class="report-card-icon">💳</div>
               <div class="report-card-content">
@@ -79,7 +79,7 @@
                 <p class="report-card-detail">Betrag: {{ formatCurrency(partiallyPaidTotal) }}</p>
               </div>
             </div>
-  
+
             <div class="report-summary-card">
               <div class="report-card-icon">⚠️</div>
               <div class="report-card-content">
@@ -90,8 +90,8 @@
             </div>
           </div>
         </div>
-          <div class="report-chart-section">
-            <h2>Chart</h2>
+        <div v-if="reports" class="report-chart-section">
+          <InvoiceChart :chart-data="chartData" class="report-summary-chart" />
         </div>
       </div>
 
@@ -114,9 +114,15 @@
         <table class="report-table printable">
           <thead>
             <tr>
-              <th class="sortable">Rechnungsnr. <span class="report-sort-icon">▼</span></th>
-              <th class="sortable">Datum <span class="report-sort-icon">▼</span></th>
-              <th>Kunde</th>
+              <th class="sortable" @click="sorting('id')">
+                Rechnungsnr. <span class="report-sort-icon">▼</span>
+              </th>
+              <th class="sortable" @click="sorting('date')">
+                Datum <span class="report-sort-icon">▼</span>
+              </th>
+              <th class="sortable" @click="sorting('customer_id')">
+                Kunde <span class="report-sort-icon">▼</span>
+              </th>
               <th class="sortable">Fälligkeits <span class="report-sort-icon">▼</span></th>
               <th class="center">MwSt</th>
               <th class="sortable amount">Netto <span class="report-sort-icon">▼</span></th>
@@ -157,8 +163,10 @@
 </template>
 
 <script>
+import InvoiceChart from '../../components/charts/InvoiceChart.vue'
 export default {
   name: 'InvoiceReport',
+  components: { InvoiceChart },
   inject: ['formatDate', 'formatCurrency', 'formatInvoiceId'],
   data() {
     return {
@@ -169,7 +177,8 @@ export default {
       date_box_end: '',
       period: { start: '', end: '' },
       is_ready: false,
-      activeTab: 'all'
+      activeTab: 'all',
+      is_sort: true
     }
   },
   computed: {
@@ -219,7 +228,6 @@ export default {
         )
         .reduce((sum, item) => sum + (Number(item.gross_total) || 0), 0)
     },
-    // Filtrelenmiş raporlar - Tab'a göre
     filteredReports() {
       if (!this.reports) return []
 
@@ -241,7 +249,6 @@ export default {
       }
       return this.reports
     },
-    // Dinamik tab sayıları
     tabs() {
       if (!this.reports) {
         return [
@@ -257,7 +264,84 @@ export default {
         { key: 'unpaid', label: 'Ausstehend', count: this.outstandingCount },
         { key: 'overdue', label: 'Überfällig', count: this.overdueCount }
       ]
+    },
+    chartData() {
+      if (!this.reports || !Array.isArray(this.reports) || this.reports.length === 0) {
+        return {
+          labels: ['Veri Yok'],
+          datasets: [
+            {
+              label: 'Veri Yok',
+              data: [0],
+              backgroundColor: '#e5e7eb'
+            }
+          ]
+        }
+      }
+      const grouped = this.groupByMonth(this.reports)
+      return {
+        labels: grouped.labels,
+        datasets: [
+          {
+            label: 'Bezahlt',
+            data: grouped.paid,
+            backgroundColor: '#10b981',
+            borderRadius: 15,
+            borderColor: '#ccc',
+            borderWidth: 2
+          },
+          {
+            label: 'Ausstehend',
+            data: grouped.outstanding,
+            backgroundColor: '#f59e0b',
+            borderRadius: 15,
+            borderColor: '#ccc',
+            borderWidth: 2
+          },
+          {
+            label: 'Teilweise',
+            data: grouped.partially,
+            backgroundColor: '#3b82f6',
+            borderRadius: 15,
+            borderColor: '#ccc',
+            borderWidth: 2
+          },
+          {
+            label: 'Überfällig',
+            data: grouped.overdue,
+            backgroundColor: '#ef4444',
+            borderRadius: 15,
+            borderColor: '#ccc',
+            borderWidth: 2
+          }
+        ]
+      }
     }
+    // chartOptions() {
+    //   return {
+    //     responsive: true,
+    //     maintainAspectRatio: false,
+    //     plugins: {
+    //       legend: { position: 'top' },
+    //       title: {
+    //         display: true,
+    //         text: 'Monatliche Rechnungsübersicht'
+    //       }
+    //     },
+    //     scales: {
+    //       y: {
+    //         beginAtZero: true,
+    //         ticks: {
+    //           callback: (value) => this.formatCurrency(value)
+    //         }
+    //       }
+    //     },
+    //     barThickness: 50,
+    //     maxBarThickness: 60,
+    //     categoryPercentage: 0.8,
+    //     barPercentage: 0.9
+    //   }
+    // }
   },
   methods: {
     async rangeDateFilter() {
@@ -302,6 +386,51 @@ export default {
         overdue: 'Überfällig',
         draft: 'Entwurf'
       }[status]
+    },
+    groupByMonth(reports) {
+      const months = {}
+      reports.forEach((item) => {
+        const date = new Date(item.date)
+        const monthKey = date.toLocaleDateString('de-DE', { year: 'numeric', month: 'short' })
+
+        if (!months[monthKey]) {
+          months[monthKey] = { paid: 0, outstanding: 0, partially: 0, overdue: 0 }
+        }
+
+        const amount = item.gross_total
+
+        if (item.payment_status === 'paid') {
+          months[monthKey].paid += amount
+        } else if (item.payment_status === 'outstanding') {
+          months[monthKey].outstanding += amount
+        } else if (item.payment_status === 'partially_paid') {
+          months[monthKey].partially += amount
+        } else if (item.payment_status === 'overdue') {
+          months[monthKey].overdue += amount
+        }
+      })
+
+      const sortedKeys = Object.keys(months).sort((a, b) => {
+        const dateA = new Date(a.split(' ').reverse().join(' '))
+        const dateB = new Date(b.split(' ').reverse().join(' '))
+        return dateA - dateB
+      })
+
+      return {
+        labels: sortedKeys,
+        paid: sortedKeys.map((key) => months[key].paid),
+        outstanding: sortedKeys.map((key) => months[key].outstanding),
+        partially: sortedKeys.map((key) => months[key].partially),
+        overdue: sortedKeys.map((key) => months[key].overdue)
+      }
+    },
+    sorting(key) {
+      if (!key) return
+      this.reports.sort((a, b) => {
+        const res = a[key] > b[key] ? 1 : -1
+        return this.isSort ? res : -res
+      })
+      this.isSort = !this.isSort
     }
   }
 }
