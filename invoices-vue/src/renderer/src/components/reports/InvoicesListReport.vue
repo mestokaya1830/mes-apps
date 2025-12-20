@@ -167,7 +167,7 @@
       </div>
 
       <!-- Detailed Table -->
-      <div class="table-section">
+      <div class="report-table-container">
         <h3>Detaillierte Übersicht</h3>
 
         <div class="filter-tabs">
@@ -197,7 +197,7 @@
             class="filter-tab"
             @click="activeTab = 'unpaid'"
           >
-            Ausstehend({{ summary.unpaid_count }})
+            Unbezahlt ({{ summary.unpaid_count }})
           </button>
           <button
             :class="['filter-tab', { active: activeTab === 'overdue' }]"
@@ -215,9 +215,13 @@
               <th>Kunde</th>
               <th>Rechnungsdatum</th>
               <th>Fälligkeitsdatum</th>
-              <th>Betrag</th>
+              <th>Nettobetrag</th>
+              <th>MwSt</th>
+              <th>Bruttobetrag</th>
+              <th>Rabatt</th>
+              <th>Gesamt nach Rabatt</th>
               <th>Status</th>
-              <!-- <th>Tage seit Fälligkeit</th> -->
+              <th>Tage seit Fälligkeit</th>
               <th>Zahlungsdatum</th>
             </tr>
           </thead>
@@ -229,16 +233,25 @@
               <td>{{ item.customer_id }}</td>
               <td>{{ formatDate(item.date) }}</td>
               <td>{{ formatDate(item.due_date) }}</td>
-              <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
+              <td>{{ formatCurrency(item.net_total) }}</td>
+              <td>{{ formatCurrency(item.vat_total) }}</td>
+              <td>{{ formatCurrency(item.gross_total) }}</td>
+              <td v-if="item.early_paid_discount_applied">{{ formatCurrency(item.early_payment_discount) }}</td>
+              <td v-if="item.early_paid_discount_applied">{{ formatCurrency(item. gross_total_after_discount) }}</td>
               <td>
-                <span :class="['report-table-status-badge ' + item.payment_status]">{{
-                  item.payment_status
-                }}</span>
+                <span
+                  :class="[
+                    'report-table-status-badge',
+                    item.isOverdue ? 'overdue' : item.payment_status
+                  ]"
+                >
+                  {{ item.isOverdue ? 'overdue' : item.payment_status }}
+                </span>
               </td>
+
               <td>
                 <span class="days-badge">{{ formatDate(item.paid_at) }}</span>
               </td>
-              <!-- <td>17.11.2025</td> -->
             </tr>
           </tbody>
         </table>
@@ -252,7 +265,7 @@ import InvoiceChart from '../chart/InvoiceChart.vue'
 export default {
   name: 'InvoiceReport',
   components: { InvoiceChart },
-  inject: ['formatDate', 'formatCurrency', 'formatInvoiceId', 'formatCustomerId'],
+  inject: ['formatDate', 'formatCurrency', 'formatInvoiceId', 'formatCustomerId', 'checkDueDate'],
   data() {
     return {
       title: 'Rechnungsbericht',
@@ -271,43 +284,41 @@ export default {
       if (!this.period) return
       return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
     },
+    returnReportWithOverdue() {
+      if (!this.reports) return []
+      return this.reports.map((item) => {
+        return {
+          ...item,
+          isOverdue: item.payment_status === 'unpaid' && this.checkDueDate(item.due_date)
+        }
+      })
+    },
     summary() {
-      const all = this.reports || []
+      //shorthand
+      const all = this.returnReportWithOverdue //new reports for isOverdue
       const paid = all.filter((item) => item.payment_status === 'paid')
       const partially_paid = all.filter((item) => item.payment_status === 'partially_paid')
       const unpaid = all.filter((item) => item.payment_status === 'unpaid')
-      const overdue = all.filter((item) => item.payment_status === 'overdue')
+      const overdue = all.filter((item) => item.isOverdue)
 
-      const sum = {
+      return {
+        //all counts
         all_count: all.length,
         paid_count: paid.length,
         partially_paid_count: partially_paid.length,
         unpaid_count: unpaid.length,
         overdue_count: overdue.length,
 
-        all_total: all.reduce(
-          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
-          0
-        ),
-        paid_total: paid.reduce(
-          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
-          0
-        ),
+        //all totals
+        all_total: all.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+        paid_total: paid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
         partially_paid_total: partially_paid.reduce(
-          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
+          (sum, item) => sum + Number(item.gross_total || 0),
           0
         ),
-        unpaid_total: unpaid.reduce(
-          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
-          0
-        ),
-        overdue_total: overdue.reduce(
-          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
-          0
-        )
+        unpaid_total: unpaid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+        overdue_total: overdue.reduce((sum, item) => sum + Number(item.gross_total || 0), 0)
       }
-
-      return sum
     },
 
     setPercentage() {
@@ -320,28 +331,24 @@ export default {
       }
     },
     filteredReports() {
-      if (!this.reports) return []
+      if (!this.returnReportWithOverdue) return []
 
-      if (this.activeTab === 'all') {
-        return this.reports
+      switch (this.activeTab) {
+        case 'all':
+          return this.returnReportWithOverdue
+        case 'paid':
+          return this.returnReportWithOverdue.filter((item) => item.payment_status === 'paid')
+        case 'partially_paid':
+          return this.returnReportWithOverdue.filter(
+            (item) => item.payment_status === 'partially_paid'
+          )
+        case 'unpaid':
+          return this.returnReportWithOverdue.filter((item) => item.payment_status === 'unpaid')
+        case 'overdue':
+          return this.returnReportWithOverdue.filter((item) => item.isOverdue)
+        default:
+          return this.returnReportWithOverdue
       }
-      if (this.activeTab === 'paid') {
-        return this.reports.filter((item) => item.payment_status === 'paid')
-      }
-      if (this.activeTab === 'partially_paid') {
-        return this.reports.filter((item) => item.payment_status === 'partially_paid')
-      }
-      if (this.activeTab === 'unpaid') {
-        return this.reports.filter((item) => item.payment_status !== 'paid')
-      }
-      if (this.activeTab === 'overdue') {
-        const today = new Date().setHours(0, 0, 0, 0)
-        return this.reports.filter(
-          (item) =>
-            item.payment_status !== 'paid' && item.due_date && new Date(item.due_date) < today
-        )
-      }
-      return this.reports
     },
     tabs() {
       return [
@@ -383,7 +390,6 @@ export default {
         end: this.date_box_end
       }
       const result = await window.api.documentReport(data)
-      console.log(result)
       if (!result.success) return
       this.reports = result.rows
 
@@ -392,14 +398,7 @@ export default {
         end: this.date_box_end
       }
       this.is_ready = true
-    },
-    statusText(status) {
-      return {
-        paid: 'Bezahlt',
-        unpaid: 'Ausstehend',
-        overdue: 'Überfällig',
-        draft: 'Entwurf'
-      }[status]
+      console.log(result)
     },
     formatPercentage(value, total) {
       if (!total || total === 0) return '0.00%'
@@ -837,7 +836,6 @@ export default {
   border-radius: 12px;
   font-size: 11px;
   font-weight: 600;
-  text-transform: uppercase;
 }
 
 .report-table-status-badge.paid {
@@ -845,9 +843,9 @@ export default {
   color: #065f46;
 }
 
-.report-table-status-badge.pending {
+.report-table-status-badge.unpaid {
   background: #fef3c7;
-  color: #92400e;
+  color: #000;
 }
 
 .report-table-status-badge.overdue {

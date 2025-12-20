@@ -98,9 +98,6 @@ export default {
         const [curr, locale] = currency.split('.')
         return new Intl.NumberFormat(locale, { style: 'currency', currency: curr }).format(num)
       },
-      formatNumber(value) {
-        return new Intl.NumberFormat('de-DE').format(value || 0)
-      },
       checkServiceDates(start, end, ref1, ref2) {
         if (!start) {
           this.$refs[ref1].focus?.()
@@ -149,6 +146,16 @@ export default {
             data[item] = data[item].trim()
           }
         }
+      },
+      checkDueDate(value) {
+        if (!value) return false
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        const due_date = new Date(value)
+        due_date.setHours(0, 0, 0, 0)
+
+        return new Date(due_date) < today
       }
     }
   },

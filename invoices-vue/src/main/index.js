@@ -1126,7 +1126,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
           .prepare(
             `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id BETWEEN ? AND ?`
           )
-          .get().total
+          .get(start, end).total
       } else {
         rows = db
           .prepare(
@@ -1138,7 +1138,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
           .all(term, limit)
         total = db
           .prepare(`SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id + 0 LIKE ?`)
-          .get().total
+          .get(term).total
       }
     }
     return { success: true, rows, total }
@@ -1169,16 +1169,16 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
           early_paid_discount_applied,
           customer
         FROM invoices
-        WHERE date BETWEEN ? AND ? AND is_active = 1 AND payment_status != 'paid'
+        WHERE is_active = 1 AND payment_status != 'paid' AND date BETWEEN ? AND ?
         ORDER BY id DESC
         LIMIT ?;`
       )
       .all(start, end, limit)
     const total = db
       .prepare(
-        `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? AND payment_status != 'paid'`
+        `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND payment_status != 'paid' AND date BETWEEN ? AND ?`
       )
-      .get().total
+      .get(start, end).total
     return { success: true, rows, total }
   } catch (error) {
     console.error('dateFilter error:', error)
@@ -1965,13 +1965,7 @@ ipcMain.handle('document-report', async (event, payload) => {
       )
       .all(start, end)
 
-    // const rows = invoices.map((item) => {
-    //   const payments = db
-    //     .prepare(`SELECT * FROM payments WHERE invoice_id = ? AND is_active = 1 ORDER BY id ASC`)
-    //     .all(item.id)
-
-    //   return {...item, payments }
-    // })
+    console.log(rows)
 
     return { success: true, rows }
   } catch (err) {

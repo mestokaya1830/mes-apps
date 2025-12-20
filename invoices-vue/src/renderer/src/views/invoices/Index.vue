@@ -52,14 +52,14 @@
           ref="date_box_start"
           v-model="date_box_start"
           type="date"
-          class="form-input"
+          class="form-input date"
           @input="formDate()"
         />
         <input
           ref="date_box_end"
           v-model="date_box_end"
           type="date"
-          class="form-input"
+          class="form-input date"
           @input="filterDate()"
         />
         <div class="sort-btn" @click="sorting('id')">&#8645;</div>
