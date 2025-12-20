@@ -1,15 +1,14 @@
 <template>
-  <div>
+  <div class="editor-panel">
+    <select class="form-input" v-model="date_range" @change="rangeDateFilter">
+      <option value="" disabled selected>Wähle Daten</option>
+      <option value="1">Diesen Monat</option>
+      <option value="3">Letzte 3 Monate</option>
+      <option value="6">Letzte 6 Monate</option>
+      <option value="12">Letztes Jahr</option>
+    </select>
+
     <div class="form-section">
-      <div class="form-group">
-        <select v-model="date_range" class="form-input" @change="rangeDateFilter">
-          <option disabled value="">Wähle Daten</option>
-          <option value="1">Diesen Monat</option>
-          <option value="3">Letzte 3 Monate</option>
-          <option value="6">Letzte 6 Monate</option>
-          <option value="12">Letztes Jahr</option>
-        </select>
-      </div>
       <div class="form-row">
         <div class="form-group">
           <label>Von</label>
@@ -34,126 +33,211 @@
       </div>
     </div>
 
+    <!-- REPORT STARTS -->
     <div v-if="is_ready" class="report-container">
-      <!-- HEADER -->
-      <div class="report-header">
-        <label class="report-title">{{ title }}</label>
-        <label class="report-period">Zeitraum: {{ selectedPeriad }}</label>
+      <div class="report-header-2">
+        <div>
+          <h2>Rechnungsbericht</h2>
+          <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
+        </div>
+        <button class="btn-export" onclick="window.print()">🖨️ Drucken</button>
       </div>
 
-      <div class="report-summary-container">
-        <div class="report-summary-section">
-          <div class="report-summary-cards">
-            <div class="report-summary-card">
-              <div class="report-card-icon">📄</div>
-              <div class="report-card-content">
-                <p class="report-card-label">Gesamt Rechnungen</p>
-                <h3 class="report-card-value">{{ reports.length }}</h3>
-                <p class="report-card-detail">Total Betrag: {{ formatCurrency(total) }}</p>
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <p class="card-label">Summe Ø</p>
+            <h3 class="card-value">{{ formatCurrency(summary.all_total) }}</h3>
+            <p class="card-detail">{{ summary.all_count }} Rechnungen (100%)</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">✅</div>
+          <div class="card-content">
+            <p class="card-label">Pünktlich Bezahlt</p>
+            <h3 class="card-value">{{ formatCurrency(summary.paid_total) }}</h3>
+            <p class="card-detail">{{ summary.paid_count }} Rechnungen ({{ setPercentage.paid_percentage }})</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">✅</div>
+          <div class="card-content">
+            <p class="card-label">Teilzhaltig Bezahlt</p>
+            <h3 class="card-value">{{ formatCurrency(summary.partially_paid_total) }}</h3>
+            <p class="card-detail">{{ summary.partially_paid_count }} Rechnungen ({{ setPercentage.partially_paid_percentage }})</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">⏳</div>
+          <div class="card-content">
+            <p class="card-label">Ausstehend (fällig)</p>
+            <h3 class="card-value">{{ formatCurrency(summary.outstanding_total) }}</h3>
+            <p class="card-detail">{{ summary.outstanding_count }} Rechnungen ({{ setPercentage.outstanding_percentage }})</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">⚠️</div>
+          <div class="card-content">
+            <p class="card-label">Überfällig</p>
+            <h3 class="card-value">{{ formatCurrency(summary.overdue_total) }}</h3>
+            <p class="card-detail">{{ summary.overdue_count }} Rechnungen ({{ setPercentage.overdue_percentage }})</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donut Chart & Aging -->
+      <div class="chart-row">
+        <InvoiceChart :chartData="summary" />
+        <!-- <div class="donut-section">
+          <h3>Rechnungsverteilung</h3>
+          <div class="donut-container">
+            <div class="donut-chart">
+              <div class="donut-ring">
+                <div class="donut-hole">
+                  <div class="donut-total">24</div>
+                  <div class="donut-label">Rechnungen</div>
+                </div>
               </div>
             </div>
-
-            <div class="report-summary-card">
-              <div class="report-card-icon">✅</div>
-              <div class="report-card-content">
-                <p class="report-card-label">Bezahlt</p>
-                <h3 class="report-card-value">{{ paidCount }}</h3>
-                <p class="report-card-detail">Betrag: {{ formatCurrency(paidTotal) }}</p>
+            <div class="donut-legend">
+              <div class="legend-item">
+                <div class="legend-color paid"></div>
+                <div class="legend-text">
+                  <div class="legend-title">Bezahlt</div>
+                  <div class="legend-value">€38.200</div>
+                  <div class="legend-detail">18 Rg. (75%)</div>
+                </div>
               </div>
-            </div>
-
-            <div class="report-summary-card">
-              <div class="report-card-icon">⏳</div>
-              <div class="report-card-content">
-                <p class="report-card-label">Ausstehend</p>
-                <h3 class="report-card-value">{{ outstandingCount }}</h3>
-                <p class="report-card-detail">Betrag: {{ formatCurrency(outstandingTotal) }}</p>
+              <div class="legend-item">
+                <div class="legend-color pending"></div>
+                <div class="legend-text">
+                  <div class="legend-title">Ausstehend</div>
+                  <div class="legend-value">€4.850</div>
+                  <div class="legend-detail">4 Rg. (17%)</div>
+                </div>
               </div>
-            </div>
-
-            <div class="report-summary-card">
-              <div class="report-card-icon">💳</div>
-              <div class="report-card-content">
-                <p class="report-card-label">Teilweise bezahlt</p>
-                <h3 class="report-card-value">{{ partiallyPaidCount }}</h3>
-                <p class="report-card-detail">Betrag: {{ formatCurrency(partiallyPaidTotal) }}</p>
-              </div>
-            </div>
-
-            <div class="report-summary-card">
-              <div class="report-card-icon">⚠️</div>
-              <div class="report-card-content">
-                <p class="report-card-label">Überfällig</p>
-                <h3 class="report-card-value">{{ overdueCount }}</h3>
-                <p class="report-card-detail">Betrag: {{ formatCurrency(overdueTotal) }}</p>
+              <div class="legend-item">
+                <div class="legend-color overdue"></div>
+                <div class="legend-text">
+                  <div class="legend-title">Überfällig</div>
+                  <div class="legend-value">€2.800</div>
+                  <div class="legend-detail">2 Rg. (8%)</div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div v-if="reports" class="report-chart-section">
-          <InvoiceChart :chart-data="chartData" class="report-summary-chart" />
-        </div>
+        </div> -->
+
+        <!-- <div class="aging-section">
+          <h3>Forderungsaltersstruktur</h3>
+          <table class="aging-table">
+            <thead>
+              <tr>
+                <th>Zeitraum</th>
+                <th>Betrag</th>
+                <th>Anzahl</th>
+                <th class="percent">Anteil</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>0-30 Tage</strong></td>
+                <td class="amount">€38.200,00</td>
+                <td>18</td>
+                <td class="percent">83%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 83%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>31-60 Tage</strong></td>
+                <td class="amount">€4.850,00</td>
+                <td>4</td>
+                <td class="percent">11%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill warning" style="width: 11%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>61-90 Tage</strong></td>
+                <td class="amount">€1.900,00</td>
+                <td>1</td>
+                <td class="percent">4%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill danger" style="width: 4%"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>> 90 Tage</strong></td>
+                <td class="amount">€900,00</td>
+                <td>1</td>
+                <td class="percent">2%</td>
+                <td>
+                  <div class="progress-bar">
+                    <div class="progress-fill danger" style="width: 2%"></div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div> -->
       </div>
 
-      <!-- TABS -->
-      <div class="report-filter-tabs">
-        <button
-          v-for="tab in tabs"
-          :key="tab.key"
-          class="report-filter-tab"
-          :class="{ active: activeTab === tab.key }"
-          @click="activeTab = tab.key"
-        >
-          {{ tab.label }}
-          <span class="report-tab-count">{{ tab.count }}</span>
-        </button>
-      </div>
+      <!-- Detailed Table -->
+      <div class="table-section">
+        <h3>Detaillierte Übersicht</h3>
 
-      <!-- TABLE -->
-      <div class="report-table-container">
-        <table class="report-table printable">
+        <div class="filter-tabs">
+          <button class="filter-tab active">Alle (24)</button>
+          <button class="filter-tab">Bezahlt (18)</button>
+          <button class="filter-tab">Ausstehend (4)</button>
+          <button class="filter-tab">Überfällig (2)</button>
+        </div>
+
+        <table class="report-table">
           <thead>
             <tr>
-              <th class="sortable" @click="sorting('id')">
-                Rechnungsnr. <span class="report-sort-icon">▼</span>
-              </th>
-              <th class="sortable" @click="sorting('date')">
-                Datum <span class="report-sort-icon">▼</span>
-              </th>
-              <th class="sortable" @click="sorting('customer_id')">
-                Kunde <span class="report-sort-icon">▼</span>
-              </th>
-              <th class="sortable">Fälligkeits <span class="report-sort-icon">▼</span></th>
-              <th class="center">MwSt</th>
-              <th class="sortable amount">Netto <span class="report-sort-icon">▼</span></th>
-              <th class="sortable amount">MwSt-Betrag <span class="report-sort-icon">▼</span></th>
-              <th class="sortable amount">Brutto <span class="report-sort-icon">▼</span></th>
+              <th>Rechnungsnr.</th>
+              <th>Kunde</th>
+              <th>Rechnungsdatum</th>
+              <th>Fälligkeitsdatum</th>
+              <th>Betrag</th>
               <th>Status</th>
+              <!-- <th>Tage seit Fälligkeit</th> -->
               <th>Zahlungsdatum</th>
-              <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in filteredReports" :key="item.id">
-              <td class="item-id">{{ formatInvoiceId(item.id) }}</td>
+            <tr v-for="item in reports" :key="item.id">
+              <td>
+                <strong>{{ formatInvoiceId(item.id) }}</strong>
+              </td>
+              <td>{{ item.customer_id }}</td>
               <td>{{ formatDate(item.date) }}</td>
-              <td class="table-customer-id">{{ item.customer_id }}</td>
               <td>{{ formatDate(item.due_date) }}</td>
-              <td class="center">{{ item.vat }}%</td>
-              <td class="amount">{{ formatCurrency(item.net_total) }}</td>
-              <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
               <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
               <td>
-                <span class="report-table-satus-badge" :class="item.payment_status">
-                  {{ statusText(item.payment_status) }}
-                </span>
+                <span :class="['report-table-status-badge ' + item.payment_status]">{{
+                  item.payment_status
+                }}</span>
               </td>
-              <td>{{ item.paid_at || '---------------' }}</td>
               <td>
-                <div class="action-buttons">
-                  <button class="action-btn">👁️</button>
-                </div>
+                <span class="days-badge">{{ formatDate(item.paid_at) }}</span>
               </td>
+              <!-- <td>17.11.2025</td> -->
             </tr>
           </tbody>
         </table>
@@ -163,11 +247,11 @@
 </template>
 
 <script>
-import InvoiceChart from '../../components/charts/InvoiceChart.vue'
+  import InvoiceChart from '../chart/InvoiceChart.vue';
 export default {
   name: 'InvoiceReport',
   components: { InvoiceChart },
-  inject: ['formatDate', 'formatCurrency', 'formatInvoiceId'],
+  inject: ['formatDate', 'formatCurrency', 'formatInvoiceId', 'formatCustomerId'],
   data() {
     return {
       title: 'Rechnungsbericht',
@@ -186,47 +270,62 @@ export default {
       if (!this.period) return
       return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
     },
-    total() {
-      return this.reports.reduce((a, b) => a + Number(b.gross_total) || 0, 0)
-    },
-    paidCount() {
-      return this.reports.filter((item) => item.payment_status === 'paid').length
-    },
-    paidTotal() {
-      return this.reports
-        .filter((item) => item.payment_status === 'paid')
-        .reduce((sum, item) => sum + (Number(item.gross_total) || 0), 0)
-    },
-    outstandingCount() {
-      return this.reports.filter((item) => item.payment_status !== 'paid').length
-    },
-    outstandingTotal() {
-      return this.reports
-        .filter((item) => item.payment_status !== 'paid')
-        .reduce((sum, item) => sum + (Number(item.gross_total) || 0), 0)
-    },
-    partiallyPaidCount() {
-      return this.reports.filter((item) => item.payment_status === 'partially_paid').length
-    },
-    partiallyPaidTotal() {
-      return this.reports
-        .filter((item) => item.payment_status === 'partially_paid')
-        .reduce((sum, item) => sum + (Number(item.gross_total) || 0), 0)
-    },
-    overdueCount() {
-      const today = new Date().setHours(0, 0, 0, 0)
-      return this.reports.filter(
-        (item) => item.payment_status !== 'paid' && item.due_date && new Date(item.due_date) < today
-      ).length
-    },
-    overdueTotal() {
-      const today = new Date().setHours(0, 0, 0, 0)
-      return this.reports
-        .filter(
-          (item) =>
-            item.payment_status !== 'paid' && item.due_date && new Date(item.due_date) < today
+    summary() {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      //for shorthand
+      const all = this.reports
+      const paid = this.reports.filter((item) => item.payment_status === 'paid')
+      const outstanding = this.reports.filter((item) => item.payment_status !== 'paid')
+      const partially_paid = this.reports.filter((item) => item.payment_status === 'partially_paid')
+      const overdue = outstanding.filter((item) => item.due_date && new Date(item.due_date) < today)
+
+      // all totals and lengths
+      const sum = {
+        //all length
+        all_count: all.length,
+        paid_count: paid.length,
+        outstanding_count: outstanding.length,
+        partially_paid_count: partially_paid.length,
+        overdue_count: overdue.length,
+
+        all_total: all.reduce(
+          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
+          0
+        ),
+
+        paid_total: paid.reduce(
+          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
+          0
+        ),
+
+        outstanding_total: outstanding.reduce(
+          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
+          0
+        ),
+
+        partially_paid_total: partially_paid.reduce(
+          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
+          0
+        ),
+
+        overdue_total: overdue.reduce(
+          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
+          0
         )
-        .reduce((sum, item) => sum + (Number(item.gross_total) || 0), 0)
+      }
+      return sum
+    },
+    setPercentage() {
+      const sum = this.summary
+      const percentage = {
+        paid_percentage: ((sum.paid_total / sum.all_total) * 100).toFixed(2) + '%',
+        outstanding_percentage: ((sum.outstanding_total / sum.all_total) * 100).toFixed(2) + '%',
+        partially_paid_percentage: ((sum.partially_paid_total / sum.all_total) * 100).toFixed(2) + '%',
+        overdue_percentage: ((sum.overdue_total / sum.all_total) * 100).toFixed(2) + '%'
+      }
+      return percentage
     },
     filteredReports() {
       if (!this.reports) return []
@@ -236,6 +335,9 @@ export default {
       }
       if (this.activeTab === 'paid') {
         return this.reports.filter((item) => item.payment_status === 'paid')
+      }
+      if (this.activeTab === 'partially_paid') {
+        return this.reports.filter((item) => item.payment_status === 'partially_paid')
       }
       if (this.activeTab === 'unpaid') {
         return this.reports.filter((item) => item.payment_status !== 'paid')
@@ -254,94 +356,19 @@ export default {
         return [
           { key: 'all', label: 'Alle', count: 0 },
           { key: 'paid', label: 'Bezahlt', count: 0 },
+          { key: 'partially_paid', label: 'Teilweise Bezahlt', count: 0 },
           { key: 'unpaid', label: 'Ausstehend', count: 0 },
           { key: 'overdue', label: 'Überfällig', count: 0 }
         ]
       }
       return [
         { key: 'all', label: 'Alle', count: this.reports.length },
-        { key: 'paid', label: 'Bezahlt', count: this.paidCount },
-        { key: 'unpaid', label: 'Ausstehend', count: this.outstandingCount },
-        { key: 'overdue', label: 'Überfällig', count: this.overdueCount }
+        { key: 'paid', label: 'Bezahlt', count: this.summary.paid_count },
+        { key: 'unpaid', label: 'Ausstehend', count: this.summary.outstanding_count },
+        { key: 'partially_paid', label: 'Teilweise Bezahlt', count: this.summary.partially_paid_count },
+        { key: 'overdue', label: 'Überfällig', count: this.summary.overdue_count }
       ]
-    },
-    chartData() {
-      if (!this.reports || !Array.isArray(this.reports) || this.reports.length === 0) {
-        return {
-          labels: ['Veri Yok'],
-          datasets: [
-            {
-              label: 'Veri Yok',
-              data: [0],
-              backgroundColor: '#e5e7eb'
-            }
-          ]
-        }
-      }
-      const grouped = this.groupByMonth(this.reports)
-      return {
-        labels: grouped.labels,
-        datasets: [
-          {
-            label: 'Bezahlt',
-            data: grouped.paid,
-            backgroundColor: '#10b981',
-            borderRadius: 15,
-            borderColor: '#ccc',
-            borderWidth: 2
-          },
-          {
-            label: 'Ausstehend',
-            data: grouped.outstanding,
-            backgroundColor: '#f59e0b',
-            borderRadius: 15,
-            borderColor: '#ccc',
-            borderWidth: 2
-          },
-          {
-            label: 'Teilweise',
-            data: grouped.partially,
-            backgroundColor: '#3b82f6',
-            borderRadius: 15,
-            borderColor: '#ccc',
-            borderWidth: 2
-          },
-          {
-            label: 'Überfällig',
-            data: grouped.overdue,
-            backgroundColor: '#ef4444',
-            borderRadius: 15,
-            borderColor: '#ccc',
-            borderWidth: 2
-          }
-        ]
-      }
     }
-    // chartOptions() {
-    //   return {
-    //     responsive: true,
-    //     maintainAspectRatio: false,
-    //     plugins: {
-    //       legend: { position: 'top' },
-    //       title: {
-    //         display: true,
-    //         text: 'Monatliche Rechnungsübersicht'
-    //       }
-    //     },
-    //     scales: {
-    //       y: {
-    //         beginAtZero: true,
-    //         ticks: {
-    //           callback: (value) => this.formatCurrency(value)
-    //         }
-    //       }
-    //     },
-    //     barThickness: 50,
-    //     maxBarThickness: 60,
-    //     categoryPercentage: 0.8,
-    //     barPercentage: 0.9
-    //   }
-    // }
   },
   methods: {
     async rangeDateFilter() {
@@ -369,9 +396,9 @@ export default {
         end: this.date_box_end
       }
       const result = await window.api.documentReport(data)
+      console.log(result)
       if (!result.success) return
       this.reports = result.rows
-      console.log(result)
 
       this.period = {
         start: this.date_box_start,
@@ -389,32 +416,56 @@ export default {
     },
     groupByMonth(reports) {
       const months = {}
+
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
       reports.forEach((item) => {
-        const date = new Date(item.date)
-        const monthKey = date.toLocaleDateString('de-DE', { year: 'numeric', month: 'short' })
+        const invoiceDate = new Date(item.date)
+
+        // Locale bağımsız ay anahtarı (güvenli sıralama için)
+        const monthKey = `${invoiceDate.getFullYear()}-${String(
+          invoiceDate.getMonth() + 1
+        ).padStart(2, '0')}`
 
         if (!months[monthKey]) {
-          months[monthKey] = { paid: 0, outstanding: 0, partially: 0, overdue: 0 }
+          months[monthKey] = {
+            paid: 0, // tamamen ödenmiş faturalar
+            outstanding: 0, // kalan borç
+            partially: 0, // yapılan kısmi ödemeler
+            overdue: 0, // vadesi geçmiş kalan borç
+            date: new Date(invoiceDate.getFullYear(), invoiceDate.getMonth(), 1)
+          }
         }
 
-        const amount = item.gross_total
+        const grossTotal = Number(item.gross_total) || 0
+        const paidAmount = Number(item.amount) || 0
+        const remainingAmount = Math.max(grossTotal - paidAmount, 0)
 
+        const dueDate = new Date(item.due_date)
+        dueDate.setHours(0, 0, 0, 0)
+
+        const isOverdue = dueDate < today
+
+        // Ödeme durumu hesapları
         if (item.payment_status === 'paid') {
-          months[monthKey].paid += amount
-        } else if (item.payment_status === 'outstanding') {
-          months[monthKey].outstanding += amount
-        } else if (item.payment_status === 'partially_paid') {
-          months[monthKey].partially += amount
-        } else if (item.payment_status === 'overdue') {
-          months[monthKey].overdue += amount
+          months[monthKey].paid += grossTotal
+        }
+
+        if (item.payment_status === 'unpaid' || item.payment_status === 'partially_paid') {
+          months[monthKey].outstanding += remainingAmount
+
+          if (isOverdue) {
+            months[monthKey].overdue += remainingAmount
+          }
+        }
+
+        if (item.payment_status === 'partially_paid') {
+          months[monthKey].partially += paidAmount
         }
       })
 
-      const sortedKeys = Object.keys(months).sort((a, b) => {
-        const dateA = new Date(a.split(' ').reverse().join(' '))
-        const dateB = new Date(b.split(' ').reverse().join(' '))
-        return dateA - dateB
-      })
+      const sortedKeys = Object.keys(months).sort((a, b) => months[a].date - months[b].date)
 
       return {
         labels: sortedKeys,
@@ -435,3 +486,534 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.editor-panel {
+  max-width: 100%;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.report-container {
+  margin-top: 30px;
+}
+
+.report-header-2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.report-header-2 h2 {
+  font-size: 24px;
+  color: #1f2937;
+}
+
+.report-period {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 4px 0 0 0;
+}
+
+.btn-export {
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-export:hover {
+  background: #2563eb;
+}
+
+/* SUMMARY CARDS */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  padding: 24px;
+  border-radius: 12px;
+  color: white;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card:nth-child(2) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.summary-card:nth-child(3) {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+}
+
+.summary-card:nth-child(4) {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.summary-card:nth-child(5) {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.card-icon {
+  font-size: 36px;
+  opacity: 0.9;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-label {
+  font-size: 13px;
+  opacity: 0.9;
+  margin: 0 0 4px 0;
+}
+
+.card-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.card-detail {
+  font-size: 12px;
+  opacity: 0.85;
+  margin: 4px 0 0 0;
+}
+
+/* DONUT CHART */
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.donut-section {
+  background: #f9fafb;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.donut-section h3 {
+  font-size: 18px;
+  color: #1f2937;
+  margin: 0 0 20px 0;
+}
+
+.donut-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+
+.donut-chart {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.donut-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: conic-gradient(#10b981 0deg 270deg, #f59e0b 270deg 315deg, #ef4444 315deg 360deg);
+  position: relative;
+}
+
+.donut-hole {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-total {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.donut-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.legend-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.legend-color.paid {
+  background: #10b981;
+}
+
+.legend-color.pending {
+  background: #f59e0b;
+}
+
+.legend-color.overdue {
+  background: #ef4444;
+}
+
+.legend-text {
+  flex: 1;
+}
+
+.legend-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.legend-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 2px 0;
+}
+
+.legend-detail {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* AGING TABLE */
+.aging-section {
+  background: #f9fafb;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.aging-section h3 {
+  font-size: 18px;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.aging-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.aging-table thead {
+  background: #f3f4f6;
+}
+
+.aging-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.aging-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.aging-table .amount {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+}
+
+.aging-table .percent {
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  transition: width 0.3s ease;
+}
+
+.progress-fill.warning {
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.progress-fill.danger {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+/* DETAILED TABLE */
+.table-section {
+  margin-top: 60px;
+  padding-top: 30px;
+  border-top: 1px solid #ccc;
+}
+
+.table-section h3 {
+  font-size: 18px;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 8px;
+}
+
+.filter-tab {
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.filter-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+}
+
+.filter-tab:hover {
+  color: #1f2937;
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.report-table thead {
+  background: #f9fafb;
+}
+
+.report-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.report-table td {
+  padding: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.report-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.report-table .amount {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+}
+
+.report-table-status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.report-table-status-badge.paid {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.report-table-status-badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.report-table-status-badge.overdue {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.days-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.days-badge.ok {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.days-badge.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.days-badge.danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* PRINT STYLES */
+@media print {
+  body {
+    background: white;
+    padding: 0;
+  }
+
+  .editor-panel {
+    box-shadow: none;
+    padding: 20px;
+    max-width: 100%;
+  }
+
+  .form-section,
+  .form-input:not(.search-input),
+  h1,
+  .btn-export,
+  .filter-tabs,
+  .search-input {
+    display: none !important;
+  }
+
+  .report-container {
+    margin-top: 0;
+  }
+
+  .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    page-break-inside: avoid;
+  }
+
+  .summary-card {
+    padding: 15px;
+    box-shadow: none;
+    border: 1px solid #ddd;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .chart-row {
+    page-break-inside: avoid;
+  }
+
+  .donut-section,
+  .aging-section {
+    page-break-inside: avoid;
+  }
+
+  .report-table {
+    font-size: 10px;
+  }
+
+  .report-table thead {
+    display: table-header-group;
+    background: #f3f4f6 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .report-table tbody tr {
+    page-break-inside: avoid;
+  }
+
+  @page {
+    margin: 1.5cm;
+  }
+}
+</style>

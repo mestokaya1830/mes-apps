@@ -35,7 +35,6 @@
           <option value="is_partially_paid">Teilweise bezahlt</option>
           <option value="overdue">Überfällig</option>
           <option value="is_early_paid">Frühzahlung</option>
-          <option value="is_early_paid">Frühzahlung</option>
           <option value="is_reminded">Erinnert</option>
         </select>
 

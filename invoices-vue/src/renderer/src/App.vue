@@ -199,7 +199,7 @@ export default {
   overflow-y: auto;
 }
 .router {
-  width: 80%;
+  width: 90%;
 }
 .go-top-button {
   position: fixed;
