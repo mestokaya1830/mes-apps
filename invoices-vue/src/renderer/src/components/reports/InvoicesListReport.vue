@@ -59,7 +59,9 @@
           <div class="card-content">
             <p class="card-label">Pünktlich Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.paid_total) }}</h3>
-            <p class="card-detail">{{ summary.paid_count }} Rechnungen ({{ setPercentage.paid_percentage }})</p>
+            <p class="card-detail">
+              {{ summary.paid_count }} Rechnungen ({{ setPercentage.paid_percentage }})
+            </p>
           </div>
         </div>
 
@@ -68,7 +70,11 @@
           <div class="card-content">
             <p class="card-label">Teilzhaltig Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.partially_paid_total) }}</h3>
-            <p class="card-detail">{{ summary.partially_paid_count }} Rechnungen ({{ setPercentage.partially_paid_percentage }})</p>
+            <p class="card-detail">
+              {{ summary.partially_paid_count }} Rechnungen ({{
+                setPercentage.partially_paid_percentage
+              }})
+            </p>
           </div>
         </div>
 
@@ -76,8 +82,10 @@
           <div class="card-icon">⏳</div>
           <div class="card-content">
             <p class="card-label">Ausstehend (fällig)</p>
-            <h3 class="card-value">{{ formatCurrency(summary.outstanding_total) }}</h3>
-            <p class="card-detail">{{ summary.outstanding_count }} Rechnungen ({{ setPercentage.outstanding_percentage }})</p>
+            <h3 class="card-value">{{ formatCurrency(summary.unpaid_total) }}</h3>
+            <p class="card-detail">
+              {{ summary.unpaid_count }} Rechnungen ({{ setPercentage.unpaid_percentage }})
+            </p>
           </div>
         </div>
 
@@ -86,7 +94,9 @@
           <div class="card-content">
             <p class="card-label">Überfällig</p>
             <h3 class="card-value">{{ formatCurrency(summary.overdue_total) }}</h3>
-            <p class="card-detail">{{ summary.overdue_count }} Rechnungen ({{ setPercentage.overdue_percentage }})</p>
+            <p class="card-detail">
+              {{ summary.overdue_count }} Rechnungen ({{ setPercentage.overdue_percentage }})
+            </p>
           </div>
         </div>
       </div>
@@ -94,46 +104,6 @@
       <!-- Donut Chart & Aging -->
       <div class="chart-row">
         <InvoiceChart :chartData="summary" />
-        <!-- <div class="donut-section">
-          <h3>Rechnungsverteilung</h3>
-          <div class="donut-container">
-            <div class="donut-chart">
-              <div class="donut-ring">
-                <div class="donut-hole">
-                  <div class="donut-total">24</div>
-                  <div class="donut-label">Rechnungen</div>
-                </div>
-              </div>
-            </div>
-            <div class="donut-legend">
-              <div class="legend-item">
-                <div class="legend-color paid"></div>
-                <div class="legend-text">
-                  <div class="legend-title">Bezahlt</div>
-                  <div class="legend-value">€38.200</div>
-                  <div class="legend-detail">18 Rg. (75%)</div>
-                </div>
-              </div>
-              <div class="legend-item">
-                <div class="legend-color pending"></div>
-                <div class="legend-text">
-                  <div class="legend-title">Ausstehend</div>
-                  <div class="legend-value">€4.850</div>
-                  <div class="legend-detail">4 Rg. (17%)</div>
-                </div>
-              </div>
-              <div class="legend-item">
-                <div class="legend-color overdue"></div>
-                <div class="legend-text">
-                  <div class="legend-title">Überfällig</div>
-                  <div class="legend-value">€2.800</div>
-                  <div class="legend-detail">2 Rg. (8%)</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-
         <!-- <div class="aging-section">
           <h3>Forderungsaltersstruktur</h3>
           <table class="aging-table">
@@ -201,10 +171,41 @@
         <h3>Detaillierte Übersicht</h3>
 
         <div class="filter-tabs">
-          <button class="filter-tab active">Alle (24)</button>
-          <button class="filter-tab">Bezahlt (18)</button>
-          <button class="filter-tab">Ausstehend (4)</button>
-          <button class="filter-tab">Überfällig (2)</button>
+          <button
+            :class="['filter-tab', { active: activeTab === 'all' }]"
+            class="filter-tab"
+            @click="activeTab = 'all'"
+          >
+            Alle ({{ summary.all_count }})
+          </button>
+          <button
+            :class="['filter-tab', { active: activeTab === 'paid' }]"
+            class="filter-tab"
+            @click="activeTab = 'paid'"
+          >
+            Bezahlt ({{ summary.paid_count }})
+          </button>
+          <button
+            :class="['filter-tab', { active: activeTab === 'partially_paid' }]"
+            class="filter-tab"
+            @click="activeTab = 'partially_paid'"
+          >
+            Teilweizeltig ({{ summary.partially_paid_count }})
+          </button>
+          <button
+            :class="['filter-tab', { active: activeTab === 'unpaid' }]"
+            class="filter-tab"
+            @click="activeTab = 'unpaid'"
+          >
+            Ausstehend({{ summary.unpaid_count }})
+          </button>
+          <button
+            :class="['filter-tab', { active: activeTab === 'overdue' }]"
+            class="filter-tab"
+            @click="activeTab = 'overdue'"
+          >
+            Überfällig ({{ summary.overdue_count }})
+          </button>
         </div>
 
         <table class="report-table">
@@ -221,7 +222,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in reports" :key="item.id">
+            <tr v-for="item in filteredReports" :key="item.id">
               <td>
                 <strong>{{ formatInvoiceId(item.id) }}</strong>
               </td>
@@ -247,7 +248,7 @@
 </template>
 
 <script>
-  import InvoiceChart from '../chart/InvoiceChart.vue';
+import InvoiceChart from '../chart/InvoiceChart.vue'
 export default {
   name: 'InvoiceReport',
   components: { InvoiceChart },
@@ -271,61 +272,52 @@ export default {
       return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
     },
     summary() {
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
+      const all = this.reports || []
+      const paid = all.filter((item) => item.payment_status === 'paid')
+      const partially_paid = all.filter((item) => item.payment_status === 'partially_paid')
+      const unpaid = all.filter((item) => item.payment_status === 'unpaid')
+      const overdue = all.filter((item) => item.payment_status === 'overdue')
 
-      //for shorthand
-      const all = this.reports
-      const paid = this.reports.filter((item) => item.payment_status === 'paid')
-      const outstanding = this.reports.filter((item) => item.payment_status !== 'paid')
-      const partially_paid = this.reports.filter((item) => item.payment_status === 'partially_paid')
-      const overdue = outstanding.filter((item) => item.due_date && new Date(item.due_date) < today)
-
-      // all totals and lengths
       const sum = {
-        //all length
         all_count: all.length,
         paid_count: paid.length,
-        outstanding_count: outstanding.length,
         partially_paid_count: partially_paid.length,
+        unpaid_count: unpaid.length,
         overdue_count: overdue.length,
 
         all_total: all.reduce(
           (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
           0
         ),
-
         paid_total: paid.reduce(
           (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
           0
         ),
-
-        outstanding_total: outstanding.reduce(
-          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
-          0
-        ),
-
         partially_paid_total: partially_paid.reduce(
           (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
           0
         ),
-
+        unpaid_total: unpaid.reduce(
+          (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
+          0
+        ),
         overdue_total: overdue.reduce(
           (sum, item) => sum + (item.gross_total != null ? Number(item.gross_total) : 0),
           0
         )
       }
+
       return sum
     },
+
     setPercentage() {
       const sum = this.summary
-      const percentage = {
-        paid_percentage: ((sum.paid_total / sum.all_total) * 100).toFixed(2) + '%',
-        outstanding_percentage: ((sum.outstanding_total / sum.all_total) * 100).toFixed(2) + '%',
-        partially_paid_percentage: ((sum.partially_paid_total / sum.all_total) * 100).toFixed(2) + '%',
-        overdue_percentage: ((sum.overdue_total / sum.all_total) * 100).toFixed(2) + '%'
+      return {
+        paid_percentage: this.formatPercentage(sum.paid_total, sum.all_total),
+        unpaid_percentage: this.formatPercentage(sum.unpaid_total, sum.all_total),
+        partially_paid_percentage: this.formatPercentage(sum.partially_paid_total, sum.all_total),
+        overdue_percentage: this.formatPercentage(sum.overdue_total, sum.all_total)
       }
-      return percentage
     },
     filteredReports() {
       if (!this.reports) return []
@@ -352,20 +344,15 @@ export default {
       return this.reports
     },
     tabs() {
-      if (!this.reports) {
-        return [
-          { key: 'all', label: 'Alle', count: 0 },
-          { key: 'paid', label: 'Bezahlt', count: 0 },
-          { key: 'partially_paid', label: 'Teilweise Bezahlt', count: 0 },
-          { key: 'unpaid', label: 'Ausstehend', count: 0 },
-          { key: 'overdue', label: 'Überfällig', count: 0 }
-        ]
-      }
       return [
-        { key: 'all', label: 'Alle', count: this.reports.length },
+        { key: 'all', label: 'Alle', count: this.summary.all_count },
         { key: 'paid', label: 'Bezahlt', count: this.summary.paid_count },
-        { key: 'unpaid', label: 'Ausstehend', count: this.summary.outstanding_count },
-        { key: 'partially_paid', label: 'Teilweise Bezahlt', count: this.summary.partially_paid_count },
+        { key: 'unpaid', label: 'Ausstehend', count: this.summary.unpaid_count },
+        {
+          key: 'partially_paid',
+          label: 'Teilweise Bezahlt',
+          count: this.summary.partially_paid_count
+        },
         { key: 'overdue', label: 'Überfällig', count: this.summary.overdue_count }
       ]
     }
@@ -414,66 +401,9 @@ export default {
         draft: 'Entwurf'
       }[status]
     },
-    groupByMonth(reports) {
-      const months = {}
-
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
-
-      reports.forEach((item) => {
-        const invoiceDate = new Date(item.date)
-
-        // Locale bağımsız ay anahtarı (güvenli sıralama için)
-        const monthKey = `${invoiceDate.getFullYear()}-${String(
-          invoiceDate.getMonth() + 1
-        ).padStart(2, '0')}`
-
-        if (!months[monthKey]) {
-          months[monthKey] = {
-            paid: 0, // tamamen ödenmiş faturalar
-            outstanding: 0, // kalan borç
-            partially: 0, // yapılan kısmi ödemeler
-            overdue: 0, // vadesi geçmiş kalan borç
-            date: new Date(invoiceDate.getFullYear(), invoiceDate.getMonth(), 1)
-          }
-        }
-
-        const grossTotal = Number(item.gross_total) || 0
-        const paidAmount = Number(item.amount) || 0
-        const remainingAmount = Math.max(grossTotal - paidAmount, 0)
-
-        const dueDate = new Date(item.due_date)
-        dueDate.setHours(0, 0, 0, 0)
-
-        const isOverdue = dueDate < today
-
-        // Ödeme durumu hesapları
-        if (item.payment_status === 'paid') {
-          months[monthKey].paid += grossTotal
-        }
-
-        if (item.payment_status === 'unpaid' || item.payment_status === 'partially_paid') {
-          months[monthKey].outstanding += remainingAmount
-
-          if (isOverdue) {
-            months[monthKey].overdue += remainingAmount
-          }
-        }
-
-        if (item.payment_status === 'partially_paid') {
-          months[monthKey].partially += paidAmount
-        }
-      })
-
-      const sortedKeys = Object.keys(months).sort((a, b) => months[a].date - months[b].date)
-
-      return {
-        labels: sortedKeys,
-        paid: sortedKeys.map((key) => months[key].paid),
-        outstanding: sortedKeys.map((key) => months[key].outstanding),
-        partially: sortedKeys.map((key) => months[key].partially),
-        overdue: sortedKeys.map((key) => months[key].overdue)
-      }
+    formatPercentage(value, total) {
+      if (!total || total === 0) return '0.00%'
+      return ((value / total) * 100).toFixed(2) + '%'
     },
     sorting(key) {
       if (!key) return

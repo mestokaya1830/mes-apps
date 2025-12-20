@@ -15,6 +15,7 @@ const state = reactive({
   payment: null,
   deliverie: null,
   reminder: null,
+  category_filter: null,
   date_filter: null,
   _isClearing: false // IndexedDB temizleme işlemi için flag
 })
@@ -43,6 +44,9 @@ async function init() {
     const reminder = await localforage.getItem('reminder')
     if (reminder) state.reminder = reminder
 
+    const category_filter = await localforage.getItem('category_filter')
+    if (category_filter) state.category_filter = category_filter
+    
     const date_filter = await localforage.getItem('date_filter')
     if (date_filter) state.date_filter = date_filter
   } catch (err) {

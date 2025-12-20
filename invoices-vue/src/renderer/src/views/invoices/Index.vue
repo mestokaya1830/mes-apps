@@ -4,7 +4,7 @@
       <!-- Header Section -->
       <div v-if="invoices" class="editor-header-block">
         <div>
-          <h1 class="title">{{ title }} {{ invoices.length }}</h1>
+          <h1 class="title">{{ title }} {{ total_count }} / {{ current_count }}</h1>
           <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
         </div>
         <router-link to="/customers" class="add-btn">
@@ -33,8 +33,11 @@
           <option value="canceled">Storniert</option>
           <option value="is_paid">Bezahlt</option>
           <option value="is_partially_paid">Teilweise bezahlt</option>
+          <option value="unpaid">Unbezahlt</option>
           <option value="overdue">Überfällig</option>
+          <option value="outstanding">Ausstehend</option>
           <option value="is_early_paid">Frühzahlung</option>
+          <option value="is_late_paid">Spät bezahlt</option>
           <option value="is_reminded">Erinnert</option>
         </select>
 
@@ -168,7 +171,8 @@ export default {
       date_box_start: '',
       date_box_end: '',
       categories_filter: '',
-      invoice_length: 0,
+      total_count: 0,
+      current_count: 0,
       isSort: true
     }
   },
@@ -177,9 +181,14 @@ export default {
       this.date_box_start = store.state.date_filter.start
       this.date_box_end = store.state.date_filter.end
       this.filterDate()
-    } else {
-      this.getInvoices()
+      return
     }
+    if (store.state.category_filter) {
+      this.categories_filter = store.state.category_filter
+      this.filterCategories()
+      return
+    }
+    this.getInvoices()
   },
   methods: {
     async getInvoices() {
@@ -190,6 +199,8 @@ export default {
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
+        this.total_count = result.total
+        this.current_count = result.rows.length
       } catch (error) {
         console.error(error)
       }
@@ -201,20 +212,21 @@ export default {
     },
     async filterCategories() {
       try {
-        this.clearDate()
         const result = await window.api.filterInvoicesCategories(this.categories_filter)
         if (!result.success) return
         this.invoices = result.rows.map((row) => ({
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
+        this.total_count = result.total
+        this.current_count = result.rows.length
+        await store.setStore('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
       } catch (error) {
         console.error(error)
       }
     },
     async searchInvoice() {
       const term = this.search_box?.trim()
-      console.log(term)
       if (!term) {
         this.getInvoices()
         return
@@ -229,6 +241,8 @@ export default {
         ...row,
         customer: row.customer ? JSON.parse(row.customer) : null
       }))
+      this.total_count = result.total
+      this.current_count = result.rows.length
     },
     async filterDate() {
       try {
@@ -249,7 +263,8 @@ export default {
             ...row,
             customer: row.customer ? JSON.parse(row.customer) : null
           }))
-          console.log('date', this.invoices)
+          this.total_count = result.total
+          this.current_count = result.rows.length
           await store.setStore('date_filter', JSON.parse(JSON.stringify(date)))
         }
       } catch (error) {
@@ -263,17 +278,7 @@ export default {
         return this.isSort ? res : -res
       })
       this.isSort = !this.isSort
-    },
-    async clearDate() {
-      try {
-        this.date_box_start = ''
-        this.date_box_end = ''
-        await store.clearStore('date_filter')
-      } catch (error) {
-        console.error(error)
-      }
     }
   }
 }
 </script>
-

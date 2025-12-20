@@ -67,6 +67,7 @@ export default {
   },
   mounted() {
     this.auth = store.state.auth
+    this.clearDate()
   },
   methods: {
     async logout() {
@@ -75,6 +76,14 @@ export default {
         this.$router.push('/login')
       } catch (error) {
         console.error('Abmeldefehler:', error)
+      }
+    },
+    async clearDate() {
+      try {
+        await store.clearStore('date_filter')
+        await store.clearStore('category_filter')
+      } catch (error) {
+        console.error(error)
       }
     }
   }

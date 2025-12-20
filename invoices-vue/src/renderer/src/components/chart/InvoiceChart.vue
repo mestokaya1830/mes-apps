@@ -92,11 +92,11 @@ export default {
         type: 'doughnut',
         data: {
           labels: [
-    ['Bezahlt', `${this.chartData.paid_total}`],
-    ['Teilweise Bezahlt', `${this.chartData.partially_paid_total}`],
-    ['Ausstehend', `${this.chartData.outstanding_total}`],
-    ['Überfällig', `${this.chartData.overdue_total}`]
-  ],
+            ['Bezahlt', `${this.chartData.paid_total}`],
+            ['Teilweise Bezahlt', `${this.chartData.partially_paid_total}`],
+            ['Ausstehend', `${this.chartData.outstanding_total}`],
+            ['Überfällig', `${this.chartData.overdue_total}`]
+          ],
           datasets: [
             {
               data: [
@@ -130,11 +130,11 @@ export default {
                 padding: 12,
                 color: '#444',
                 font: (context) => {
-          // İkinci satır için küçük font
-          return {
-            size: context.index === 1 ? 10 : 14
-          };
-        }
+                  // second text font
+                  return {
+                    size: context.index === 1 ? 10 : 14
+                  }
+                }
               }
             }
           }

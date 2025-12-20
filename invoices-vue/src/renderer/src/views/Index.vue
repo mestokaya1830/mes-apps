@@ -66,6 +66,7 @@
   </div>
 </template>
 <script>
+import store from '../store/store'
 export default {
   data() {
     return {
@@ -79,6 +80,7 @@ export default {
   methods: {
     async getDashboard() {
       try {
+        this.clearDate()
         const result = await window.api.getDashboard()
         if (!result.success) return
         this.tablesCount = result.rows
@@ -88,6 +90,14 @@ export default {
     },
     goTo(path) {
       this.$router.push(`/${path}`)
+    },
+    async clearDate() {
+      try {
+        await store.clearStore('date_filter')
+        await store.clearStore('category_filter')
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 }
@@ -95,6 +105,4 @@ export default {
 
 <style scoped>
 /* Önceki CSS aynen korunuyor */
-
-
 </style>

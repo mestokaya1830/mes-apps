@@ -727,7 +727,13 @@ ipcMain.handle('get-invoices', async () => {
         `
       )
       .all(limit)
-    return { success: true, rows }
+
+    const total = db
+      .prepare(
+        `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND payment_status != 'paid'`
+      )
+      .get().total
+    return { success: true, rows, total }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -797,7 +803,7 @@ ipcMain.handle('get-invoice-by-id', async (event, payload) => {
       const payment_total =
         db
           .prepare(
-            `SELECT sum(payment_amount) As total FROM payments WHERE invoice_id = ? AND is_active = 1`
+            `SELECT sum(payment_amount) As total FROM payments WHERE is_active = 1 AND invoice_id = ?`
           )
           .get(id)?.total ?? 0
       return { success: true, rows, payment_id, payment_total }
@@ -844,155 +850,226 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
   }
+
   try {
     const category = payload
     let query = ''
+    let countQuery = ''
     let rows = []
+    let total = 0
     let limit = 50
 
     switch (category) {
       case 'all':
-        query = `SELECT id, date, due_date, paid_at, gross_total,gross_total_after_discount, is_active, payment_status, early_payment_offer, early_paid_discount_applied, cancelled_at, customer
+        query = `
+          SELECT id, date, due_date, paid_at, gross_total, gross_total_after_discount,
+                 is_active, payment_status, early_payment_offer, early_paid_discount_applied,
+                 cancelled_at, customer
           FROM invoices
           ORDER BY id DESC
-          LIMIT ?`
-        rows = db.prepare(query).all(limit)
+          LIMIT ?
+        `
+        countQuery = `SELECT COUNT(*) as total FROM invoices`
         break
 
       case 'active':
-        query = `SELECT id, date, due_date, paid_at, gross_total, gross_total_after_discount, is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
+        query = `
+          SELECT id, date, due_date, paid_at, gross_total, gross_total_after_discount,
+                 is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
           FROM invoices
           WHERE is_active = 1 AND payment_status != 'paid'
           ORDER BY id DESC
-          LIMIT ?`
-        rows = db.prepare(query).all(limit)
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1 AND payment_status != 'paid'
+        `
         break
 
       case 'canceled':
-        query = `SELECT id, date, due_date, paid_at, gross_total, gross_total_after_discount, is_active, payment_status, early_payment_offer, early_paid_discount_applied, cancelled_at, customer
+        query = `
+          SELECT id, date, due_date, paid_at, gross_total, gross_total_after_discount,
+                 is_active, payment_status, early_payment_offer, early_paid_discount_applied,
+                 cancelled_at, customer
           FROM invoices
           WHERE is_active = 0
           ORDER BY updated_at DESC
-          LIMIT ?`
-        rows = db.prepare(query).all(limit)
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 0
+        `
         break
 
       case 'is_paid':
         query = `
-            SELECT
-              id,
-              date,
-              due_date,
-              paid_at,
-              gross_total,
-              is_active,
-              payment_status,
-              early_payment_offer,
-              early_paid_discount_applied,
-              customer
-            FROM invoices
-            WHERE  payment_status = 'paid' AND is_active = 1
-            ORDER BY updated_at DESC
-            LIMIT ?;
-          `
-        rows = db.prepare(query).all(limit)
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1 AND payment_status = 'paid'
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1 AND payment_status = 'paid'
+        `
         break
 
       case 'is_partially_paid':
         query = `
-              SELECT
-              id,
-              date,
-              due_date,
-              paid_at,
-              gross_total,
-              is_active,
-              payment_status,
-              early_payment_offer,
-              early_paid_discount_applied,
-              customer
-            FROM invoices
-            WHERE  payment_status = 'partially_paid' AND is_active = 1
-            ORDER BY updated_at DESC
-            LIMIT ?;
-            `
-        rows = db.prepare(query).all(limit)
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1 AND payment_status = 'partially_paid'
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1 AND payment_status = 'partially_paid'
+        `
+        break
+
+      case 'unpaid':
+        query = `
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1 AND payment_status = 'unpaid'
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1 AND payment_status = 'unpaid'
+        `
         break
 
       case 'overdue':
         query = `
-               SELECT
-                    id,
-                    date,
-                    due_date,
-                    paid_at,
-                    gross_total,
-                    is_active,
-                    payment_status,
-                    early_payment_offer,
-                    early_paid_discount_applied,
-                    customer
-                FROM invoices
-                WHERE DATE(due_date, 'localtime') < DATE('now', 'localtime')
-                  AND payment_status != 'paid'
-                  AND is_active = 1
-                ORDER BY updated_at DESC
-                LIMIT ?
-               `
-        rows = db.prepare(query).all(limit)
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1
+            AND payment_status = 'unpaid'
+            AND DATE(due_date, 'localtime') < DATE('now', 'localtime')
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+            AND payment_status = 'unpaid'
+            AND DATE(due_date, 'localtime') < DATE('now', 'localtime')
+        `
         break
 
       case 'is_early_paid':
         query = `
-               SELECT
-                    id,
-                    date,
-                    due_date,
-                    paid_at,
-                    gross_total,
-                    is_active,
-                    payment_status,
-                    early_payment_offer,
-                    early_paid_discount_applied,
-                    customer
-                FROM invoices
-                WHERE DATE(paid_at, 'localtime') < DATE(due_date, 'localtime')
-                  AND payment_status = 'paid'
-                  AND is_active = 1
-                ORDER BY updated_at DESC
-                LIMIT ?
-               `
-        rows = db.prepare(query).all(limit)
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1
+            AND payment_status = 'paid'
+            AND DATE(paid_at, 'localtime') < DATE(due_date, 'localtime')
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+            AND payment_status = 'paid'
+            AND DATE(paid_at, 'localtime') < DATE(due_date, 'localtime')
+        `
+        break
 
+      case 'is_late_paid':
+        query = `
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1
+            AND payment_status = 'paid'
+            AND DATE(paid_at, 'localtime') > DATE(due_date, 'localtime')
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+            AND payment_status = 'paid'
+            AND DATE(paid_at, 'localtime') > DATE(due_date, 'localtime')
+        `
+        break
+
+      case 'outstanding':
+        query = `
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1
+            AND (payment_status = 'unpaid' OR payment_status = 'overdue')
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+            AND (payment_status = 'unpaid' OR payment_status = 'overdue')
+        `
         break
 
       case 'is_reminded':
         query = `
-               SELECT
-                    id,
-                    date,
-                    due_date,
-                    paid_at,
-                    gross_total,
-                    is_active,
-                    payment_status,
-                    early_payment_offer,
-                    early_paid_discount_applied,
-                    customer
-                FROM invoices
-                WHERE is_reminded = 1
-                  AND is_active = 1
-                ORDER BY updated_at DESC
-                LIMIT ?
-               `
-        rows = db.prepare(query).all(limit)
+          SELECT id, date, due_date, paid_at, gross_total, is_active, payment_status,
+                 early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE is_active = 1 AND is_reminded = 1
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1 AND is_reminded = 1
+        `
         break
+
       default:
-        query = `SELECT * FROM invoices WHERE is_active = 1 AND payment_status != 'paid' ORDER BY id DESC LIMIT ?`
-        rows = db.prepare(query).all(limit)
+        query = `
+          SELECT *
+          FROM invoices
+          WHERE is_active = 1 AND payment_status != 'paid'
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1 AND payment_status != 'paid'
+        `
     }
 
-    return { success: true, rows }
+    rows = db.prepare(query).all(limit)
+
+    if (countQuery) {
+      const countResult = db.prepare(countQuery).get()
+      total = countResult.total
+    }
+
+    return { success: true, rows, total }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1006,6 +1083,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
   try {
     let limit = 50
     let rows = []
+    let total = 0
     if (isNaN(term) && !term.includes('-')) {
       rows = db
         .prepare(
@@ -1022,16 +1100,16 @@ ipcMain.handle('search-invoices', async (event, term) => {
             early_paid_discount_applied,
             customer
           FROM invoices
-          WHERE (
+          WHERE is_active = 1 AND (
                   json_extract(customer, '$.first_name') LIKE '${term}%'
                   OR json_extract(customer, '$.last_name') LIKE '${term}%'
                   OR json_extract(customer, '$.company_name') LIKE '${term}%'
                 )
-                AND is_active = 1
           ORDER BY id DESC
           LIMIT ?`
         )
         .all(limit)
+      total = db.prepare(`SELECT COUNT(id) As total FROM invoices WHERE is_active = 1`).get().total
     } else {
       if (isNaN(term) && term.includes('-')) {
         const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
@@ -1040,22 +1118,30 @@ ipcMain.handle('search-invoices', async (event, term) => {
           .prepare(
             `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
             FROM invoices
-            WHERE id BETWEEN ? AND ? AND is_active = 1
+            WHERE is_active = 1 AND id BETWEEN ? AND ?
             ORDER BY id DESC LIMIT ?`
           )
           .all(start, end, limit)
+        total = db
+          .prepare(
+            `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id BETWEEN ? AND ?`
+          )
+          .get().total
       } else {
         rows = db
           .prepare(
             `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active,  payment_status, early_payment_offer, early_paid_discount_applied, customer
             FROM invoices
-            WHERE id + 0 LIKE ? AND is_active = 1
+            WHERE is_active = 1 AND id + 0 LIKE ?
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, limit)
+        total = db
+          .prepare(`SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id + 0 LIKE ?`)
+          .get().total
       }
     }
-    return { success: true, rows }
+    return { success: true, rows, total }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1088,7 +1174,12 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
         LIMIT ?;`
       )
       .all(start, end, limit)
-    return { success: true, rows }
+    const total = db
+      .prepare(
+        `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? AND payment_status != 'paid'`
+      )
+      .get().total
+    return { success: true, rows, total }
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
@@ -1870,7 +1961,7 @@ ipcMain.handle('document-report', async (event, payload) => {
     const { start, end } = payload
     const rows = db
       .prepare(
-        `SELECT * FROM invoices WHERE date BETWEEN ? AND ? AND is_active = 1 ORDER BY id DESC`
+        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
       )
       .all(start, end)
 

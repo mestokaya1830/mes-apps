@@ -15,17 +15,7 @@
         <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
         <p><strong>Adresse:</strong> {{ customer.address }}</p>
         <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
-        {{ counts }}
-        <!-- 
-        <p><strong>Gesamt Rechnungen:</strong> {{ customer.total_invoices }}</p>
-        <p><strong>Bezahlt:</strong> {{ customer.total_paid }}</p>
-        <p><strong>Unbezahlt:</strong> {{ customer.total_unpaid }}</p>
-        <p><strong>Überfällig:</strong> {{ customer.overdue }}</p>
-        <p><strong>Früh bezahlt:</strong> {{ customer.early_paid }}</p>
-        <p><strong>Bestellungen:</strong> {{ customer.total_orders }}</p>
-        <p><strong>Angebote:</strong> {{ customer.total_offers }}</p>
-        <p><strong>Erinnerungen:</strong> {{ customer.total_reminders }}</p> -->
-
+       
         <button class="action-btn delete-btn" @click="deleteCustomer(item.id)">
           <svg
             xmlns="http://www.w3.org/2000/svg"
