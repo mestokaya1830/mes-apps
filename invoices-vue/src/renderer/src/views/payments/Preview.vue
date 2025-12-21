@@ -114,6 +114,10 @@
                   <td>Dateiname</td>
                   <td>{{ paymentPreview.file_name }}</td>
                 </tr>
+                <tr>
+                  <td>Staus</td>
+                  <td><h2>{{ paymentPreview.invoice.payment_status }}</h2></td>
+                </tr>
               </tbody>
             </table>
           </div>

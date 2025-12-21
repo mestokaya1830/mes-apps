@@ -81,7 +81,7 @@
         <div class="summary-card">
           <div class="card-icon">⏳</div>
           <div class="card-content">
-            <p class="card-label">Ausstehend (fällig)</p>
+            <p class="card-label">Unbezahlt (fällig)</p>
             <h3 class="card-value">{{ formatCurrency(summary.unpaid_total) }}</h3>
             <p class="card-detail">
               {{ summary.unpaid_count }} Rechnungen ({{ setPercentage.unpaid_percentage }})
@@ -101,70 +101,8 @@
         </div>
       </div>
 
-      <!-- Donut Chart & Aging -->
-      <div class="chart-row">
-        <InvoiceChart :chartData="summary" />
-        <!-- <div class="aging-section">
-          <h3>Forderungsaltersstruktur</h3>
-          <table class="aging-table">
-            <thead>
-              <tr>
-                <th>Zeitraum</th>
-                <th>Betrag</th>
-                <th>Anzahl</th>
-                <th class="percent">Anteil</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>0-30 Tage</strong></td>
-                <td class="amount">€38.200,00</td>
-                <td>18</td>
-                <td class="percent">83%</td>
-                <td>
-                  <div class="progress-bar">
-                    <div class="progress-fill" style="width: 83%"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>31-60 Tage</strong></td>
-                <td class="amount">€4.850,00</td>
-                <td>4</td>
-                <td class="percent">11%</td>
-                <td>
-                  <div class="progress-bar">
-                    <div class="progress-fill warning" style="width: 11%"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>61-90 Tage</strong></td>
-                <td class="amount">€1.900,00</td>
-                <td>1</td>
-                <td class="percent">4%</td>
-                <td>
-                  <div class="progress-bar">
-                    <div class="progress-fill danger" style="width: 4%"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><strong>> 90 Tage</strong></td>
-                <td class="amount">€900,00</td>
-                <td>1</td>
-                <td class="percent">2%</td>
-                <td>
-                  <div class="progress-bar">
-                    <div class="progress-fill danger" style="width: 2%"></div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div> -->
-      </div>
+      <!-- Chart -->
+      <InvoiceChart :chartData="summary" />
 
       <!-- Detailed Table -->
       <div class="report-table-container">
@@ -236,8 +174,8 @@
               <td>{{ formatCurrency(item.net_total) }}</td>
               <td>{{ formatCurrency(item.vat_total) }}</td>
               <td>{{ formatCurrency(item.gross_total) }}</td>
-              <td v-if="item.early_paid_discount_applied">{{ formatCurrency(item.early_payment_discount) }}</td>
-              <td v-if="item.early_paid_discount_applied">{{ formatCurrency(item. gross_total_after_discount) }}</td>
+              <td>{{ formatCurrency(item.early_payment_discount) }}</td>
+              <td>{{ formatCurrency(item. gross_total_after_discount) }}</td>
               <td>
                 <span
                   :class="[
@@ -325,8 +263,8 @@ export default {
       const sum = this.summary
       return {
         paid_percentage: this.formatPercentage(sum.paid_total, sum.all_total),
-        unpaid_percentage: this.formatPercentage(sum.unpaid_total, sum.all_total),
         partially_paid_percentage: this.formatPercentage(sum.partially_paid_total, sum.all_total),
+        unpaid_percentage: this.formatPercentage(sum.unpaid_total, sum.all_total),
         overdue_percentage: this.formatPercentage(sum.overdue_total, sum.all_total)
       }
     },

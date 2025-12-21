@@ -28,25 +28,20 @@ export default db
 // }
 
 // try {
-//   db.prepare('Delete From orders').run()
-//   db.prepare('Delete From offers').run()
-//   db.prepare('Delete From reminders').run()
-//   db.prepare('Delete From payments').run()
-//   db.prepare('Delete From invoices').run()
-//   db.prepare('Delete From customers').run()
+//   db.prepare(`update invoices set payment_status = 'unpaid'`).run()
 // } catch (error) {
 //   console.error(error)
 // }
 
 
-try {
-  const result = db
-    .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE payment_status = 'unpaid' AND due_date < DATE('now')`)
-    .get()
-  console.log(result.total)
+// try {
+//   const result = db
+//     .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE payment_status = 'unpaid' AND due_date < DATE('now')`)
+//     .get()
+//   console.log(result.total)
 
-} catch (error) {
-  console.error(error)
-}
+// } catch (error) {
+//   console.error(error)
+// }
 
 

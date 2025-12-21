@@ -1250,7 +1250,6 @@ ipcMain.handle('add-payment', async (event, payload) => {
 
         JSON.stringify(data.invoice)
       )
-
     db.prepare(
       'UPDATE invoices SET payment_status = ?, paid_at = ?, early_paid_discount_applied = ? WHERE id = ?'
     ).run(

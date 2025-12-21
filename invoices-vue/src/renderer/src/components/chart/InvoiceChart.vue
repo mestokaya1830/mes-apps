@@ -1,36 +1,14 @@
 <template>
-  <div>
-    <canvas :key="chartKey" ref="chartCanvas" width="500" height="300"></canvas>
+  <div class="canvas-con">
+    <canvas id="myChart"></canvas>
   </div>
 </template>
 
 <script>
 import Chart from 'chart.js/auto'
 
-const centerTextPlugin = {
-  id: 'centerText',
-  afterDraw(chart) {
-    const { ctx, chartArea, data } = chart
-    if (!ctx || !chartArea || !data.datasets[0].all_count) return
-    const total = data.datasets[0].all_count
-
-    ctx.save()
-    const fontSize = (chartArea.right - chartArea.left) / 8
-    ctx.font = `bold ${fontSize}px Arial`
-    ctx.fillStyle = '#333'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-
-    const centerX = (chartArea.left + chartArea.right) / 2
-    const centerY = (chartArea.top + chartArea.bottom) / 2
-
-    ctx.fillText(total, centerX, centerY)
-    ctx.restore()
-  }
-}
-
 export default {
-  name: 'DoughnutChart',
+  name: 'BarChart',
   props: {
     chartData: {
       type: Object,
@@ -38,104 +16,87 @@ export default {
     }
   },
   data() {
-    return {
-      chart: null,
-      chartKey: 0
-    }
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler() {
-        this.recreateChart()
-      }
-    }
+    return {}
   },
   mounted() {
-    this.$nextTick(() => {
-      this.initChart()
-    })
-  },
-  beforeUnmount() {
-    this.destroyChart()
+    this.$nextTick(() => this.initChart())
   },
   methods: {
-    destroyChart() {
-      if (this.chart) {
-        try {
-          this.chart.destroy()
-        } catch (error) {
-          console.error('Chart destruction error:', error)
-        }
-        this.chart = null
-      }
-    },
-
-    recreateChart() {
-      this.destroyChart()
-      this.chartKey++
-      this.$nextTick(() => {
-        setTimeout(() => this.initChart(), 50)
-      })
-    },
-
     initChart() {
-      const ctx = this.$refs.chartCanvas
-      if (!ctx || !this.chartData) return
+      Chart.defaults.elements.bar.borderWidth = 2
+      Chart.defaults.elements.bar.borderColor = '#444'
+   
+      const labels = ['Bezahlt', 'Teilweise bezahlt', 'Unbezahlt', 'Überfällig']
+      const backgroundColor = ['#10b981', '#60a5fa', '#f59e0b', '#ef4444']
+      const data = [
+        this.chartData.paid_count,
+        this.chartData.partially_paid_count,
+        this.chartData.unpaid_count,
+        this.chartData.overdue_count
+      ]
 
-      this.destroyChart()
-
-      this.chart = new Chart(ctx, {
-        type: 'doughnut',
+      new Chart(document.getElementById('myChart'), {
+        type: 'bar',
         data: {
-          labels: [
-            ['Summe', `${this.chartData.all_total}`],
-            ['Bezahlt', `${this.chartData.paid_total}`],
-            ['Teilweise Bezahlt', `${this.chartData.partially_paid_total}`],
-            ['Unbezahlt', `${this.chartData.unpaid_total}`],
-            ['Überfällig', `${this.chartData.overdue_total}`]
-          ],
+          labels: labels,
           datasets: [
             {
-              all_count: this.chartData.all_count || 0,
-              data: [
-                this.chartData.paid_count || 0,
-                this.chartData.partially_paid_count || 0,
-                this.chartData.unpaid_count || 0,
-                this.chartData.overdue_count || 0
-              ],
-              backgroundColor: ['#10b981', '#60a5fa', '#f59e0b', '#ef4444'],
-              borderWidth: 1
+              label: 'Bar Chart',
+              data: data,
+              backgroundColor: backgroundColor,
+              barPercentage: 0.5,
+              categoryPercentage: 1,
+              borderRadius: 5
             }
           ]
         },
+        scales: {
+          yAxis: {
+            min: 0,
+            stepSize: 1,
+            color: '#000',
+            font: { size: 12 }
+          }
+        },
         options: {
-          responsive: false,
-          maintainAspectRatio: true,
-          cutout: '60%',
-          animation: false,
           plugins: {
             title: {
               display: true,
-              text: 'Title'
+              text: 'Anzahl Rechnungen',
+              font: { size: 18 },
+              padding: {
+                top: 20,
+                bottom: 0
+              }
             },
+            // subtitle: {
+            //   display: true,
+            //   text: 'Subtitle'
+            // },
             legend: {
-              position: 'right',
+              display: true,
+              position: 'top',
               labels: {
-                usePointStyle: true,
-                pointStyle: 'rectRounded',
-                boxWidth: 24,
-                boxHeight: 24,
-                padding: 12,
-                color: '#444',
-                font: (context) => ({ size: context.index === 1 ? 10 : 14 })
+                color: 'blue',
+                font: { size: 10 }
               }
             }
           }
-        },
-        plugins: [centerTextPlugin]
+        }
       })
-    }
+    },
   }
 }
 </script>
+
+<style>
+.canvas-con {
+  width: 700px;
+  height: 400px;
+  margin: auto;
+  margin-top: 50px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 0 10px;
+}
+</style>
