@@ -105,9 +105,7 @@
       <InvoiceChart :chartData="summary" />
 
       <!-- Detailed Table -->
-      <div class="report-table-container">
-        <h3>Detaillierte Übersicht</h3>
-
+      <div class="table-container">
         <div class="filter-tabs">
           <button
             :class="['filter-tab', { active: activeTab === 'all' }]"
@@ -149,33 +147,29 @@
         <table class="report-table">
           <thead>
             <tr>
-              <th>Rechnungsnr.</th>
+              <th class="sortable">Rechnungsnr. <span class="sort-icon">▼</span></th>
+              <th class="sortable">Datum <span class="sort-icon">▼</span></th>
               <th>Kunde</th>
-              <th>Rechnungsdatum</th>
-              <th>Fälligkeitsdatum</th>
-              <th>Nettobetrag</th>
-              <th>MwSt</th>
-              <th>Bruttobetrag</th>
-              <th>Rabatt</th>
-              <th>Gesamt nach Rabatt</th>
+              <th class="sortable">Fälligkeitsdatum <span class="sort-icon">▼</span></th>
+              <th class="center">MwSt</th>
+              <th class="sortable amount">Netto <span class="sort-icon">▼</span></th>
+              <th class="sortable amount">MwSt-Betrag <span class="sort-icon">▼</span></th>
+              <th class="sortable amount">Brutto <span class="sort-icon">▼</span></th>
               <th>Status</th>
-              <th>Tage seit Fälligkeit</th>
               <th>Zahlungsdatum</th>
+              <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in filteredReports" :key="item.id">
-              <td>
-                <strong>{{ formatInvoiceId(item.id) }}</strong>
-              </td>
-              <td>{{ item.customer_id }}</td>
+              <td><span class="invoice-number">{{ formatInvoiceId(item.id) }}</span></td>
               <td>{{ formatDate(item.date) }}</td>
+              <td><span class="customer-name">{{ item.customer_id }}</span></td>
               <td>{{ formatDate(item.due_date) }}</td>
-              <td>{{ formatCurrency(item.net_total) }}</td>
-              <td>{{ formatCurrency(item.vat_total) }}</td>
-              <td>{{ formatCurrency(item.gross_total) }}</td>
-              <td>{{ formatCurrency(item.early_payment_discount) }}</td>
-              <td>{{ formatCurrency(item. gross_total_after_discount) }}</td>
+              <td class="center">{{item.vat_rate}}%</td>
+              <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
+              <td class="amount">{{ formatCurrency(item.net_total) }}</td>
+              <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
               <td>
                 <span
                   :class="[
@@ -186,9 +180,11 @@
                   {{ item.isOverdue ? 'overdue' : item.payment_status }}
                 </span>
               </td>
-
+              <td>{{ formatDate(item.paid_at) || '--------' }}</td>
               <td>
-                <span class="days-badge">{{ formatDate(item.paid_at) }}</span>
+                <div class="action-buttons">
+                  <button class="action-btn">👁️</button>
+                </div>
               </td>
             </tr>
           </tbody>

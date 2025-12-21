@@ -93,8 +93,7 @@ export default {
 .canvas-con {
   width: 700px;
   height: 400px;
-  margin: auto;
-  margin-top: 50px;
+  margin: 50px auto;
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 0 10px;
