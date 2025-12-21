@@ -105,7 +105,7 @@
       <InvoiceChart :chartData="summary" />
 
       <!-- Detailed Table -->
-      <div class="table-container">
+      <div class="report-table-container">
         <div class="filter-tabs">
           <button
             :class="['filter-tab', { active: activeTab === 'all' }]"
@@ -151,7 +151,6 @@
               <th class="sortable">Datum <span class="sort-icon">▼</span></th>
               <th>Kunde</th>
               <th class="sortable">Fälligkeitsdatum <span class="sort-icon">▼</span></th>
-              <th class="center">MwSt</th>
               <th class="sortable amount">Netto <span class="sort-icon">▼</span></th>
               <th class="sortable amount">MwSt-Betrag <span class="sort-icon">▼</span></th>
               <th class="sortable amount">Brutto <span class="sort-icon">▼</span></th>
@@ -166,7 +165,6 @@
               <td>{{ formatDate(item.date) }}</td>
               <td><span class="customer-name">{{ item.customer_id }}</span></td>
               <td>{{ formatDate(item.due_date) }}</td>
-              <td class="center">{{item.vat_rate}}%</td>
               <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
               <td class="amount">{{ formatCurrency(item.net_total) }}</td>
               <td class="amount">{{ formatCurrency(item.gross_total) }}</td>

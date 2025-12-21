@@ -28,7 +28,7 @@ export default db
 // }
 
 // try {
-//   db.prepare(`update invoices set payment_status = 'unpaid'`).run()
+//   db.prepare(`Alter table invoices drop column vat_rate`).run()
 // } catch (error) {
 //   console.error(error)
 // }

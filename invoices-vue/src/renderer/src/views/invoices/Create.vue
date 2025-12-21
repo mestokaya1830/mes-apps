@@ -409,7 +409,6 @@ export default {
         is_eu_delivery: false,
 
         positions: [],
-
         net_total: 0,
         vat_total: 0,
         gross_total: 0,
