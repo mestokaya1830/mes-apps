@@ -29,15 +29,20 @@
               <span class="meta-value">{{ formatInvoiceId(invoice.id) }}</span>
             </div>
 
+            <!-- Service date -->
+            <div v-if="invoice.service_date" class="meta-row">
+              <span class="meta-label">Leistungsdatum:</span>
+              <span class="meta-value">{{ formatDate(invoice.service_date) }}</span>
+            </div>
+
             <div class="meta-row">
               <span class="meta-label">Datum:</span>
               <span class="meta-value">{{ formatDate(invoice.date) }}</span>
             </div>
 
-            <!-- Service date -->
-            <div v-if="invoice.service_date" class="meta-row">
-              <span class="meta-label">Leistungsdatum:</span>
-              <span class="meta-value">{{ formatDate(invoice.service_date) }}</span>
+            <div class="meta-row">
+              <span class="meta-label">Fälligkeitsdatum:</span>
+              <span class="meta-value">{{ formatDate(invoice.due_date) }}</span>
             </div>
 
             <div class="meta-row">
@@ -213,38 +218,38 @@
       />
 
       <!-- payment list -->
-      <div v-if="payments && payments.length" class="customer-grid">
-        <table class="table-auto w-full border">
+      <div v-if="payments && payments.length" class="report-table-container">
+        <table class="report-table">
           <thead>
             <tr>
-              <th class="payment-head">Zahlungs-ID</th>
-              <th class="payment-head">Zahlungsdatum</th>
-              <th class="payment-head">Rechnungssumme</th>
-              <th class="payment-head">Rabatt</th>
-              <th class="payment-head">Gesamtbetrag nach Rabatt</th>
-              <th class="payment-head">Gezahlter Betrag</th>
-              <th class="payment-head">Details</th>
+              <th>Zahlungs-ID</th>
+              <th>Zahlungsdatum</th>
+              <th>Summe</th>
+              <th v-if="invoice.early_paid_discount_applied">Rabatt</th>
+              <th v-if="invoice.early_paid_discount_applied">Summe nach Rabatt</th>
+              <th>Gezahlter Betrag</th>
+              <th>Details</th>
             </tr>
           </thead>
           <tbody v-if="payments">
             <tr v-for="item in payments" :key="item.id">
-              <td class="payment-row">{{ formatPaymentId(item.id) }}</td>
-              <td class="payment-row">{{ formatDate(item.date) }}</td>
-              <td class="payment-row">
+              <td>{{ formatPaymentId(item.id) }}</td>
+              <td>{{ formatDate(item.date) }}</td>
+              <td>
                 {{ formatCurrency(item.invoice.gross_total, item.invoice.currency) }}
               </td>
-              <td class="payment-row">
+              <td v-if="invoice.early_paid_discount_applied">
                 {{ formatCurrency(item.invoice.early_payment_discount, item.invoice.currency) }}
               </td>
-              <td class="payment-row">
+              <td v-if="invoice.early_paid_discount_applied">
                 {{ formatCurrency(item.invoice.gross_total_after_discount, item.invoice.currency) }}
               </td>
-              <td class="payment-row">
+              <td>
                 {{ formatCurrency(item.payment_amount, item.invoice.currency) }}
               </td>
 
-              <td class="payment-row">
-                <router-link :to="'/payments/details/' + item.id" class="action-btn details-btn">
+              <td>
+                <router-link :to="'/payments/details/' + item.id" class="action-btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -258,7 +263,7 @@
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
                   </svg>
-                  Details
+                  👁️
                 </router-link>
               </td>
             </tr>
@@ -269,11 +274,20 @@
           <span>
             {{ formatCurrency(invoice.gross_total, invoice.currency) }}
           </span>
+          <div v-if="invoice.early_paid_discount_applied" class="fl-1">
+            <label for="">Discount: </label>
+            <span>
+              {{ formatCurrency(invoice.early_payment_discount, invoice.currency) }}
+            </span>
+          </div>
           <label for=""> Bereitbezahlt: </label>
           <span>
             {{ formatCurrency(payment_total, invoice.currency) }}
           </span>
           <label for="">Restbetrag: </label>
+          <span v-if="invoice.early_paid_discount_applied">
+            {{ formatCurrency(invoice.gross_total_after_discount - payment_total, invoice.currency) }}
+          </span>
           <span>
             {{ formatCurrency(invoice.gross_total - payment_total, invoice.currency) }}
           </span>

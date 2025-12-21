@@ -292,8 +292,7 @@ export default {
       } else {
         outstanding = gross - (paid + amount)
       }
-
-      return Number(outstanding)
+      return Number(outstanding.toFixed(2))
     },
 
     checkEarlyPayment() {
@@ -341,12 +340,12 @@ export default {
       return true
     },
     setPaymentStatus() {
-      let tempOutstanding = this.calculateOutstanding()
-      if (tempOutstanding === 0) {
+      let result = this.calculateOutstanding()
+      if (result === 0) {
         this.payment.invoice.payment_status = 'paid'
-      } else {
-        this.payment.invoice.payment_status = 'partially_paid'
+        return
       }
+      this.payment.invoice.payment_status = 'partially_paid'
     },
     checkPaymentDate() {
       if (!this.payment.date) {
@@ -360,9 +359,8 @@ export default {
       if (!this.checkPaymentAmount()) return
       if (this.setPaymentStatus()) return
       this.payment.image_file = this.selectedImage
-      console.log(this.payment)
-      // await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
-      // this.$router.push('/payments/preview')
+      await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
+      this.$router.push('/payments/preview')
     }
   }
 }

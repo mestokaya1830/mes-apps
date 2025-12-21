@@ -165,8 +165,8 @@
               <td>{{ formatDate(item.date) }}</td>
               <td><span class="customer-name">{{ item.customer_id }}</span></td>
               <td>{{ formatDate(item.due_date) }}</td>
-              <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
               <td class="amount">{{ formatCurrency(item.net_total) }}</td>
+              <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
               <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
               <td>
                 <span

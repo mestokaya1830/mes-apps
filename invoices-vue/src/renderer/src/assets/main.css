@@ -19,7 +19,11 @@ a {
   text-decoration: none;
   color: #fff;
 }
-
+.fl-1{
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
 .date {
   position: relative;
   cursor: pointer;
@@ -1438,9 +1442,12 @@ input:checked + .slider:before {
 }
 
 .report-table {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  margin-top: 30px;
   table-layout: fixed;
   overflow-x: auto;
 }
@@ -1449,8 +1456,13 @@ input:checked + .slider:before {
   background: #f9fafb;
   border-bottom: 2px solid #e5e7eb;
 }
+.report-table thead tr{
+  display: flex;
+  justify-content: space-between;
+}
 
-.report-table th {
+.report-table th, .report-table td{
+  flex: 1;
   padding: 12px 8px;
   text-align: left;
   font-weight: 600;
@@ -1458,7 +1470,6 @@ input:checked + .slider:before {
   font-size: 13px;
   white-space: nowrap; /* Başlıklar tek satırda */
 }
-
 .report-table th.sortable {
   cursor: pointer;
   user-select: none;
@@ -1475,6 +1486,8 @@ input:checked + .slider:before {
 }
 
 .report-table tbody tr {
+  display: flex;
+  justify-content: space-between;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -1489,74 +1502,6 @@ input:checked + .slider:before {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.report-table th:nth-child(1),
-.report-table td:nth-child(1) {
-  width: 120px;
-  min-width: 120px;
-}
-
-.report-table th:nth-child(2),
-.report-table td:nth-child(2) {
-  width: 110px;
-  min-width: 110px;
-}
-
-.report-table th:nth-child(3),
-.report-table td:nth-child(3) {
-  width: 50px;
-  min-width: 50px;
-}
-
-.report-table th:nth-child(4),
-.report-table td:nth-child(4) {
-  width: 110px;
-  min-width: 110px;
-}
-
-.report-table th:nth-child(5),
-.report-table td:nth-child(5) {
-  width: 60px;
-  min-width: 60px;
-}
-
-.report-table th:nth-child(6),
-.report-table td:nth-child(6) {
-  width: 140px;
-  min-width: 140px;
-}
-
-.report-table th:nth-child(7),
-.report-table td:nth-child(7) {
-  width: 140px;
-  min-width: 140px;
-}
-
-.report-table th:nth-child(8),
-.report-table td:nth-child(8) {
-  width: 140px;
-  min-width: 140px;
-}
-
-.report-table th:nth-child(9),
-.report-table td:nth-child(9) {
-  width: 120px;
-  min-width: 120px;
-  text-align: center;
-}
-
-.report-table th:nth-child(10),
-.report-table td:nth-child(10) {
-  width: 140px;
-  min-width: 140px;
-}
-
-.report-table th:nth-child(11),
-.report-table td:nth-child(11) {
-  width: 70px;
-  min-width: 70px;
-}
-
 
 .action-buttons {
   display: flex;

@@ -25,7 +25,7 @@ export default {
     initChart() {
       Chart.defaults.elements.bar.borderWidth = 2
       Chart.defaults.elements.bar.borderColor = '#444'
-   
+
       const labels = ['Bezahlt', 'Teilweise bezahlt', 'Unbezahlt', 'Überfällig']
       const backgroundColor = ['#10b981', '#60a5fa', '#f59e0b', '#ef4444']
       const data = [
@@ -53,7 +53,7 @@ export default {
         scales: {
           yAxis: {
             min: 0,
-            stepSize: 1,
+            stepSize: 0.1,
             color: '#000',
             font: { size: 12 }
           }
@@ -84,7 +84,7 @@ export default {
           }
         }
       })
-    },
+    }
   }
 }
 </script>

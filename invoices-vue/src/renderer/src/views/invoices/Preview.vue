@@ -28,16 +28,22 @@
               <span class="meta-value">{{ formatInvoiceId(invoicePreview.id) }}</span>
             </div>
 
-            <div class="meta-row">
-              <span class="meta-label">Datum:</span>
-              <span class="meta-value">{{ formatDate(invoicePreview.date) }}</span>
-            </div>
-
             <!-- Service date -->
             <div v-if="invoicePreview.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
               <span class="meta-value">{{ formatDate(invoicePreview.service_date) }}</span>
             </div>
+
+            <div class="meta-row">
+              <span class="meta-label">Datum:</span>
+              <span class="meta-value">{{ formatDate(invoicePreview.date) }}</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="meta-label">Fälligkeitsdatum:</span>
+              <span class="meta-value">{{ formatDate(invoicePreview.due_date) }}</span>
+            </div>
+
 
             <div class="meta-row">
               <span class="meta-label">Kunden-Nr.:</span>
