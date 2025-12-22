@@ -420,15 +420,17 @@ ipcMain.handle('add-customer', async (event, payload) => {
         `
       INSERT INTO customers (
         is_active,
+        date,
         company_type, company_name,
         first_name, last_name, full_name, email, phone, website,
         address, postal_code, city, country,
         tax_number, vat_id
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
       )
       .run(
         customer.is_active ? 1 : 0,
+        new Date().toISOString().split('T')[0],
 
         customer.company_type,
         customer.company_name,
@@ -629,6 +631,46 @@ ipcMain.handle('search-customers', async (event, term) => {
       console.error('DB error:', err.message)
       return { success: false, message: err.message }
     }
+  }
+})
+
+ipcMain.handle('report-customers', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const { start, end, limit } = payload
+
+    const rows = db
+      .prepare(
+        `      SELECT 
+              c.id,
+              c.company_name,
+              c.full_name,
+              COUNT(i.id) AS invoice_count,
+              MAX(i.date) AS last_activity,
+              SUM(i.gross_total) AS invoice_total,
+              SUM(CASE WHEN i.payment_status = 'paid' THEN 1 ELSE 0 END) AS paid,
+              SUM(CASE WHEN i.payment_status = 'unpaid' THEN 1 ELSE 0 END) AS unpaid,
+              SUM(CASE WHEN i.payment_status = 'partially_paid' THEN 1 ELSE 0 END) AS partially_paid,
+              SUM(CASE WHEN i.due_date < DATE('now') AND i.payment_status != 'paid' THEN 1 ELSE 0 END) AS overdue
+          FROM customers c
+          LEFT JOIN invoices i ON c.id = i.customer_id
+          WHERE c.is_active = 1 AND c.date BETWEEN ? AND ?
+          GROUP BY c.id
+          ORDER BY c.company_name ASC   -- veya toplam gelire göre DESC
+          LIMIT ?`
+      )
+      .all(start, end, limit)
+
+    return {
+      success: true,
+      rows: rows
+    }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
   }
 })
 
@@ -1132,10 +1174,10 @@ ipcMain.handle('search-invoices', async (event, term) => {
           .prepare(
             `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active,  payment_status, early_payment_offer, early_paid_discount_applied, customer
             FROM invoices
-            WHERE is_active = 1 AND id + 0 LIKE ?
+            WHERE is_active = 1 AND (id = ? OR customer_id = ?)
             ORDER BY id DESC LIMIT ?`
           )
-          .all(term, limit)
+          .all(term, term ,limit)
         total = db
           .prepare(`SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id + 0 LIKE ?`)
           .get(term).total
@@ -1183,6 +1225,27 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
+  }
+})
+
+ipcMain.handle('report-invoices', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
+      )
+      .all(start, end)
+
+    console.log(rows)
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
   }
 })
 
@@ -1951,24 +2014,5 @@ ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
     // Burada audit log veya DB işlemi yapılabilir
   } catch (err) {
     console.error('PDF Error:', err)
-  }
-})
-
-//reports
-ipcMain.handle('document-report', async (event, payload) => {
-  try {
-    const { start, end } = payload
-    const rows = db
-      .prepare(
-        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
-      )
-      .all(start, end)
-
-    console.log(rows)
-
-    return { success: true, rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
   }
 })

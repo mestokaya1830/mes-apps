@@ -156,6 +156,10 @@ export default {
         due_date.setHours(0, 0, 0, 0)
 
         return new Date(due_date) < today
+      },
+      formatPercentage(value, total) {
+        if (!total || total === 0) return '0.00%'
+        return ((value / total) * 100).toFixed(2) + '%'
       }
     }
   },

@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld('api', {
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
   deleteCustomerById: async (id) => ipcRenderer.invoke('delete-customer-by-id', id),
   searchCustomers: async (data) => ipcRenderer.invoke('search-customers', data),
+  reportCustomers: async (data) => ipcRenderer.invoke('report-customers', data),
 
   //invoice
   addInvoice: async (data) => ipcRenderer.invoke('add-invoice', data),
@@ -35,6 +36,7 @@ contextBridge.exposeInMainWorld('api', {
   filterInvoicesCategories: async (data) => ipcRenderer.invoke('flter-invoices-categories', data),
   searchInvoices: async (term) => ipcRenderer.invoke('search-invoices', term),
   filterInvoicesDate: async (date) => ipcRenderer.invoke('filter-invoices-date', date),
+  reportInvoices: async (data) => ipcRenderer.invoke('report-invoices', data),
 
   //payment
   addPayment: (data) => ipcRenderer.invoke('add-payment', data),
@@ -69,8 +71,5 @@ contextBridge.exposeInMainWorld('api', {
         fileName
       })
     })
-  },
-
-  //reports
-  documentReport: async (data) => ipcRenderer.invoke('document-report', data)
+  }
 })

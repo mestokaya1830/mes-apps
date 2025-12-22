@@ -5,7 +5,7 @@
         {{ title }}
         <h2 v-if="reportsLength">{{ reportsLength }}</h2>
       </h3>
-      <select v-model="report_static_date" class="form-input" @change="getStaticDate">
+      <select v-model="date_range" class="form-input" @change="rangeDateFilter">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>
         <option value="3">Letzte 3 Monate</option>
@@ -17,81 +17,145 @@
         <div class="form-row">
           <div class="form-group">
             <label for="">Von</label>
-            <input v-model="date_box_start" type="date" class="form-input" @change="dateFilter()" />
+            <input
+              v-model="date_box_start"
+              type="date"
+              class="form-input date"
+              @change="flexDateFilter()"
+            />
           </div>
           <div class="form-group">
             <label for="">Bis</label>
-            <input v-model="date_box_end" type="date" class="form-input" @change="dateFilter()" />
+            <input
+              v-model="date_box_end"
+              type="date"
+              class="form-input date"
+              @change="flexDateFilter()"
+            />
           </div>
         </div>
       </div>
       <div v-if="is_ready" class="report-container printable">
-        <div class="report-header">
+        <div class="report-header-2">
           <div>
-            <h2>{{ title }}</h2>
-            <p class="report-period">Zeitraum: {{ period.start }} - {{ period.end }}</p>
-          </div>
-          <button class="btn-export" @click="printReport">🖨️ Drucken</button>
-        </div>
-
-        <div class="summary-section">
-          <!-- Summary Cards -->
-          <div class="summary-cards">
-            <div class="summary-card">
-              <div class="card-icon">👥</div>
-              <div class="card-content">
-                <p class="card-label">Aktive Kunden</p>
-                <h3 class="card-value">{{ reports.length }}</h3>
-                <p class="card-detail">Im Zeitraum</p>
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="card-icon">💰</div>
-              <div class="card-content">
-                <p class="card-label">Ø Umsatz pro Kunde</p>
-                <h3 class="card-value">{{ formatCurrency(reportSummary.average) }}</h3>
-                <p class="card-detail">Durchschnitt</p>
-              </div>
-            </div>
-
-            <div class="summary-card">
-              <div class="card-icon">🏆</div>
-              <div class="card-content">
-                <p class="card-label">Top Kunde</p>
-                <h3 class="card-value">{{ formatCurrency(reportSummary.top_customer) }}</h3>
-                <p class="card-detail">{{ reportSummary.top_customer_name }}</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="chart-container">
-            <h1>Chart</h1>
+            <h2>Kundenbezogener Bericht</h2>
+            <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
           </div>
         </div>
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+          <div class="summary-card">
+            <div class="card-icon">👥</div>
+            <div class="card-content">
+              <p class="card-label">Aktive Kunden</p>
+              <h3 class="card-value">{{ reportsLength }}</h3>
+              <p class="card-detail">Im Zeitraum</p>
+            </div>
+          </div>
 
-        <!-- Table -->
+          <div class="summary-card">
+            <div class="card-icon">💰</div>
+            <div class="card-content">
+              <p class="card-label">Ø Gesamtumsatz</p>
+              <h3 class="card-value">{{ formatCurrency(reports.total) }}</h3>
+              <p class="card-detail">Im Zeitraum</p>
+            </div>
+          </div>
+
+          <div v-if="reports.topCustomers" class="summary-card">
+            <div class="card-icon">🏆</div>
+            <div class="card-content">
+              <p class="card-label">Top Kunde</p>
+              <h3 class="card-value">
+                {{ formatCurrency(reports.topCustomers[0].total_revenue) }}
+              </h3>
+              <h3 class="card-detail">{{ reports.topCustomers[0].company_name }}</h3>
+              <p class="card-detail">{{ reports.topCustomers[0].full_name }}</p>
+              <p class="card-detail">ID: {{ reports.topCustomers[0].id }}</p>
+            </div>
+          </div>
+
+          <div class="summary-card">
+            <div class="card-icon">📊</div>
+            <div class="card-content">
+              <p class="card-label">Umsatz pro Kunde</p>
+              <h3 class="card-value">{{ formatCurrency(reports.avarage) }}</h3>
+              <p class="card-detail">Durchschchnitt</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Customers -->
         <div class="top-customers-section">
           <h3>🏆 Top 10 Kunden nach Umsatz</h3>
-          <div v-for="(item, index) in reports" :key="item.id" class="top-customer-list">
+          <div
+            v-for="(item, index) in reports.topCustomers"
+            :key="item.id"
+            class="top-customer-list"
+          >
             <div class="top-customer-item">
-              <div class="customer-rank gold">{{ index }}</div>
+              <div class="customer-rank gold">{{ index + 1 }}</div>
               <div class="customer-info">
-                <div class="customer-name">{{ item.customer.company_name }}</div>
-                <div class="customer-detail">
-                  Kunde seit: {{ formatDate(period.start) }} <br />
-                  Letzte Rechnung: {{ formatDate(item.date) }}
-                </div>
+                <div class="customer-name">{{ item.company_name }}</div>
+                <div class="customer-detail">{{ item.full_name }}</div>
                 <div class="customer-bar">
-                  <div class="customer-bar-fill" style="width: 100%"></div>
+                  <div class="customer-bar-fill" :style="`width: ${item.percentage}%`"></div>
                 </div>
+                <small> {{ item.percentage }} %</small>
               </div>
               <div class="customer-revenue">
-                <div class="revenue-amount">{{ formatCurrency(item.summary.total) }}</div>
-                <div class="revenue-count">6 Rechnungen</div>
+                <div class="revenue-amount">{{ formatCurrency(item.total_revenu) }}</div>
+                <div class="revenue-count">{{ item.invoice_count }} Rechnungen</div>
+                <small> {{ item.percentage }} %</small>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Detailed Table -->
+        <div class="table-section">
+          <h3>Detaillierte Kundenübersicht</h3>
+          <input type="text" placeholder="Suche nach Kundenname..." class="search-input" />
+
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Kunde</th>
+                <th class="center">Rechnungen</th>
+                <th>Gesamtumsatz</th>
+                <th>Bezahlt</th>
+                <th>Teilweise bezahlt</th>
+                <th>Ausstehend</th>
+                <th>Un­be­rfällig</th>
+                <th>Letzte Aktivität</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in reports" :key="item.id">
+                <td>
+                  <strong>{{ item.company_name || item.full_name }}</strong>
+                </td>
+                <td>{{ item.invoice_count }}</td>
+                <td>{{ formatCurrency(item.invoice_total) }}</td>
+                <td>{{ item.paid }}</td>
+                <td>{{ item.partially_paid }}</td>
+                <td>{{ item.unpaid }}</td>
+                <td>{{ item.overdue }}</td>
+                <td>{{ item.last_activity }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td><strong>SUMME / DURCHSCHNITT</strong></td>
+                <td><strong>30</strong></td>
+                <td class="amount"><strong>€39.665,00</strong></td>
+                <td class="amount"><strong>€1.322,17</strong></td>
+                <td class="amount"><strong>€30.955,90</strong></td>
+                <td class="amount"><strong>€8.709,10</strong></td>
+                <td colspan="2"></td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
     </div>
@@ -100,102 +164,84 @@
 <script>
 export default {
   name: 'CustomersReport',
-  inject: ['formatCustomerId', 'formatDate', 'formatCurrency'],
+  inject: ['formatCustomerId', 'formatDate', 'formatCurrency', 'formatPercentage'],
   data() {
     return {
       title: 'Kundenbezogener Bericht',
       reports: null,
-      report_static_date: '',
+      summary: null,
+      date_range: '',
       date_box_start: '',
       date_box_end: '',
-      period: {
-        start: '',
-        end: ''
-      },
-      reportSummary: {},
+      period: { start: '', end: '' },
       is_ready: false,
-      reportsLength: 0
+      activeTab: 'all',
+      is_sort: true
     }
   },
-
+  mounted() {
+    this.getReport()
+  },
   methods: {
-    formatInvoiceId(id) {
-      if (!id || !id) return ''
-      const year = new Date().getFullYear()
-      return `RE-${year}-${String(id).padStart(5, '0')}`
+    async rangeDateFilter() {
+      if (!this.date_range) return
+      const today = new Date()
+      const startDate = new Date(today.getFullYear(), today.getMonth() - this.date_range, 1)
+      const endDate = new Date(today.getFullYear(), today.getMonth() + 0, 0)
+      this.date_box_start = startDate.toISOString().slice(0, 10)
+      this.date_box_end = endDate.toISOString().slice(0, 10)
+      this.getReport()
     },
-    async getStaticDate() {
-      if (this.report_static_date) {
-        const today = new Date()
-        const endDate = new Date(today.getFullYear(), today.getMonth() + 0, 0, 23, 59, 59) //with 23 hours
-        const startDate = new Date(
-          today.getFullYear(),
-          today.getMonth() - this.report_static_date,
-          1,
-          0,
-          0,
-          0
-        ) //with 0 hours
+    flexDateFilter() {
+      if (!this.date_box_start) return this.$refs.date_box_start.focus()
+      if (!this.date_box_end) return this.$refs.date_box_end.focus()
+      if (this.date_box_start > this.date_box_end) {
+        this.date_box_end = ''
+        return this.$refs.date_box_end.focus()
+      }
+      this.getReport()
+    },
+    async getReport() {
+      if (!this.date_box_start || !this.date_box_end) return
+      const data = {
+        start: this.date_box_start,
+        end: this.date_box_end,
+        limit: 20
+      }
+      const result = await window.api.reportCustomers(data)
+      if (!result.success) return
+      this.reports = result.rows
+      console.log('result', result)
+      // this.reports = {
+      //   customers: result.rows,
+      //   avarage: result.avarage,
+      //   total: result.total,
+      //   topCustomers: result.topCustomers
+      // }
+      // const totalRevenue = result.topCustomers.reduce((sum, c) => sum + c.total_revenue, 0)
+      // result.topCustomers.forEach((c) => {
+      //   c.percentage = ((c.total_revenue / totalRevenue) * 100).toFixed(2) // örn: "50.00"
+      // })
 
-        const result = await window.api.documentReport(
-          'invoices',
-          startDate.toISOString().slice(0, 10),
-          endDate.toISOString().slice(0, 10)
-        )
-        if (result.success) {
-          this.reports = result.rows.map((row) => ({
-            ...row,
-            customer: JSON.parse(row.customer),
-            terms: JSON.parse(row.terms),
-            positions: JSON.parse(row.positions),
-            summary: JSON.parse(row.summary),
-            tax_options: JSON.parse(row.tax_options)
-          }))
-          this.period.start = startDate.toISOString().slice(0, 10)
-          this.period.end = endDate.toISOString().slice(0, 10)
-          this.is_ready = true
-          this.reportSummaryFunction()
-        }
+      //date
+      this.date_range = {
+        start: this.date_box_start,
+        end: this.date_box_end
       }
-    },
-    async dateFilter() {
-      if (this.date_box_start && this.date_box_end) {
-        const result = await window.api.documentReport(
-          'invoices',
-          this.date_box_start,
-          this.date_box_end
-        )
-        if (result.success) {
-          this.reports = result.rows
-          this.is_ready = true
-          this.reportSummaryFunction()
-        }
+      this.period = {
+        start: this.date_box_start,
+        end: this.date_box_end
       }
+      this.is_ready = true
+      this.reportsLength = result.rows.length
     },
-    reportSummaryFunction() {
-      if (this.reports) {
-        this.reportSummary = {
-          total: 0,
-          paid_amount: 0,
-          outstanding: 0,
-          average: 0,
-          top_customer: 0
-        }
-        this.reports.forEach((report) => {
-          this.reportSummary.total += Number(report.summary.total)
-          this.reportSummary.paid_amount += Number(report.summary.paid_amount)
-          this.reportSummary.outstanding += Number(report.summary.outstanding)
-        })
-        this.reportSummary.average = this.reportSummary.total / this.reports.length
-        this.reportSummary.top_customer = Math.max(...this.reports.map((r) => r.summary.total))
-        this.reportSummary.top_customer_name = this.reports.find(
-          (item) => Number(item.summary.total) === this.reportSummary.top_customer
-        )?.customer.company_name
-      }
-      this.reportsLength = this.reports.length
-    },
-    async printReport() {
-      window.print()
+    sorting(key) {
+      if (!key) return
+      this.reports.sort((a, b) => {
+        const res = a[key] > b[key] ? 1 : -1
+        return this.isSort ? res : -res
+      })
+      this.isSort = !this.isSort
     }
   }
 }

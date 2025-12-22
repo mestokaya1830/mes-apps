@@ -190,7 +190,8 @@ export default {
         phone: '+49',
         website: '',
         tax_number: '',
-        vat_id: ''
+        vat_id: '',
+        is_active: 1
       },
       companies: [
         { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },

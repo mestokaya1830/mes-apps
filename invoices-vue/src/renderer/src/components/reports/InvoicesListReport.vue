@@ -147,7 +147,9 @@
         <table class="report-table">
           <thead>
             <tr>
-              <th class="sortable">Rechnungsnr. <span class="sort-icon">▼</span></th>
+              <th class="sortable" @click="sorting('id')">
+                Rechnungsnr. <span class="sort-icon">▼</span>
+              </th>
               <th class="sortable">Datum <span class="sort-icon">▼</span></th>
               <th>Kunde</th>
               <th class="sortable">Fälligkeitsdatum <span class="sort-icon">▼</span></th>
@@ -161,9 +163,13 @@
           </thead>
           <tbody>
             <tr v-for="item in filteredReports" :key="item.id">
-              <td><span class="invoice-number">{{ formatInvoiceId(item.id) }}</span></td>
+              <td>
+                <span class="invoice-number">{{ formatInvoiceId(item.id) }}</span>
+              </td>
               <td>{{ formatDate(item.date) }}</td>
-              <td><span class="customer-name">{{ item.customer_id }}</span></td>
+              <td>
+                <span class="customer-name">{{ item.customer_id }}</span>
+              </td>
               <td>{{ formatDate(item.due_date) }}</td>
               <td class="amount">{{ formatCurrency(item.net_total) }}</td>
               <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
@@ -197,7 +203,14 @@ import InvoiceChart from '../chart/InvoiceChart.vue'
 export default {
   name: 'InvoiceReport',
   components: { InvoiceChart },
-  inject: ['formatDate', 'formatCurrency', 'formatInvoiceId', 'formatCustomerId', 'checkDueDate'],
+  inject: [
+    'formatDate',
+    'formatCurrency',
+    'formatInvoiceId',
+    'formatCustomerId',
+    'checkDueDate',
+    'formatPercentage'
+  ],
   data() {
     return {
       title: 'Rechnungsbericht',
@@ -321,7 +334,7 @@ export default {
         start: this.date_box_start,
         end: this.date_box_end
       }
-      const result = await window.api.documentReport(data)
+      const result = await window.api.reportInvoices(data)
       if (!result.success) return
       this.reports = result.rows
 
@@ -330,11 +343,7 @@ export default {
         end: this.date_box_end
       }
       this.is_ready = true
-      console.log(result)
-    },
-    formatPercentage(value, total) {
-      if (!total || total === 0) return '0.00%'
-      return ((value / total) * 100).toFixed(2) + '%'
+      // console.log(result)
     },
     sorting(key) {
       if (!key) return
@@ -348,7 +357,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .editor-panel {
   max-width: 100%;
   background: white;
@@ -806,7 +815,6 @@ export default {
   background: #fee2e2;
   color: #991b1b;
 }
-
 /* PRINT STYLES */
 @media print {
   body {

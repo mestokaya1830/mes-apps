@@ -16,7 +16,7 @@
         <p><strong>Adresse:</strong> {{ customer.address }}</p>
         <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
        
-        <button class="action-btn delete-btn" @click="deleteCustomer(item.id)">
+        <button class="action-btn delete-btn" @click="deleteCustomer(customer.id)">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -70,7 +70,7 @@ export default {
         try {
           const result = await window.api.deleteCustomerById(id)
           if (!result.success) return
-          this.getCustomers()
+          this.$router.push({ name: 'customers' })
         } catch (error) {
           console.error(error)
         }

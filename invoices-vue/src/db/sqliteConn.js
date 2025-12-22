@@ -17,8 +17,6 @@ process.on('exit', () => db.close())
 
 export default db
 
-
-
 // try {
 //   const result = db.prepare(`PRAGMA table_info(invoices);`).all()
 //   const fields = result.map((r) => r.name)
@@ -28,11 +26,10 @@ export default db
 // }
 
 // try {
-//   db.prepare(`Alter table invoices drop column vat_rate`).run()
+//   db.prepare(`Alter table customers ADD COLUMN date TEXT NOT NULL DEFAULT '';`).run()
 // } catch (error) {
 //   console.error(error)
 // }
-
 
 // try {
 //   const result = db
@@ -43,5 +40,3 @@ export default db
 // } catch (error) {
 //   console.error(error)
 // }
-
-
