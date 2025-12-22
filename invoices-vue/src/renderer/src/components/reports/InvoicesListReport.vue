@@ -1,6 +1,6 @@
 <template>
   <div class="editor-panel">
-    <select class="form-input" v-model="date_range" @change="rangeDateFilter">
+    <select v-model="date_range" class="form-input" @change="rangeDateFilter">
       <option value="" disabled selected>Wähle Daten</option>
       <option value="1">Diesen Monat</option>
       <option value="3">Letzte 3 Monate</option>
@@ -37,7 +37,7 @@
     <div v-if="is_ready" class="report-container">
       <div class="report-header-2">
         <div>
-          <h2>Rechnungsbericht</h2>
+          <h2>{{ title }}</h2>
           <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
         </div>
         <button class="btn-export" onclick="window.print()">🖨️ Drucken</button>

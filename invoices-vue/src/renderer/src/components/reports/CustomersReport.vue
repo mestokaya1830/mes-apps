@@ -1,153 +1,151 @@
 <template>
-  <div>
-    <div class="editor-panel">
-      <h3 v-if="reports" class="editor-header">{{ title }} {{ reports.length }}</h3>
-      <select v-model="date_range" class="form-input" @change="rangeDateFilter">
-        <option value="" disabled selected>Waehle Daten</option>
-        <option value="1">Diesen Monat</option>
-        <option value="3">Letzte 3 Monate</option>
-        <option value="6">Letzte 6 Monate</option>
-        <option value="12">Letztes Jahr</option>
-      </select>
+  <div class="editor-panel">
+    <select v-model="date_range" class="form-input" @change="rangeDateFilter">
+      <option value="" disabled selected>Waehle Daten</option>
+      <option value="1">Diesen Monat</option>
+      <option value="3">Letzte 3 Monate</option>
+      <option value="6">Letzte 6 Monate</option>
+      <option value="12">Letztes Jahr</option>
+    </select>
 
-      <div class="form-section">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="">Von</label>
-            <input
-              v-model="date_box_start"
-              type="date"
-              class="form-input date"
-              @change="flexDateFilter()"
-            />
+    <div class="form-section">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="">Von</label>
+          <input
+            v-model="date_box_start"
+            type="date"
+            class="form-input date"
+            @change="flexDateFilter()"
+          />
+        </div>
+        <div class="form-group">
+          <label for="">Bis</label>
+          <input
+            v-model="date_box_end"
+            type="date"
+            class="form-input date"
+            @change="flexDateFilter()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div v-if="is_ready" class="report-container printable">
+      <div class="report-header-2">
+        <div>
+          <h2>{{ title }}</h2>
+          <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
+        </div>
+      </div>
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon">👥</div>
+          <div class="card-content">
+            <p class="card-label">Aktive Kunden</p>
+            <h3 class="card-value">{{ reports.length }}</h3>
+            <p class="card-detail">Im Zeitraum</p>
           </div>
-          <div class="form-group">
-            <label for="">Bis</label>
-            <input
-              v-model="date_box_end"
-              type="date"
-              class="form-input date"
-              @change="flexDateFilter()"
-            />
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">💰</div>
+          <div class="card-content">
+            <p class="card-label">Ø Gesamtumsatz</p>
+            <h3 class="card-value">{{ formatCurrency(summary.total_revenue) }}</h3>
+            <p class="card-detail">Im Zeitraum</p>
+          </div>
+        </div>
+
+        <div v-if="summary.top_customer" class="summary-card">
+          <div class="card-icon">🏆</div>
+          <div class="card-content">
+            <p class="card-label">Top Kunde</p>
+            <h3 class="card-value">
+              {{ formatCurrency(summary.top_customer.invoice_total) }}
+            </h3>
+            <h3 class="card-detail">{{ summary.top_customer.company_name }}</h3>
+            <p class="card-detail">{{ summary.top_customer.full_name }}</p>
+            <p class="card-detail">ID: {{ summary.top_customer.id }}</p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <div class="card-icon">📊</div>
+          <div class="card-content">
+            <p class="card-label">Umsatz pro Kunde</p>
+            <h3 class="card-value">{{ formatCurrency(summary.total_avarage) }}</h3>
+            <p class="card-detail">Durchschchnitt</p>
           </div>
         </div>
       </div>
-      <div v-if="is_ready" class="report-container printable">
-        <div class="report-header-2">
-          <div>
-            <h2>Kundenbezogener Bericht</h2>
-            <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
-          </div>
-        </div>
-        <!-- Summary Cards -->
-        <div class="summary-cards">
-          <div class="summary-card">
-            <div class="card-icon">👥</div>
-            <div class="card-content">
-              <p class="card-label">Aktive Kunden</p>
-              <h3 class="card-value">{{ reports.length }}</h3>
-              <p class="card-detail">Im Zeitraum</p>
-            </div>
-          </div>
 
-          <div class="summary-card">
-            <div class="card-icon">💰</div>
-            <div class="card-content">
-              <p class="card-label">Ø Gesamtumsatz</p>
-              <h3 class="card-value">{{ formatCurrency(summary.total_revenue) }}</h3>
-              <p class="card-detail">Im Zeitraum</p>
-            </div>
-          </div>
-
-          <div v-if="summary.top_customer" class="summary-card">
-            <div class="card-icon">🏆</div>
-            <div class="card-content">
-              <p class="card-label">Top Kunde</p>
-              <h3 class="card-value">
-                {{ formatCurrency(summary.top_customer.invoice_total) }}
-              </h3>
-              <h3 class="card-detail">{{ summary.top_customer.company_name }}</h3>
-              <p class="card-detail">{{ summary.top_customer.full_name }}</p>
-              <p class="card-detail">ID: {{ summary.top_customer.id }}</p>
-            </div>
-          </div>
-
-          <div class="summary-card">
-            <div class="card-icon">📊</div>
-            <div class="card-content">
-              <p class="card-label">Umsatz pro Kunde</p>
-              <h3 class="card-value">{{ formatCurrency(summary.total_avarage) }}</h3>
-              <p class="card-detail">Durchschchnitt</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Top Customers -->
-        <div class="top-customers-section">
-          <h3>🏆 Kunden</h3>
-          <div v-for="(item, index) in reports" :key="item.id" class="top-customer-list">
-            <div class="top-customer-item">
-              <div class="customer-rank gold">{{ index + 1 }}</div>
-              <div class="customer-info">
-                <div class="customer-name">{{ item.company_name }}</div>
-                <div class="customer-detail">{{ item.full_name }}</div>
-                <div class="customer-bar">
-                  <div class="customer-bar-fill" :style="`width: ${item.percentage}%`"></div>
-                </div>
-                <small> {{ item.percentage }} %</small>
+      <!-- Top Customers -->
+      <div class="top-customers-section">
+        <h3>🏆 Kunden</h3>
+        <div v-for="(item, index) in reports" :key="item.id" class="top-customer-list">
+          <div class="top-customer-item">
+            <div class="customer-rank gold">{{ index + 1 }}</div>
+            <div class="customer-info">
+              <div class="customer-name">{{ item.company_name }}</div>
+              <div class="customer-detail">{{ item.full_name }}</div>
+              <div class="customer-bar">
+                <div class="customer-bar-fill" :style="`width: ${item.percentage}%`"></div>
               </div>
-              <div class="customer-revenue">
-                <div class="revenue-amount">{{ formatCurrency(item.invoice_total) }}</div>
-                <div class="revenue-count">{{ item.invoice_count }} Rechnungen</div>
-                <small> {{ item.percentage }} %</small>
-              </div>
+              <small> {{ item.percentage }} %</small>
+            </div>
+            <div class="customer-revenue">
+              <div class="revenue-amount">{{ formatCurrency(item.invoice_total) }}</div>
+              <div class="revenue-count">{{ item.invoice_count }} Rechnungen</div>
+              <small> {{ item.percentage }} %</small>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Detailed Table -->
-        <div class="table-section">
-          <h3>Detaillierte Kundenübersicht</h3>
-          <table class="report-table">
-            <thead>
-              <tr>
-                <th>Kunde</th>
-                <th class="center">Rechnungen</th>
-                <th>Gesamtumsatz</th>
-                <th>Bezahlt</th>
-                <th>Teilweise bezahlt</th>
-                <th>Ausstehend</th>
-                <th>Un­be­rfällig</th>
-                <th>Letzte Aktivität</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in reports" :key="item.id">
-                <td>
-                  <strong>{{ item.company_name || item.full_name }}</strong>
-                </td>
-                <td>{{ item.invoice_count }}</td>
-                <td>{{ formatCurrency(item.invoice_total) }}</td>
-                <td>{{ item.paid }}</td>
-                <td>{{ item.partially_paid }}</td>
-                <td>{{ item.unpaid }}</td>
-                <td>{{ item.overdue }}</td>
-                <td>{{ item.last_activity }}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr class="total-row">
-                <td><strong>SUMME / DURCHSCHNITT</strong></td>
-                <td><strong>30</strong></td>
-                <td class="amount"><strong>€39.665,00</strong></td>
-                <td class="amount"><strong>€1.322,17</strong></td>
-                <td class="amount"><strong>€30.955,90</strong></td>
-                <td class="amount"><strong>€8.709,10</strong></td>
-                <td colspan="2"></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+      <!-- Detailed Table -->
+      <div class="table-section">
+        <h3>Detaillierte Kundenübersicht</h3>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Kunde</th>
+              <th class="center">Rechnungen</th>
+              <th>Gesamtumsatz</th>
+              <th>Bezahlt</th>
+              <th>Teilweise bezahlt</th>
+              <th>Ausstehend</th>
+              <th>Un­be­rfällig</th>
+              <th>Letzte Aktivität</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in reports" :key="item.id">
+              <td>
+                <strong>{{ item.company_name || item.full_name }}</strong>
+              </td>
+              <td>{{ item.invoice_count }}</td>
+              <td>{{ formatCurrency(item.invoice_total) }}</td>
+              <td>{{ item.paid }}</td>
+              <td>{{ item.partially_paid }}</td>
+              <td>{{ item.unpaid }}</td>
+              <td>{{ item.overdue }}</td>
+              <td>{{ item.last_activity }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td><strong>SUMME / DURCHSCHNITT</strong></td>
+              <td><strong>30</strong></td>
+              <td class="amount"><strong>€39.665,00</strong></td>
+              <td class="amount"><strong>€1.322,17</strong></td>
+              <td class="amount"><strong>€30.955,90</strong></td>
+              <td class="amount"><strong>€8.709,10</strong></td>
+              <td colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     </div>
   </div>
@@ -169,9 +167,6 @@ export default {
       activeTab: 'all',
       is_sort: true
     }
-  },
-  mounted() {
-    this.getReport()
   },
   methods: {
     async rangeDateFilter() {
@@ -210,7 +205,10 @@ export default {
 
       this.summary = {
         total_revenue: result.rows.reduce((sum, c) => sum + c.invoice_total, 0),
-        total_avarage: result.rows.reduce((sum, c) => sum + c.invoice_total / result.rows.length, 0),
+        total_avarage: result.rows.reduce(
+          (sum, c) => sum + c.invoice_total / result.rows.length,
+          0
+        ),
         top_customer: result.rows.sort((a, b) => (a.invoice_total > b.invoice_total ? -1 : 1))[0]
       }
       console.log('summary', this.summary)
