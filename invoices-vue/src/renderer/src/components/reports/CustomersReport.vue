@@ -1,10 +1,7 @@
 <template>
   <div>
     <div class="editor-panel">
-      <h3 class="editor-header">
-        {{ title }}
-        <h2 v-if="reportsLength">{{ reportsLength }}</h2>
-      </h3>
+      <h3 v-if="reports" class="editor-header">{{ title }} {{ reports.length }}</h3>
       <select v-model="date_range" class="form-input" @change="rangeDateFilter">
         <option value="" disabled selected>Waehle Daten</option>
         <option value="1">Diesen Monat</option>
@@ -48,7 +45,7 @@
             <div class="card-icon">👥</div>
             <div class="card-content">
               <p class="card-label">Aktive Kunden</p>
-              <h3 class="card-value">{{ reportsLength }}</h3>
+              <h3 class="card-value">{{ reports.length }}</h3>
               <p class="card-detail">Im Zeitraum</p>
             </div>
           </div>
@@ -57,21 +54,21 @@
             <div class="card-icon">💰</div>
             <div class="card-content">
               <p class="card-label">Ø Gesamtumsatz</p>
-              <h3 class="card-value">{{ formatCurrency(reports.total) }}</h3>
+              <h3 class="card-value">{{ formatCurrency(summary.total_revenue) }}</h3>
               <p class="card-detail">Im Zeitraum</p>
             </div>
           </div>
 
-          <div v-if="reports.topCustomers" class="summary-card">
+          <div v-if="summary.top_customer" class="summary-card">
             <div class="card-icon">🏆</div>
             <div class="card-content">
               <p class="card-label">Top Kunde</p>
               <h3 class="card-value">
-                {{ formatCurrency(reports.topCustomers[0].total_revenue) }}
+                {{ formatCurrency(summary.top_customer.invoice_total) }}
               </h3>
-              <h3 class="card-detail">{{ reports.topCustomers[0].company_name }}</h3>
-              <p class="card-detail">{{ reports.topCustomers[0].full_name }}</p>
-              <p class="card-detail">ID: {{ reports.topCustomers[0].id }}</p>
+              <h3 class="card-detail">{{ summary.top_customer.company_name }}</h3>
+              <p class="card-detail">{{ summary.top_customer.full_name }}</p>
+              <p class="card-detail">ID: {{ summary.top_customer.id }}</p>
             </div>
           </div>
 
@@ -79,7 +76,7 @@
             <div class="card-icon">📊</div>
             <div class="card-content">
               <p class="card-label">Umsatz pro Kunde</p>
-              <h3 class="card-value">{{ formatCurrency(reports.avarage) }}</h3>
+              <h3 class="card-value">{{ formatCurrency(summary.total_avarage) }}</h3>
               <p class="card-detail">Durchschchnitt</p>
             </div>
           </div>
@@ -87,12 +84,8 @@
 
         <!-- Top Customers -->
         <div class="top-customers-section">
-          <h3>🏆 Top 10 Kunden nach Umsatz</h3>
-          <div
-            v-for="(item, index) in reports.topCustomers"
-            :key="item.id"
-            class="top-customer-list"
-          >
+          <h3>🏆 Kunden</h3>
+          <div v-for="(item, index) in reports" :key="item.id" class="top-customer-list">
             <div class="top-customer-item">
               <div class="customer-rank gold">{{ index + 1 }}</div>
               <div class="customer-info">
@@ -104,7 +97,7 @@
                 <small> {{ item.percentage }} %</small>
               </div>
               <div class="customer-revenue">
-                <div class="revenue-amount">{{ formatCurrency(item.total_revenu) }}</div>
+                <div class="revenue-amount">{{ formatCurrency(item.invoice_total) }}</div>
                 <div class="revenue-count">{{ item.invoice_count }} Rechnungen</div>
                 <small> {{ item.percentage }} %</small>
               </div>
@@ -115,8 +108,6 @@
         <!-- Detailed Table -->
         <div class="table-section">
           <h3>Detaillierte Kundenübersicht</h3>
-          <input type="text" placeholder="Suche nach Kundenname..." class="search-input" />
-
           <table class="report-table">
             <thead>
               <tr>
@@ -212,17 +203,17 @@ export default {
       if (!result.success) return
       this.reports = result.rows
       console.log('result', result)
-      // this.reports = {
-      //   customers: result.rows,
-      //   avarage: result.avarage,
-      //   total: result.total,
-      //   topCustomers: result.topCustomers
-      // }
-      // const totalRevenue = result.topCustomers.reduce((sum, c) => sum + c.total_revenue, 0)
-      // result.topCustomers.forEach((c) => {
-      //   c.percentage = ((c.total_revenue / totalRevenue) * 100).toFixed(2) // örn: "50.00"
-      // })
+      const totalRevenue = result.rows.reduce((sum, c) => sum + c.invoice_count, 0)
+      result.rows.forEach((c) => {
+        c.percentage = ((c.invoice_count / totalRevenue) * 100).toFixed(2) // örn: "50.00"
+      })
 
+      this.summary = {
+        total_revenue: result.rows.reduce((sum, c) => sum + c.invoice_total, 0),
+        total_avarage: result.rows.reduce((sum, c) => sum + c.invoice_total / result.rows.length, 0),
+        top_customer: result.rows.sort((a, b) => (a.invoice_total > b.invoice_total ? -1 : 1))[0]
+      }
+      console.log('summary', this.summary)
       //date
       this.date_range = {
         start: this.date_box_start,
@@ -233,7 +224,6 @@ export default {
         end: this.date_box_end
       }
       this.is_ready = true
-      this.reportsLength = result.rows.length
     },
     sorting(key) {
       if (!key) return
