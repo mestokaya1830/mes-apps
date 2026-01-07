@@ -1,7 +1,7 @@
 <template>
   <div class="editor-panel">
     <select v-model="date_range" class="form-input" @change="rangeDateFilter">
-      <option value="" disabled selected>Waehle Daten</option>
+      <option value="" disabled>Waehle Daten</option>
       <option value="1">Diesen Monat</option>
       <option value="3">Letzte 3 Monate</option>
       <option value="6">Letzte 6 Monate</option>
@@ -212,11 +212,6 @@ export default {
         top_customer: result.rows.sort((a, b) => (a.invoice_total > b.invoice_total ? -1 : 1))[0]
       }
       console.log('summary', this.summary)
-      //date
-      this.date_range = {
-        start: this.date_box_start,
-        end: this.date_box_end
-      }
       this.period = {
         start: this.date_box_start,
         end: this.date_box_end

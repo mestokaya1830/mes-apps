@@ -10,13 +10,13 @@
       <div class="nav-menu">
         <li class="nav-item">
           <router-link to="/" exact-active-class="active" class="nav-link">
-            <span class="nav-icon">🏠</span>
+            <i class="bi bi-house-door-fill"></i>
             <span>Startseite</span>
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/customers" exact-active-class="active" class="nav-link">
-            <span class="nav-icon">👥</span>
+            <span class="material-icons">home</span>
             <span>Kunden</span>
           </router-link>
         </li>
