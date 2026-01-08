@@ -41,3 +41,8 @@ export default db
 //   console.error(error)
 // }
 
+// try {
+//   db.prepare('Delete from users').run()
+// } catch (error) {
+//   console.log(error)
+// }

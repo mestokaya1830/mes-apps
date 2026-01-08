@@ -315,6 +315,14 @@
 <script>
 export default {
   name: 'PaymentReport',
+  inject: [
+    'formatDate',
+    'formatCurrency',
+    'formatInvoiceId',
+    'formatCustomerId',
+    'checkDueDate',
+    'formatPercentage'
+  ],
   data() {
     return {
       title: 'Zahlungsbericht',
@@ -329,7 +337,7 @@ export default {
     }
   },
   computed: {
-  selectedPeriod() {
+    selectedPeriod() {
       if (!this.period) return
       return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
     },
@@ -438,9 +446,9 @@ export default {
         start: this.date_box_start,
         end: this.date_box_end
       }
-      const result = await window.api.reportPayments(data)
-      if (!result.success) return
-      this.reports = result.rows
+      // const result = await window.api.reportPayments(data)
+      // if (!result.success) return
+      // this.reports = result.rows
 
       this.period = {
         start: this.date_box_start,

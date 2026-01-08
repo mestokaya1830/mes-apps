@@ -106,14 +106,13 @@
           <label class="form-field">
             <span>🇩🇪 Unternehmensform (Deutschland)</span>
             <select v-model="user.company_details" class="form-input">
-              <option disabled value="">-- Bitte wählen --</option>
-              <option v-for="item in companies" :key="item.value" :value="item.value">
+              <option value="" disabled>-- Bitte wählen --</option>
+              <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
               </option>
             </select>
             <div v-if="error.company_details" class="error">{{ error.company_details }}</div>
           </label>
-
           <label class="form-field">
             <span>Firmenlogo</span>
             <input type="file" @change="setLogo($event)" />
