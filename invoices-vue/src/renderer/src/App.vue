@@ -158,8 +158,8 @@ export default {
         return new Date(due_date) < today
       },
       formatPercentage(value, total) {
-        if (!total || total === 0) return '0.00%'
-        return ((value / total) * 100).toFixed(2) + '%'
+        if (!total || total === 0) return '0%'
+        return ((value / total) * 100) + '%'
       }
     }
   },

@@ -42,13 +42,15 @@
       </div>
 
       <!-- Summary Cards -->
-      <div class="report-summary-cards">
+      <div v-if="reports" class="report-summary-cards">
         <div class="report-summary-card">
           <div class="card-icon">✅</div>
           <div class="card-content">
             <p class="card-label">Pünktlich Bezahlt</p>
-            <h3 class="card-value">€38.200,00</h3>
-            <p class="card-detail">18 Rechnungen (75%)</p>
+            <h3 class="card-value">{{ formatCurrency(paidOnTime.sum) }}</h3>
+            <p class="card-detail">
+              {{ paidOnTime.count || 0 }} Rechnungen ({{ setPercentage.paid_percentage || '0%' }})
+            </p>
           </div>
         </div>
 
@@ -341,50 +343,63 @@ export default {
       if (!this.period) return
       return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
     },
-    returnReportWithOverdue() {
-      if (!this.reports) return []
-      return this.reports.map((item) => {
-        return {
-          ...item,
-          isOverdue: item.payment_status === 'unpaid' && this.checkDueDate(item.due_date)
-        }
-      })
+    paidOnTime() {
+      if (!this.reports) return 0
+      const count = this.reports.filter(
+        (item) =>
+          item.payment_status === 'paid' && new Date(item.paid_at) <= new Date(item.due_date)
+      )
+      const sum = count.reduce((total, item) => total + Number(item.gross_total || 0), 0)
+      return { count: count.length, sum: sum }
     },
-    summary() {
-      //shorthand
-      const all = this.returnReportWithOverdue //new reports for isOverdue
-      const paid = all.filter((item) => item.payment_status === 'paid')
-      const partially_paid = all.filter((item) => item.payment_status === 'partially_paid')
-      const unpaid = all.filter((item) => item.payment_status === 'unpaid')
-      const overdue = all.filter((item) => item.isOverdue)
+    // returnReportWithOverdue() {
+    //   if (!this.reports) return []
+    //   return this.reports.map((item) => {
+    //     return {
+    //       ...item,
+    //       isOverdue: item.payment_status === 'unpaid' && this.checkDueDate(item.due_date)
+    //     }
+    //   })
+    // },
+    // summary() {
+    //   //shorthand
+    //   const all = this.returnReportWithOverdue //new reports for isOverdue
+    //   const paid = all.filter((item) => item.payment_status === 'paid')
+    //   const partially_paid = all.filter((item) => item.payment_status === 'partially_paid')
+    //   const unpaid = all.filter((item) => item.payment_status === 'unpaid')
+    //   const overdue = all.filter((item) => item.isOverdue)
 
-      return {
-        //all counts
-        all_count: all.length,
-        paid_count: paid.length,
-        partially_paid_count: partially_paid.length,
-        unpaid_count: unpaid.length,
-        overdue_count: overdue.length,
+    //   return {
+    //     //all counts
+    //     all_count: all.length,
+    //     paid_count: paid.length,
+    //     partially_paid_count: partially_paid.length,
+    //     unpaid_count: unpaid.length,
+    //     overdue_count: overdue.length,
 
-        //all totals
-        all_total: all.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
-        paid_total: paid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
-        partially_paid_total: partially_paid.reduce(
-          (sum, item) => sum + Number(item.gross_total || 0),
-          0
-        ),
-        unpaid_total: unpaid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
-        overdue_total: overdue.reduce((sum, item) => sum + Number(item.gross_total || 0), 0)
-      }
-    },
+    //     //all totals
+    //     all_total: all.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+    //     paid_total: paid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+    //     partially_paid_total: partially_paid.reduce(
+    //       (sum, item) => sum + Number(item.gross_total || 0),
+    //       0
+    //     ),
+    //     unpaid_total: unpaid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+    //     overdue_total: overdue.reduce((sum, item) => sum + Number(item.gross_total || 0), 0)
+    //   }
+    // },
 
     setPercentage() {
-      const sum = this.summary
+      if (!this.reports) return
+      const allPaid = this.reports
+        .filter((item) => item.payment_status === 'paid')
+        .reduce((sum, item) => sum + Number(item.gross_total || 0), 0)
+        console.log('allPaid', allPaid)
       return {
-        paid_percentage: this.formatPercentage(sum.paid_total, sum.all_total),
-        partially_paid_percentage: this.formatPercentage(sum.partially_paid_total, sum.all_total),
-        unpaid_percentage: this.formatPercentage(sum.unpaid_total, sum.all_total),
-        overdue_percentage: this.formatPercentage(sum.overdue_total, sum.all_total)
+        paid_percentage: this.formatPercentage(this.paidOnTime.sum, allPaid)
+        // partially_paid_percentage: this.formatPercentage(sum.partially_paid_total, sum.all_total),
+        // unpaid_percentage: this.formatPercentage(sum.unpaid_total, sum.all_total),
+        // overdue_percentage: this.formatPercentage(sum.overdue_total, sum.all_total)
       }
     },
     filteredReports() {
@@ -446,16 +461,16 @@ export default {
         start: this.date_box_start,
         end: this.date_box_end
       }
-      // const result = await window.api.reportPayments(data)
-      // if (!result.success) return
-      // this.reports = result.rows
+      const result = await window.api.reportPayments(data)
+      if (!result.success) return
+      this.reports = result.rows
 
       this.period = {
         start: this.date_box_start,
         end: this.date_box_end
       }
       this.is_ready = true
-      // console.log(result)
+      console.log(result)
     },
     sorting(key) {
       if (!key) return

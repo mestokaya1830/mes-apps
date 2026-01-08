@@ -98,7 +98,7 @@ ipcMain.handle('register', async (event, payload) => {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const [image, data] = payload
+    const {image, data} = payload
     const companyDetailsJSON = JSON.stringify(data.company_details || {})
     const contactPersonJSON = JSON.stringify(data.contact_person || {})
 
@@ -135,10 +135,8 @@ ipcMain.handle('register', async (event, payload) => {
           bank_name,
           bic,
           iban,
-          bank_account_holder,
-
-          invoice_approved
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          bank_account_holder
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .run(
         data.gender,
@@ -171,9 +169,7 @@ ipcMain.handle('register', async (event, payload) => {
         data.bank_name,
         data.bic,
         data.iban,
-        data.bank_account_holder,
-
-        data.invoice_approved
+        data.bank_account_holder
       )
     return { success: true, user: user }
   } catch (error) {
@@ -1402,7 +1398,23 @@ ipcMain.handle('cancel-payment-by-id', async (event, payload) => {
 })
 
 ipcMain.handle('report-payments', async (event, payload) => {
-  
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  const { start, end } = payload
+
+  try {
+    const rows = db
+      .prepare(
+        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
+      )
+      .all(start, end) 
+    return { success: true, rows }
+  } catch (error) {
+    console.error('DB error:', error.message)
+    return { success: false, message: error.message }
+  }
 })
 
 //reminders

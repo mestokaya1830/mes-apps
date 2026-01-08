@@ -26,7 +26,7 @@ export default db
 // }
 
 // try {
-//   db.prepare(`Alter table customers ADD COLUMN date TEXT NOT NULL DEFAULT '';`).run()
+//   db.prepare(`Alter table users DROP COLUMN  invoice_approved;`).run()
 // } catch (error) {
 //   console.error(error)
 // }

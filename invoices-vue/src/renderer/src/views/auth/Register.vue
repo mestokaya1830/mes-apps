@@ -9,7 +9,7 @@
         <div class="form-blog">
           <!-- Gender -->
           <label class="form-field col-span-1">
-            <span>Anrede</span>
+            <span>Anrede *</span>
             <select v-model="user.gender" class="form-input">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
@@ -22,28 +22,28 @@
           <!-- First Name -->
           <label class="form-field">
             <span>Vorname *</span>
-            <input v-model="user.first_name" type="text" placeholder="Enter your first name" />
+            <input v-model="user.first_name" type="text" placeholder="Max" />
             <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
           </label>
 
           <!-- Last Name -->
           <label class="form-field">
             <span>Nachname *</span>
-            <input v-model="user.last_name" type="text" placeholder="Enter your last name" />
+            <input v-model="user.last_name" type="text" placeholder="Mustermann" />
             <div v-if="error.last_name" class="error">{{ error.last_name }}</div>
           </label>
 
           <!-- Email -->
           <label class="form-field">
             <span>E-Mail *</span>
-            <input v-model="user.email" type="email" placeholder="example@email.com" />
+            <input v-model="user.email" type="email" placeholder="max@beispiel.de" />
             <div v-if="error.email" class="error">{{ error.email }}</div>
           </label>
 
           <!-- Password -->
           <label class="form-field">
             <span>Passwort *</span>
-            <input v-model="user.password" type="password" placeholder="Create a strong password" />
+            <input v-model="user.password" type="password" placeholder="Mindestens 6 Zeichen" />
             <div v-if="error.password" class="error">{{ error.password }}</div>
           </label>
 
@@ -57,7 +57,7 @@
           <!-- Website -->
           <label class="form-field">
             <span>Webseite</span>
-            <input v-model="user.website" type="url" placeholder="www.example.com" />
+            <input v-model="user.website" type="url" placeholder="https://www.beispiel.de" />
             <div v-if="error.website" class="error">{{ error.website }}</div>
           </label>
         </div>
@@ -68,26 +68,45 @@
         <h3 class="section-title">Adressinformationen</h3>
         <div class="form-blog">
           <label class="form-field">
-            <span>Adresse</span>
+            <span>Adresse *</span>
             <input v-model="user.address" type="text" placeholder="Hauptstraße 123" />
+            <small class="hint">Straße und Hausnummer (z.B. Musterstraße 12)</small>
             <div v-if="error.address" class="error">{{ error.address }}</div>
           </label>
 
           <label class="form-field">
-            <span>Postleitzahl</span>
-            <input v-model="user.postal_code" type="text" placeholder="10115" />
+            <span>Postleitzahl *</span>
+            <input v-model="user.postal_code" type="text" placeholder="10115" maxlength="5" />
             <div v-if="error.postal_code" class="error">{{ error.postal_code }}</div>
           </label>
 
           <label class="form-field">
-            <span>Stadt</span>
+            <span>Stadt *</span>
             <input v-model="user.city" type="text" placeholder="Berlin" />
             <div v-if="error.city" class="error">{{ error.city }}</div>
           </label>
 
           <label class="form-field">
-            <span>🇩🇪 Bundesland (Deutschland)</span>
-            <input v-model="user.state" type="text" placeholder="State" />
+            <span>🇩🇪 Bundesland *</span>
+            <select v-model="user.state" class="form-input">
+              <option value="" disabled>Bitte wählen</option>
+              <option value="Baden-Württemberg">Baden-Württemberg</option>
+              <option value="Bayern">Bayern</option>
+              <option value="Berlin">Berlin</option>
+              <option value="Brandenburg">Brandenburg</option>
+              <option value="Bremen">Bremen</option>
+              <option value="Hamburg">Hamburg</option>
+              <option value="Hessen">Hessen</option>
+              <option value="Mecklenburg-Vorpommern">Mecklenburg-Vorpommern</option>
+              <option value="Niedersachsen">Niedersachsen</option>
+              <option value="Nordrhein-Westfalen">Nordrhein-Westfalen</option>
+              <option value="Rheinland-Pfalz">Rheinland-Pfalz</option>
+              <option value="Saarland">Saarland</option>
+              <option value="Sachsen">Sachsen</option>
+              <option value="Sachsen-Anhalt">Sachsen-Anhalt</option>
+              <option value="Schleswig-Holstein">Schleswig-Holstein</option>
+              <option value="Thüringen">Thüringen</option>
+            </select>
             <div v-if="error.state" class="error">{{ error.state }}</div>
           </label>
         </div>
@@ -98,28 +117,31 @@
         <h3 class="section-title">Unternehmensinformationen</h3>
         <div class="form-blog">
           <label class="form-field">
-            <span>Firmenname</span>
-            <input v-model="user.company_name" type="text" placeholder="TechSolutions GmbH" />
+            <span>Firmenname *</span>
+            <input v-model="user.company_name" type="text" placeholder="Beispiel GmbH" />
             <div v-if="error.company_name" class="error">{{ error.company_name }}</div>
           </label>
 
           <label class="form-field">
-            <span>🇩🇪 Unternehmensform (Deutschland)</span>
+            <span>🇩🇪 Unternehmensform *</span>
             <select v-model="user.company_details" class="form-input">
-              <option value="" disabled>-- Bitte wählen --</option>
+              <option :value="null" disabled>-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
               </option>
             </select>
             <div v-if="error.company_details" class="error">{{ error.company_details }}</div>
           </label>
+          {{ user.company_details }}
+
           <label class="form-field">
             <span>Firmenlogo</span>
-            <input type="file" @change="setLogo($event)" />
+            <input type="file" @change="setLogo($event)" accept="image/*" />
+            <small class="hint">PNG, JPG oder SVG (max. 2MB)</small>
             <div v-if="error.company_logo" class="error">{{ error.company_logo }}</div>
           </label>
 
-          <figure class="form-field logo-preview-wrapper">
+          <figure v-if="selectedImage" class="form-field logo-preview-wrapper">
             <figcaption>Logo-Vorschau</figcaption>
             <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
           </figure>
@@ -131,7 +153,7 @@
         <h3 class="section-title">Ansprechpartner</h3>
         <div class="form-blog">
           <label class="form-field col-span-1">
-            <span>Anrede</span>
+            <span>Anrede *</span>
             <select v-model="user.contact_person.gender" class="form-input">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
@@ -145,11 +167,7 @@
 
           <label class="form-field">
             <span>Vorname</span>
-            <input
-              v-model="user.contact_person.first_name"
-              type="text"
-              placeholder="Hans Mueller"
-            />
+            <input v-model="user.contact_person.first_name" type="text" placeholder="Anna" />
             <div v-if="error['contact_person.first_name']" class="error">
               {{ error['contact_person.first_name'] }}
             </div>
@@ -157,7 +175,7 @@
 
           <label class="form-field">
             <span>Nachname</span>
-            <input v-model="user.contact_person.last_name" type="text" placeholder="Hans Mueller" />
+            <input v-model="user.contact_person.last_name" type="text" placeholder="Schmidt" />
             <div v-if="error['contact_person.last_name']" class="error">
               {{ error['contact_person.last_name'] }}
             </div>
@@ -165,7 +183,7 @@
 
           <label class="form-field">
             <span>Telefon</span>
-            <input v-model="user.contact_person.phone" type="tel" placeholder="+49 30 12345678" />
+            <input v-model="user.contact_person.phone" type="tel" placeholder="+49 30 98765432" />
             <div v-if="error['contact_person.phone']" class="error">
               {{ error['contact_person.phone'] }}
             </div>
@@ -176,7 +194,7 @@
             <input
               v-model="user.contact_person.email"
               type="email"
-              placeholder="example@email.com"
+              placeholder="buchhaltung@beispiel.de"
             />
             <div v-if="error['contact_person.email']" class="error">
               {{ error['contact_person.email'] }}
@@ -191,7 +209,8 @@
         <div class="form-blog">
           <label class="form-field">
             <span>Steuernummer</span>
-            <input v-model="user.tax_number" type="text" placeholder="123/456/78901" />
+            <input v-model="user.tax_number" type="text" placeholder="123/456/78901" maxlength="15" />
+            <small class="hint">Format: 123/456/78901 (je nach Bundesland)</small>
             <div v-if="error.tax_number" class="error">{{ error.tax_number }}</div>
           </label>
 
@@ -207,7 +226,8 @@
 
           <label class="form-field">
             <span>USt-IdNr.</span>
-            <input v-model="user.vat_id" type="text" placeholder="DE123456789" />
+            <input v-model="user.vat_id" type="text" placeholder="DE123456789" maxlength="11" @input="formatVatId" />
+            <small class="hint">Format: DE + 9 Ziffern</small>
             <div v-if="error.vat_id" class="error">{{ error.vat_id }}</div>
           </label>
 
@@ -237,23 +257,20 @@
 
           <label class="form-field">
             <span>BIC</span>
-            <input v-model="user.bic" type="text" placeholder="DEUTDEBBXXX" />
+            <input v-model="user.bic" type="text" placeholder="DEUTDEBBXXX" maxlength="11" />
             <div v-if="error.bic" class="error">{{ error.bic }}</div>
           </label>
 
           <label class="form-field">
             <span>IBAN</span>
-            <input v-model="user.iban" type="text" placeholder="DE89370400440532013000" />
+            <input v-model="user.iban" type="text" placeholder="DE89 3704 0044 0532 0130 00" maxlength="27" @input="formatIban" />
+            <small class="hint">DE + 20 Ziffern</small>
             <div v-if="error.iban" class="error">{{ error.iban }}</div>
           </label>
 
           <label class="form-field">
             <span>Kontoinhaber</span>
-            <input
-              v-model="user.bank_account_holder"
-              type="text"
-              placeholder="TechSolutions GmbH"
-            />
+            <input v-model="user.bank_account_holder" type="text" placeholder="Beispiel GmbH" />
             <div v-if="error.bank_account_holder" class="error">
               {{ error.bank_account_holder }}
             </div>
@@ -269,7 +286,7 @@
           <textarea
             v-model="user.company_signature"
             rows="4"
-            placeholder="Mit freundlichen Grüßen&#10;TechSolutions GmbH&#10;Hans Mueller&#10;Geschäftsführer"
+            placeholder="Mit freundlichen Grüßen&#10;Beispiel GmbH&#10;Max Mustermann&#10;Geschäftsführer"
           ></textarea>
           <div v-if="error.company_signature" class="error">{{ error.company_signature }}</div>
         </label>
@@ -277,8 +294,11 @@
 
       <!-- Submit Button -->
       <div class="form-actions">
+        <button type="button" @click="fillExampleData" class="form-btn btn-secondary">
+          📝 Beispieldaten füllen
+        </button>
         <button type="submit" :disabled="isSubmitting" class="form-btn">
-          <span v-if="isSubmitting">Saving...</span>
+          <span v-if="isSubmitting">Wird gespeichert...</span>
           <span v-else>Benutzer speichern</span>
         </button>
       </div>
@@ -288,6 +308,7 @@
     <p v-if="showSuccess" class="status-message success">
       ✅ Benutzer wurde erfolgreich gespeichert!
     </p>
+    <p v-if="showError" class="status-message error">❌ {{ errorMessage }}</p>
   </div>
 </template>
 
@@ -298,6 +319,9 @@ export default {
   data() {
     return {
       isSubmitting: false,
+      showSuccess: false,
+      showError: false,
+      errorMessage: '',
       error: {},
       user: {
         gender: '',
@@ -313,7 +337,7 @@ export default {
         country: 'Deutschland',
         website: '',
         company_name: '',
-        company_details: { company_type_short: '', company_type: '' },
+        company_details: null,
         company_signature: '',
         contact_person: {
           gender: '',
@@ -334,7 +358,6 @@ export default {
       },
       binaryImage: null,
       selectedImage: null,
-      state: '',
       companies: [
         { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
         { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },
@@ -364,18 +387,70 @@ export default {
     }
   },
   watch: {
-    user: {
-      handler(newVal) {
-        for (const key in newVal) {
-          if (typeof newVal[key] === 'string' && newVal[key] && this.error[key]) {
-            this.error[key] = ''
-          }
-        }
-      },
-      deep: true
+    'user.company_details'(newVal) {
+      if (newVal && this.error.company_details) {
+        this.error.company_details = ''
+      }
     }
   },
   methods: {
+    // ✅ Örnek veriyi doldur
+    fillExampleData() {
+      this.user = {
+        gender: 'Herr',
+        first_name: 'Maximilian',
+        last_name: 'Schmidt',
+        password: 'Test123!',
+        email: 'max.schmidt@beispiel-gmbh.de',
+        phone: '+49 30 12345678',
+        address: 'Friedrichstraße 123',
+        postal_code: '10117',
+        city: 'Berlin',
+        state: 'Berlin',
+        country: 'Deutschland',
+        website: 'https://www.beispiel-gmbh.de',
+        company_name: 'Beispiel Consulting GmbH',
+        company_details: this.companies.find((c) => c.value === 'GmbH'),
+        company_signature:
+          'Mit freundlichen Grüßen\nBeispiel Consulting GmbH\nMaximilian Schmidt\nGeschäftsführer',
+        contact_person: {
+          gender: 'Frau',
+          first_name: 'Julia',
+          last_name: 'Müller',
+          email: 'buchhaltung@beispiel-gmbh.de',
+          phone: '+49 30 12345679'
+        },
+        tax_number: '12/345/67890',
+        tax_office: 'Finanzamt Berlin Mitte/Tiergarten',
+        vat_id: 'DE123456789',
+        court_registration: 'HRB 12345 B',
+        court_location: 'Amtsgericht Charlottenburg',
+        bank_name: 'Deutsche Bank',
+        bic: 'DEUTDEBBXXX',
+        iban: 'DE89370400440532013000',
+        bank_account_holder: 'Beispiel Consulting GmbH'
+      }
+    },
+
+    // USt-IdNr auto-format
+    formatVatId() {
+      let val = this.user.vat_id.toUpperCase().replace(/[^A-Z0-9]/g, '')
+      if (val && !val.startsWith('DE')) {
+        if (/^\d/.test(val)) {
+          val = 'DE' + val
+        }
+      }
+      this.user.vat_id = val.substring(0, 11)
+    },
+
+    // IBAN auto-format (with spaces every 4 chars)
+    formatIban() {
+      let val = this.user.iban.toUpperCase().replace(/[^A-Z0-9]/g, '')
+      // Add space every 4 characters
+      val = val.match(/.{1,4}/g)?.join(' ') || val
+      this.user.iban = val.substring(0, 27)
+    },
+
     async setLogo(event) {
       const file = event.target.files[0]
       if (!file) return
@@ -400,12 +475,13 @@ export default {
     validateForm() {
       const u = this.user
       let valid = true
+      this.error = {}
 
+      // Personal info
       if (!u.gender) {
         this.error.gender = 'Bitte Anrede auswählen.'
         valid = false
       }
-
       if (!u.first_name || u.first_name.length < 2) {
         this.error.first_name = 'Vorname muss mindestens 2 Zeichen enthalten.'
         valid = false
@@ -414,6 +490,7 @@ export default {
         this.error.last_name = 'Nachname muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
       if (!emailRegex.test(u.email)) {
         this.error.email = 'Ungültige E-Mail-Adresse.'
@@ -424,6 +501,39 @@ export default {
         valid = false
       }
 
+      // Address
+      if (!u.address || u.address.trim().length < 3) {
+        this.error.address = 'Adresse muss mindestens 3 Zeichen enthalten.'
+        valid = false
+      } else if (!/^[A-Za-zÄÖÜäöüß\s\-.]+\s+\d+[A-Za-z]?$/.test(u.address)) {
+        this.error.address = 'Adresse muss Straße und Hausnummer enthalten (z.B. Musterstraße 12).'
+        valid = false
+      }
+
+      if (u.postal_code && !/^\d{5}$/.test(u.postal_code)) {
+        this.error.postal_code = 'Postleitzahl muss 5 Ziffern enthalten.'
+        valid = false
+      }
+      if (u.city && u.city.length < 2) {
+        this.error.city = 'Stadt muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
+      if (!u.state) {
+        this.error.state = 'Bitte Bundesland auswählen.'
+        valid = false
+      }
+
+      // Company
+      if (!u.company_name || u.company_name.length < 3) {
+        this.error.company_name = 'Firmenname muss mindestens 3 Zeichen enthalten.'
+        valid = false
+      }
+      if (!u.company_details || !u.company_details.value) {
+        this.error.company_details = 'Bitte Unternehmensform auswählen.'
+        valid = false
+      }
+
+      // Contact person
       const cp = u.contact_person
       if (!cp.gender) {
         this.error['contact_person.gender'] = 'Bitte Anrede auswählen.'
@@ -442,48 +552,33 @@ export default {
         valid = false
       }
 
-      if (!u.address || u.address.trim().length < 3) {
-        this.error.address = 'Adresse muss mindestens 3 Zeichen enthalten.'
-        valid = false
-      } else if (!/^[A-Za-zÄÖÜäöüß\s\-.]+\s+\d+[A-Za-z]?$/.test(u.address)) {
-        this.error.address = 'Adresse muss Straße und Hausnummer enthalten (z. B. Musterstraße 12).'
-        valid = false
+      // Tax info - ✅ DÜZELTME
+      if (u.tax_number && u.tax_number.trim() !== '') {
+        const cleanTaxNumber = u.tax_number.replace(/[\s\/\-]/g, '')
+        if (!/^\d+$/.test(cleanTaxNumber)) {
+          this.error.tax_number = 'Steuernummer darf nur Zahlen enthalten.'
+          valid = false
+        } else if (cleanTaxNumber.length < 10 || cleanTaxNumber.length > 13) {
+          this.error.tax_number = 'Steuernummer muss 10-13 Ziffern enthalten.'
+          valid = false
+        }
       }
 
-      if (u.postal_code && !/^\d{5}$/.test(u.postal_code)) {
-        this.error.postal_code = 'Postleitzahl muss 5 Ziffern enthalten.'
-        valid = false
-      }
-      if (u.city && u.city.length < 2) {
-        this.error.city = 'Stadt muss mindestens 2 Zeichen enthalten.'
-        valid = false
-      }
-      if (!u.state) {
-        this.error.state = 'Bitte Bundesland auswählen.'
-        valid = false
+      if (u.vat_id && u.vat_id.trim() !== '') {
+        const cleanVatId = u.vat_id.replace(/\s/g, '').toUpperCase()
+        if (!/^DE\d{9}$/.test(cleanVatId)) {
+          this.error.vat_id = 'USt-IdNr. muss mit "DE" beginnen und 9 Ziffern enthalten.'
+          valid = false
+        }
       }
 
-      if (!u.company_name || u.company_name.length < 3) {
-        this.error.company_name = 'Firmenname muss mindestens 3 Zeichen enthalten.'
-        valid = false
-      }
-      if (!u.company_details || !u.company_details.company_type) {
-        this.error.company_details = 'Bitte Unternehmensform auswählen.'
-        valid = false
-      }
-
-      if (u.tax_number && !/^[0-9]{10,11}$/.test(u.tax_number)) {
-        this.error.tax_number = 'Steuernummer muss 10–11 Ziffern enthalten.'
-        valid = false
-      }
-      if (u.vat_id && !/^DE[0-9]{9}$/.test(u.vat_id)) {
-        this.error.vat_id = 'Die deutsche USt-ID muss mit "DE" beginnen und 9 Ziffern enthalten.'
-        valid = false
-      }
-
-      if (u.iban && !/^DE\d{20}$/.test(u.iban.replace(/\s+/g, ''))) {
-        this.error.iban = 'Ungültige IBAN.'
-        valid = false
+      // Bank info
+      if (u.iban && u.iban.trim() !== '') {
+        const cleanIban = u.iban.replace(/\s/g, '')
+        if (!/^DE\d{20}$/.test(cleanIban)) {
+          this.error.iban = 'Ungültige deutsche IBAN (Format: DE + 20 Ziffern).'
+          valid = false
+        }
       }
 
       return valid
@@ -491,23 +586,39 @@ export default {
 
     async register() {
       this.trimFormFields(this.user)
-      this.error = this.validateForm()
-      if (!this.validateForm()) return
+
+      if (!this.validateForm()) {
+        this.showError = true
+        this.errorMessage = 'Bitte alle Pflichtfelder korrekt ausfüllen.'
+        return
+      }
+
       this.isSubmitting = true
+      this.showSuccess = false
+      this.showError = false
 
       try {
         const data = {
-          image: Array.from(this.binaryImage),
+          image: this.binaryImage ? Array.from(this.binaryImage) : [],
           data: JSON.parse(JSON.stringify(this.user))
         }
+
         const result = await window.api.register(data)
-        if (result.success) {
-          this.error = result.message || 'Fehler beim Speichern'
+
+        if (!result.success) {
+          this.showError = true
+          this.errorMessage = result.message || 'Fehler beim Speichern'
           return
         }
-        this.$router.push('/login')
+
+        this.showSuccess = true
+        setTimeout(() => {
+          this.$router.push('/login')
+        }, 2000)
       } catch (err) {
-        this.error = err.message || 'Fehler beim Speichern'
+        console.error('Register error:', err)
+        this.showError = true
+        this.errorMessage = err.message || 'Fehler beim Speichern'
       } finally {
         this.isSubmitting = false
       }
@@ -516,10 +627,69 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .error {
-  color: red;
-  font-size: 12px;
-  margin-top: 4px;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.status-message {
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.status-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.logo-preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.logo-preview {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #f8f9fa;
 }
 </style>
