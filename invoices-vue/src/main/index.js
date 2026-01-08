@@ -1401,6 +1401,10 @@ ipcMain.handle('cancel-payment-by-id', async (event, payload) => {
   }
 })
 
+ipcMain.handle('report-payments', async (event, payload) => {
+  
+})
+
 //reminders
 ipcMain.handle('add-reminder', async (event, payload) => {
   const data = payload

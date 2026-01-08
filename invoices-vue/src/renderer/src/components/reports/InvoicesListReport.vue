@@ -38,14 +38,14 @@
       <div class="report-header-2">
         <div>
           <h2>{{ title }}</h2>
-          <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
+          <p class="report-period">Zeitraum: {{ selectedPeriod }}</p>
         </div>
         <!-- <button class="btn-export" onclick="window.print()">🖨️ Drucken</button> -->
       </div>
 
       <!-- Summary Cards -->
-      <div class="summary-cards">
-        <div class="summary-card">
+      <div class="report-summary-cards">
+        <div class="report-summary-card">
           <div class="card-icon">📊</div>
           <div class="card-content">
             <p class="card-label">Summe Ø</p>
@@ -54,7 +54,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">✅</div>
           <div class="card-content">
             <p class="card-label">Pünktlich Bezahlt</p>
@@ -65,7 +65,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">✅</div>
           <div class="card-content">
             <p class="card-label">Teilzhaltig Bezahlt</p>
@@ -78,7 +78,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">⏳</div>
           <div class="card-content">
             <p class="card-label">Unbezahlt (fällig)</p>
@@ -89,7 +89,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">⚠️</div>
           <div class="card-content">
             <p class="card-label">Überfällig</p>
@@ -225,7 +225,7 @@ export default {
     }
   },
   computed: {
-    selectedPeriad() {
+    selectedPeriod() {
       if (!this.period) return
       return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
     },

@@ -13,11 +13,11 @@
             <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
           </select>
         </div>
-        <SalesReport v-if="report_type == 'Umsatzbericht'" />
-        <PaymentsReport v-if="report_type == 'Zahlungsstatus'" />
         <CustomersReport v-if="report_type == 'Kundenbezogener'" />
-        <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
         <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
+        <PaymentsReport v-if="report_type == 'Zahlungsstatus'" />
+        <SalesReport v-if="report_type == 'Umsatzbericht'" />
+        <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
       </div>
       <div class="print-actions">
         <button class="btn-excel">📊 Excel Export</button>
@@ -28,20 +28,20 @@
 </template>
 
 <script>
-import SalesReport from '../../components/reports/SalesReport.vue'
-import PaymentsReport from '../../components/reports/PaymentsReport.vue'
 import CustomersReport from '../../components/reports/CustomersReport.vue'
-import TaxReport from '../../components/reports/TaxReport.vue'
 import InvoicesListReport from '../../components/reports/InvoicesListReport.vue'
+import PaymentsReport from '../../components/reports/PaymentsReport.vue'
+import SalesReport from '../../components/reports/SalesReport.vue'
+import TaxReport from '../../components/reports/TaxReport.vue'
 
 export default {
   name: 'InvoicesReport',
   components: {
-    SalesReport,
-    PaymentsReport,
     CustomersReport,
-    TaxReport,
-    InvoicesListReport
+    InvoicesListReport,
+    PaymentsReport,
+    SalesReport,
+    TaxReport
   },
   data() {
     return {

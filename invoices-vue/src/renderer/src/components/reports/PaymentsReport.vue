@@ -1,9 +1,7 @@
 <template>
   <div class="editor-panel">
-    <h1>Rechnung Report</h1>
-
-    <select class="form-input">
-      <option value="" disabled selected>Wähle Daten</option>
+    <select v-model="date_range" class="form-input" @change="rangeDateFilter">
+      <option value="" disabled>Wähle Daten</option>
       <option value="1">Diesen Monat</option>
       <option value="3">Letzte 3 Monate</option>
       <option value="6">Letzte 6 Monate</option>
@@ -38,14 +36,14 @@
       <div class="report-header">
         <div>
           <h2>Zahlungsstatus Bericht</h2>
-          <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
+          <p class="report-period">Zeitraum: {{ selectedPeriod }}</p>
         </div>
-        <button class="btn-export" onclick="window.print()">🖨️ Drucken</button>
+        <!-- <button class="btn-export" onclick="window.print()">🖨️ Drucken</button> -->
       </div>
 
       <!-- Summary Cards -->
-      <div class="summary-cards">
-        <div class="summary-card">
+      <div class="report-summary-cards">
+        <div class="report-summary-card">
           <div class="card-icon">✅</div>
           <div class="card-content">
             <p class="card-label">Pünktlich Bezahlt</p>
@@ -54,7 +52,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">⏳</div>
           <div class="card-content">
             <p class="card-label">Ausstehend (fällig)</p>
@@ -63,7 +61,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">⚠️</div>
           <div class="card-content">
             <p class="card-label">Überfällig</p>
@@ -72,7 +70,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">📊</div>
           <div class="card-content">
             <p class="card-label">Zahlungsziel Ø</p>
@@ -319,7 +317,145 @@ export default {
   name: 'PaymentReport',
   data() {
     return {
-      title: 'Zahlungsbericht'
+      title: 'Zahlungsbericht',
+      reports: null,
+      date_range: '',
+      date_box_start: '',
+      date_box_end: '',
+      period: { start: '', end: '' },
+      is_ready: false,
+      activeTab: 'all',
+      is_sort: true
+    }
+  },
+  computed: {
+  selectedPeriod() {
+      if (!this.period) return
+      return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
+    },
+    returnReportWithOverdue() {
+      if (!this.reports) return []
+      return this.reports.map((item) => {
+        return {
+          ...item,
+          isOverdue: item.payment_status === 'unpaid' && this.checkDueDate(item.due_date)
+        }
+      })
+    },
+    summary() {
+      //shorthand
+      const all = this.returnReportWithOverdue //new reports for isOverdue
+      const paid = all.filter((item) => item.payment_status === 'paid')
+      const partially_paid = all.filter((item) => item.payment_status === 'partially_paid')
+      const unpaid = all.filter((item) => item.payment_status === 'unpaid')
+      const overdue = all.filter((item) => item.isOverdue)
+
+      return {
+        //all counts
+        all_count: all.length,
+        paid_count: paid.length,
+        partially_paid_count: partially_paid.length,
+        unpaid_count: unpaid.length,
+        overdue_count: overdue.length,
+
+        //all totals
+        all_total: all.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+        paid_total: paid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+        partially_paid_total: partially_paid.reduce(
+          (sum, item) => sum + Number(item.gross_total || 0),
+          0
+        ),
+        unpaid_total: unpaid.reduce((sum, item) => sum + Number(item.gross_total || 0), 0),
+        overdue_total: overdue.reduce((sum, item) => sum + Number(item.gross_total || 0), 0)
+      }
+    },
+
+    setPercentage() {
+      const sum = this.summary
+      return {
+        paid_percentage: this.formatPercentage(sum.paid_total, sum.all_total),
+        partially_paid_percentage: this.formatPercentage(sum.partially_paid_total, sum.all_total),
+        unpaid_percentage: this.formatPercentage(sum.unpaid_total, sum.all_total),
+        overdue_percentage: this.formatPercentage(sum.overdue_total, sum.all_total)
+      }
+    },
+    filteredReports() {
+      if (!this.returnReportWithOverdue) return []
+
+      switch (this.activeTab) {
+        case 'all':
+          return this.returnReportWithOverdue
+        case 'paid':
+          return this.returnReportWithOverdue.filter((item) => item.payment_status === 'paid')
+        case 'partially_paid':
+          return this.returnReportWithOverdue.filter(
+            (item) => item.payment_status === 'partially_paid'
+          )
+        case 'unpaid':
+          return this.returnReportWithOverdue.filter((item) => item.payment_status === 'unpaid')
+        case 'overdue':
+          return this.returnReportWithOverdue.filter((item) => item.isOverdue)
+        default:
+          return this.returnReportWithOverdue
+      }
+    },
+    tabs() {
+      return [
+        { key: 'all', label: 'Alle', count: this.summary.all_count },
+        { key: 'paid', label: 'Bezahlt', count: this.summary.paid_count },
+        { key: 'unpaid', label: 'Ausstehend', count: this.summary.unpaid_count },
+        {
+          key: 'partially_paid',
+          label: 'Teilweise Bezahlt',
+          count: this.summary.partially_paid_count
+        },
+        { key: 'overdue', label: 'Überfällig', count: this.summary.overdue_count }
+      ]
+    }
+  },
+  methods: {
+    async rangeDateFilter() {
+      if (!this.date_range) return
+      const today = new Date()
+      const startDate = new Date(today.getFullYear(), today.getMonth() - this.date_range, 1)
+      const endDate = new Date(today.getFullYear(), today.getMonth() + 0, 0)
+      this.date_box_start = startDate.toISOString().slice(0, 10)
+      this.date_box_end = endDate.toISOString().slice(0, 10)
+      this.getReport()
+    },
+    flexDateFilter() {
+      if (!this.date_box_start) return this.$refs.date_box_start.focus()
+      if (!this.date_box_end) return this.$refs.date_box_end.focus()
+      if (this.date_box_start > this.date_box_end) {
+        this.date_box_end = ''
+        return this.$refs.date_box_end.focus()
+      }
+      this.getReport()
+    },
+    async getReport() {
+      if (!this.date_box_start || !this.date_box_end) return
+      const data = {
+        start: this.date_box_start,
+        end: this.date_box_end
+      }
+      const result = await window.api.reportPayments(data)
+      if (!result.success) return
+      this.reports = result.rows
+
+      this.period = {
+        start: this.date_box_start,
+        end: this.date_box_end
+      }
+      this.is_ready = true
+      // console.log(result)
+    },
+    sorting(key) {
+      if (!key) return
+      this.reports.sort((a, b) => {
+        const res = a[key] > b[key] ? 1 : -1
+        return this.isSort ? res : -res
+      })
+      this.isSort = !this.isSort
     }
   }
 }

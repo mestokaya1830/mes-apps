@@ -35,21 +35,21 @@
       <div class="report-header-2">
         <div>
           <h2>{{ title }}</h2>
-          <p class="report-period">Zeitraum: 01.08.2025 - 18.11.2025</p>
+          <p class="report-period">Zeitraum: {{ selectedPeriod }}</p>
         </div>
       </div>
       <!-- Summary Cards -->
-      <div class="summary-cards">
-        <div class="summary-card">
+      <div class="report-summary-cards">
+        <div class="report-summary-card">
           <div class="card-icon">👥</div>
           <div class="card-content">
             <p class="card-label">Aktive Kunden</p>
             <h3 class="card-value">{{ reports.length }}</h3>
-            <p class="card-detail">Im Zeitraum</p>
+            <p class="card-detail">Im Zeitraum {{ selectedPeriod }}</p>
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">💰</div>
           <div class="card-content">
             <p class="card-label">Ø Gesamtumsatz</p>
@@ -58,7 +58,7 @@
           </div>
         </div>
 
-        <div v-if="summary.top_customer" class="summary-card">
+        <div v-if="summary.top_customer" class="report-summary-card">
           <div class="card-icon">🏆</div>
           <div class="card-content">
             <p class="card-label">Top Kunde</p>
@@ -71,7 +71,7 @@
           </div>
         </div>
 
-        <div class="summary-card">
+        <div class="report-summary-card">
           <div class="card-icon">📊</div>
           <div class="card-content">
             <p class="card-label">Umsatz pro Kunde</p>
@@ -166,6 +166,12 @@ export default {
       is_ready: false,
       activeTab: 'all',
       is_sort: true
+    }
+  },
+  computed: {
+    selectedPeriod() {
+      if (!this.period) return
+      return this.formatDate(this.period.start) + ' - ' + this.formatDate(this.period.end)
     }
   },
   methods: {
