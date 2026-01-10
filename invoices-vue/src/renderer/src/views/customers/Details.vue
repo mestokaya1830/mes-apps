@@ -6,14 +6,20 @@
       </div>
 
       <div class="customer-info">
-        <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
-        <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
         <p><strong>Kunden.Nr.:</strong> {{ formatCustomerId(customer.id) }}</p>
+        <p><strong>Datum:</strong> {{ formatDate(customer.date) }}</p>
+        <p><strong>Firma:</strong> {{ customer.company_name }}</p>
+        <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
         <p><strong>Vorname:</strong> {{ customer.first_name }}</p>
         <p><strong>Nachname:</strong> {{ customer.last_name }}</p>
         <p><strong>Email:</strong> {{ customer.email }}</p>
-        <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
         <p><strong>Adresse:</strong> {{ customer.address }}</p>
+        <p><strong>PLZ:</strong> {{ customer.postal_code }}</p>
+        <p><strong>Stadt:</strong> {{ customer.city }}</p>
+        <p><strong>Telefon:</strong> {{ customer.phone }}</p>
+        <p><strong>Website:</strong> {{ customer.website }}</p>
+        <p><strong>USt-IdNr.:</strong> {{ customer.vat_id }}</p>
+        <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
         <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
        
         <button class="action-btn delete-btn" @click="deleteCustomer(customer.id)">
@@ -60,6 +66,7 @@ export default {
         if (!result.success) return
         this.customer = result.data.customer
         this.counts = result.data.counts
+        console.log(this.customer)
       } catch (error) {
         console.error(error)
       }

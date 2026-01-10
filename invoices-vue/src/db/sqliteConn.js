@@ -42,7 +42,8 @@ export default db
 // }
 
 // try {
-//   db.prepare('Delete from users').run()
+//   const rows = db.prepare('Select * from users').all()
+//   console.log(rows)
 // } catch (error) {
 //   console.log(error)
 // }
