@@ -9,8 +9,8 @@ import fs from 'fs'
 let win = null
 function createWindow() {
   win = new BrowserWindow({
-    width: 1260,
-    height: 800,
+    width: 1400,
+    height: 900,
     show: false, // Pencereyi gizle
     frame: false,
     autoHideMenuBar: true,
@@ -98,7 +98,7 @@ ipcMain.handle('register', async (event, payload) => {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const {image, data} = payload
+    const { image, data } = payload
     const companyDetailsJSON = JSON.stringify(data.company_details || {})
     const contactPersonJSON = JSON.stringify(data.contact_person || {})
 
@@ -1173,7 +1173,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
             WHERE is_active = 1 AND (id = ? OR customer_id = ?)
             ORDER BY id DESC LIMIT ?`
           )
-          .all(term, term ,limit)
+          .all(term, term, limit)
         total = db
           .prepare(`SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id + 0 LIKE ?`)
           .get(term).total
@@ -1397,7 +1397,7 @@ ipcMain.handle('cancel-payment-by-id', async (event, payload) => {
   }
 })
 
-ipcMain.handle('report-payments', async (event, payload) => {
+ipcMain.handle('report-taxs', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
   }
@@ -1409,7 +1409,7 @@ ipcMain.handle('report-payments', async (event, payload) => {
       .prepare(
         `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
       )
-      .all(start, end) 
+      .all(start, end)
     return { success: true, rows }
   } catch (error) {
     console.error('DB error:', error.message)

@@ -108,32 +108,6 @@ const routes = [
     meta: { title: 'Rechnungsvorschau', auth: true }
   },
 
-  //payments
-  {
-    path: '/payments/create/:id',
-    name: 'payments-create',
-    component: () => import('../views/payments/Create.vue'),
-    meta: { title: 'Neue Zahlung', auth: true }
-  },
-  {
-    path: '/payments/details/:id',
-    name: 'payments-details',
-    component: () => import('../views/payments/Details.vue'),
-    meta: { title: 'Zahlungsdetails', auth: true }
-  },
-  {
-    path: '/payments/edit/:id',
-    name: 'payments-edit',
-    component: () => import('../views/payments/Edit.vue'),
-    meta: { title: 'Zahlung stornieren', auth: true }
-  },
-  {
-    path: '/payments/preview',
-    name: 'payments-preview',
-    component: () => import('../views/payments/Preview.vue'),
-    meta: { title: 'Zahlungsvorschau', auth: true }
-  },
-
   //reminders
   {
     path: '/reminders/create/:id',

@@ -26,7 +26,6 @@ contextBridge.exposeInMainWorld('api', {
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
   deleteCustomerById: async (id) => ipcRenderer.invoke('delete-customer-by-id', id),
   searchCustomers: async (data) => ipcRenderer.invoke('search-customers', data),
-  reportCustomers: async (data) => ipcRenderer.invoke('report-customers', data),
 
   //invoice
   addInvoice: async (data) => ipcRenderer.invoke('add-invoice', data),
@@ -36,13 +35,11 @@ contextBridge.exposeInMainWorld('api', {
   filterInvoicesCategories: async (data) => ipcRenderer.invoke('flter-invoices-categories', data),
   searchInvoices: async (term) => ipcRenderer.invoke('search-invoices', term),
   filterInvoicesDate: async (date) => ipcRenderer.invoke('filter-invoices-date', date),
-  reportInvoices: async (data) => ipcRenderer.invoke('report-invoices', data),
 
   //payment
   addPayment: (data) => ipcRenderer.invoke('add-payment', data),
   getPaymentById: (id) => ipcRenderer.invoke('get-payment-by-id', id),
   cancelPaymentById: (data) => ipcRenderer.invoke('cancel-payment-by-id', data),  
-  reportPayments: async (data) => ipcRenderer.invoke('report-payments', data),
 
   //reminder
   addReminder: (data) => ipcRenderer.invoke('add-reminder', data),
@@ -63,6 +60,12 @@ contextBridge.exposeInMainWorld('api', {
   getOrderById: async (id) => ipcRenderer.invoke('get-order-by-id', id),
   updateOrderById: async (data) => ipcRenderer.invoke('update-order-by-id', data),
   cancelOrder: async (data) => ipcRenderer.invoke('cancel-order', data),
+
+  //reports
+  reportCustomers: async (data) => ipcRenderer.invoke('report-customers', data),
+  reportInvoices: async (data) => ipcRenderer.invoke('report-invoices', data),
+  reportTaxs: async (data) => ipcRenderer.invoke('report-taxs', data),
+  reportSales: async (data) => ipcRenderer.invoke('report-sales', data),
 
   //save pdf
   saveInvoicePDF: (pdfBlob, fileName) => {
