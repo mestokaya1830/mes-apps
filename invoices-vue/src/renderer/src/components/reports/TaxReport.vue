@@ -75,85 +75,12 @@
         <div class="summary-card">
           <div class="card-icon">⚡</div>
           <div class="card-content">
-            <p class="card-label">An Finanzamt zu zahlen</p>
-            <h3 class="card-value">{{ formatCurrency(totalTax) }}</h3>
-            <p class="card-detail">Zahllast</p>
+            <p class="card-label">Steuerfrei</p>
+            <h3 class="card-value">{{ formatCurrency(totalTaxFree.totalVatFree) }}</h3>
+            <p class="card-detail">{{ formatCurrency(totalTaxFree.totalVatFree) }}</p>
           </div>
         </div>
       </div>
-
-      <!-- Tax Rate Breakdown -->
-      <div class="tax-rate-grid">
-        <div class="tax-rate-box">
-          <div class="tax-rate-header">
-            <div class="tax-rate-title">Regelsteuersatz</div>
-            <div class="tax-rate-percent">19%</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Nettobetrag</div>
-            <div class="tax-rate-value">€43.400,00</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">MwSt-Betrag</div>
-            <div class="tax-rate-value">€8.246,00</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Bruttobetrag</div>
-            <div class="tax-rate-value">€51.646,00</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Anzahl Rechnungen</div>
-            <div class="tax-rate-value">22</div>
-          </div>
-        </div>
-
-        <div class="tax-rate-box">
-          <div class="tax-rate-header">
-            <div class="tax-rate-title">Ermäßigter Steuersatz</div>
-            <div class="tax-rate-percent">7%</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Nettobetrag</div>
-            <div class="tax-rate-value">€6.643,00</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">MwSt-Betrag</div>
-            <div class="tax-rate-value">€465,01</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Bruttobetrag</div>
-            <div class="tax-rate-value">€7.108,01</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Anzahl Rechnungen</div>
-            <div class="tax-rate-value">2</div>
-          </div>
-        </div>
-
-        <div class="tax-rate-box">
-          <div class="tax-rate-header">
-            <div class="tax-rate-title">Steuerfrei</div>
-            <div class="tax-rate-percent">0%</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Nettobetrag</div>
-            <div class="tax-rate-value">€0,00</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">MwSt-Betrag</div>
-            <div class="tax-rate-value">€0,00</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Bruttobetrag</div>
-            <div class="tax-rate-value">€0,00</div>
-          </div>
-          <div class="tax-rate-item">
-            <div class="tax-rate-label">Anzahl Rechnungen</div>
-            <div class="tax-rate-value">0</div>
-          </div>
-        </div>
-      </div>
-
       <!-- Monthly Chart -->
       <!-- Chart -->
       <!-- <InvoiceChart :chartData="summary" /> -->
@@ -179,42 +106,27 @@
               <th>Steuerbetrag</th>
             </tr>
           </thead>
+
           <tbody>
-            <tr>
+            <tr v-for="item in reportDetails" :key="item.id">
               <td class="field-number">Kz. 81</td>
-              <td>Steuerbare Umsätze (19%)</td>
-              <td class="amount">€43.400,00</td>
-              <td class="center">19%</td>
-              <td class="amount">€8.246,00</td>
+
+              <td>{{ item.description }} ({{ item.vat }}%)</td>
+
+              <td class="amount">€{{ item.baseAmount.toFixed(2) }}</td>
+
+              <td class="center">{{ item.vat }}%</td>
+
+              <td class="amount">€{{ item.taxAmount.toFixed(2) }}</td>
             </tr>
-            <tr>
-              <td class="field-number">Kz. 86</td>
-              <td>Steuerbare Umsätze (7%)</td>
-              <td class="amount">€6.643,00</td>
-              <td class="center">7%</td>
-              <td class="amount">€465,01</td>
-            </tr>
-            <tr>
-              <td class="field-number">Kz. 91</td>
-              <td>Steuerfreie Umsätze</td>
-              <td class="amount">€0,00</td>
-              <td class="center">0%</td>
-              <td class="amount">€0,00</td>
-            </tr>
-            <tr class="ustva-total-row">
-              <td colspan="4"><strong>Summe Umsatzsteuer (Kz. 83)</strong></td>
-              <td class="amount"><strong>€8.711,01</strong></td>
-            </tr>
-            <tr>
-              <td class="field-number">Kz. 66</td>
-              <td>Vorsteuerabzug</td>
-              <td class="amount">-</td>
-              <td class="center">-</td>
-              <td class="amount">€0,00</td>
-            </tr>
+
             <tr class="ustva-payable">
-              <td colspan="4"><strong>Zahllast (Kz. 83)</strong></td>
-              <td class="amount"><strong>€8.711,01</strong></td>
+              <td colspan="4">
+                <strong>Zahllast (Kz. 83)</strong>
+              </td>
+              <td class="amount">
+                <strong>€{{ totalTaxAmount.toFixed(2) }}</strong>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -223,13 +135,14 @@
       <!-- Detailed Table -->
       <div class="table-section">
         <h3>Detaillierte Rechnungsübersicht nach MwSt-Satz</h3>
+
         <table class="report-table">
           <thead>
             <tr>
               <th>Rechnungsnr.</th>
               <th>Datum</th>
               <th>Kunde</th>
-              <th class="center">MwSt-Satz</th>
+              <th>MwSt-Satz</th>
               <th>Nettobetrag</th>
               <th>MwSt-Betrag</th>
               <th>Bruttobetrag</th>
@@ -237,17 +150,20 @@
               <th>Zahlungsdatum</th>
             </tr>
           </thead>
+
           <tbody>
-            <tr>
-              <td class="field-number">1234</td>
-              <td>01.01.2023</td>
-              <td>Max Mustermann</td>
-              <td class="center">19%</td>
-              <td class="amount">€10.000,00</td>
-              <td class="amount">€1.800,00</td>
-              <td class="amount">€12.800,00</td>
-              <td class="status paid">Bezahlt</td>
-              <td>01.02.2023</td>
+            <tr v-for="item in reportList" :key="item.id">
+              <td>{{ item.id }}</td>
+              <td>{{ item.date }}</td>
+              <td>{{ item.customer_id }}</td>
+              <td>{{ item.vatRate }}%</td>
+              <td>€{{ item.netAmount.toFixed(2) }}</td>
+              <td>€{{ item.vatAmount.toFixed(2) }}</td>
+              <td>€{{ item.grossAmount.toFixed(2) }}</td>
+              <td :class="item.paymentStatus === 'paid' ? 'paid' : 'open'">
+                {{ item.paymentStatus === 'paid' ? 'Bezahlt' : 'Offen' }}
+              </td>
+              <td>{{ item.paidAt || '-' }}</td>
             </tr>
           </tbody>
         </table>
@@ -299,10 +215,10 @@ export default {
       }
 
       return this.reports.reduce(
-        (acc, report) => {
-          if (!Array.isArray(report.positions)) return acc
+        (acc, item) => {
+          if (!Array.isArray(item.positions)) return acc
 
-          report.positions.forEach((pos) => {
+          item.positions.forEach((pos) => {
             if (Number(pos.vat) === 19) {
               acc.totalVat19 += Number(pos.vat_unit || 0) * Number(pos.quantity || 0)
               acc.totalNet19 += Number(pos.price * pos.quantity || 0)
@@ -320,10 +236,10 @@ export default {
       }
 
       return this.reports.reduce(
-        (acc, report) => {
-          if (!Array.isArray(report.positions)) return acc
+        (acc, item) => {
+          if (!Array.isArray(item.positions)) return acc
 
-          report.positions.forEach((pos) => {
+          item.positions.forEach((pos) => {
             if (Number(pos.vat) === 7) {
               acc.totalVat7 += Number(pos.vat_unit || 0) * Number(pos.quantity || 0)
               acc.totalNet7 += Number(pos.price * pos.quantity || 0)
@@ -332,8 +248,88 @@ export default {
 
           return acc
         },
-        { totalVat7: 0, totalNet7: 0 }
+        { totalVat7: 0 }
       )
+    },
+    totalTaxFree() {
+      if (!Array.isArray(this.reports)) {
+        return { totalVatFree: 0, totalNetFree: 0 }
+      }
+
+      return this.reports.reduce(
+        (acc, item) => {
+          if (!Array.isArray(item.positions)) return acc
+
+          item.positions.forEach((pos) => {
+            if (Number(pos.vat) === 0) {
+              acc.totalVatFree += Number(pos.price * pos.quantity || 0)
+            }
+          })
+
+          return acc
+        },
+        { totalVatFree: 0 }
+      )
+    },
+    reportDetails() {
+      if (!Array.isArray(this.reports)) return []
+
+      return this.reports.flatMap((report) => {
+        if (!Array.isArray(report.positions)) return []
+
+        return report.positions
+          .filter((item) => item && item.unit_total != null && item.vat != null)
+          .map((item) => {
+            const baseAmount = Number(item.price * item.quantity) || 0
+            const vat = Number(item.vat) || 0
+
+            return {
+              id: item.id,
+              description: item.description || '-',
+              vat,
+              baseAmount,
+              taxAmount: (baseAmount * vat) / 100
+            }
+          })
+      })
+    },
+
+    totalTaxAmount() {
+      return this.reportDetails.reduce((sum, item) => sum + (item.taxAmount || 0), 0)
+    },
+    reportList() {
+      if (!Array.isArray(this.reports)) return []
+
+      return this.reports.map((item) => {
+        const vatRate = item.positions?.[0]?.vat ?? 0
+
+        const netAmount = Number(item.net_total) || 0
+        const vatAmount = Number(item.vat_total) || 0
+        const grossAmount = Number(item.gross_total) || 0
+
+        // let customerName = '-'
+        // try {
+        //   customerName = item.customer ? JSON.parse(item.customer).company_name : '-'
+        // } catch (error) {
+        //   console.log(error)
+        // }
+
+        return {
+          id: item.id,
+          date: item.date,
+          customer_id: item.customer_id,
+          vatRate,
+          netAmount,
+          vatAmount,
+          grossAmount,
+          paymentStatus: item.payment_status,
+          paidAt: item.paid_at
+        }
+      })
+    },
+
+    totalVatAmount() {
+      return this.detailedVatReport.reduce((sum, row) => sum + row.vatAmount, 0)
     }
   },
   methods: {
@@ -776,11 +772,6 @@ export default {
 .ustva-table .field-number {
   font-weight: 600;
   color: #6b7280;
-  font-family: 'Courier New', monospace;
-}
-
-.ustva-table .amount {
-  text-align: right;
   font-family: 'Courier New', monospace;
 }
 
