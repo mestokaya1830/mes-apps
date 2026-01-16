@@ -630,46 +630,6 @@ ipcMain.handle('search-customers', async (event, term) => {
   }
 })
 
-ipcMain.handle('report-customers', async (event, payload) => {
-  if (!payload) {
-    return { success: false, message: 'No data provided' }
-  }
-
-  try {
-    const { start, end, limit } = payload
-
-    const rows = db
-      .prepare(
-        `      SELECT 
-              c.id,
-              c.company_name,
-              c.full_name,
-              COUNT(i.id) AS invoice_count,
-              MAX(i.date) AS last_activity,
-              SUM(i.gross_total) AS invoice_total,
-              SUM(CASE WHEN i.payment_status = 'paid' THEN 1 ELSE 0 END) AS paid,
-              SUM(CASE WHEN i.payment_status = 'unpaid' THEN 1 ELSE 0 END) AS unpaid,
-              SUM(CASE WHEN i.payment_status = 'partially_paid' THEN 1 ELSE 0 END) AS partially_paid,
-              SUM(CASE WHEN i.due_date < DATE('now') AND i.payment_status != 'paid' THEN 1 ELSE 0 END) AS overdue
-          FROM customers c
-          LEFT JOIN invoices i ON c.id = i.customer_id
-          WHERE c.is_active = 1 AND c.date BETWEEN ? AND ?
-          GROUP BY c.id
-          ORDER BY c.company_name ASC   -- veya toplam gelire göre DESC
-          LIMIT ?`
-      )
-      .all(start, end, limit)
-
-    return {
-      success: true,
-      rows: rows
-    }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
 //invoices
 ipcMain.handle('add-invoice', async (event, payload) => {
   if (!payload) {
@@ -1224,27 +1184,6 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
   }
 })
 
-ipcMain.handle('report-invoices', async (event, payload) => {
-  if (!payload) {
-    return { success: false, message: 'No data provided' }
-  }
-  try {
-    const { start, end } = payload
-    const rows = db
-      .prepare(
-        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
-      )
-      .all(start, end)
-
-    console.log(rows)
-
-    return { success: true, rows }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: err.message }
-  }
-})
-
 //payments
 ipcMain.handle('add-payment', async (event, payload) => {
   if (!payload) return { success: false, message: 'No data provided' }
@@ -1394,26 +1333,6 @@ ipcMain.handle('cancel-payment-by-id', async (event, payload) => {
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
-  }
-})
-
-ipcMain.handle('report-taxs', async (event, payload) => {
-  if (!payload) {
-    return { success: false, message: 'No data provided' }
-  }
-
-  const { start, end } = payload
-
-  try {
-    const rows = db
-      .prepare(
-        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
-      )
-      .all(start, end)
-    return { success: true, rows }
-  } catch (error) {
-    console.error('DB error:', error.message)
-    return { success: false, message: error.message }
   }
 })
 
@@ -2030,5 +1949,108 @@ ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
     // Burada audit log veya DB işlemi yapılabilir
   } catch (err) {
     console.error('PDF Error:', err)
+  }
+})
+
+
+//reports
+ipcMain.handle('report-customers', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const { start, end, limit } = payload
+
+    const rows = db
+      .prepare(
+        `      SELECT 
+              c.id,
+              c.company_name,
+              c.full_name,
+              COUNT(i.id) AS invoice_count,
+              MAX(i.date) AS last_activity,
+              SUM(i.gross_total) AS invoice_total,
+              SUM(CASE WHEN i.payment_status = 'paid' THEN 1 ELSE 0 END) AS paid,
+              SUM(CASE WHEN i.payment_status = 'unpaid' THEN 1 ELSE 0 END) AS unpaid,
+              SUM(CASE WHEN i.payment_status = 'partially_paid' THEN 1 ELSE 0 END) AS partially_paid,
+              SUM(CASE WHEN i.due_date < DATE('now') AND i.payment_status != 'paid' THEN 1 ELSE 0 END) AS overdue
+          FROM customers c
+          LEFT JOIN invoices i ON c.id = i.customer_id
+          WHERE c.is_active = 1 AND c.date BETWEEN ? AND ?
+          GROUP BY c.id
+          ORDER BY c.company_name ASC   -- veya toplam gelire göre DESC
+          LIMIT ?`
+      )
+      .all(start, end, limit)
+
+    return {
+      success: true,
+      rows: rows
+    }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('report-invoices', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
+      )
+      .all(start, end)
+
+    console.log(rows)
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('report-taxs', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  const { start, end } = payload
+
+  try {
+    const rows = db
+      .prepare(
+        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
+      )
+      .all(start, end)
+    return { success: true, rows }
+  } catch (error) {
+    console.error('DB error:', error.message)
+    return { success: false, message: error.message }
+  }
+})
+
+ipcMain.handle('report-sales', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  const { start, end } = payload
+
+  try {
+    const rows = db
+      .prepare(
+        `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
+      )
+      .all(start, end)
+    return { success: true, rows }
+  } catch (error) {
+    console.error('DB error:', error.message)
+    return { success: false, message: error.message }
   }
 })
