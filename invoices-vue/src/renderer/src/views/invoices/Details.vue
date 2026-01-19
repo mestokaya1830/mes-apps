@@ -1,6 +1,6 @@
 <template>
-  <div v-if="invoice && auth">
-    <div class="preview-panel">
+  <div v-if="invoice && auth" class="preview-panel">
+    <div>
       <div class="printable">
         <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -286,7 +286,9 @@
           </span>
           <label for="">Restbetrag: </label>
           <span v-if="invoice.early_paid_discount_applied">
-            {{ formatCurrency(invoice.gross_total_after_discount - payment_total, invoice.currency) }}
+            {{
+              formatCurrency(invoice.gross_total_after_discount - payment_total, invoice.currency)
+            }}
           </span>
           <span>
             {{ formatCurrency(invoice.gross_total - payment_total, invoice.currency) }}

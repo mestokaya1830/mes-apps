@@ -1,101 +1,99 @@
 <template>
-  <div>
-    <div v-if="customer" class="editor-panel">
-      <div class="editor-header-block">
-        <div class="editor-title">
-          📝{{ title }} {{ formatCustomerId(customer.id) }}
-          <div class="editor-subtitle">Bearbeiten Sie die Kundendaten</div>
-        </div>
-        <router-link to="/customers" class="add-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M15 6l-6 6 6 6" />
-          </svg>
-        </router-link>
+  <div v-if="customer" class="editor-panel">
+    <div class="editor-header-block">
+      <div class="editor-title">
+        📝{{ title }} {{ formatCustomerId(customer.id) }}
+        <div class="editor-subtitle">Bearbeiten Sie die Kundendaten</div>
       </div>
-      <div class="form-section">
-        <div class="form-section-title">🏢 Unternehmensinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Unternehmenstyp</label>
-            <input v-model="customer.company_type" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Firmenname</label>
-            <input v-model="customer.company_name" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Vorname</label>
-            <input v-model="customer.first_name" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nachname</label>
-            <input v-model="customer.last_name" type="text" class="form-input" />
-          </div>
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">📍 Adressdaten</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Adresse</label>
-            <input v-model="customer.address" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Postleitzahl</label>
-            <input v-model="customer.postal_code" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stadt</label>
-            <input v-model="customer.city" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Land</label>
-            <input v-model="customer.country" type="text" class="form-input" />
-          </div>
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">📞 Kontaktdaten</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">E-Mail</label>
-            <input v-model="customer.email" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Telefonnummer</label>
-            <input v-model="customer.phone" type="text" class="form-input" />
-          </div>
-        </div>
-      </div>
-      <div class="form-section">
-        <div class="form-section-title">💼 Steuerinformationen</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Steuernummer</label>
-            <input v-model="customer.tax_number" type="text" class="form-input" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">USt-IdNr.</label>
-            <input v-model="customer.vat_id" type="text" class="form-input" />
-          </div>
+      <router-link to="/customers" class="add-btn">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M15 6l-6 6 6 6" />
+        </svg>
+      </router-link>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">🏢 Unternehmensinformationen</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Unternehmenstyp</label>
+          <input v-model="customer.company_type" type="text" class="form-input" />
         </div>
         <div class="form-group">
-          <label class="form-label">Erstellungsdatum</label>
-          <input v-model="customer.created_at" type="text" class="form-input" />
+          <label class="form-label">Firmenname</label>
+          <input v-model="customer.company_name" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vorname</label>
+          <input v-model="customer.first_name" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nachname</label>
+          <input v-model="customer.last_name" type="text" class="form-input" />
         </div>
       </div>
-      <button type="button" class="form-btn" @click="updateCustomer">Aktualisierung</button>
     </div>
+    <div class="form-section">
+      <div class="form-section-title">📍 Adressdaten</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Adresse</label>
+          <input v-model="customer.address" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Postleitzahl</label>
+          <input v-model="customer.postal_code" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stadt</label>
+          <input v-model="customer.city" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Land</label>
+          <input v-model="customer.country" type="text" class="form-input" />
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">📞 Kontaktdaten</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">E-Mail</label>
+          <input v-model="customer.email" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefonnummer</label>
+          <input v-model="customer.phone" type="text" class="form-input" />
+        </div>
+      </div>
+    </div>
+    <div class="form-section">
+      <div class="form-section-title">💼 Steuerinformationen</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Steuernummer</label>
+          <input v-model="customer.tax_number" type="text" class="form-input" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">USt-IdNr.</label>
+          <input v-model="customer.vat_id" type="text" class="form-input" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Erstellungsdatum</label>
+        <input v-model="customer.created_at" type="text" class="form-input" />
+      </div>
+    </div>
+    <button type="button" class="form-btn" @click="updateCustomer">Aktualisierung</button>
   </div>
 </template>
 

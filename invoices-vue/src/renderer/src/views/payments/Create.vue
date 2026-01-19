@@ -1,190 +1,185 @@
 <template>
-  <div>
-    <!-- Payment Capture Panel -->
-    <div v-if="payment" class="editor-panel">
-      <div class="editor-header">
-        <div class="editor-title">💳 {{ title }}</div>
-        <div class="editor-subtitle">
-          Erfassen Sie eingehende Zahlungen für die ausgewählte Rechnung
+  <div v-if="payment" class="editor-panel">
+    <div class="editor-header">
+      <div class="editor-title">💳 {{ title }}</div>
+      <div class="editor-subtitle">
+        Erfassen Sie eingehende Zahlungen für die ausgewählte Rechnung
+      </div>
+    </div>
+
+    <div>
+      <!-- 1️⃣ Invoice Information (readonly) -->
+      <div class="form-section">
+        <div class="form-section-title">📄 Ausgewählte Rechnung</div>
+        <div class="customer-details" style="margin-top: 16px">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Rechnung-Nr.:</label>
+              <label class="form-input">{{ formatInvoiceId(payment.invoice.id) }}</label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kunden-Nr.:</label>
+              <label class="form-input">{{ formatCustomerId(payment.invoice.customer_id) }}</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Rechnungsdatum</label>
+              <label class="form-input">{{ formatDate(payment.invoice.date) }}</label>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fälligkeitsdatum</label>
+              <label class="form-input">{{ formatDate(payment.invoice.due_date) }}</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <div>
+                Gesamtsumme:
+                {{ formatCurrency(payment.invoice.gross_total, payment.invoice.currency) }}
+              </div>
+              <div>
+                Bereits gezahlt:
+                {{ formatCurrency(payment.payment_total, payment.invoice.currency) }}
+              </div>
+              <div>
+                Offener Betrag:
+                {{ formatCurrency(outstanding, payment.invoice.currency) }}
+              </div>
+            </label>
+          </div>
         </div>
       </div>
 
-      <div>
-        <!-- 1️⃣ Invoice Information (readonly) -->
-        <div class="form-section">
-          <div class="form-section-title">📄 Ausgewählte Rechnung</div>
-          <div class="customer-details" style="margin-top: 16px">
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Rechnung-Nr.:</label>
-                <label class="form-input">{{ formatInvoiceId(payment.invoice.id) }}</label>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Kunden-Nr.:</label>
-                <label class="form-input">{{
-                  formatCustomerId(payment.invoice.customer_id)
-                }}</label>
-              </div>
-            </div>
+      <!-- 2️⃣ Counterparty Information -->
+      <div class="form-section">
+        <div class="form-section-title">🏦 Gegenpartei Informationen</div>
 
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Rechnungsdatum</label>
-                <label class="form-input">{{ formatDate(payment.invoice.date) }}</label>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Fälligkeitsdatum</label>
-                <label class="form-input">{{ formatDate(payment.invoice.due_date) }}</label>
-              </div>
-            </div>
+        <IbanComponent
+          v-model:localNamePartner="payment.counterparty_name"
+          v-model:iban="payment.counterparty_iban"
+          v-model:bic="payment.counterparty_bic"
+          @ibanValid="ibanValid = $event"
+          @bicValid="bicValid = $event"
+          @update:bank="setBank"
+        />
+      </div>
 
-            <div class="form-group">
-              <label class="form-label">
-                <div>
-                  Gesamtsumme:
-                  {{ formatCurrency(payment.invoice.gross_total, payment.invoice.currency) }}
-                </div>
-                <div>
-                  Bereits gezahlt:
-                  {{ formatCurrency(payment.payment_total, payment.invoice.currency) }}
-                </div>
-                <div>
-                  Offener Betrag:
-                  {{ formatCurrency(outstanding, payment.invoice.currency) }}
-                </div>
-              </label>
+      <!-- 3️⃣ Currency -->
+      <div class="form-section">
+        <div class="form-section-title">💰 Währung</div>
+        <div class="form-group">
+          <label class="form-label">Waehrung</label>
+          <select v-model="payment.invoice.currency" class="form-input">
+            <option value="EUR.de-DE">EUR</option>
+            <option value="USD.en-US">USD</option>
+            <option value="GBP.en-GB">GBP</option>
+            <option value="CHF.ch-CH">CHF</option>
+            <option value="JPY.ja-JP">JPY</option>
+            <option value="AUD.en-AU">AUD</option>
+            <option value="CAD.en-CA">CAD</option>
+            <option value="CNY.zh-CN">CNY</option>
+            <option value="SEK.sv-SE">SEK</option>
+            <option value="NZD.en-NZ">NZD</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 4️⃣ Payment Details -->
+      <div class="form-section">
+        <div class="form-section-title">💰 Zahlungsdetails</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Zahlungsdatum *</label>
+            <!-- Payment Date Input -->
+            <input
+              ref="date"
+              v-model="payment.date"
+              type="date"
+              class="form-input date"
+              @change="checkEarlyPayment"
+            />
+            <small class="form-hint">Datum des Zahlungseingangs</small>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Betrag (€) *</label>
+            <input
+              ref="payment_amount"
+              v-model="payment.payment_amount"
+              type="number"
+              class="form-input"
+              min="0"
+              :disabled="isPaymentAmountDisabled"
+              @input="onAmountInput"
+            />
+            <small v-if="paymentAmountError" class="form-warning"
+              >Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small
+            >
+            <div class="payment-row">
+              <div class="form-group">
+                <small class="form-label">Rabbat</small>
+                <small v-if="is_early_payment_selected">{{
+                  payment.invoice.early_payment_discount
+                }}</small>
+                <small v-else>0</small>
+              </div>
+              <div class="form-group">
+                <small class="form-label">Offener Betrag</small>
+                <small>{{ formatCurrency(setOutstanding, payment.invoice.currency) }}</small>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 2️⃣ Counterparty Information -->
-        <div class="form-section">
-          <div class="form-section-title">🏦 Gegenpartei Informationen</div>
-
-          <IbanComponent
-            v-model:localNamePartner="payment.counterparty_name"
-            v-model:iban="payment.counterparty_iban"
-            v-model:bic="payment.counterparty_bic"
-            @ibanValid="ibanValid = $event"
-            @bicValid="bicValid = $event"
-            @update:bank="setBank"
-          />
-        </div>
-
-        <!-- 3️⃣ Currency -->
-        <div class="form-section">
-          <div class="form-section-title">💰 Währung</div>
+        <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Waehrung</label>
-            <select v-model="payment.invoice.currency" class="form-input">
-              <option value="EUR.de-DE">EUR</option>
-              <option value="USD.en-US">USD</option>
-              <option value="GBP.en-GB">GBP</option>
-              <option value="CHF.ch-CH">CHF</option>
-              <option value="JPY.ja-JP">JPY</option>
-              <option value="AUD.en-AU">AUD</option>
-              <option value="CAD.en-CA">CAD</option>
-              <option value="CNY.zh-CN">CNY</option>
-              <option value="SEK.sv-SE">SEK</option>
-              <option value="NZD.en-NZ">NZD</option>
+            <label class="form-label">Zahlungsmethode</label>
+            <select v-model="payment.payment_method" class="form-input">
+              <option>Überweisung</option>
+              <option>Bar</option>
+              <option>PayPal</option>
+              <option>Kreditkarte</option>
+              <option>Lastschrift</option>
+              <option>Scheck</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label class="form-label">Zahlungsreferenz</label>
+            <input
+              v-model="payment.payment_reference"
+              type="text"
+              class="form-input"
+              placeholder="z.B. Bankreferenz, Transaktions-ID"
+            />
+            <small class="form-hint">Optional</small>
+          </div>
         </div>
 
-        <!-- 4️⃣ Payment Details -->
-        <div class="form-section">
-          <div class="form-section-title">💰 Zahlungsdetails</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Zahlungsdatum *</label>
-              <!-- Payment Date Input -->
-              <input
-                ref="date"
-                v-model="payment.date"
-                type="date"
-                class="form-input date"
-                @change="checkEarlyPayment"
-              />
-              <small class="form-hint">Datum des Zahlungseingangs</small>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Betrag (€) *</label>
-              <input
-                ref="payment_amount"
-                v-model="payment.payment_amount"
-                type="number"
-                class="form-input"
-                min="0"
-                :disabled="isPaymentAmountDisabled"
-                @input="onAmountInput"
-              />
-              <small v-if="paymentAmountError" class="form-warning"
-                >Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small
-              >
-              <div class="payment-row">
-                <div class="form-group">
-                  <small class="form-label">Rabbat</small>
-                  <small v-if="is_early_payment_selected">{{
-                    payment.invoice.early_payment_discount
-                  }}</small>
-                  <small v-else>0</small>
-                </div>
-                <div class="form-group">
-                  <small class="form-label">Offener Betrag</small>
-                  <small>{{ formatCurrency(setOutstanding, payment.invoice.currency) }}</small>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Zahlungsmethode</label>
-              <select v-model="payment.payment_method" class="form-input">
-                <option>Überweisung</option>
-                <option>Bar</option>
-                <option>PayPal</option>
-                <option>Kreditkarte</option>
-                <option>Lastschrift</option>
-                <option>Scheck</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Zahlungsreferenz</label>
-              <input
-                v-model="payment.payment_reference"
-                type="text"
-                class="form-input"
-                placeholder="z.B. Bankreferenz, Transaktions-ID"
-              />
-              <small class="form-hint">Optional</small>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Beleg / Zahlungsnachweis (optional)</label>
-              <input type="file" class="form-input" accept=".pdf,image/*" @change="loadImage" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Ausgewählte Datei</label>
-              <img v-if="selectedImage" :src="selectedImage" alt="" class="selected-image" />
-              <div v-else>{{ payment.file_name }}</div>
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Beleg / Zahlungsnachweis (optional)</label>
+            <input type="file" class="form-input" accept=".pdf,image/*" @change="loadImage" />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Notizen (optional)</label>
-            <textarea v-model="payment.notes" class="form-input" rows="3"></textarea>
+            <label class="form-label">Ausgewählte Datei</label>
+            <img v-if="selectedImage" :src="selectedImage" alt="" class="selected-image" />
+            <div v-else>{{ payment.file_name }}</div>
           </div>
         </div>
 
-        <!-- 5️⃣ Preview / Submit -->
-        <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
+        <div class="form-group">
+          <label class="form-label">Notizen (optional)</label>
+          <textarea v-model="payment.notes" class="form-input" rows="3"></textarea>
+        </div>
       </div>
+
+      <!-- 5️⃣ Preview / Submit -->
+      <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
     </div>
   </div>
 </template>

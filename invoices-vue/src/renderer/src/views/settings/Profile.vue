@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <div class="editor-panel">
+    <div class="preview-panel">
       <div class="editor-header-block">
         <div class="editor-title">
           📝{{ title }}
@@ -324,7 +323,6 @@
       </p>
       <p v-if="errorMessage" class="status-message error">❌ Fehler: {{ errorMessage }}</p>
     </div>
-  </div>
 </template>
 
 <script>

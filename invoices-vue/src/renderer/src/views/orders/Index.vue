@@ -1,10 +1,10 @@
 <template>
-  <div class="editor-panel">
+  <div class="preview-panel">
     <!-- Header Section -->
-    <div class="editor-header-block">
+    <div class="preview-header-block">
       <div>
         <h1 class="title">{{ title }}</h1>
-        <p class="subtitle">Verwalten Sie alle Ihre Aufträge</p>
+        <p class="preview-subtitle">Verwalten Sie alle Ihre Aufträge</p>
       </div>
       <router-link to="/orders/create" class="add-btn">
         <svg
@@ -48,7 +48,9 @@
           <div class="list-info">
             <h3 class="list-id">{{ formatOrderId(item.id) }}</h3>
             <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
-            <span class="list-name">{{ item.customer.first_name }} {{ item.customer.last_name }}</span>
+            <span class="list-name"
+              >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
+            >
           </div>
 
           <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">

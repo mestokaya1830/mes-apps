@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-panel">
+  <div class="report-panel">
     <select v-model="date_range" class="form-input" @change="rangeDateFilter">
       <option value="" disabled>Wähle Daten</option>
       <option value="1">Diesen Monat</option>

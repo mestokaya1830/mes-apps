@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="editor-panel">
     <h1>{{ title }}</h1>
     <form>
       <div class="form-section-title">ℹ️ General</div>

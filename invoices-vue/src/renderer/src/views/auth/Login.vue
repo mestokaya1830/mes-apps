@@ -1,5 +1,5 @@
 <template>
-  <div class="form-container">
+  <div class="editor-panel">
     <div v-if="!register" class="form-card">
       <div class="form-header">
         <h2>Welcome To Mes App Setup</h2>

@@ -1,47 +1,45 @@
 <template>
-  <div>
-    <div v-if="customer" class="editor-panel">
-      <div class="editor-header-block">
-        <div class="editor-title">📝 {{ title }}</div>
-      </div>
+  <div v-if="customer" class="preview-panel">
+    <div class="preview-header-block">
+      <div class="preview-title">📝 {{ title }}</div>
+    </div>
 
-      <div class="customer-info">
-        <p><strong>Kunden.Nr.:</strong> {{ formatCustomerId(customer.id) }}</p>
-        <p><strong>Datum:</strong> {{ formatDate(customer.date) }}</p>
-        <p><strong>Firma:</strong> {{ customer.company_name }}</p>
-        <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
-        <p><strong>Vorname:</strong> {{ customer.first_name }}</p>
-        <p><strong>Nachname:</strong> {{ customer.last_name }}</p>
-        <p><strong>Email:</strong> {{ customer.email }}</p>
-        <p><strong>Adresse:</strong> {{ customer.address }}</p>
-        <p><strong>PLZ:</strong> {{ customer.postal_code }}</p>
-        <p><strong>Stadt:</strong> {{ customer.city }}</p>
-        <p><strong>Telefon:</strong> {{ customer.phone }}</p>
-        <p><strong>Website:</strong> {{ customer.website }}</p>
-        <p><strong>USt-IdNr.:</strong> {{ customer.vat_id }}</p>
-        <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
-        <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
-       
-        <button class="action-btn delete-btn" @click="deleteCustomer(customer.id)">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path
-              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-            ></path>
-          </svg>
-          Löschen
-        </button>
-      </div>
+    <div class="customer-info">
+      <p><strong>Kunden.Nr.:</strong> {{ formatCustomerId(customer.id) }}</p>
+      <p><strong>Datum:</strong> {{ formatDate(customer.date) }}</p>
+      <p><strong>Firma:</strong> {{ customer.company_name }}</p>
+      <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
+      <p><strong>Vorname:</strong> {{ customer.first_name }}</p>
+      <p><strong>Nachname:</strong> {{ customer.last_name }}</p>
+      <p><strong>Email:</strong> {{ customer.email }}</p>
+      <p><strong>Adresse:</strong> {{ customer.address }}</p>
+      <p><strong>PLZ:</strong> {{ customer.postal_code }}</p>
+      <p><strong>Stadt:</strong> {{ customer.city }}</p>
+      <p><strong>Telefon:</strong> {{ customer.phone }}</p>
+      <p><strong>Website:</strong> {{ customer.website }}</p>
+      <p><strong>USt-IdNr.:</strong> {{ customer.vat_id }}</p>
+      <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
+      <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
+
+      <button class="action-btn delete-btn" @click="deleteCustomer(customer.id)">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path
+            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+          ></path>
+        </svg>
+        Löschen
+      </button>
     </div>
   </div>
 </template>

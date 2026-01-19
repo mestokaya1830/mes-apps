@@ -1,5 +1,5 @@
 <template>
-  <div class="form-container">
+  <div class="editor-panel">
     <div class="form-card">
       <div class="form-header">
         <h2>Reset Password</h2>

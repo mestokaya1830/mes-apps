@@ -1,53 +1,51 @@
 <template>
-  <div v-if="$route.params.id">
-    <div class="preview-panel">
-      <div class="printable">
-        <!-- Header -->
-        <h2>{{ title }}</h2>
+  <div v-if="$route.params.id" class="editor-panel">
+    <div class="printable">
+      <!-- Header -->
+      <h2>{{ title }}</h2>
 
-        <div class="form-section">
-          <div class="custom-row">
-            <div class="form-group">
-              <label for="">Rechnung-Nr.:</label>
-              <label class="form-input">{{ formatOfferId($route.params.id) }}</label>
-            </div>
-
-            <div class="form-group">
-              <label for="">Storniert am</label>
-              <input
-                v-model="cancelled_at"
-                type="date"
-                class="form-input date"
-                placeholder="Datum der Stornierung auswählen"
-              />
-              <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
-            </div>
-
-            <div class="form-group">
-              <label for="">Storniert von</label>
-              <input
-                v-model="cancelled_by"
-                type="text"
-                class="form-input"
-                placeholder="Name der Person, die storniert"
-              />
-              <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
-            </div>
-
-            <div class="form-group">
-              <label for="">Stornierungsgrund</label>
-              <textarea
-                v-model="cancellation_reason"
-                class="form-input"
-                placeholder="Grund der Stornierung hier eingeben"
-              ></textarea>
-              <div v-if="error.cancellation_reason" class="error">
-                {{ error.cancellation_reason }}
-              </div>
-            </div>
-
-            <button @click="updateOffer" class="btn btn-cancel">Aktualisieren</button>
+      <div class="form-section">
+        <div class="custom-row">
+          <div class="form-group">
+            <label for="">Rechnung-Nr.:</label>
+            <label class="form-input">{{ formatOfferId($route.params.id) }}</label>
           </div>
+
+          <div class="form-group">
+            <label for="">Storniert am</label>
+            <input
+              v-model="cancelled_at"
+              type="date"
+              class="form-input date"
+              placeholder="Datum der Stornierung auswählen"
+            />
+            <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
+          </div>
+
+          <div class="form-group">
+            <label for="">Storniert von</label>
+            <input
+              v-model="cancelled_by"
+              type="text"
+              class="form-input"
+              placeholder="Name der Person, die storniert"
+            />
+            <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
+          </div>
+
+          <div class="form-group">
+            <label for="">Stornierungsgrund</label>
+            <textarea
+              v-model="cancellation_reason"
+              class="form-input"
+              placeholder="Grund der Stornierung hier eingeben"
+            ></textarea>
+            <div v-if="error.cancellation_reason" class="error">
+              {{ error.cancellation_reason }}
+            </div>
+          </div>
+
+          <button @click="updateOffer" class="btn btn-cancel">Aktualisieren</button>
         </div>
       </div>
     </div>
@@ -115,4 +113,3 @@ export default {
   }
 }
 </script>
-

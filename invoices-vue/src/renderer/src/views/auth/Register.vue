@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-page">
+  <div class="editor-panel">
     <h2 class="page-title">Benutzerregistrierungsformular</h2>
 
     <form class="settings-form" @submit.prevent="register">

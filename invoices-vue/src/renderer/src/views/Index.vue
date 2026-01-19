@@ -1,10 +1,10 @@
 <template>
-  <div class="editor-panel">
+  <div class="preview-panel">
     <!-- Header -->
-    <div class="editor-header-block">
+    <div class="preview-header-block">
       <div>
         <h1 class="title">{{ title }}</h1>
-        <p class="subtitle">Übersicht Ihrer Rechnungen, Angebote und Aufträge</p>
+        <p class="preview-subtitle">Übersicht Ihrer Rechnungen, Angebote und Aufträge</p>
       </div>
     </div>
 

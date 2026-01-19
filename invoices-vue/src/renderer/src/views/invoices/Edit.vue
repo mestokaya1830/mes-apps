@@ -1,6 +1,6 @@
 <template>
-  <div v-if="$route.params.id">
-    <div class="preview-panel">
+  <div v-if="$route.params.id" class="editor-panel">
+    <div>
       <div class="printable">
         <!-- Header -->
         <h2>{{ title }}</h2>
@@ -115,4 +115,3 @@ export default {
   }
 }
 </script>
-
