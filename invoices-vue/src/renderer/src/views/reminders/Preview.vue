@@ -1,5 +1,5 @@
 <template>
-  <div v-if="reminderPreview && auth" class="editor-panel">
+  <div v-if="reminderPreview && auth" class="main-container">
     <div class="printable">
       <!-- Header -->
       <HeaderSidePreview :title="title" :auth="auth" />

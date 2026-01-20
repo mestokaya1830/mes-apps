@@ -787,7 +787,7 @@ input:checked + .slider:before {
   height: auto;
 }
 
-.editor-panel {
+.main-container {
   width: 100%;
   background: white;
   border-radius: 8px;
@@ -1552,7 +1552,7 @@ input:checked + .slider:before {
   background: linear-gradient(90deg, #3b82f6, #2563eb);
   transition: width 0.3s ease;
 }
-.editor-panel {
+.main-container {
   max-width: 1400px;
   background: white;
   padding: 30px;
@@ -1874,7 +1874,7 @@ input:checked + .slider:before {
   font-family: 'Courier New', monospace;
 }
 
-.editor-panel {
+.main-container {
   box-shadow: none;
   padding: 20px;
   max-width: 100%;
@@ -1960,7 +1960,7 @@ h1,
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
-.editor-panel {
+.main-container {
   max-width: 1400px;
   background: white;
   padding: 30px;
@@ -2472,7 +2472,7 @@ h1,
 }
 
 @media screen and (max-width: 1200px) {
-  .editor-panel,
+  .main-container,
   .main-container {
     width: 60%;
     max-width: 60%;

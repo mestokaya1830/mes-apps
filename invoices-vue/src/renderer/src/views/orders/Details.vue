@@ -1,5 +1,5 @@
 <template>
-  <div v-if="order" class="editor-panel">
+  <div v-if="order" class="main-container">
     <div class="printable">
       <!-- Header section -->
       <HeaderSidePreview :title="title" :auth="auth" />

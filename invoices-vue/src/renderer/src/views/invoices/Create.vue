@@ -1,5 +1,5 @@
 <template>
-  <div v-if="invoice" class="editor-panel">
+  <div v-if="invoice" class="main-container">
     <div class="editor-header">
       <div class="editor-title">📝{{ title }}</div>
       <div class="editor-subtitle">Bearbeiten Sie die Rechnung und sehen Sie die Vorschau live</div>

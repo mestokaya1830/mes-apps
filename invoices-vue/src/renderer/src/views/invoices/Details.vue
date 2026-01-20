@@ -1,5 +1,5 @@
 <template>
-  <div v-if="invoice && auth" class="editor-panel">
+  <div v-if="invoice && auth" class="main-container">
     <div>
       <div class="printable">
         <!-- Header -->

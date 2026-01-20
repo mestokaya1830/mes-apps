@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-panel">
+  <div class="main-container">
     <div class="printable">
       <!-- Header -->
       <h2>{{ title }}</h2>

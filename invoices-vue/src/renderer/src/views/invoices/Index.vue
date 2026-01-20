@@ -1,7 +1,7 @@
 <template>
-  <div v-if="invoices" class="editor-panel">
+  <div v-if="invoices" class="main-container">
     <!-- Header Section -->
-    <div v-if="invoices" class="editor-header-block">
+    <div v-if="invoices" class="main-header">
       <div>
         <h1 class="title">{{ title }} {{ total_count }} / {{ current_count }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
@@ -24,7 +24,7 @@
       </router-link>
     </div>
 
-    <div class="filter-container">
+    <div class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>

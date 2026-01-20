@@ -1,5 +1,5 @@
 <template>
-  <div v-if="payment" class="editor-panel">
+  <div v-if="payment" class="main-container">
     <div class="editor-header">
       <div class="editor-title">💳 {{ title }}</div>
       <div class="editor-subtitle">

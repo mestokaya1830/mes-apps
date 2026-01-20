@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.params.id" class="editor-panel">
+  <div v-if="$route.params.id" class="main-container">
     <div>
       <div class="printable">
         <!-- Header -->

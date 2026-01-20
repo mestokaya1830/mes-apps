@@ -1,7 +1,7 @@
 <template>
-  <div class="editor-panel">
+  <div class="main-container">
     <!-- Header Section -->
-    <div class="editor-header-block">
+    <div class="main-header">
       <div>
         <h1 class="title">{{ title }} {{ offers.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Angebote</p>
@@ -24,7 +24,7 @@
       </router-link>
     </div>
 
-    <div class="filter-container">
+    <div class="main-filter">
       <input
         v-model="search_box"
         type="search"

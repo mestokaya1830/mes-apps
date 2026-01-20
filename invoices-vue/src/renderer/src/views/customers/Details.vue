@@ -1,6 +1,6 @@
 <template>
-  <div v-if="customer" class="editor-panel">
-    <div class="editor-header-block">
+  <div v-if="customer" class="main-container">
+    <div class="main-header">
       <div class="preview-title">📝 {{ title }}</div>
     </div>
 

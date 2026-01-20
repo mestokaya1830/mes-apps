@@ -1,6 +1,6 @@
 <template>
-    <div class="editor-panel">
-      <div class="editor-header-block">
+    <div class="main-container">
+      <div class="main-header">
         <div class="editor-title">
           📝{{ title }}
           <div class="editor-subtitle">Bearbeiten Sie die Profile</div>

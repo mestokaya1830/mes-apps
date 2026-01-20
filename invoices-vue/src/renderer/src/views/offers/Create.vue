@@ -1,5 +1,5 @@
 <template>
-  <div v-if="offer" class="editor-panel">
+  <div v-if="offer" class="main-container">
     <div class="editor-header">
       <div class="editor-title">📝 {{ title }}</div>
       <div class="editor-subtitle">Bearbeiten Sie das Angebot und sehen Sie die Vorschau live</div>

@@ -1,6 +1,6 @@
 <template>
-  <div v-if="customer" class="editor-panel">
-    <div class="editor-header-block">
+  <div v-if="customer" class="main-container">
+    <div class="main-header">
       <div class="editor-title">
         📝{{ title }} {{ formatCustomerId(customer.id) }}
         <div class="editor-subtitle">Bearbeiten Sie die Kundendaten</div>
