@@ -1,7 +1,7 @@
 <template>
-  <div class="preview-panel">
+  <div class="editor-panel">
     <!-- Header Section -->
-    <div class="preview-header-block">
+    <div class="editor-header-block">
       <div>
         <h1 class="title">{{ title }}</h1>
         <p class="preview-subtitle">Verwalten Sie alle Ihre Aufträge</p>
@@ -29,11 +29,11 @@
         v-model="search_box"
         type="search"
         placeholder="Suche..."
-        class="form-input"
+        class="inputs"
         @input="searchOrder()"
       />
-      <input v-model="date_box_start" type="date" @input="dateFilter()" class="form-input date" />
-      <input v-model="date_box_end" type="date" @input="dateFilter()" class="form-input date" />
+      <input v-model="date_box_start" type="date" @input="dateFilter()" class="inputs date" />
+      <input v-model="date_box_end" type="date" @input="dateFilter()" class="inputs date" />
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
     </div>
 
@@ -42,15 +42,17 @@
       <div v-for="item in ordersList" :key="item.id" class="list-card">
         <!-- Card Header -->
         <div class="card-header">
-          <div class="list-avatar">
-            {{ getInitials(item.customer.first_name, item.customer.last_name) }}
-          </div>
-          <div class="list-info">
-            <h3 class="list-id">{{ formatOrderId(item.id) }}</h3>
-            <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
-            <span class="list-name"
-              >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
-            >
+          <div class="card-header-left">
+            <div class="list-avatar">
+              {{ getInitials(item.customer.first_name, item.customer.last_name) }}
+            </div>
+            <div class="list-info">
+              <h3 class="list-id">{{ formatOrderId(item.id) }}</h3>
+              <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
+              <span class="list-name"
+                >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
+              >
+            </div>
           </div>
 
           <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
@@ -63,7 +65,7 @@
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/orders/details/' + item.id" class="action-btn details-btn">
+          <router-link :to="'/orders/details/' + item.id" class="details-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

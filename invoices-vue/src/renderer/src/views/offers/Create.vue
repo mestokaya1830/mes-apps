@@ -10,7 +10,7 @@
       <div class="form-section-title">📌 Grunddaten</div>
       <div class="form-group">
         <label class="form-label">Angebotsnummer <span class="stars">*</span></label>
-        <input v-model="offer.id" type="text" class="form-input" readonly />
+        <input v-model="offer.id" type="text" class="inputs" readonly />
         <small class="form-hint">Format: AN-YYYY-XXXX (automatisch generiert)</small>
       </div>
       <div class="form-row">
@@ -20,7 +20,7 @@
             ref="date"
             v-model="offer.date"
             type="date"
-            class="form-input date"
+            class="inputs date"
             required
             @input="error.date = ''"
           />
@@ -32,7 +32,7 @@
             ref="valid_until"
             v-model="offer.valid_until"
             type="date"
-            class="form-input date"
+            class="inputs date"
             required
             @input="error.valid_until = ''"
           />
@@ -44,7 +44,7 @@
         <input
           v-model="offer.subject"
           type="text"
-          class="form-input"
+          class="inputs"
           placeholder="z.B. Webentwicklung Projekt XYZ"
         />
       </div>
@@ -54,7 +54,7 @@
     <div class="form-section">
       <div class="form-group">
         <label class="form-label">Status</label>
-        <select v-model="offer.status" class="form-input">
+        <select v-model="offer.status" class="inputs">
           <option value="draft">Entwurf</option>
           <option value="sent">Gesendet</option>
           <option value="accepted">Angenommen</option>
@@ -67,7 +67,7 @@
         <input
           v-model="offer.status_by"
           type="text"
-          class="form-input"
+          class="inputs"
           placeholder="z. B. Max Mustermann"
         />
       </div>
@@ -76,7 +76,7 @@
         <label class="form-label">Statuskommentar</label>
         <textarea
           v-model="offer.status_comments"
-          class="form-input"
+          class="inputs"
           rows="2"
           placeholder="Interne Anmerkung zum Status"
         ></textarea>
@@ -89,34 +89,34 @@
       <div v-if="offer.customer?.id" class="customer-details">
         <div class="form-group">
           <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-          <input v-model="offer.customer.id" type="text" class="form-input" readonly />
+          <input v-model="offer.customer.id" type="text" class="inputs" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Firmname <span class="stars">*</span></label>
-          <input v-model="offer.customer.company_name" type="text" class="form-input" readonly />
+          <input v-model="offer.customer.company_name" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Vorname <span class="stars">*</span></label>
-            <input v-model="offer.customer.first_name" type="text" class="form-input" readonly />
+            <input v-model="offer.customer.first_name" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Nachname <span class="stars">*</span></label>
-            <input v-model="offer.customer.last_name" type="text" class="form-input" readonly />
+            <input v-model="offer.customer.last_name" type="text" class="inputs" readonly />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Adresse <span class="stars">*</span></label>
-          <input v-model="offer.customer.address" type="text" class="form-input" readonly />
+          <input v-model="offer.customer.address" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ <span class="stars">*</span></label>
-            <input v-model="offer.customer.postal_code" type="text" class="form-input" readonly />
+            <input v-model="offer.customer.postal_code" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt <span class="stars">*</span></label>
-            <input v-model="offer.customer.city" type="text" class="form-input" readonly />
+            <input v-model="offer.customer.city" type="text" class="inputs" readonly />
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@
     <div class="form-section">
       <div class="form-section-title">💰 Währung</div>
       <div class="form-group">
-        <select v-model="offer.currency" class="form-input">
+        <select v-model="offer.currency" class="inputs">
           <option value="EUR.de-DE">EUR</option>
           <option value="USD.en-US">USD</option>
           <option value="GBP.en-GB">GBP</option>
@@ -153,16 +153,16 @@
           </div>
           <div class="form-group">
             <label class="form-label">Bezeichnung</label>
-            <input v-model="pos.title" type="text" class="form-input" />
+            <input v-model="pos.title" type="text" class="inputs" />
           </div>
           <div class="form-group">
             <label class="form-label">Beschreibung</label>
-            <input v-model="pos.description" type="text" class="form-input" />
+            <input v-model="pos.description" type="text" class="inputs" />
           </div>
           <div class="form-row form-row-4">
             <div class="form-group">
               <label class="form-label">Einheit</label>
-              <select v-model="pos.unit" class="form-input">
+              <select v-model="pos.unit" class="inputs">
                 <option value="Stk">Stk</option>
                 <option value="Std">Std</option>
                 <option value="Tag">Tag</option>
@@ -177,7 +177,7 @@
               <input
                 v-model.number="pos.quantity"
                 type="number"
-                class="form-input"
+                class="inputs"
                 @input="getUnitTotal(pos.quantity, pos.price, index)"
               />
             </div>
@@ -186,7 +186,7 @@
               <input
                 v-model.number="pos.price"
                 type="number"
-                class="form-input"
+                class="inputs"
                 step="0.01"
                 @input="getUnitTotal(pos.quantity, pos.price, index)"
               />
@@ -195,7 +195,7 @@
               <label class="form-label">MwSt. (%)</label>
               <select
                 v-model.number="pos.vat"
-                class="form-input"
+                class="inputs"
                 @change="getUnitTotal(pos.quantity, pos.price, index)"
               >
                 <option :value="0">0</option>
@@ -229,7 +229,7 @@
         <label class="form-label">Zahlungsbedingungen</label>
         <textarea
           v-model="offer.payment_terms"
-          class="form-input"
+          class="inputs"
           rows="2"
           placeholder="z. B. 14 Tage netto, 2 % Skonto bei Zahlung innerhalb 8 Tagen"
         ></textarea>
@@ -239,7 +239,7 @@
         <label class="form-label">Lieferbedingungen</label>
         <textarea
           v-model="offer.delivery_terms"
-          class="form-input"
+          class="inputs"
           rows="2"
           placeholder="z. B. frei Haus, ab Werk, DAP, EXW unserer Niederlassung in Berlin"
         ></textarea>
@@ -247,14 +247,14 @@
 
       <div class="form-group">
         <label class="form-label">Lieferzeit</label>
-        <input v-model="offer.delivery_time" type="date" class="form-input date" />
+        <input v-model="offer.delivery_time" type="date" class="inputs date" />
       </div>
 
       <div class="form-group">
         <label class="form-label">Einleitungstext</label>
         <textarea
           v-model="offer.introduction_text"
-          class="form-input"
+          class="inputs"
           rows="3"
           placeholder="Vielen Dank für Ihre Anfrage vom XX.XX.XXXX. Gerne unterbreiten wir Ihnen nachfolgend unser Angebot…"
         ></textarea>
@@ -264,7 +264,7 @@
         <label class="form-label">Abschlusstext</label>
         <textarea
           v-model="offer.closing_text"
-          class="form-input"
+          class="inputs"
           rows="3"
           placeholder="Wir freuen uns auf Ihre Rückmeldung und stehen bei Rückfragen jederzeit gerne zur Verfügung. Mit freundlichen Grüßen"
         ></textarea>
@@ -274,7 +274,7 @@
         <label class="form-label">Notizen (für Kunden sichtbar)</label>
         <textarea
           v-model="offer.notes"
-          class="form-input"
+          class="inputs"
           rows="3"
           placeholder="z. B. Preise verstehen sich zzgl. gesetzlicher MwSt. • Gültigkeit des Angebots: 30 Tage"
         ></textarea>
@@ -284,7 +284,7 @@
         <label class="form-label">Interne Notizen</label>
         <textarea
           v-model="offer.internal_notes"
-          class="form-input"
+          class="inputs"
           rows="3"
           placeholder="z. B. Kunde wünscht Expressversand • Rabatt nur bei Vorkasse • Material aktuell knapp"
         ></textarea>

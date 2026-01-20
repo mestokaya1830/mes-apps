@@ -16,24 +16,24 @@
           <input
             v-model="order.id"
             type="text"
-            class="form-input"
+            class="inputs"
             readonly
             placeholder="AU-20251205-001"
           />
         </div>
         <div class="form-group">
           <label class="form-label">Datum *</label>
-          <input v-model="order.date" type="date" class="form-input date" />
+          <input v-model="order.date" type="date" class="inputs date" />
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Leistungszeitraum Von *</label>
-          <input v-model="order.service_period_start" type="date" class="form-input date" />
+          <input v-model="order.service_period_start" type="date" class="inputs date" />
         </div>
         <div class="form-group">
           <label class="form-label">Leistungszeitraum Bis *</label>
-          <input v-model="order.service_period_end" type="date" class="form-input date" />
+          <input v-model="order.service_period_end" type="date" class="inputs date" />
         </div>
       </div>
     </div>
@@ -44,34 +44,34 @@
       <div v-if="order.customer?.id" class="customer-details">
         <div class="form-group">
           <label class="form-label">Kunden-Nr. *</label>
-          <input v-model="order.customer.id" type="text" class="form-input" readonly />
+          <input v-model="order.customer.id" type="text" class="inputs" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Firmname *</label>
-          <input v-model="order.customer.company_name" type="text" class="form-input" readonly />
+          <input v-model="order.customer.company_name" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Vorname *</label>
-            <input v-model="order.customer.first_name" type="text" class="form-input" readonly />
+            <input v-model="order.customer.first_name" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Nachname *</label>
-            <input v-model="order.customer.last_name" type="text" class="form-input" readonly />
+            <input v-model="order.customer.last_name" type="text" class="inputs" readonly />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Adresse *</label>
-          <input v-model="order.customer.address" type="text" class="form-input" readonly />
+          <input v-model="order.customer.address" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ *</label>
-            <input v-model="order.customer.postal_code" type="text" class="form-input" readonly />
+            <input v-model="order.customer.postal_code" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt *</label>
-            <input v-model="order.customer.city" type="text" class="form-input" readonly />
+            <input v-model="order.customer.city" type="text" class="inputs" readonly />
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@
 
     <div class="form-group">
       <label class="form-label">Subject *</label>
-      <input v-model="order.subject" type="text" class="form-input" />
+      <input v-model="order.subject" type="text" class="inputs" />
     </div>
 
     <!-- Lieferdaten + Versand -->
@@ -91,14 +91,14 @@
           type="text"
           id="delivery_terms"
           v-model="order.delivery_terms"
-          class="form-input"
+          class="inputs"
           placeholder="Lieferbedingungen eingeben"
         />
       </div>
       <div class="form-section-title">📦 Lieferung & Versand</div>
       <div class="form-group">
         <label class="form-label">Versandart:</label>
-        <select v-model="order.shipping_method" class="form-input">
+        <select v-model="order.shipping_method" class="inputs">
           <option value="" disabled>Bitte auswählen</option>
           <option value="dhl">DHL</option>
           <option value="hermes">Hermes</option>
@@ -112,34 +112,34 @@
 
       <div class="form-group">
         <label class="form-label">Liefertermin</label>
-        <input v-model="order.delivery_date" type="date" class="form-input date" />
+        <input v-model="order.delivery_date" type="date" class="inputs date" />
       </div>
       <div class="form-group">
         <label class="form-label">Lieferadresse</label>
-        <textarea v-model="order.delivery_address" rows="2" class="form-input"></textarea>
+        <textarea v-model="order.delivery_address" rows="2" class="inputs"></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">PLZ</label>
-          <input v-model="order.delivery_postal_code" type="text" class="form-input" />
+          <input v-model="order.delivery_postal_code" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Stadt</label>
-          <input v-model="order.delivery_city" type="text" class="form-input" />
+          <input v-model="order.delivery_city" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Land</label>
-          <input v-model="order.delivery_country" type="text" class="form-input" />
+          <input v-model="order.delivery_country" type="text" class="inputs" />
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Sendemethode</label>
-          <input v-model="order.sent_method" type="text" class="form-input" />
+          <input v-model="order.sent_method" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Gesendet am</label>
-          <input v-model="order.sent_at" type="date" class="form-input date" />
+          <input v-model="order.sent_at" type="date" class="inputs date" />
         </div>
       </div>
     </div>
@@ -149,11 +149,11 @@
       <div class="form-section-title">💳 Zahlung & Währung</div>
       <div class="form-group">
         <label class="form-label">Zahlungsbedingungen</label>
-        <input v-model="order.payment_terms" type="text" class="form-input" />
+        <input v-model="order.payment_terms" type="text" class="inputs" />
       </div>
       <div class="form-group">
         <label class="form-label">Zahlungsart</label>
-        <select v-model="order.payment_method" class="form-input">
+        <select v-model="order.payment_method" class="inputs">
           <option value="" disabled>Bitte auswählen</option>
           <option>Überweisung</option>
           <option>Bar</option>
@@ -165,11 +165,11 @@
       </div>
       <div class="form-group">
         <label class="form-label">Zahlungshinweise</label>
-        <textarea v-model="order.payment_conditions" class="form-input"></textarea>
+        <textarea v-model="order.payment_conditions" class="inputs"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Währung</label>
-        <select v-model="order.currency" class="form-input">
+        <select v-model="order.currency" class="inputs">
           <option value="EUR.de-DE">EUR</option>
           <option value="USD.en-US">USD</option>
           <option value="GBP.en-GB">GBP</option>
@@ -184,7 +184,7 @@
       </div>
       <div class="form-group">
         <label class="form-label">Zahlungsreferenz</label>
-        <input v-model="order.payment_reference" type="text" class="form-input" />
+        <input v-model="order.payment_reference" type="text" class="inputs" />
       </div>
     </div>
 
@@ -200,16 +200,16 @@
           </div>
           <div class="form-group">
             <label class="form-label">Bezeichnung</label>
-            <input v-model="pos.title" type="text" class="form-input" />
+            <input v-model="pos.title" type="text" class="inputs" />
           </div>
           <div class="form-group">
             <label class="form-label">Beschreibung</label>
-            <input v-model="pos.description" type="text" class="form-input" />
+            <input v-model="pos.description" type="text" class="inputs" />
           </div>
           <div class="form-row form-row-4">
             <div class="form-group">
               <label class="form-label">Einheit</label>
-              <select v-model="pos.unit" class="form-input">
+              <select v-model="pos.unit" class="inputs">
                 <option value="Stk">Stk</option>
                 <option value="Std">Std</option>
                 <option value="Tag">Tag</option>
@@ -224,7 +224,7 @@
               <input
                 v-model.number="pos.quantity"
                 type="number"
-                class="form-input"
+                class="inputs"
                 @input="getUnitTotal(pos.quantity, pos.price, index)"
               />
             </div>
@@ -233,7 +233,7 @@
               <input
                 v-model.number="pos.price"
                 type="number"
-                class="form-input"
+                class="inputs"
                 step="0.01"
                 @input="getUnitTotal(pos.quantity, pos.price, index)"
               />
@@ -242,7 +242,7 @@
               <label class="form-label">MwSt. (%)</label>
               <select
                 v-model.number="pos.vat"
-                class="form-input"
+                class="inputs"
                 @change="getUnitTotal(pos.quantity, pos.price, index)"
               >
                 <option :value="0">0</option>
@@ -271,19 +271,19 @@
       <div class="form-section-title">📝 Notizen & Texte</div>
       <div class="form-group">
         <label class="form-label">Einleitungstext</label>
-        <textarea v-model="order.intro_text" rows="2" class="form-input"></textarea>
+        <textarea v-model="order.intro_text" rows="2" class="inputs"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Kundennotiz</label>
-        <textarea v-model="order.customer_notes" rows="3" class="form-input"></textarea>
+        <textarea v-model="order.customer_notes" rows="3" class="inputs"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Interne Notiz</label>
-        <textarea v-model="order.internal_notes" rows="2" class="form-input"></textarea>
+        <textarea v-model="order.internal_notes" rows="2" class="inputs"></textarea>
       </div>
       <div class="form-group">
         <label class="form-label">Schlusstext</label>
-        <textarea v-model="order.closing_text" rows="3" class="form-input"></textarea>
+        <textarea v-model="order.closing_text" rows="3" class="inputs"></textarea>
       </div>
     </div>
 

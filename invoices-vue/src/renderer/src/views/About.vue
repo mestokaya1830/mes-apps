@@ -1,5 +1,5 @@
 <template lang="">
-  <div class="preview-panel">
+  <div class="editor-panel">
     <h1>{{ title }}</h1>
   </div>
 </template>

@@ -10,7 +10,7 @@
       <div class="form-section-title">📌 Grunddaten</div>
       <div class="form-group">
         <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
-        <input v-model="invoice.id" type="text" class="form-input" readonly />
+        <input v-model="invoice.id" type="text" class="inputs" readonly />
         <small class="form-hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
       </div>
       <div class="form-row">
@@ -20,7 +20,7 @@
             ref="service_date"
             v-model="invoice.service_date"
             type="date"
-            class="form-input date"
+            class="inputs date"
             required
             @input="error.service_date = ''"
           />
@@ -32,7 +32,7 @@
             ref="date"
             v-model="invoice.date"
             type="date"
-            class="form-input date"
+            class="inputs date"
             required
             @input="error.date = ''"
           />
@@ -46,34 +46,34 @@
       <div v-if="invoice.customer?.id" class="customer-details">
         <div class="form-group">
           <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-          <input v-model="invoice.customer.id" type="text" class="form-input" readonly />
+          <input v-model="invoice.customer.id" type="text" class="inputs" readonly />
         </div>
         <div class="form-group">
           <label class="form-label">Firmname <span class="stars">*</span></label>
-          <input v-model="invoice.customer.company_name" type="text" class="form-input" readonly />
+          <input v-model="invoice.customer.company_name" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Vorname <span class="stars">*</span></label>
-            <input v-model="invoice.customer.first_name" type="text" class="form-input" readonly />
+            <input v-model="invoice.customer.first_name" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Nachname <span class="stars">*</span></label>
-            <input v-model="invoice.customer.last_name" type="text" class="form-input" readonly />
+            <input v-model="invoice.customer.last_name" type="text" class="inputs" readonly />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Adresse <span class="stars">*</span></label>
-          <input v-model="invoice.customer.address" type="text" class="form-input" readonly />
+          <input v-model="invoice.customer.address" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">PLZ <span class="stars">*</span></label>
-            <input v-model="invoice.customer.postal_code" type="text" class="form-input" readonly />
+            <input v-model="invoice.customer.postal_code" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
             <label class="form-label">Stadt <span class="stars">*</span></label>
-            <input v-model="invoice.customer.city" type="text" class="form-input" readonly />
+            <input v-model="invoice.customer.city" type="text" class="inputs" readonly />
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@
     <div class="form-section">
       <div class="form-section-title">💰 Währung</div>
       <div class="form-group">
-        <select v-model="invoice.currency" class="form-input">
+        <select v-model="invoice.currency" class="inputs">
           <option value="EUR.de-DE">EUR</option>
           <option value="USD.en-US">USD</option>
           <option value="GBP.en-GB">GBP</option>
@@ -167,11 +167,11 @@
           </div>
           <div class="form-group">
             <label class="form-label">Bezeichnung</label>
-            <input v-model="item.title" type="text" class="form-input" />
+            <input v-model="item.title" type="text" class="inputs" />
           </div>
           <div class="form-group">
             <label class="form-label">Beschreibung</label>
-            <input v-model="item.description" type="text" class="form-input" />
+            <input v-model="item.description" type="text" class="inputs" />
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -180,7 +180,7 @@
                 ref="service_period_start"
                 v-model="item.service_period_start"
                 type="date"
-                class="form-input date"
+                class="inputs date"
               />
               <div v-if="error.service_period_start" class="error">
                 {{ error.service_period_start }}
@@ -192,7 +192,7 @@
                 ref="service_period_end"
                 v-model="item.service_period_end"
                 type="date"
-                class="form-input date"
+                class="inputs date"
               />
               <div v-if="error.service_period_end" class="error">
                 {{ error.service_period_end }}
@@ -202,7 +202,7 @@
           <div class="form-row form-row-4">
             <div class="form-group">
               <label class="form-label">Einheit</label>
-              <select v-model="item.unit" class="form-input">
+              <select v-model="item.unit" class="inputs">
                 <option value="Stk">Stk</option>
                 <option value="Std">Std</option>
                 <option value="Tag">Tag</option>
@@ -217,7 +217,7 @@
               <input
                 v-model.number="item.quantity"
                 type="number"
-                class="form-input"
+                class="inputs"
                 min="1"
                 required
                 @input="getUnitTotal(item.quantity, item.price, index)"
@@ -228,7 +228,7 @@
               <input
                 v-model.number="item.price"
                 type="number"
-                class="form-input"
+                class="inputs"
                 step="0.01"
                 @input="getUnitTotal(item.quantity, item.price, index)"
               />
@@ -238,7 +238,7 @@
               <select
                 v-if="!invoice.is_reverse_charge"
                 v-model.number="item.vat"
-                class="form-input"
+                class="inputs"
                 @change="getUnitTotal(item.quantity, item.price, index)"
               >
                 <option :value="0">0</option>
@@ -270,7 +270,7 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Zahlungsziel (Tage) *</label>
-          <input v-model.number="invoice.payment_terms" type="number" class="form-input" required />
+          <input v-model.number="invoice.payment_terms" type="number" class="inputs" required />
           <small class="form-hint">Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto</small>
         </div>
         <div class="switch-container">
@@ -295,19 +295,19 @@
             v-model.number="invoice.early_payment_percentage"
             type="number"
             step="0.1"
-            class="form-input"
+            class="inputs"
           />
         </div>
         <div class="form-group">
           <label class="form-label">Skonto Frist (Tage)</label>
-          <input v-model.number="invoice.early_payment_days" type="number" class="form-input" />
+          <input v-model.number="invoice.early_payment_days" type="number" class="inputs" />
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Zusätzliche Zahlungsbedingungen</label>
         <textarea
           v-model="invoice.payment_conditions"
-          class="form-input"
+          class="inputs"
           rows="3"
           placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
         ></textarea>

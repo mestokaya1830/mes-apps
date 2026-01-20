@@ -8,7 +8,7 @@
         <div class="form-group">
           <div v-if="order.status === 'accepted' || order.status === 'rejected'">
             <h4>Status:</h4>
-            <div class="form-input disabled">
+            <div class="inputs disabled">
               {{
                 order.status === 'accepted'
                   ? 'Angenommen'
@@ -21,7 +21,7 @@
           </div>
           <div v-else>
             <label class="form-label">Status</label>
-            <select v-model="order.status" class="form-input">
+            <select v-model="order.status" class="inputs">
               <option value="" disabled>Status auswählen</option>
               <option value="draft" :disabled="order.status !== 'sent' ? true : true">
                 Entwurf
@@ -46,7 +46,7 @@
         <!-- Status date -->
         <div class="form-group">
           <label class="form-label">Bearbeitet am:</label>
-          <input v-model="order.status_date" type="date" class="form-input date" />
+          <input v-model="order.status_date" type="date" class="inputs date" />
         </div>
 
         <!-- Status comments -->
@@ -54,7 +54,7 @@
           <label class="form-label">Kommentare:</label>
           <textarea
             v-model="order.status_comments"
-            class="form-input"
+            class="inputs"
             placeholder="Kommentare oder Notizen hier eingeben"
           ></textarea>
         </div>
@@ -62,7 +62,7 @@
         <!-- Subject -->
         <div class="form-group">
           <label class="form-label">Betreff / Subject:</label>
-          <input v-model="order.subject" type="text" class="form-input" />
+          <input v-model="order.subject" type="text" class="inputs" />
         </div>
 
         <!-- Lieferdaten + Versand -->
@@ -71,35 +71,35 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Gesendet am</label>
-              <input v-model="order.sent_at" type="date" class="form-input date" />
+              <input v-model="order.sent_at" type="date" class="inputs date" />
             </div>
             <div class="form-group">
               <label class="form-label">Liefertermin</label>
-              <input v-model="order.delivery_date" type="date" class="form-input date" />
+              <input v-model="order.delivery_date" type="date" class="inputs date" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Lieferadresse</label>
-              <input v-model="order.delivery_address" type="text" class="form-input" />
+              <input v-model="order.delivery_address" type="text" class="inputs" />
             </div>
             <div class="form-group">
               <label class="form-label">PLZ</label>
-              <input v-model="order.delivery_postal_code" type="text" class="form-input" />
+              <input v-model="order.delivery_postal_code" type="text" class="inputs" />
             </div>
             <div class="form-group">
               <label class="form-label">Stadt</label>
-              <input v-model="order.delivery_city" type="text" class="form-input" />
+              <input v-model="order.delivery_city" type="text" class="inputs" />
             </div>
             <div class="form-group">
               <label class="form-label">Land</label>
-              <input v-model="order.delivery_country" type="text" class="form-input" />
+              <input v-model="order.delivery_country" type="text" class="inputs" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Versandart:</label>
-              <select v-model="order.shipping_method" class="form-input">
+              <select v-model="order.shipping_method" class="inputs">
                 <option value="" disabled>Bitte auswählen</option>
                 <option value="dhl">DHL</option>
                 <option value="hermes">Hermes</option>
@@ -116,11 +116,11 @@
         <!-- Payment details -->
         <div class="form-group">
           <label class="form-label">Zahlungsbedingungen (Tage):</label>
-          <input v-model="order.payment_terms" type="number" class="form-input" />
+          <input v-model="order.payment_terms" type="number" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Zahlungsart</label>
-          <select v-model="order.payment_method" class="form-input">
+          <select v-model="order.payment_method" class="inputs">
             <option value="" disabled>Bitte auswählen</option>
             <option>Überweisung</option>
             <option>Bar</option>
@@ -132,17 +132,17 @@
         </div>
         <div class="form-group">
           <label class="form-label">Zahlungsreferenz:</label>
-          <input v-model="order.payment_reference" type="text" class="form-input" />
+          <input v-model="order.payment_reference" type="text" class="inputs" />
         </div>
 
         <!-- Notes -->
         <div class="form-group">
           <label class="form-label">Kundenhinweise:</label>
-          <textarea v-model="order.customer_notes" class="form-input"></textarea>
+          <textarea v-model="order.customer_notes" class="inputs"></textarea>
         </div>
         <div class="form-group">
           <label class="form-label">Interne Hinweise:</label>
-          <textarea v-model="order.internal_notes" class="form-input"></textarea>
+          <textarea v-model="order.internal_notes" class="inputs"></textarea>
         </div>
       </div>
     </div>

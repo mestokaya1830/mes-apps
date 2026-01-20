@@ -26,19 +26,19 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Unternehmenstyp</label>
-          <input v-model="customer.company_type" type="text" class="form-input" />
+          <input v-model="customer.company_type" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Firmenname</label>
-          <input v-model="customer.company_name" type="text" class="form-input" />
+          <input v-model="customer.company_name" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Vorname</label>
-          <input v-model="customer.first_name" type="text" class="form-input" />
+          <input v-model="customer.first_name" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Nachname</label>
-          <input v-model="customer.last_name" type="text" class="form-input" />
+          <input v-model="customer.last_name" type="text" class="inputs" />
         </div>
       </div>
     </div>
@@ -47,19 +47,19 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Adresse</label>
-          <input v-model="customer.address" type="text" class="form-input" />
+          <input v-model="customer.address" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Postleitzahl</label>
-          <input v-model="customer.postal_code" type="text" class="form-input" />
+          <input v-model="customer.postal_code" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Stadt</label>
-          <input v-model="customer.city" type="text" class="form-input" />
+          <input v-model="customer.city" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Land</label>
-          <input v-model="customer.country" type="text" class="form-input" />
+          <input v-model="customer.country" type="text" class="inputs" />
         </div>
       </div>
     </div>
@@ -68,11 +68,11 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">E-Mail</label>
-          <input v-model="customer.email" type="text" class="form-input" />
+          <input v-model="customer.email" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Telefonnummer</label>
-          <input v-model="customer.phone" type="text" class="form-input" />
+          <input v-model="customer.phone" type="text" class="inputs" />
         </div>
       </div>
     </div>
@@ -81,16 +81,16 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Steuernummer</label>
-          <input v-model="customer.tax_number" type="text" class="form-input" />
+          <input v-model="customer.tax_number" type="text" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">USt-IdNr.</label>
-          <input v-model="customer.vat_id" type="text" class="form-input" />
+          <input v-model="customer.vat_id" type="text" class="inputs" />
         </div>
       </div>
       <div class="form-group">
         <label class="form-label">Erstellungsdatum</label>
-        <input v-model="customer.created_at" type="text" class="form-input" />
+        <input v-model="customer.created_at" type="text" class="inputs" />
       </div>
     </div>
     <button type="button" class="form-btn" @click="updateCustomer">Aktualisierung</button>

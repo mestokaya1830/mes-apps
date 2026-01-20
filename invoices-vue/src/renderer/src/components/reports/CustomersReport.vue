@@ -1,6 +1,6 @@
 <template>
   <div class="report-panel">
-    <select v-model="date_range" class="form-input" @change="rangeDateFilter">
+    <select v-model="date_range" class="inputs" @change="rangeDateFilter">
       <option value="" disabled>Waehle Daten</option>
       <option value="1">Diesen Monat</option>
       <option value="3">Letzte 3 Monate</option>
@@ -15,7 +15,7 @@
           <input
             v-model="date_box_start"
             type="date"
-            class="form-input date"
+            class="inputs date"
             @change="flexDateFilter()"
           />
         </div>
@@ -24,7 +24,7 @@
           <input
             v-model="date_box_end"
             type="date"
-            class="form-input date"
+            class="inputs date"
             @change="flexDateFilter()"
           />
         </div>

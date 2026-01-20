@@ -27,7 +27,7 @@
         <!-- Unternehmenstyp -->
         <div class="form-group">
           <label class="form-label"> Unternehmenstyp <span class="stars">*</span> </label>
-          <select v-model="customer.company_type" class="form-input">
+          <select v-model="customer.company_type" class="inputs">
             <option disabled value="">Wähle Unternehmenstyp</option>
             <option v-for="item in companies" :key="item.value" :value="item.value">
               {{ item.label }}
@@ -41,7 +41,7 @@
         <!-- Firmenname -->
         <div class="form-group">
           <label class="form-label">Firmenname <span class="stars">*</span></label>
-          <input v-model="customer.company_name" type="text" class="form-input" />
+          <input v-model="customer.company_name" type="text" class="inputs" />
           <div v-if="error.company_name" class="error">
             {{ error.company_name }}
           </div>
@@ -50,7 +50,7 @@
         <!-- Vorname -->
         <div class="form-group">
           <label class="form-label">Vorname <span class="stars">*</span></label>
-          <input v-model="customer.first_name" type="text" class="form-input" />
+          <input v-model="customer.first_name" type="text" class="inputs" />
           <div v-if="error.first_name" class="error">
             {{ error.first_name }}
           </div>
@@ -59,7 +59,7 @@
         <!-- Nachname -->
         <div class="form-group">
           <label class="form-label">Nachname <span class="stars">*</span></label>
-          <input v-model="customer.last_name" type="text" class="form-input" />
+          <input v-model="customer.last_name" type="text" class="inputs" />
           <div v-if="error.last_name" class="error">
             {{ error.last_name }}
           </div>
@@ -68,7 +68,7 @@
         <!-- E-Mail -->
         <div class="form-group">
           <label class="form-label">E-Mail <span class="stars">*</span></label>
-          <input v-model="customer.email" type="email" class="form-input" />
+          <input v-model="customer.email" type="email" class="inputs" />
           <div v-if="error.email" class="error">
             {{ error.email }}
           </div>
@@ -77,7 +77,7 @@
         <!-- Telefonnummer -->
         <div class="form-group">
           <label class="form-label">Telefonnummer <span class="stars">*</span></label>
-          <input v-model="customer.phone" type="text" class="form-input" />
+          <input v-model="customer.phone" type="text" class="inputs" />
           <div v-if="error.phone" class="error">
             {{ error.phone }}
           </div>
@@ -92,7 +92,7 @@
         <!-- Address -->
         <div class="form-group">
           <label class="form-label">Adresse <span class="stars">*</span></label>
-          <input v-model="customer.address" type="text" class="form-input" />
+          <input v-model="customer.address" type="text" class="inputs" />
           <div v-if="error.address" class="error">
             {{ error.address }}
           </div>
@@ -101,7 +101,7 @@
         <!-- Postleitzahl -->
         <div class="form-group">
           <label class="form-label">Postleitzahl <span class="stars">*</span></label>
-          <input v-model="customer.postal_code" type="text" class="form-input" />
+          <input v-model="customer.postal_code" type="text" class="inputs" />
           <div v-if="error.postal_code" class="error">
             {{ error.postal_code }}
           </div>
@@ -110,7 +110,7 @@
         <!-- Stadt -->
         <div class="form-group">
           <label class="form-label">Stadt <span class="stars">*</span></label>
-          <input v-model="customer.city" type="text" class="form-input" />
+          <input v-model="customer.city" type="text" class="inputs" />
           <div v-if="error.city" class="error">
             {{ error.city }}
           </div>
@@ -119,7 +119,7 @@
         <!-- Land -->
         <div class="form-group">
           <label class="form-label">Land <span class="stars">*</span></label>
-          <input v-model="customer.country" type="text" class="form-input" />
+          <input v-model="customer.country" type="text" class="inputs" />
           <div v-if="error.country" class="error">
             {{ error.country }}
           </div>
@@ -135,7 +135,7 @@
         <!-- Steuernummer -->
         <div class="form-group">
           <label class="form-label">Steuernummer <span class="stars">*</span></label>
-          <input v-model="customer.tax_number" type="text" class="form-input" />
+          <input v-model="customer.tax_number" type="text" class="inputs" />
           <div v-if="error.tax_number" class="error">
             {{ error.tax_number }}
           </div>
@@ -144,7 +144,7 @@
         <!-- VAT ID -->
         <div class="form-group">
           <label class="form-label">USt-IdNr. <span class="stars">*</span></label>
-          <input v-model="customer.vat_id" type="text" class="form-input" />
+          <input v-model="customer.vat_id" type="text" class="inputs" />
           <div v-if="error.vat_id" class="error">
             {{ error.vat_id }}
           </div>

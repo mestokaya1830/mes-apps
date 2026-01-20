@@ -1,5 +1,5 @@
 <template>
-  <div v-if="offerPreview && auth" class="preview-panel">
+  <div v-if="offerPreview && auth" class="editor-panel">
     <div class="printable">
       <!-- Header -->
       <HeaderSidePreview :title="title" :auth="auth" />

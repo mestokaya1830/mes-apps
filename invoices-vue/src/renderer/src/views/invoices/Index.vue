@@ -1,5 +1,5 @@
 <template>
-  <div v-if="invoices" class="preview-panel">
+  <div v-if="invoices" class="editor-panel">
     <!-- Header Section -->
     <div v-if="invoices" class="editor-header-block">
       <div>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="filter-container">
-      <select v-model="categories_filter" class="form-input select" @change="filterCategories">
+      <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
         <option value="active">Aktiv</option>
@@ -42,7 +42,7 @@
 
       <input
         v-model="search_box"
-        class="form-input"
+        class="inputs"
         placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
         @input="searchInvoice"
       />
@@ -51,14 +51,14 @@
         ref="date_box_start"
         v-model="date_box_start"
         type="date"
-        class="form-input date"
+        class="inputs date"
         @input="formDate()"
       />
       <input
         ref="date_box_end"
         v-model="date_box_end"
         type="date"
-        class="form-input date"
+        class="inputs date"
         @input="filterDate()"
       />
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
@@ -71,47 +71,51 @@
       <div v-for="item in invoices" :key="item.id" class="list-card">
         <!-- Card Header -->
         <div class="card-header">
-          <div class="list-avatar">
-            {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
+          <div class="card-header-left">
+            <div class="list-avatar">
+              {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
+            </div>
+            <div class="list-info">
+              <h3 class="list-id">{{ formatInvoiceId(item.id) }}</h3>
+              <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
+              <span class="list-name"
+                >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
+              >
+            </div>
           </div>
-          <div class="list-info">
-            <h3 class="list-id">{{ formatInvoiceId(item.id) }}</h3>
-            <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
-            <span class="list-name"
-              >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
+          <div class="status-badge-container">
+            <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+              {{ item.is_active ? 'Aktiv' : 'Storniert' }}
+            </div>
+            <div class="status-badge total">
+              {{ formatCurrency(item.gross_total, item.currency) }}
+            </div>
+  
+            <router-link
+              v-if="item.payment_status !== 'paid' && item.is_active === 1"
+              :to="`/payments/create/${item.id}`"
+              class="status-badge payment"
+              >Zahlung erfassen</router-link
             >
-          </div>
-          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
-            {{ item.is_active ? 'Aktiv' : 'Storniert' }}
-          </div>
-          <div class="status-badge total">
-            {{ formatCurrency(item.gross_total, item.currency) }}
-          </div>
-
-          <router-link
-            v-if="item.payment_status !== 'paid' && item.is_active === 1"
-            :to="`/payments/create/${item.id}`"
-            class="status-badge payment"
-            >Zahlung erfassen</router-link
-          >
-
-          <div
-            v-if="item.payment_status === 'paid' && item.is_active === 1"
-            class="status-badge paid"
-          >
-            <span v-if="item.paid_at && item.paid_at < item.due_date">⏰</span>
-            Bezahlt
-            <span v-if="item.early_paid_discount_applied">💰</span>
-          </div>
-
-          <div v-if="item.is_active === 0" class="status-badge canceled">
-            <small>Storniert am: {{ formatDate(item.cancelled_at) }}</small>
+  
+            <div
+              v-if="item.payment_status === 'paid' && item.is_active === 1"
+              class="status-badge paid"
+            >
+              <span v-if="item.paid_at && item.paid_at < item.due_date">⏰</span>
+              Bezahlt
+              <span v-if="item.early_paid_discount_applied">💰</span>
+            </div>
+  
+            <div v-if="item.is_active === 0" class="status-badge canceled">
+              <small>Storniert am: {{ formatDate(item.cancelled_at) }}</small>
+            </div>
           </div>
         </div>
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/invoices/details/' + item.id" class="action-btn details-btn">
+          <router-link :to="'/invoices/details/' + item.id" class="details-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

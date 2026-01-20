@@ -1,7 +1,7 @@
 <template>
-  <div class="preview-panel">
+  <div class="editor-panel">
     <!-- Header -->
-    <div class="preview-header-block">
+    <div class="editor-header-block">
       <div>
         <h1 class="title">{{ title }}</h1>
         <p class="preview-subtitle">Übersicht Ihrer Rechnungen, Angebote und Aufträge</p>

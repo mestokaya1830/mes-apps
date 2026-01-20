@@ -4,7 +4,7 @@
       <h2>{{ title }}</h2>
       <div class="form-section">
         <div class="form-group">
-          <select v-model="report_type" class="form-input">
+          <select v-model="report_type" class="inputs">
             <option value="" disabled>Waehle Bericht</option>
             <option value="Kundenbezogener">Kundenbezogener Bericht</option>
             <option value="Rechnungsliste">Rechnungsliste</option>

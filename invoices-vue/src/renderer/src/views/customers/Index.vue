@@ -1,7 +1,7 @@
 <template>
-  <div v-if="customers" class="preview-container">
+  <div v-if="customers" class="editor-panel">
     <!-- Header Section -->
-    <div class="preview-header-block">
+    <div class="editor-header-block">
       <div>
         <h1 class="title">{{ title }} {{ customers.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Kunden</p>
@@ -28,7 +28,7 @@
       <input
         v-model="search_box"
         type="search"
-        class="form-input"
+        class="inputs search-box"
         placeholder="Suce..."
         @input="searchFilter()"
       />
@@ -39,13 +39,15 @@
     <div class="list-grid">
       <div v-for="item in customers" :key="item.id" class="list-card">
         <div class="card-header">
-          <div class="list-avatar">
-            {{ avatarStyle(item.first_name, item.last_name) }}
-          </div>
-          <div class="list-info">
-            <h3 class="list-id">{{ formatCustomerId(item.id) }}</h3>
-            <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span> <br />
-            <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
+          <div class="card-header-left">
+            <div class="list-avatar">
+              {{ avatarStyle(item.first_name, item.last_name) }}
+            </div>
+            <div class="list-info">
+              <h3 class="list-id">{{ formatCustomerId(item.id) }}</h3>
+              <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span> <br />
+              <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
+            </div>
           </div>
           <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
             {{ item.is_active ? 'Active' : 'Inactive' }}
@@ -128,7 +130,7 @@
             </svg>
             Neues Auftrag erstellen
           </router-link>
-          <router-link :to="'/customers/details/' + item.id" class="action-btn details-btn">
+          <router-link :to="'/customers/details/' + item.id" class="details-btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -194,6 +196,7 @@ export default {
         const result = await window.api.getCustomers()
         if (!result.success) return
         this.customers = result.rows
+        console.log(this.customers)
       } catch (error) {
         console.error(error)
       }

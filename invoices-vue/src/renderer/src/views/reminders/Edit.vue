@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.params.id" class="preview-panel">
+  <div v-if="$route.params.id" class="editor-panel">
     <div class="printable">
       <!-- Header -->
       <h2>{{ title }}</h2>
@@ -8,7 +8,7 @@
         <div class="custom-row">
           <div class="form-group">
             <label for="">Rechnung-Nr.:</label>
-            <label class="form-input">{{ formatReminderId($route.params.id) }}</label>
+            <label class="inputs">{{ formatReminderId($route.params.id) }}</label>
           </div>
 
           <div class="form-group">
@@ -16,7 +16,7 @@
             <input
               v-model="cancelled_at"
               type="date"
-              class="form-input date"
+              class="inputs date"
               placeholder="Datum der Stornierung auswählen"
             />
             <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
@@ -27,7 +27,7 @@
             <input
               v-model="cancelled_by"
               type="text"
-              class="form-input"
+              class="inputs"
               placeholder="Name der Person, die storniert"
             />
             <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
@@ -37,7 +37,7 @@
             <label for="">Stornierungsgrund</label>
             <textarea
               v-model="cancellation_reason"
-              class="form-input"
+              class="inputs"
               placeholder="Grund der Stornierung hier eingeben"
             ></textarea>
             <div v-if="error.cancellation_reason" class="error">

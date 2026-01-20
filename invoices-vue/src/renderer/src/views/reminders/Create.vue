@@ -8,11 +8,11 @@
     <div class="form-section">
       <div class="form-group">
         <label class="form-label">Sent At</label>
-        <input v-model="reminder.date" type="datetime-local" class="form-input date" />
+        <input v-model="reminder.date" type="datetime-local" class="inputs date" />
       </div>
       <div class="form-group">
         <label class="form-label">Sent Method</label>
-        <select v-model="reminder.sent_method" class="form-input">
+        <select v-model="reminder.sent_method" class="inputs">
           <option value="" disabled>Wählen</option>
           <option value="email">Email</option>
           <option value="post">Post</option>
@@ -24,14 +24,14 @@
 
     <div class="form-group">
       <label class="form-label">Zahlungsnachweis</label>
-      <input v-model="reminder.proof_type" type="text" class="form-input" />
+      <input v-model="reminder.proof_type" type="text" class="inputs" />
     </div>
 
     <!-- 1. Level -->
     <div class="form-section">
       <label class="form-label">💼 Betreff (Level)</label>
       <div class="form-group">
-        <select v-model="reminder.level" class="form-input" @change="updateTexts">
+        <select v-model="reminder.level" class="inputs" @change="updateTexts">
           <option value="" disabled>Wähle Betreff</option>
           <option value="1">Zahlungserinnerung / 1. Mahnung</option>
           <option value="2">2. Mahnung</option>
@@ -44,7 +44,7 @@
     <div class="form-section">
       <div class="form-group">
         <label class="form-label">Zahlungsfrist auswählen</label>
-        <select v-model="reminder.payment_deadline" class="form-input" @change="updateTexts">
+        <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
           <option value="" disabled selected>Bitte auswählen</option>
           <option value="innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
           <option value="innerhalb von 5 Tagen">Innerhalb von 5 Tagen</option>
@@ -61,11 +61,11 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Mahngebühr</label>
-          <input v-model="reminder.reminder_fee" type="number" class="form-input" />
+          <input v-model="reminder.reminder_fee" type="number" class="inputs" />
         </div>
         <div class="form-group">
           <label class="form-label">Verzugszinsen</label>
-          <input v-model="reminder.late_interest" type="number" class="form-input" />
+          <input v-model="reminder.late_interest" type="number" class="inputs" />
         </div>
       </div>
     </div>
@@ -74,17 +74,17 @@
     <div v-if="reminder.level" class="form-section">
       <div class="form-group">
         <label class="form-label">Intro Text</label>
-        <textarea v-model="reminder.intro_text" class="form-input"></textarea>
+        <textarea v-model="reminder.intro_text" class="inputs"></textarea>
       </div>
 
       <div v-if="reminder.level != '1'" class="form-group">
         <label class="form-label">⚠️ Warnung</label>
-        <textarea v-model="reminder.warning_text" class="form-input"></textarea>
+        <textarea v-model="reminder.warning_text" class="inputs"></textarea>
       </div>
 
       <div class="form-group">
         <label class="form-label">📝 Endtext</label>
-        <textarea v-model="reminder.closing_text" class="form-input"></textarea>
+        <textarea v-model="reminder.closing_text" class="inputs"></textarea>
       </div>
     </div>
 

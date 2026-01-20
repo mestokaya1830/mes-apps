@@ -13,7 +13,7 @@
         <div class="form-group">
           <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
             <h4>Status:</h4>
-            <div class="form-input disabled">
+            <div class="inputs disabled">
               {{
                 offer.status === 'accepted'
                   ? 'Angenommen'
@@ -27,7 +27,7 @@
           </div>
           <div v-else>
             <label class="form-label">Status</label>
-            <select v-model="offer.status" class="form-input">
+            <select v-model="offer.status" class="inputs">
               <option value="" disabled>Status auswählen</option>
               <option value="draft" :disabled="offer.status !== 'sent' ? true : true">
                 Entwurf
@@ -50,14 +50,14 @@
 
         <div class="form-group">
           <label class="form-label">Bearbeitet am:</label>
-          <input v-model="offer.date" type="date" class="form-input date" />
+          <input v-model="offer.date" type="date" class="inputs date" />
         </div>
 
         <div class="form-group">
           <label class="form-label">Kommentare:</label>
           <textarea
             v-model="offer.status_comments"
-            class="form-input"
+            class="inputs"
             placeholder="Kommentare oder Notizen hier eingeben"
           ></textarea>
         </div>

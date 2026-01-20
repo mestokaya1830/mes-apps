@@ -15,22 +15,22 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Rechnung-Nr.:</label>
-              <label class="form-input">{{ formatInvoiceId(payment.invoice.id) }}</label>
+              <label class="inputs">{{ formatInvoiceId(payment.invoice.id) }}</label>
             </div>
             <div class="form-group">
               <label class="form-label">Kunden-Nr.:</label>
-              <label class="form-input">{{ formatCustomerId(payment.invoice.customer_id) }}</label>
+              <label class="inputs">{{ formatCustomerId(payment.invoice.customer_id) }}</label>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Rechnungsdatum</label>
-              <label class="form-input">{{ formatDate(payment.invoice.date) }}</label>
+              <label class="inputs">{{ formatDate(payment.invoice.date) }}</label>
             </div>
             <div class="form-group">
               <label class="form-label">Fälligkeitsdatum</label>
-              <label class="form-input">{{ formatDate(payment.invoice.due_date) }}</label>
+              <label class="inputs">{{ formatDate(payment.invoice.due_date) }}</label>
             </div>
           </div>
 
@@ -72,7 +72,7 @@
         <div class="form-section-title">💰 Währung</div>
         <div class="form-group">
           <label class="form-label">Waehrung</label>
-          <select v-model="payment.invoice.currency" class="form-input">
+          <select v-model="payment.invoice.currency" class="inputs">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
             <option value="GBP.en-GB">GBP</option>
@@ -98,7 +98,7 @@
               ref="date"
               v-model="payment.date"
               type="date"
-              class="form-input date"
+              class="inputs date"
               @change="checkEarlyPayment"
             />
             <small class="form-hint">Datum des Zahlungseingangs</small>
@@ -110,7 +110,7 @@
               ref="payment_amount"
               v-model="payment.payment_amount"
               type="number"
-              class="form-input"
+              class="inputs"
               min="0"
               :disabled="isPaymentAmountDisabled"
               @input="onAmountInput"
@@ -137,7 +137,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Zahlungsmethode</label>
-            <select v-model="payment.payment_method" class="form-input">
+            <select v-model="payment.payment_method" class="inputs">
               <option>Überweisung</option>
               <option>Bar</option>
               <option>PayPal</option>
@@ -152,7 +152,7 @@
             <input
               v-model="payment.payment_reference"
               type="text"
-              class="form-input"
+              class="inputs"
               placeholder="z.B. Bankreferenz, Transaktions-ID"
             />
             <small class="form-hint">Optional</small>
@@ -162,7 +162,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Beleg / Zahlungsnachweis (optional)</label>
-            <input type="file" class="form-input" accept=".pdf,image/*" @change="loadImage" />
+            <input type="file" class="inputs" accept=".pdf,image/*" @change="loadImage" />
           </div>
 
           <div class="form-group">
@@ -174,7 +174,7 @@
 
         <div class="form-group">
           <label class="form-label">Notizen (optional)</label>
-          <textarea v-model="payment.notes" class="form-input" rows="3"></textarea>
+          <textarea v-model="payment.notes" class="inputs" rows="3"></textarea>
         </div>
       </div>
 

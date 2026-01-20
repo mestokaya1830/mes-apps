@@ -7,7 +7,7 @@
           <input
             v-model="localNamePartner"
             type="text"
-            class="form-input"
+            class="inputs"
             placeholder="z.B. Kunde / Lieferant"
             @input="updateName"
           />
@@ -18,7 +18,7 @@
             type="text"
             :value="iban"
             placeholder="DE89 3704 0044 0532 0130 00"
-            class="form-input"
+            class="inputs"
             @input="handleIban($event.target.value)"
           />
           <span v-if="ibanCountryFlag" class="flag">{{ ibanCountryFlag }}</span>
@@ -33,7 +33,7 @@
             type="text"
             :value="bic"
             placeholder="DEUTDEFF500"
-            class="form-input"
+            class="inputs"
             @input="handleBic($event.target.value)"
           />
           <p class="error" v-if="bicError">{{ bicError }}</p>
@@ -41,7 +41,7 @@
   
         <div class="form-group">
           <label class="form-label">Bankname (automatisch)</label>
-          <input type="text" :value="bankName" readonly class="form-input" />
+          <input type="text" :value="bankName" readonly class="inputs" />
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="preview-panel">
+    <div class="editor-panel">
       <div class="editor-header-block">
         <div class="editor-title">
           📝{{ title }}
@@ -28,7 +28,7 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Anrede</label>
-              <select v-model="user.gender" class="form-input">
+              <select v-model="user.gender" class="inputs">
                 <option value="" disabled>Bitte wählen</option>
                 <option value="Herr">Herr</option>
                 <option value="Frau">Frau</option>
@@ -70,7 +70,7 @@
               <input
                 v-model="user.phone"
                 type="tel"
-                class="form-input"
+                class="inputs"
                 placeholder="+49 30 12345678"
               />
             </div>
@@ -80,7 +80,7 @@
             <input
               v-model="user.website"
               type="url"
-              class="form-input"
+              class="inputs"
               placeholder="www.example.com"
             />
           </div>
@@ -95,7 +95,7 @@
               <input
                 v-model="user.address"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="Hauptstraße 123"
               />
             </div>
@@ -104,17 +104,17 @@
               <input
                 v-model="user.postal_code"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="10115"
               />
             </div>
             <div class="form-group">
               <label class="form-label">Stadt</label>
-              <input v-model="user.city" type="text" class="form-input" placeholder="Berlin" />
+              <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
             </div>
             <div class="form-group">
               <label class="form-label">🇩🇪 Bundesland (Deutschland)</label>
-              <select v-model="user.state" class="form-input">
+              <select v-model="user.state" class="inputs">
                 <option disabled value="">Bitte wählen</option>
                 <option v-for="item in german_states" :key="item.value" :value="item.value">
                   {{ item.label }}
@@ -133,13 +133,13 @@
               <input
                 v-model="user.company_name"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="TechSolutions GmbH"
               />
             </div>
             <div class="form-group">
               <label class="form-field">🇩🇪 Unternehmensform (Deutschland)</label>
-              <select v-model="user.company_details" class="form-input">
+              <select v-model="user.company_details" class="inputs">
                 <option disabled value="">-- Bitte wählen --</option>
                 <option v-for="item in companies" :key="item.value" :value="item">
                   {{ item.label }}
@@ -163,7 +163,7 @@
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Anrede</label>
-              <select v-model="user.contact_person.gender" class="form-input">
+              <select v-model="user.contact_person.gender" class="inputs">
                 <option value="" disabled>Bitte wählen</option>
                 <option value="Herr">Herr</option>
                 <option value="Frau">Frau</option>
@@ -175,7 +175,7 @@
               <input
                 v-model="user.contact_person.first_name"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="Hans Mueller"
               />
             </div>
@@ -184,7 +184,7 @@
               <input
                 v-model="user.contact_person.last_name"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="Hans Mueller"
               />
             </div>
@@ -193,7 +193,7 @@
               <input
                 v-model="user.contact_person.phone"
                 type="tel"
-                class="form-input"
+                class="inputs"
                 placeholder="+49 30 12345678"
               />
             </div>
@@ -203,7 +203,7 @@
             <input
               v-model="user.contact_person.email"
               type="email"
-              class="form-input"
+              class="inputs"
               placeholder="example@email.com"
             />
           </div>
@@ -218,7 +218,7 @@
               <input
                 v-model="user.tax_number"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="123/456/78901"
               />
             </div>
@@ -227,7 +227,7 @@
               <input
                 v-model="user.tax_office"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="Finanzamt Berlin Mitte/Tiergarten"
               />
             </div>
@@ -236,7 +236,7 @@
               <input
                 v-model="user.vat_id"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="DE123456789"
               />
             </div>
@@ -245,7 +245,7 @@
               <input
                 v-model="user.court_registration"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="HRB 12345 B"
               />
             </div>
@@ -255,7 +255,7 @@
             <input
               v-model="user.court_location"
               type="text"
-              class="form-input"
+              class="inputs"
               placeholder="Amtsgericht Berlin"
             />
           </div>
@@ -270,24 +270,24 @@
               <input
                 v-model="user.bank_name"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="Deutsche Bank AG"
               />
             </div>
             <div class="form-group">
               <label class="form-field">BIC</label>
-              <input v-model="user.bic" type="text" class="form-input" placeholder="DEUTDEBBXXX" />
+              <input v-model="user.bic" type="text" class="inputs" placeholder="DEUTDEBBXXX" />
             </div>
             <div class="form-group">
               <label class="form-field">IBAN</label>
-              <input v-model="user.iban" type="text" class="form-input" placeholder="DE89370400440532013000" />
+              <input v-model="user.iban" type="text" class="inputs" placeholder="DE89370400440532013000" />
             </div>
             <div class="form-group">
               <label class="form-field">Kontoinhaber</label>
                <input
                 v-model="user.bank_account_holder"
                 type="text"
-                class="form-input"
+                class="inputs"
                 placeholder="TechSolutions GmbH"
               />
             </div>
