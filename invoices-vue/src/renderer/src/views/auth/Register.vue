@@ -1,5 +1,5 @@
 <template>
-  <div class="editor-panel">
+  <div class="form-container">
     <h2 class="page-title">Benutzerregistrierungsformular</h2>
 
     <form class="settings-form" @submit.prevent="register">
@@ -10,7 +10,7 @@
           <!-- Gender -->
           <label class="form-field col-span-1">
             <span>Anrede *</span>
-            <select v-model="user.gender" class="form-input">
+            <select v-model="user.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -22,42 +22,52 @@
           <!-- First Name -->
           <label class="form-field">
             <span>Vorname *</span>
-            <input v-model="user.first_name" type="text" placeholder="Max" />
+            <input v-model="user.first_name" type="text" class="inputs" placeholder="Max" />
             <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
           </label>
 
           <!-- Last Name -->
           <label class="form-field">
             <span>Nachname *</span>
-            <input v-model="user.last_name" type="text" placeholder="Mustermann" />
+            <input v-model="user.last_name" type="text" class="inputs" placeholder="Mustermann" />
             <div v-if="error.last_name" class="error">{{ error.last_name }}</div>
           </label>
 
           <!-- Email -->
           <label class="form-field">
             <span>E-Mail *</span>
-            <input v-model="user.email" type="email" placeholder="max@beispiel.de" />
+            <input v-model="user.email" type="email" class="inputs" placeholder="max@beispiel.de" />
             <div v-if="error.email" class="error">{{ error.email }}</div>
           </label>
 
           <!-- Password -->
           <label class="form-field">
             <span>Passwort *</span>
-            <input v-model="user.password" type="password" placeholder="Mindestens 6 Zeichen" />
+            <input
+              v-model="user.password"
+              type="password"
+              class="inputs"
+              placeholder="Mindestens 6 Zeichen"
+            />
             <div v-if="error.password" class="error">{{ error.password }}</div>
           </label>
 
           <!-- Phone -->
           <label class="form-field">
             <span>Telefon</span>
-            <input v-model="user.phone" type="tel" placeholder="+49 30 12345678" />
+            <input v-model="user.phone" type="tel" class="inputs" placeholder="+49 30 12345678" />
             <div v-if="error.phone" class="error">{{ error.phone }}</div>
           </label>
 
           <!-- Website -->
           <label class="form-field">
             <span>Webseite</span>
-            <input v-model="user.website" type="url" placeholder="https://www.beispiel.de" />
+            <input
+              v-model="user.website"
+              type="url"
+              class="inputs"
+              placeholder="https://www.beispiel.de"
+            />
             <div v-if="error.website" class="error">{{ error.website }}</div>
           </label>
         </div>
@@ -69,26 +79,37 @@
         <div class="form-blog">
           <label class="form-field">
             <span>Adresse *</span>
-            <input v-model="user.address" type="text" placeholder="Hauptstraße 123" />
+            <input
+              v-model="user.address"
+              type="text"
+              class="inputs"
+              placeholder="Hauptstraße 123"
+            />
             <small class="hint">Straße und Hausnummer (z.B. Musterstraße 12)</small>
             <div v-if="error.address" class="error">{{ error.address }}</div>
           </label>
 
           <label class="form-field">
             <span>Postleitzahl *</span>
-            <input v-model="user.postal_code" type="text" placeholder="10115" maxlength="5" />
+            <input
+              v-model="user.postal_code"
+              type="text"
+              class="inputs"
+              placeholder="10115"
+              maxlength="5"
+            />
             <div v-if="error.postal_code" class="error">{{ error.postal_code }}</div>
           </label>
 
           <label class="form-field">
             <span>Stadt *</span>
-            <input v-model="user.city" type="text" placeholder="Berlin" />
+            <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
             <div v-if="error.city" class="error">{{ error.city }}</div>
           </label>
 
           <label class="form-field">
             <span>🇩🇪 Bundesland *</span>
-            <select v-model="user.state" class="form-input">
+            <select v-model="user.state" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Baden-Württemberg">Baden-Württemberg</option>
               <option value="Bayern">Bayern</option>
@@ -118,13 +139,18 @@
         <div class="form-blog">
           <label class="form-field">
             <span>Firmenname *</span>
-            <input v-model="user.company_name" type="text" placeholder="Beispiel GmbH" />
+            <input
+              v-model="user.company_name"
+              type="text"
+              class="inputs"
+              placeholder="Beispiel GmbH"
+            />
             <div v-if="error.company_name" class="error">{{ error.company_name }}</div>
           </label>
 
           <label class="form-field">
             <span>🇩🇪 Unternehmensform *</span>
-            <select v-model="user.company_details" class="form-input">
+            <select v-model="user.company_details" class="inputs">
               <option :value="null" disabled>-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
@@ -154,7 +180,7 @@
         <div class="form-blog">
           <label class="form-field col-span-1">
             <span>Anrede *</span>
-            <select v-model="user.contact_person.gender" class="form-input">
+            <select v-model="user.contact_person.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -167,7 +193,12 @@
 
           <label class="form-field">
             <span>Vorname</span>
-            <input v-model="user.contact_person.first_name" type="text" placeholder="Anna" />
+            <input
+              v-model="user.contact_person.first_name"
+              type="text"
+              class="inputs"
+              placeholder="Anna"
+            />
             <div v-if="error['contact_person.first_name']" class="error">
               {{ error['contact_person.first_name'] }}
             </div>
@@ -175,7 +206,12 @@
 
           <label class="form-field">
             <span>Nachname</span>
-            <input v-model="user.contact_person.last_name" type="text" placeholder="Schmidt" />
+            <input
+              v-model="user.contact_person.last_name"
+              type="text"
+              class="inputs"
+              placeholder="Schmidt"
+            />
             <div v-if="error['contact_person.last_name']" class="error">
               {{ error['contact_person.last_name'] }}
             </div>
@@ -183,7 +219,12 @@
 
           <label class="form-field">
             <span>Telefon</span>
-            <input v-model="user.contact_person.phone" type="tel" placeholder="+49 30 98765432" />
+            <input
+              v-model="user.contact_person.phone"
+              type="tel"
+              class="inputs"
+              placeholder="+49 30 98765432"
+            />
             <div v-if="error['contact_person.phone']" class="error">
               {{ error['contact_person.phone'] }}
             </div>
@@ -194,6 +235,7 @@
             <input
               v-model="user.contact_person.email"
               type="email"
+              class="inputs"
               placeholder="buchhaltung@beispiel.de"
             />
             <div v-if="error['contact_person.email']" class="error">
@@ -209,7 +251,13 @@
         <div class="form-blog">
           <label class="form-field">
             <span>Steuernummer</span>
-            <input v-model="user.tax_number" type="text" placeholder="123/456/78901" maxlength="15" />
+            <input
+              v-model="user.tax_number"
+              type="text"
+              class="inputs"
+              placeholder="123/456/78901"
+              maxlength="15"
+            />
             <small class="hint">Format: 123/456/78901 (je nach Bundesland)</small>
             <div v-if="error.tax_number" class="error">{{ error.tax_number }}</div>
           </label>
@@ -219,6 +267,7 @@
             <input
               v-model="user.tax_office"
               type="text"
+              class="inputs"
               placeholder="Finanzamt Berlin Mitte/Tiergarten"
             />
             <div v-if="error.tax_office" class="error">{{ error.tax_office }}</div>
@@ -226,20 +275,37 @@
 
           <label class="form-field">
             <span>USt-IdNr.</span>
-            <input v-model="user.vat_id" type="text" placeholder="DE123456789" maxlength="11" @input="formatVatId" />
+            <input
+              v-model="user.vat_id"
+              type="text"
+              class="inputs"
+              placeholder="DE123456789"
+              maxlength="11"
+              @input="formatVatId"
+            />
             <small class="hint">Format: DE + 9 Ziffern</small>
             <div v-if="error.vat_id" class="error">{{ error.vat_id }}</div>
           </label>
 
           <label class="form-field">
             <span>Handelsregistereintrag</span>
-            <input v-model="user.court_registration" type="text" placeholder="HRB 12345 B" />
+            <input
+              v-model="user.court_registration"
+              type="text"
+              class="inputs"
+              placeholder="HRB 12345 B"
+            />
             <div v-if="error.court_registration" class="error">{{ error.court_registration }}</div>
           </label>
 
           <label class="form-field">
             <span>Gerichtsstand</span>
-            <input v-model="user.court_location" type="text" placeholder="Amtsgericht Berlin" />
+            <input
+              v-model="user.court_location"
+              type="text"
+              class="inputs"
+              placeholder="Amtsgericht Berlin"
+            />
             <div v-if="error.court_location" class="error">{{ error.court_location }}</div>
           </label>
         </div>
@@ -251,26 +317,49 @@
         <div class="form-blog">
           <label class="form-field">
             <span>Bankname</span>
-            <input v-model="user.bank_name" type="text" placeholder="Deutsche Bank AG" />
+            <input
+              v-model="user.bank_name"
+              type="text"
+              class="inputs"
+              placeholder="Deutsche Bank AG"
+            />
             <div v-if="error.bank_name" class="error">{{ error.bank_name }}</div>
           </label>
 
           <label class="form-field">
             <span>BIC</span>
-            <input v-model="user.bic" type="text" placeholder="DEUTDEBBXXX" maxlength="11" />
+            <input
+              v-model="user.bic"
+              type="text"
+              class="inputs"
+              placeholder="DEUTDEBBXXX"
+              maxlength="11"
+            />
             <div v-if="error.bic" class="error">{{ error.bic }}</div>
           </label>
 
           <label class="form-field">
             <span>IBAN</span>
-            <input v-model="user.iban" type="text" placeholder="DE89 3704 0044 0532 0130 00" maxlength="27" @input="formatIban" />
+            <input
+              v-model="user.iban"
+              type="text"
+              class="inputs"
+              placeholder="DE89 3704 0044 0532 0130 00"
+              maxlength="27"
+              @input="formatIban"
+            />
             <small class="hint">DE + 20 Ziffern</small>
             <div v-if="error.iban" class="error">{{ error.iban }}</div>
           </label>
 
           <label class="form-field">
             <span>Kontoinhaber</span>
-            <input v-model="user.bank_account_holder" type="text" placeholder="Beispiel GmbH" />
+            <input
+              v-model="user.bank_account_holder"
+              type="text"
+              class="inputs"
+              placeholder="Beispiel GmbH"
+            />
             <div v-if="error.bank_account_holder" class="error">
               {{ error.bank_account_holder }}
             </div>
@@ -294,10 +383,8 @@
 
       <!-- Submit Button -->
       <div class="form-actions">
-        <button type="button" @click="fillExampleData" class="form-btn btn-secondary">
-          📝 Beispieldaten füllen
-        </button>
-        <button type="submit" :disabled="isSubmitting" class="form-btn">
+        <button type="button" @click="fillExampleData" class="btn">📝 Beispieldaten füllen</button>
+        <button type="submit" :disabled="isSubmitting" class="btn">
           <span v-if="isSubmitting">Wird gespeichert...</span>
           <span v-else>Benutzer speichern</span>
         </button>

@@ -1,31 +1,32 @@
 <template>
-  <div class="editor-panel">
+  <div class="form-container">
     <div class="form-card">
       <div class="form-header">
-        <h2>Email Verification</h2>
-        <p>Please enter your email</p>
+        <h2>E-Mail-Verifizierung</h2>
+        <p>Bitte geben Sie Ihre E-Mail-Adresse ein</p>
       </div>
       <form @submit.prevent="sendEmail">
         <div class="form-group">
-          <label for="email" class="form-label">Email</label>
+          <label for="email" class="form-label">E-Mail</label>
           <div>
             <input
               id="email"
               v-model="email"
               type="email"
-              class="form-control"
-              placeholder="example@email.com"
+              class="inputs"
+              placeholder="beispiel@email.com"
               @input="error = ''"
             />
             <p v-if="error" class="error">{{ error }}</p>
           </div>
         </div>
         <p v-if="success" class="success">{{ success }}</p>
-        <button class="form-btn" type="submit">Send Email</button>
+        <button class="btn" type="submit">E-Mail senden</button>
       </form>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {

@@ -1,16 +1,16 @@
 <template>
-  <div class="editor-panel">
+  <div class="form-container">
     <div v-if="!register" class="form-card">
       <div class="form-header">
-        <h2>Welcome To Mes App Setup</h2>
+        <h2>Willkommen beim Setup von Mes App</h2>
         <router-link to="register" class="forgot-password">Next</router-link>
       </div>
     </div>
 
     <div v-else class="form-card">
       <div class="form-header">
-        <h2>Welcome Back</h2>
-        <p>Please sign in to your account</p>
+        <h2>Willkommen zurück</h2>
+        <p>Bitte melden Sie sich bei Ihrem Konto an</p>
       </div>
 
       <form @submit.prevent="loginUser">
@@ -20,7 +20,7 @@
             id="email"
             v-model="user.email"
             type="email"
-            :class="{ error: error.email }"
+            :class="['inputs', { error: error.email }]"
             placeholder="Enter your email"
           />
           <div v-if="error.email" class="error-message">{{ error.email }}</div>
@@ -32,7 +32,7 @@
             id="inputPassword"
             v-model="user.password"
             type="password"
-            :class="{ error: error.password }"
+            :class="['inputs', { error: error.password }]"
             placeholder="Enter your password"
           />
           <div v-if="error.password" class="error-message">{{ error.password }}</div>
@@ -44,7 +44,7 @@
 
         <div v-if="error.credential" class="text error-message">{{ error.credential }}</div>
 
-        <button type="submit" class="form-btn">Sign In</button>
+        <button type="submit" class="btn">Anmelden</button>
       </form>
     </div>
   </div>
