@@ -104,5 +104,5 @@ export default {
 </script>
 
 <style scoped>
-/* Önceki CSS aynen korunuyor */
+  
 </style>
