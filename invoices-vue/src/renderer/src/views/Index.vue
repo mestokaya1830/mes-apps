@@ -284,7 +284,6 @@ export default {
 .dashboard-title {
   color: #6b7280;
   font-size: 0.875rem;
-  margin-bottom: 0.75rem;
   font-weight: 500;
 }
 
@@ -292,19 +291,6 @@ export default {
   font-size: 2.25rem;
   font-weight: 700;
   color: #111827;
-  margin-bottom: 0.5rem;
-}
-
-.dashboard-change {
-  font-size: 0.875rem;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.dashboard-change.positive {
-  color: #15803d;
 }
 
 /* Charts Grid */

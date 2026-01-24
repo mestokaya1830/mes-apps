@@ -4,7 +4,7 @@
     <div class="container">
       <SideBar />
       <div ref="container" class="layouts">
-        <router-view class="router" />
+        <router-view />
       </div>
     </div>
     <div v-if="showGoTop" class="go-top-button" @click="scrollToTop">
@@ -206,11 +206,7 @@ export default {
   flex-direction: column;
   align-items: center;
   height: 100%;
-  padding: 30px 20px;
   overflow-y: auto;
-}
-.router {
-  width: 90%;
 }
 .go-top-button {
   position: fixed;
