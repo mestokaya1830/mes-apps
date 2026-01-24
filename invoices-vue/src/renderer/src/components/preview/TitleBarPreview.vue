@@ -27,7 +27,7 @@ export default {
 <style scoped>
 .titlebar {
   height: 60px;
-  background: #0f172a;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
   color: white;
   -webkit-app-region: drag;
   display: flex;

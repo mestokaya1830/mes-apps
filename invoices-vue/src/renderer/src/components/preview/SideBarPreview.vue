@@ -2,15 +2,16 @@
   <div class="sidebar">
     <div class="sidebar-header">
       <div class="app-logo">
-        <h2>Mes Rechnungs-App</h2>
+        <h2>Mes App</h2>
       </div>
     </div>
 
     <nav>
       <div class="nav-menu">
+        <div class="nav-label">Hauptmenü</div>
         <li class="nav-item">
           <router-link to="/" exact-active-class="active" class="nav-link">
-            <i class="bi bi-house-door-fill"></i>
+            <span class="material-icons">home</span>
             <span>Startseite</span>
           </router-link>
         </li>
@@ -22,35 +23,51 @@
         </li>
         <li class="nav-item">
           <router-link to="/invoices" exact-active-class="active" class="nav-link">
-            <span class="nav-icon">📄</span>
+            <span class="material-icons">home</span>
             <span>Rechnungen</span>
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/offers" exact-active-class="active" class="nav-link">
-            <span class="nav-icon">📋</span>
+            <span class="material-icons">home</span>
             <span>Angebote</span>
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/orders" exact-active-class="active" class="nav-link">
-            <span class="nav-icon">📦</span>
+            <span class="material-icons">home</span>
             <span>Aufträge</span>
           </router-link>
         </li>
         <li class="nav-item">
           <router-link to="/about" exact-active-class="active" class="nav-link">
-            <span class="nav-icon">ℹ️</span>
+            <span class="material-icons">home</span>
             <span>Über</span>
+          </router-link>
+        </li>
+        <div class="nav-label">Verwaltung</div>
+        <li class="nav-item">
+          <router-link to="/about" exact-active-class="active" class="nav-link">
+            <span class="material-icons">home</span>
+            <span>Berichte</span>
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/about" exact-active-class="active" class="nav-link">
+            <span class="material-icons">home</span>
+            <span>Einstellungen</span>
           </router-link>
         </li>
       </div>
     </nav>
 
     <div v-if="auth" class="sidebar-footer">
-      <a href="#" class="nav-link logout-link" @click="logout()">
-        <span class="nav-icon">🚪</span>
-        <span>Abmelden</span>
+      <a href="#" class="nav-link" @click="logout()">
+        <div class="user-avatar">MK</div>
+        <div>
+          <h4>Max Keller</h4>
+          <p>Administrator</p>
+        </div>
       </a>
     </div>
   </div>
@@ -94,9 +111,13 @@ export default {
 /* ===== SIDEBAR ===== */
 .sidebar {
   width: 300px;
-  background: #0f172a;
-  padding: 0;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
   position: relative;
+  height: 100%;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-header {
@@ -105,9 +126,14 @@ export default {
 }
 
 .app-logo {
-  font-size: 16px;
+  padding: 2rem 1.5rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-menu {
@@ -115,31 +141,37 @@ export default {
   padding: 16px 12px;
 }
 
-.nav-item {
-  margin-bottom: 4px;
-}
-
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  color: #94a3b8;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  color: #d1d5db;
   text-decoration: none;
-  border-radius: 8px;
-  transition: all 0.15s;
-  font-size: 18px;
-  font-weight: 500;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  position: relative;
 }
 
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
 }
 
 .nav-link.active {
-  background: rgba(34, 197, 94, 0.12);
-  color: #22c55e;
+  background: linear-gradient(90deg, rgba(59, 165, 92, 0.2) 0%, rgba(59, 165, 92, 0.05) 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #3ba55c;
 }
 
 .nav-icon {
@@ -147,14 +179,46 @@ export default {
   text-align: center;
   font-size: 24px;
 }
-
+.nav-label {
+  padding: 0 1.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
 .sidebar-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 16px 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  margin-top: auto;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3ba55c 0%, #2d8a47 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.sidebar-footer h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-footer p {
+  margin-top: auto;
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
 
 .logout-link {

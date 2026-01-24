@@ -211,7 +211,9 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 8px;
   resize: vertical;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 textarea:focus {
@@ -250,10 +252,9 @@ textarea.error {
 }
 /* MAIN STYLES */
 .main-container {
-  width: 100%;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  height: auto;
+  padding: 2rem;
+  background: #fff;
 }
 .main-container .main-header {
   display: flex;
@@ -265,10 +266,9 @@ textarea.error {
   gap: 20px;
 }
 .main-container .title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0;
+  font-size: 2rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
 }
 
 .main-container.subtitle {
@@ -419,5 +419,3 @@ textarea.error {
 .list-grid .details-btn {
   margin-left: auto;
 }
-
-
