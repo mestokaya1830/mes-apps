@@ -47,13 +47,13 @@
         </li>
         <div class="nav-label">Verwaltung</div>
         <li class="nav-item">
-          <router-link to="/about" exact-active-class="active" class="nav-link">
+          <router-link to="/reports" exact-active-class="active" class="nav-link">
             <span class="material-icons">home</span>
             <span>Berichte</span>
           </router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/about" exact-active-class="active" class="nav-link">
+          <router-link to="/profile" exact-active-class="active" class="nav-link">
             <span class="material-icons">home</span>
             <span>Einstellungen</span>
           </router-link>
