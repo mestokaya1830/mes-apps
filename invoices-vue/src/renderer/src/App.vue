@@ -1,7 +1,7 @@
 <template>
   <div>
     <TitleBar />
-    <div class="container">
+    <div class="app-container">
       <SideBar />
       <div ref="container" class="layouts">
         <router-view />
@@ -192,37 +192,35 @@ export default {
 }
 </script>
 
-<style scoped>
-.container {
-  display: flex;
-  width: 100%;
-  height: calc(100vh - 60px);
+<style>
+.app-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: calc(100vh - 60px);
   margin-top: 60px;
 }
 
 .layouts {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100%;
   overflow-y: auto;
 }
 .go-top-button {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: #007bff;
-  color: white;
-  border-radius: 50px;
-  padding: 12px 20px;
   display: flex;
   align-items: center;
   gap: 8px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  color: white;
+  border-radius: 50px;
+  padding: 12px 20px;
   cursor: pointer;
+  background-color: #007bff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
-  z-index: 1000;
 }
 
 .go-top-button:hover {
@@ -240,9 +238,144 @@ export default {
   font-size: 14px;
   font-weight: 500;
 }
-@media (max-width: 1260px) {
-  .router {
-    width: 90%;
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-logo {
+  padding: 2rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-menu {
+  list-style: none;
+  padding: 16px 12px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  color: #d1d5db;
+  text-decoration: none;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.nav-link.active {
+  background: linear-gradient(90deg, rgba(59, 165, 92, 0.2) 0%, rgba(59, 165, 92, 0.05) 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #3ba55c;
+}
+
+.nav-icon {
+  width: 36px;
+  text-align: center;
+  font-size: 24px;
+  color: #3ba55c;
+}
+.nav-label {
+  padding: 0 1.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.sidebar-footer {
+  padding: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  margin-top: auto;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3ba55c 0%, #2d8a47 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.sidebar-footer h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-footer p {
+  margin-top: auto;
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.logout-link {
+  color: #f87171;
+}
+
+.logout-link:hover {
+  background: rgba(248, 113, 113, 0.1);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .nav-text {
+    display: none;
+  }
+
+  .nav-icon {
+    margin-right: 0;
   }
 }
 </style>

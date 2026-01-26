@@ -69,7 +69,11 @@ button:focus {
   align-items: center;
   margin: 0 10px;
 }
-
+.btn-icon {
+  font-size: 18px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
 .status-badge.active {
   background: #c6f6d5;
   color: #000;
@@ -285,7 +289,8 @@ textarea.error {
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3ba55c 0%, #2d8a47 100%);
+  /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
   color: white;
   border-radius: 8px;
   text-decoration: none;
