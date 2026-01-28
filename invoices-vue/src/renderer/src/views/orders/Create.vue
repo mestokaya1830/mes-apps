@@ -1,7 +1,7 @@
 <template>
   <div v-if="order" class="main-container">
     <div class="editor-header">
-      <div class="editor-title">📝{{ title }}</div>
+      <h1 class="title">{{ title }}</h1>
       <div class="editor-subtitle">
         Bearbeiten Sie die Auftragsdaten und sehen Sie die Vorschau live
       </div>
@@ -9,7 +9,7 @@
 
     <!-- Grunddaten -->
     <div class="form-section">
-      <div class="form-section-title">📌 Grunddaten</div>
+      <div class="form-section-title"><i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Auftragsnummer *</label>
@@ -23,24 +23,33 @@
         </div>
         <div class="form-group">
           <label class="form-label">Datum *</label>
-          <input v-model="order.date" type="date" class="inputs date" />
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input v-model="order.date" type="date" class="inputs date" />
+          </div>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Leistungszeitraum Von *</label>
-          <input v-model="order.service_period_start" type="date" class="inputs date" />
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input v-model="order.service_period_start" type="date" class="inputs date" />
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label">Leistungszeitraum Bis *</label>
-          <input v-model="order.service_period_end" type="date" class="inputs date" />
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input v-model="order.service_period_end" type="date" class="inputs date" />
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Kundendaten -->
     <div class="form-section">
-      <div class="form-section-title">👤 Kundendaten</div>
+      <div class="form-section-title"><i class="bi bi-person-fill me-2 form-title"></i>Kundendaten</div>
       <div v-if="order.customer?.id" class="customer-details">
         <div class="form-group">
           <label class="form-label">Kunden-Nr. *</label>
@@ -77,6 +86,7 @@
       </div>
     </div>
 
+    <!-- Subject -->
     <div class="form-group">
       <label class="form-label">Subject *</label>
       <input v-model="order.subject" type="text" class="inputs" />
@@ -84,20 +94,18 @@
 
     <!-- Lieferdaten + Versand -->
     <div class="form-section">
-      <!-- Delivery Info -->
+      <div class="form-section-title"><i class="bi bi-box-seam me-2 form-title"></i>Lieferung & Versand</div>
       <div class="form-group">
-        <label for="delivery_terms">Lieferbedingungen</label>
+        <label class="form-label">Lieferbedingungen</label>
         <input
           type="text"
-          id="delivery_terms"
           v-model="order.delivery_terms"
           class="inputs"
           placeholder="Lieferbedingungen eingeben"
         />
       </div>
-      <div class="form-section-title">📦 Lieferung & Versand</div>
       <div class="form-group">
-        <label class="form-label">Versandart:</label>
+        <label class="form-label">Versandart</label>
         <select v-model="order.shipping_method" class="inputs">
           <option value="" disabled>Bitte auswählen</option>
           <option value="dhl">DHL</option>
@@ -109,14 +117,18 @@
           <option value="pickup">Selbstabholung</option>
         </select>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Liefertermin</label>
-        <input v-model="order.delivery_date" type="date" class="inputs date" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Lieferadresse</label>
-        <textarea v-model="order.delivery_address" rows="2" class="inputs"></textarea>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Liefertermin</label>
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input v-model="order.delivery_date" type="date" class="inputs date" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lieferadresse</label>
+          <textarea v-model="order.delivery_address" rows="2" class="inputs"></textarea>
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -139,14 +151,19 @@
         </div>
         <div class="form-group">
           <label class="form-label">Gesendet am</label>
-          <input v-model="order.sent_at" type="date" class="inputs date" />
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input v-model="order.sent_at" type="date" class="inputs date" />
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Zahlung & Währung -->
     <div class="form-section">
-      <div class="form-section-title">💳 Zahlung & Währung</div>
+      <div class="form-section-title">
+        <i class="bi bi-credit-card-2-front-fill me-2 form-title"></i>Zahlung & Währung
+      </div>
       <div class="form-group">
         <label class="form-label">Zahlungsbedingungen</label>
         <input v-model="order.payment_terms" type="text" class="inputs" />
@@ -190,13 +207,15 @@
 
     <!-- Positionen -->
     <div class="form-section">
-      <div class="form-section-title">📦 Positionen</div>
+      <div class="form-section-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
       <div v-if="order.positions && order.positions.length === 0">Keine Positionen vorhanden</div>
       <div v-else class="positions-editor">
         <div v-for="(pos, index) in order.positions" :key="index" class="position-item">
           <div class="positions-header">
             <span class="position-number">Position {{ index + 1 }}</span>
-            <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
+            <button class="delete-position-btn" @click="deletePosition(index)">
+              <i class="bi bi-trash3 me-1"></i>Löschen
+            </button>
           </div>
           <div class="form-group">
             <label class="form-label">Bezeichnung</label>
@@ -263,12 +282,14 @@
           </div>
         </div>
       </div>
-      <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
+      <button class="add-position-btn" @click="addPosition()">
+        <i class="bi bi-plus-circle me-1 form-title"></i>Position hinzufügen
+      </button>
     </div>
 
     <!-- Notizen & Texte -->
     <div class="form-section">
-      <div class="form-section-title">📝 Notizen & Texte</div>
+      <div class="form-section-title"><i class="bi bi-pencil-square me-2 form-title"></i>Notizen & Texte</div>
       <div class="form-group">
         <label class="form-label">Einleitungstext</label>
         <textarea v-model="order.intro_text" rows="2" class="inputs"></textarea>
@@ -287,7 +308,10 @@
       </div>
     </div>
 
-    <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
+    <!-- Vorschau Button -->
+    <div class="pt-4 text-center">
+      <button class="preview-btn"><i class="bi bi-eye me-2"></i>Vorschau anzeigen</button>
+    </div>
   </div>
 </template>
 

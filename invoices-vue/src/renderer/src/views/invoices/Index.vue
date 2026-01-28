@@ -7,19 +7,7 @@
         <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
       </div>
       <router-link to="/customers" class="add-btn">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
+        <i class="bi bi-plus-circle add-icon"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>
     </div>
@@ -47,20 +35,28 @@
         @input="searchInvoice"
       />
 
-      <input
-        ref="date_box_start"
-        v-model="date_box_start"
-        type="date"
-        class="inputs date"
-        @input="formDate()"
-      />
-      <input
-        ref="date_box_end"
-        v-model="date_box_end"
-        type="date"
-        class="inputs date"
-        @input="filterDate()"
-      />
+      <div class="date-wrapper">
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_start"
+          v-model="date_box_start"
+          type="date"
+          class="inputs date"
+          @input="formDate()"
+        />
+      </div>
+
+      <div class="date-wrapper">
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_end"
+          v-model="date_box_end"
+          type="date"
+          class="inputs date"
+          @input="formDate()"
+        />
+      </div>
+
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
     </div>
 
@@ -90,14 +86,14 @@
             <div class="status-badge total">
               {{ formatCurrency(item.gross_total, item.currency) }}
             </div>
-  
+
             <router-link
               v-if="item.payment_status !== 'paid' && item.is_active === 1"
               :to="`/payments/create/${item.id}`"
               class="status-badge payment"
               >Zahlung erfassen</router-link
             >
-  
+
             <div
               v-if="item.payment_status === 'paid' && item.is_active === 1"
               class="status-badge paid"
@@ -106,7 +102,7 @@
               Bezahlt
               <span v-if="item.early_paid_discount_applied">💰</span>
             </div>
-  
+
             <div v-if="item.is_active === 0" class="status-badge canceled">
               <small>Storniert am: {{ formatDate(item.cancelled_at) }}</small>
             </div>
@@ -115,20 +111,8 @@
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/invoices/details/' + item.id" class="details-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
+          <router-link :to="'/invoices/details/' + item.id" class="details-btn btn-details">
+            <i class="bi bi-eye"></i>
             Details
           </router-link>
         </div>

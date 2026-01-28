@@ -1,41 +1,63 @@
 <template>
   <div v-if="customers" class="main-container">
-    <!-- Header Section -->
     <div class="main-header">
       <div>
         <h1 class="title">{{ title }} {{ customers.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Kunden</p>
       </div>
       <router-link to="/customers/create" class="add-btn">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
+        <i class="bi bi-plus-circle add-icon"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
     </div>
 
     <div class="main-filter">
+      <select v-model="categories_filter" class="inputs select" @change="filterCategories">
+        <option value="" disabled>Kategorie</option>
+        <option value="all">Alle</option>
+        <option value="active">Aktiv</option>
+        <option value="canceled">Storniert</option>
+        <option value="is_paid">Bezahlt</option>
+        <option value="is_partially_paid">Teilweise bezahlt</option>
+        <option value="unpaid">Unbezahlt</option>
+        <option value="overdue">Überfällig</option>
+        <option value="outstanding">Ausstehend</option>
+        <option value="is_early_paid">Frühzahlung</option>
+        <option value="is_late_paid">Spät bezahlt</option>
+        <option value="is_reminded">Erinnert</option>
+      </select>
+
       <input
         v-model="search_box"
-        type="search"
-        class="inputs search-box"
-        placeholder="Suce..."
-        @input="searchFilter()"
+        class="inputs"
+        placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
+        @input="searchInvoice"
       />
+
+      <div class="date-wrapper">
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_start"
+          v-model="date_box_start"
+          type="date"
+          class="inputs date"
+          @input="formDate()"
+        />
+      </div>
+
+      <div class="date-wrapper">
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_end"
+          v-model="date_box_end"
+          type="date"
+          class="inputs date"
+          @input="formDate()"
+        />
+      </div>
+
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
     </div>
-
-    <!-- Customer Cards -->
     <div class="list-grid">
       <div v-for="item in customers" :key="item.id" class="list-card">
         <div class="card-header">
@@ -45,7 +67,7 @@
             </div>
             <div class="list-info">
               <h3 class="list-id">{{ formatCustomerId(item.id) }}</h3>
-              <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span> <br />
+              <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span>
               <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
             </div>
           </div>
@@ -56,124 +78,45 @@
 
         <div class="card-actions">
           <router-link
-            :to="{
-              path: '/invoices/create',
-              query: { id: item.id }
-            }"
-            class="action-btn details-btn"
+            :to="{ path: '/invoices/create', query: { id: item.id } }"
+            class="action-btn btn-rechnung"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 8V21H3V3h12l6 5z"></path>
-              <line x1="3" y1="7" x2="21" y2="7"></line>
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="17" x2="21" y2="17"></line>
-            </svg>
+            <i class="bi bi-receipt"></i>
             Rechnung erstellen
           </router-link>
+
           <router-link
-            :to="{
-              path: '/offers/create',
-              query: { id: item.id }
-            }"
-            class="action-btn details-btn"
+            :to="{ path: '/offers/create', query: { id: item.id } }"
+            class="action-btn btn-angebot"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 8V21H3V3h12l6 5z"></path>
-              <line x1="3" y1="7" x2="21" y2="7"></line>
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="17" x2="21" y2="17"></line>
-            </svg>
-            Neues Angebote erstellen
+            <i class="bi bi-file-earmark-text"></i>
+            Neues Angebot erstellen
           </router-link>
+
           <router-link
-            :to="{
-              path: '/orders/create',
-              query: { id: item.id }
-            }"
-            class="action-btn details-btn"
+            :to="{ path: '/orders/create', query: { id: item.id } }"
+            class="action-btn btn-auftrag"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M21 8V21H3V3h12l6 5z"></path>
-              <line x1="3" y1="7" x2="21" y2="7"></line>
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="17" x2="21" y2="17"></line>
-            </svg>
+            <i class="bi bi-box-seam"></i>
             Neues Auftrag erstellen
           </router-link>
-          <router-link :to="'/customers/details/' + item.id" class="details-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
+
+          <router-link :to="'/customers/details/' + item.id" class="details-btn btn-details">
+            <i class="bi bi-eye"></i>
             Details
           </router-link>
         </div>
       </div>
     </div>
 
-    <!-- Empty State -->
     <div v-if="customers.length === 0" class="empty-state">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
+      <i class="bi bi-people"></i>
       <h3>Keine Kunden</h3>
-      <p>Füge Kunden hinzu, um sie zu verwalten.</p>
+      <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
     </div>
   </div>
 </template>
+
 
 <script>
 export default {
@@ -230,3 +173,79 @@ export default {
   }
 }
 </script>
+
+<style>
+.card-actions {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.action-btn,
+.details-btn, .preview-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 0.55rem 0.65rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: transparent;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.btn-rechnung i {
+  color: #16a34a;
+}
+.btn-angebot i {
+  color: #2563eb;
+}
+.btn-auftrag i {
+  color: #f97316;
+}
+.btn-details i {
+  color: #6b7280;
+}
+
+.btn-rechnung:hover {
+  background-color: rgba(22, 163, 52, 0.1);
+  border-color: #16a34a;
+}
+.btn-angebot:hover {
+  background-color: rgba(37, 99, 235, 0.1);
+  border-color: #2563eb;
+}
+.btn-auftrag:hover {
+  background-color: rgba(249, 115, 22, 0.1);
+  border-color: #f97316;
+}
+.btn-details:hover {
+  background-color: rgba(107, 114, 128, 0.1);
+  border-color: #6b7280;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.card-header {
+  align-items: center;
+}
+
+.list-info h3,
+.list-info span {
+  line-height: 1.25;
+}
+.list-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+</style>

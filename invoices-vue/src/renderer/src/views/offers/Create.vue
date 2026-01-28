@@ -1,13 +1,15 @@
 <template>
   <div v-if="offer" class="main-container">
     <div class="editor-header">
-      <div class="editor-title">📝 {{ title }}</div>
+      <h1 class="title">{{ title }}</h1>
       <div class="editor-subtitle">Bearbeiten Sie das Angebot und sehen Sie die Vorschau live</div>
     </div>
 
-    <!-- Base -->
+    <!-- Grunddaten -->
     <div class="form-section">
-      <div class="form-section-title">📌 Grunddaten</div>
+      <div class="form-section-title">
+        <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
+      </div>
       <div class="form-group">
         <label class="form-label">Angebotsnummer <span class="stars">*</span></label>
         <input v-model="offer.id" type="text" class="inputs" readonly />
@@ -16,26 +18,32 @@
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Angebotsdatum <span class="stars">*</span></label>
-          <input
-            ref="date"
-            v-model="offer.date"
-            type="date"
-            class="inputs date"
-            required
-            @input="error.date = ''"
-          />
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input
+              ref="date"
+              v-model="offer.date"
+              type="date"
+              class="inputs date"
+              required
+              @input="error.date = ''"
+            />
+          </div>
           <div v-if="error.date" class="error">{{ error.date }}</div>
         </div>
         <div class="form-group">
           <label class="form-label">Gültigkeitsdatum <span class="stars">*</span></label>
-          <input
-            ref="valid_until"
-            v-model="offer.valid_until"
-            type="date"
-            class="inputs date"
-            required
-            @input="error.valid_until = ''"
-          />
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input
+              ref="valid_until"
+              v-model="offer.valid_until"
+              type="date"
+              class="inputs date"
+              required
+              @input="error.valid_until = ''"
+            />
+          </div>
           <div v-if="error.valid_until" class="error">{{ error.valid_until }}</div>
         </div>
       </div>
@@ -50,8 +58,10 @@
       </div>
     </div>
 
-    <!-- status -->
+    <!-- Status -->
     <div class="form-section">
+      <div class="form-section-title"><i class="bi bi-info-circle me-2 form-title"></i>Status</div>
+
       <div class="form-group">
         <label class="form-label">Status</label>
         <select v-model="offer.status" class="inputs">
@@ -83,9 +93,11 @@
       </div>
     </div>
 
-    <!-- Customer -->
+    <!-- Kundendaten -->
     <div v-if="offer.customer" class="form-section">
-      <div class="form-section-title">👤 Kundendaten</div>
+      <div class="form-section-title">
+        <i class="bi bi-person-fill me-2 form-title"></i>Kundendaten
+      </div>
       <div v-if="offer.customer?.id" class="customer-details">
         <div class="form-group">
           <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
@@ -122,9 +134,11 @@
       </div>
     </div>
 
-    <!-- currency -->
+    <!-- Währung -->
     <div class="form-section">
-      <div class="form-section-title">💰 Währung</div>
+      <div class="form-section-title">
+        <i class="bi bi-currency-exchange me-2 form-title"></i>Währung
+      </div>
       <div class="form-group">
         <select v-model="offer.currency" class="inputs">
           <option value="EUR.de-DE">EUR</option>
@@ -143,87 +157,26 @@
 
     <!-- Positionen -->
     <div class="form-section">
-      <div class="form-section-title">📦 Positionen</div>
+      <div class="form-section-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
       <div v-if="offer.positions && offer.positions.length === 0">Keine Positionen vorhanden</div>
       <div v-else class="positions-editor">
         <div v-for="(pos, index) in offer.positions" :key="index" class="position-item">
           <div class="positions-header">
             <span class="position-number">Position {{ index + 1 }}</span>
-            <button class="delete-position-btn" @click="deletePosition(index)">🗑️ Löschen</button>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bezeichnung</label>
-            <input v-model="pos.title" type="text" class="inputs" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Beschreibung</label>
-            <input v-model="pos.description" type="text" class="inputs" />
-          </div>
-          <div class="form-row form-row-4">
-            <div class="form-group">
-              <label class="form-label">Einheit</label>
-              <select v-model="pos.unit" class="inputs">
-                <option value="Stk">Stk</option>
-                <option value="Std">Std</option>
-                <option value="Tag">Tag</option>
-                <option value="Monat">Monat</option>
-                <option value="Pauschal">Pauschal</option>
-                <option value="m²">m²</option>
-                <option value="kg">kg</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Menge</label>
-              <input
-                v-model.number="pos.quantity"
-                type="number"
-                class="inputs"
-                @input="getUnitTotal(pos.quantity, pos.price, index)"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Preis (€)</label>
-              <input
-                v-model.number="pos.price"
-                type="number"
-                class="inputs"
-                step="0.01"
-                @input="getUnitTotal(pos.quantity, pos.price, index)"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">MwSt. (%)</label>
-              <select
-                v-model.number="pos.vat"
-                class="inputs"
-                @change="getUnitTotal(pos.quantity, pos.price, index)"
-              >
-                <option :value="0">0</option>
-                <option :value="7">7</option>
-                <option :value="19">19</option>
-              </select>
-            </div>
-          </div>
-          <div class="positions-total">
-            <div class="positions-total-item">
-              <label class="form-label">Vat Unit (€)</label>
-              <div class="form-result-item">
-                {{ pos.vat_unit || '0.00' }}
-              </div>
-            </div>
-            <div class="positions-total-item">
-              <label class="form-label">Unit Total (€)</label>
-              <div class="form-result-item">{{ pos.unit_total || '0.00' }}</div>
-            </div>
+            <button class="delete-position-btn"><i class="bi bi-trash3 me-1"></i>Löschen</button>
           </div>
         </div>
       </div>
-      <button class="add-position-btn" @click="addPosition()">➕ Position hinzufügen</button>
+      <button class="add-position-btn">
+        <i class="bi bi-plus-circle me-1 form-title"></i>Position hinzufügen
+      </button>
     </div>
 
     <!-- Zusätzliche Informationen -->
     <div class="form-section">
-      <div class="form-section-title">📄 Zusätzliche Informationen</div>
+      <div class="form-section-title">
+        <i class="bi bi-file-text-fill me-2 form-title"></i>Zusätzliche Informationen
+      </div>
 
       <div class="form-group">
         <label class="form-label">Zahlungsbedingungen</label>
@@ -291,19 +244,20 @@
       </div>
     </div>
 
-    <!-- Legally Binding -->
     <div class="switch-container">
       <label for="is_legal" class="switch">
         <input id="is_legal" v-model="offer.is_legal" type="checkbox" />
         <span class="slider round"></span>
       </label>
       <div class="switch-text">
-        <strong>Legally binding signature</strong>
+        <i class="bi bi-pencil-square me-1 form-title"></i
+        ><strong>Legally binding signature</strong>
       </div>
     </div>
 
-    <!-- Vorschau Button -->
-    <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
+    <div class="pt-4 text-center">
+      <button class="preview-btn"><i class="bi bi-eye me-2"></i>Vorschau anzeigen</button>
+    </div>
   </div>
 </template>
 

@@ -8,20 +8,7 @@
       </div>
     </div>
     <div v-if="showGoTop" class="go-top-button" @click="scrollToTop">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <polyline points="18 15 12 9 6 15"></polyline>
-      </svg>
-      <span>Go Top</span>
+        <i class="bi bi-arrow-up go-top-icon"></i>
     </div>
   </div>
 </template>
@@ -209,16 +196,15 @@ export default {
 .go-top-button {
   display: flex;
   align-items: center;
-  gap: 8px;
   position: fixed;
   bottom: 30px;
   right: 30px;
   z-index: 1000;
   color: white;
-  border-radius: 50px;
-  padding: 12px 20px;
+  border-radius: 50%;
+  padding: 10px 18px;
   cursor: pointer;
-  background-color: #007bff;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: all 0.3s ease;
 }
@@ -229,14 +215,8 @@ export default {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
-.go-top-button svg {
-  width: 20px;
-  height: 20px;
-}
-
-.go-top-button span {
-  font-size: 14px;
-  font-weight: 500;
+.go-top-icon {
+  font-size: 24px;
 }
 
 /* ===== SIDEBAR ===== */

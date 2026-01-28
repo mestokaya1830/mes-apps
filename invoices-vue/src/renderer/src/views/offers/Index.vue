@@ -7,24 +7,26 @@
         <p class="subtitle">Verwalten Sie alle Ihre Angebote</p>
       </div>
       <router-link to="/customers" class="add-btn">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
+         <i class="bi bi-plus-circle add-icon"></i>
         <span>Neues Angebot erstellen</span>
       </router-link>
     </div>
 
     <div class="main-filter">
+       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
+        <option value="" disabled>Kategorie</option>
+        <option value="all">Alle</option>
+        <option value="active">Aktiv</option>
+        <option value="canceled">Storniert</option>
+        <option value="is_paid">Bezahlt</option>
+        <option value="is_partially_paid">Teilweise bezahlt</option>
+        <option value="unpaid">Unbezahlt</option>
+        <option value="overdue">Überfällig</option>
+        <option value="outstanding">Ausstehend</option>
+        <option value="is_early_paid">Frühzahlung</option>
+        <option value="is_late_paid">Spät bezahlt</option>
+        <option value="is_reminded">Erinnert</option>
+      </select>
       <input
         v-model="search_box"
         type="search"
@@ -32,8 +34,27 @@
         class="inputs"
         @input="searchOffer()"
       />
-      <input v-model="date_box_start" type="date" @change="dateFilter()" class="inputs date" />
-      <input v-model="date_box_end" type="date" @change="dateFilter()" class="inputs date" />
+     <div class="date-wrapper">
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_start"
+          v-model="date_box_start"
+          type="date"
+          class="inputs date"
+          @input="formDate()"
+        />
+      </div>
+
+      <div class="date-wrapper">
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_end"
+          v-model="date_box_end"
+          type="date"
+          class="inputs date"
+          @input="formDate()"
+        />
+      </div>
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
     </div>
 
@@ -66,20 +87,8 @@
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/offers/details/' + item.id" class="details-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
+          <router-link :to="'/offers/details/' + item.id" class="details-btn btn-details">
+            <i class="bi bi-eye"></i>
             Details
           </router-link>
         </div>
