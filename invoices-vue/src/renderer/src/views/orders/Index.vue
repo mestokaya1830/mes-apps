@@ -6,7 +6,7 @@
         <h1 class="title">{{ title }}</h1>
         <p class="preview-subtitle">Verwalten Sie alle Ihre Aufträge</p>
       </div>
-      <router-link to="/orders/create" class="add-btn">
+      <router-link to="/customers" class="add-btn">
         <i class="bi bi-plus-circle add-icon"></i>
         <span>Neuen Auftrag erstellen</span>
       </router-link>

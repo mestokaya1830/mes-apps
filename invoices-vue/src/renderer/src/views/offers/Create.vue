@@ -2,7 +2,6 @@
   <div v-if="offer" class="main-container">
     <div class="main-header">
       <h1 class="main-title">{{ title }}</h1>
-      <div class="main-subtitle">Bearbeiten Sie das Angebot und sehen Sie die Vorschau live</div>
       <router-link to="/offers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
@@ -258,8 +257,8 @@
       </div>
     </div>
 
-    <div class="pt-4 text-center">
-      <button class="preview-btn"><i class="bi bi-eye me-2"></i>Vorschau anzeigen</button>
+    <div class="form-section container-2">
+      <button class="btn btn-preview"><i class="bi bi-eye me-2 icons"></i>Vorschau anzeigen</button>
     </div>
   </div>
 </template>

@@ -52,14 +52,13 @@
               </div>
             </div>
 
-            <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
           </div>
         </div>
       </div>
     </div>
-    <router-link :to="`/invoices/details/${$route.params.id}`" class="back-link">
-      ← Zurück zur Rechnungsdetails
-    </router-link>
+    <div class="form-section container-2">
+      <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
+    </div>
   </div>
 </template>
 

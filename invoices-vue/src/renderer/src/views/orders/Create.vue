@@ -2,9 +2,6 @@
   <div v-if="order" class="main-container">
     <div class="main-header">
       <h1 class="main-title">{{ title }}</h1>
-      <div class="main-subtitle">
-        Bearbeiten Sie die Auftragsdaten und sehen Sie die Vorschau live
-      </div>
       <router-link to="/orders" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
@@ -12,7 +9,9 @@
 
     <!-- Grunddaten -->
     <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten</div>
+      <div class="form-section-title">
+        <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Auftragsnummer *</label>
@@ -52,7 +51,9 @@
 
     <!-- Kundendaten -->
     <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-person-fill me-2 form-title"></i>Kundendaten</div>
+      <div class="form-section-title">
+        <i class="bi bi-person-fill me-2 form-icons"></i>Kundendaten
+      </div>
       <div v-if="order.customer?.id" class="customer-details">
         <div class="form-group">
           <label class="form-label">Kunden-Nr. *</label>
@@ -97,30 +98,32 @@
 
     <!-- Lieferdaten + Versand -->
     <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-box-seam me-2 form-title"></i>Lieferung & Versand</div>
+      <div class="form-section-title">
+        <i class="bi bi-box-seam me-2 form-title"></i>Lieferung & Versand
+      </div>
       <div class="form-group">
         <label class="form-label">Lieferbedingungen</label>
         <input
-          type="text"
           v-model="order.delivery_terms"
+          type="text"
           class="inputs"
           placeholder="Lieferbedingungen eingeben"
         />
       </div>
-      <div class="form-group">
-        <label class="form-label">Versandart</label>
-        <select v-model="order.shipping_method" class="inputs">
-          <option value="" disabled>Bitte auswählen</option>
-          <option value="dhl">DHL</option>
-          <option value="hermes">Hermes</option>
-          <option value="ups">UPS</option>
-          <option value="dpd">DPD</option>
-          <option value="gls">GLS</option>
-          <option value="email">E-Mail</option>
-          <option value="pickup">Selbstabholung</option>
-        </select>
-      </div>
       <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Versandart</label>
+          <select v-model="order.shipping_method" class="inputs">
+            <option value="" disabled>Bitte auswählen</option>
+            <option value="dhl">DHL</option>
+            <option value="hermes">Hermes</option>
+            <option value="ups">UPS</option>
+            <option value="dpd">DPD</option>
+            <option value="gls">GLS</option>
+            <option value="email">E-Mail</option>
+            <option value="pickup">Selbstabholung</option>
+          </select>
+        </div>
         <div class="form-group">
           <label class="form-label">Liefertermin</label>
           <div class="date-wrapper">
@@ -128,10 +131,10 @@
             <input v-model="order.delivery_date" type="date" class="inputs date" />
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Lieferadresse</label>
-          <textarea v-model="order.delivery_address" rows="2" class="inputs"></textarea>
-        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lieferadresse</label>
+        <textarea v-model="order.delivery_address" rows="2" class="inputs"></textarea>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -292,7 +295,9 @@
 
     <!-- Notizen & Texte -->
     <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-pencil-square me-2 form-title"></i>Notizen & Texte</div>
+      <div class="form-section-title">
+        <i class="bi bi-pencil-square me-2 form-title"></i>Notizen & Texte
+      </div>
       <div class="form-group">
         <label class="form-label">Einleitungstext</label>
         <textarea v-model="order.intro_text" rows="2" class="inputs"></textarea>
@@ -312,8 +317,8 @@
     </div>
 
     <!-- Vorschau Button -->
-    <div class="pt-4 text-center">
-      <button class="preview-btn"><i class="bi bi-eye me-2"></i>Vorschau anzeigen</button>
+    <div class="form-section container-2">
+      <button class="btn btn-preview"><i class="bi bi-eye me-2 icons"></i>Vorschau anzeigen</button>
     </div>
   </div>
 </template>

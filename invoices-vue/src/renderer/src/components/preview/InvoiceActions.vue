@@ -26,7 +26,7 @@
           v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
           class="btn btn-cancel"
         >
-          <i class="bi bi-pencil-square me-1 form-title"></i>
+          <i class="bi bi-pencil-square me-1 icons"></i>
           <span>Stornieren</span>
         </button>
       </router-link>

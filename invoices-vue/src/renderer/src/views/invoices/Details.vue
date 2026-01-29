@@ -1,7 +1,7 @@
 <template>
   <div v-if="invoice && auth" class="main-container">
-    <div class="main-header container-2">
-      <router-link to="/invoices" class="btn btn-secondary">
+   <div class="container-2">
+       <router-link to="/invoices" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
     </div>
@@ -301,7 +301,7 @@
         </div>
       </div>
 
-      <router-link :to="`/reminders/create/${invoice.id}`" class="btn create-reminder"
+      <router-link :to="`/reminders/create/${invoice.id}`" class="btn btn-reminder"
         >Mahnung erstellen</router-link
       >
 
