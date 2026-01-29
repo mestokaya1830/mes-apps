@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('api', {
   //customer
   addCustomer: async (data) => ipcRenderer.invoke('add-customer', data),
   getCustomers: async (data) => ipcRenderer.invoke('get-customers', data),
-  getCustomerById: async (data) => ipcRenderer.invoke('get-customer-by-id', data),
+  getCustomerById: async (id) => ipcRenderer.invoke('get-customer-by-id', id),
   customerDetails: async (id) => ipcRenderer.invoke('customer-details', id),
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
   deleteCustomerById: async (id) => ipcRenderer.invoke('delete-customer-by-id', id),

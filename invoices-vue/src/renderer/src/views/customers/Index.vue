@@ -2,10 +2,10 @@
   <div v-if="customers" class="main-container">
     <div class="main-header">
       <div>
-        <h1 class="title">{{ title }} {{ customers.length }}</h1>
+        <h1 class="main-title">{{ title }} {{ customers.length }}</h1>
         <p class="subtitle">Verwalten Sie alle Ihre Kunden</p>
       </div>
-      <router-link to="/customers/create" class="add-btn">
+      <router-link to="/customers/create" class="btn add-btn">
         <i class="bi bi-plus-circle add-icon"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>

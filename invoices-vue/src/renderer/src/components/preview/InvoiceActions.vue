@@ -1,34 +1,39 @@
-<template lang="">
+<template>
   <div>
-    <div class="action-buttons">
+    <div class="action-btn-container">
       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
-        <span class="nav-icon">💾</span>
+        <i class="bi bi-save me-1 form-title"></i>
         <span>Speichern</span>
       </button>
+
       <button class="btn btn-secondary" @click="sendEmail">
-        <span class="nav-icon">📧</span>
+        <i class="bi bi-envelope me-1 form-title"></i>
         <span>E-Mail</span>
       </button>
+
       <button class="btn btn-pdf" @click="exportPDF">
-        <span class="nav-icon">📄</span>
+        <i class="bi bi-file-earmark-pdf me-1 form-title"></i>
         <span>PDF</span>
       </button>
+
       <button class="btn btn-print" @click="printDocument">
-        <span class="nav-icon">🖨</span>
+        <i class="bi bi-printer me-1 form-title"></i>
         <span>Drucken</span>
       </button>
-      <button
-        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
-        class="btn btn-cancel"
-      >
-        <router-link :to="`/invoices/edit/${tableData.id}`">
-          <span class="nav-icon">✏</span>
+
+      <router-link :to="`/invoices/edit/${tableData.id}`">
+        <button
+          v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+          class="btn btn-cancel"
+        >
+          <i class="bi bi-pencil-square me-1 form-title"></i>
           <span>Stornieren</span>
-        </router-link>
-      </button>
+        </button>
+      </router-link>
     </div>
   </div>
 </template>
+
 <script>
 import html2pdf from 'html2pdf.js'
 import store from '../../store/store.js'

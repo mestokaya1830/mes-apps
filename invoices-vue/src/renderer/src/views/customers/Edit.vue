@@ -1,28 +1,18 @@
 <template>
   <div v-if="customer" class="main-container">
     <div class="main-header">
-      <div class="editor-title">
-        📝{{ title }} {{ formatCustomerId(customer.id) }}
-        <div class="editor-subtitle">Bearbeiten Sie die Kundendaten</div>
-      </div>
-      <router-link to="/customers" class="add-btn">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M15 6l-6 6 6 6" />
-        </svg>
+      <h1 class="main-title">
+        {{ title }}
+      </h1>
+      <router-link :to="`/customers/details/${customer.id}`" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill me-1"></i>Zurück
       </router-link>
     </div>
+
     <div class="form-section">
-      <div class="form-section-title">🏢 Unternehmensinformationen</div>
+      <div class="form-section-title">
+        <i class="bi bi-building form-title me-2"></i> Unternehmensinformationen
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Unternehmenstyp</label>
@@ -42,8 +32,11 @@
         </div>
       </div>
     </div>
+
     <div class="form-section">
-      <div class="form-section-title">📍 Adressdaten</div>
+      <div class="form-section-title">
+        <i class="bi bi-geo-alt form-title me-2"></i> Adressdaten
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Adresse</label>
@@ -63,8 +56,11 @@
         </div>
       </div>
     </div>
+
     <div class="form-section">
-      <div class="form-section-title">📞 Kontaktdaten</div>
+      <div class="form-section-title">
+        <i class="bi bi-telephone form-title me-2"></i> Kontaktdaten
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">E-Mail</label>
@@ -76,8 +72,11 @@
         </div>
       </div>
     </div>
+
     <div class="form-section">
-      <div class="form-section-title">💼 Steuerinformationen</div>
+      <div class="form-section-title">
+        <i class="bi bi-file-earmark-text form-title me-2"></i> Steuerinformationen
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Steuernummer</label>
@@ -93,7 +92,10 @@
         <input v-model="customer.created_at" type="text" class="inputs" />
       </div>
     </div>
-    <button type="button" class="form-btn" @click="updateCustomer">Aktualisierung</button>
+
+    <button type="button" class="form-btn" @click="updateCustomer">
+      <i class="bi bi-save me-1 form-title"></i> Aktualisierung
+    </button>
   </div>
 </template>
 
@@ -116,14 +118,12 @@ export default {
         const result = await window.api.getCustomerById(this.$route.params.id)
         if (!result.success) return
         this.customer = result.rows
+        console.log(result)
       } catch (error) {
         console.error(error)
       }
     },
 
-    // --------------------------
-    // FORM VALIDASYON KONTROLÜ
-    // --------------------------
     validateForm() {
       const c = this.customer
 
@@ -141,7 +141,6 @@ export default {
 
       if (!c.address || c.address.length < 3) return 'Adresse muss mindestens 3 Zeichen enthalten.'
 
-      // Alman Postleitzahl — 5 haneli
       if (!/^\d{5}$/.test(c.postal_code)) return 'Postleitzahl muss aus 5 Ziffern bestehen.'
 
       if (!c.city || c.city.length < 2) return 'Stadt muss mindestens 2 Zeichen enthalten.'
@@ -151,7 +150,6 @@ export default {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(c.email)) return 'Ungültige E-Mail-Adresse.'
 
-      // Telefon minimum 3 rakam — + kabul edilir
       if (!/^\+?\d{3,}$/.test(c.phone)) return 'Telefonnummer muss mindestens 3 Zahlen enthalten.'
 
       if (!c.tax_number || c.tax_number.length < 3)
@@ -162,9 +160,6 @@ export default {
       return null
     },
 
-    // --------------------------
-    // UPDATE
-    // --------------------------
     async updateCustomer() {
       this.errorMessage = ''
 

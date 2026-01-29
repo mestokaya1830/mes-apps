@@ -186,7 +186,7 @@
               </td>
               <td>{{ formatDate(item.paid_at) || '--------' }}</td>
               <td>
-                <div class="action-buttons">
+                <div class="action-btn">
                   <button class="action-btn">👁️</button>
                 </div>
               </td>

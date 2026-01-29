@@ -462,13 +462,9 @@ canvas {
         <p class="dashboard-subtitle">Übersicht Ihrer Geschäftstätigkeit</p>
       </div>
       <div class="dashboard-header-actions">
-        <button class="dashbord-btn btn-secondary">
+        <button class="btn btn-secondary">
           <i class="bi bi-download btn-icon"></i>
           Exportieren
-        </button>
-        <button class="dashbord-btn btn-primary">
-          <i class="bi bi-plus-circle btn-icon"></i>
-          Neue Rechnung
         </button>
       </div>
     </div>
@@ -675,27 +671,6 @@ export default {
 .dashboard-header-actions {
   display: flex;
   gap: 1rem;
-}
-.dashbord-btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.dashbord-btn.btn-primary {
-  background: linear-gradient(135deg, #3ba55c 0%, #2d8a47 100%);
-  color: white;
-}
-.dashbord-btn.btn-secondary {
-  background: white;
-  color: #374151;
-  border: 2px solid #e5e7eb;
 }
 .dashboard-grid {
   display: grid;

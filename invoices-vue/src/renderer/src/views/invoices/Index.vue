@@ -3,11 +3,11 @@
     <!-- Header Section -->
     <div v-if="invoices" class="main-header">
       <div>
-        <h1 class="title">{{ title }} {{ total_count }} / {{ current_count }}</h1>
-        <p class="subtitle">Verwalten Sie alle Ihre Rechnungen</p>
+        <h1 class="main-title">{{ title }} {{ total_count }} / {{ current_count }}</h1>
+        <p class="main-subtitle">Verwalten Sie alle Ihre Rechnungen</p>
       </div>
-      <router-link to="/customers" class="add-btn">
-        <i class="bi bi-plus-circle add-icon"></i>
+      <router-link to="/customers" class="btn add-btn">
+        <i class="bi bi-plus-circle icons"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>
     </div>

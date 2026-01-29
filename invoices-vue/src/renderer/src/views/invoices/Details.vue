@@ -1,5 +1,10 @@
 <template>
   <div v-if="invoice && auth" class="main-container">
+    <div class="main-header">
+      <router-link to="/invoices" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+      </router-link>
+    </div>
     <div>
       <div class="printable">
         <!-- Header -->
@@ -342,7 +347,6 @@
         </table>
       </div>
     </div>
-    <router-link to="/invoices" class="back-link"> ← Zurück zur Rechnungsliste </router-link>
   </div>
 </template>
 

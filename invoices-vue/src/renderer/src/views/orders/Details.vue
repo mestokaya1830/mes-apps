@@ -1,5 +1,8 @@
 <template>
   <div v-if="order" class="main-container">
+    <router-link to="/orders" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+      </router-link>
     <div class="printable">
       <!-- Header section -->
       <HeaderSidePreview :title="title" :auth="auth" />

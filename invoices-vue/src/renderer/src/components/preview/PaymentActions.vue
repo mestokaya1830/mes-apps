@@ -1,6 +1,6 @@
 <template lang="">
   <div>
-    <div class="action-buttons">
+    <div class="action-btn">
       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="savePayment">
         <span class="nav-icon">💾</span>
         <span>Speichern</span>

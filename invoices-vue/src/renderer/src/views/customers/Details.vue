@@ -1,45 +1,40 @@
 <template>
   <div v-if="customer" class="main-container">
+    <!-- Header -->
     <div class="main-header">
-      <div class="preview-title">📝 {{ title }}</div>
+      <h1 class="main-title">{{ title }}</h1>
+      <router-link to="/customers" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+      </router-link>
     </div>
 
-    <div class="customer-info">
-      <p><strong>Kunden.Nr.:</strong> {{ formatCustomerId(customer.id) }}</p>
-      <p><strong>Datum:</strong> {{ formatDate(customer.date) }}</p>
-      <p><strong>Firma:</strong> {{ customer.company_name }}</p>
-      <p><strong>Firmentyp:</strong> {{ customer.company_type }}</p>
-      <p><strong>Vorname:</strong> {{ customer.first_name }}</p>
-      <p><strong>Nachname:</strong> {{ customer.last_name }}</p>
-      <p><strong>Email:</strong> {{ customer.email }}</p>
-      <p><strong>Adresse:</strong> {{ customer.address }}</p>
-      <p><strong>PLZ:</strong> {{ customer.postal_code }}</p>
-      <p><strong>Stadt:</strong> {{ customer.city }}</p>
-      <p><strong>Telefon:</strong> {{ customer.phone }}</p>
-      <p><strong>Website:</strong> {{ customer.website }}</p>
-      <p><strong>USt-IdNr.:</strong> {{ customer.vat_id }}</p>
-      <p><strong>Steuernummer:</strong> {{ customer.tax_number }}</p>
-      <p><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</p>
+    <!-- Customer Info Card -->
+    <div class="customer-info card">
+      <div class="info-grid">
+        <div class="info-item"><strong>Kunden-Nr.:</strong> {{ formatCustomerId(customer.id) }}</div>
+        <div class="info-item"><strong>Datum:</strong> {{ formatDate(customer.date) }}</div>
+        <div class="info-item"><strong>Firma:</strong> {{ customer.company_name }}</div>
+        <div class="info-item"><strong>Firmentyp:</strong> {{ customer.company_type }}</div>
+        <div class="info-item"><strong>Vorname:</strong> {{ customer.first_name }}</div>
+        <div class="info-item"><strong>Nachname:</strong> {{ customer.last_name }}</div>
+        <div class="info-item"><strong>Email:</strong> {{ customer.email }}</div>
+        <div class="info-item"><strong>Adresse:</strong> {{ customer.address }}</div>
+        <div class="info-item"><strong>PLZ:</strong> {{ customer.postal_code }}</div>
+        <div class="info-item"><strong>Stadt:</strong> {{ customer.city }}</div>
+        <div class="info-item"><strong>Telefon:</strong> {{ customer.phone }}</div>
+        <div class="info-item"><strong>Website:</strong> {{ customer.website }}</div>
+        <div class="info-item"><strong>USt-IdNr.:</strong> {{ customer.vat_id }}</div>
+        <div class="info-item"><strong>Steuernummer:</strong> {{ customer.tax_number }}</div>
+        <div class="info-item"><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</div>
+      </div>
+    </div>
 
-      <button class="action-btn delete-btn" @click="deleteCustomer(customer.id)">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path
-            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
-          ></path>
-        </svg>
-        Löschen
-      </button>
+    <!-- Actions -->
+    <div class="action-btn">
+      <router-link :to="`/customers/edit/${customer.id}`">
+        <button class="btn edit-btn">Edit</button>
+      </router-link>
+      <button class="btn delete-btn" @click="deleteCustomer(customer.id)">Löschen</button>
     </div>
   </div>
 </template>
@@ -64,7 +59,6 @@ export default {
         if (!result.success) return
         this.customer = result.data.customer
         this.counts = result.data.counts
-        console.log(this.customer)
       } catch (error) {
         console.error(error)
       }
@@ -84,3 +78,58 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* Header */
+.main-header {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.preview-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+/* Card */
+.customer-info.card {
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+/* Grid for customer info */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+}
+.info-item {
+  font-size: 0.95rem;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.info-item:last-child {
+  border-bottom: none;
+}
+
+/* Action Buttons */
+.action-btn {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.edit-btn {
+  width: fit-content;
+  background-color: yellow;
+}
+.delete-btn {
+  width: fit-content;
+  background-color: #dc3545;
+  color: #fff;
+}
+
+</style>

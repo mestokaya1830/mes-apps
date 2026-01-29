@@ -472,21 +472,14 @@ ipcMain.handle('get-customers', async () => {
   }
 })
 
-ipcMain.handle('get-customer-by-id', async (event, payload) => {
-  const { id, table_name } = payload
+ipcMain.handle('get-customer-by-id', async (event, id) => {
+  console.log('get-customer-by-id called with id:', id)
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
   try {
-    const customer = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
-    const lastRow = db.prepare(`SELECT id FROM ${table_name} ORDER BY id DESC LIMIT 1;`).get()
-
-    const last_id = lastRow ? lastRow.id : 0
-    const data = {
-      customer,
-      last_id
-    }
-    return { success: true, data }
+    const rows = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
+    return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
