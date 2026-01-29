@@ -30,11 +30,11 @@
     </div>
 
     <!-- Actions -->
-    <div class="action-btn">
+    <div class="form-section btn-container">
       <router-link :to="`/customers/edit/${customer.id}`">
-        <button class="btn edit-btn">Edit</button>
+        <button class="btn btn-edit">Edit</button>
       </router-link>
-      <button class="btn delete-btn" @click="deleteCustomer(customer.id)">Löschen</button>
+      <button class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
     </div>
   </div>
 </template>
@@ -80,56 +80,36 @@ export default {
 </script>
 
 <style scoped>
-/* Header */
-.main-header {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.preview-title {
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-
 /* Card */
 .customer-info.card {
-  padding: 20px;
-  border-radius: 8px;
+  padding: 30px;
+  border-radius: 12px;
   background-color: #fff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
   margin-bottom: 20px;
 }
 
 /* Grid for customer info */
 .info-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px 40px;
 }
+
 .info-item {
   font-size: 0.95rem;
-  padding: 6px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-.info-item:last-child {
-  border-bottom: none;
-}
-
-/* Action Buttons */
-.action-btn {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-.edit-btn {
-  width: fit-content;
-  background-color: yellow;
-}
-.delete-btn {
-  width: fit-content;
-  background-color: #dc3545;
-  color: #fff;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
+.info-item strong {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
 </style>

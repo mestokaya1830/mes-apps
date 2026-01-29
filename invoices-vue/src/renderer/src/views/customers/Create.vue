@@ -106,16 +106,16 @@
     </div>
 
     <!-- Submit -->
-    <div class="form-section">
+    <div class="form-section btn-container">
       <div v-if="showSuccess" class="">
         <p class="font-medium text-success">
           <i class="bi bi-check-circle me-1"></i>Kunde erfolgreich gespeichert!
         </p>
       </div>
 
-      <div class="flex justify-center pt-6">
-        <button type="button" class="form-btn"><i class="bi bi-save me-1"></i>Speichern</button>
-      </div>
+      <button type="button" class="btn btn-primary">
+        <i class="bi bi-save me-1 icons"></i>Speichern
+      </button>
     </div>
   </div>
 </template>

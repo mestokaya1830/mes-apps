@@ -33,7 +33,7 @@
         <input id="bic" v-model="user.contact_person.phone" type="text" />
       </div>
     </form>
-    <button class="form-btn" @click="updateUser()">Update</button>
+    <button class="btn-primary" @click="updateUser()">Update</button>
   </div>
 </template>
 

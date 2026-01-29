@@ -54,7 +54,7 @@
     <!-- Kundendaten -->
     <div v-if="invoice.customer" class="form-section">
       <div class="form-section-title">
-        <i class="bi bi-person-fill me-2 form-title"></i>Kundendaten
+        <i class="bi bi-person-fill me-2 icons"></i>Kundendaten
       </div>
       <div v-if="invoice.customer?.id" class="customer-details">
         <div class="form-group">
@@ -95,7 +95,7 @@
     <!-- Steueroptionen -->
     <div class="form-section">
       <div class="form-section-title">
-        <i class="bi bi-briefcase-fill me-2 form-title"></i>Steueroptionen
+        <i class="bi bi-briefcase-fill me-2 icons"></i>Steueroptionen
       </div>
       <div class="form-section">
         <div class="switch-container">
@@ -153,7 +153,7 @@
     <!-- Währung -->
     <div class="form-section">
       <div class="form-section-title">
-        <i class="bi bi-currency-exchange me-2 form-title"></i>Währung
+        <i class="bi bi-currency-exchange me-2 icons"></i>Währung
       </div>
       <div class="form-group">
         <select v-model="invoice.currency" class="inputs">
@@ -174,7 +174,7 @@
     <!-- Positionen -->
     <div class="form-section">
       <div class="form-section-title">
-        <i class="bi bi-box-seam me-2 form-title"></i>Positionen
+        <i class="bi bi-box-seam me-2 icons"></i>Positionen
       </div>
       <div v-if="invoice.positions && invoice.positions.length === 0">
         Keine Positionen vorhanden
@@ -191,14 +191,14 @@
         </div>
       </div>
       <button class="add-position-btn">
-        <i class="bi bi-plus-circle me-1"></i>Position hinzufügen
+        <i class="bi bi-plus-circle me-1 icons"></i>Position hinzufügen
       </button>
     </div>
 
     <!-- Zahlungsinformationen -->
     <div class="form-section">
       <div class="form-section-title">
-        <i class="bi bi-credit-card-2-front-fill me-2 form-title"></i>Zahlungsinformationen
+        <i class="bi bi-credit-card-2-front-fill me-2 icons"></i>Zahlungsinformationen
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -220,7 +220,7 @@
             <span class="slider round"></span>
           </label>
           <div class="switch-text">
-            <i class="bi bi-percent me-1"></i><strong>Skonto gewähren</strong>
+            <i class="bi bi-percent me-1 icons"></i><strong>Skonto gewähren</strong>
           </div>
         </div>
       </div>
@@ -251,33 +251,33 @@
         ></textarea>
       </div>
 
-      <div v-if="invoice.positions" class="positions-total summary">
-        <div class="positions-total-item">
+      <div v-if="invoice.positions" class="container-2">
+        <div class="summary-item">
           <label class="form-label">Net Total (€)</label>
           <div class="form-result-item">{{ summary.net_total }}</div>
         </div>
-        <div class="positions-total-item">
+        <div class="summary-item">
           <label class="form-label">Vat Total (€)</label>
           <div class="form-result-item">{{ summary.vat_total }}</div>
         </div>
-        <div class="positions-total-item">
+        <div class="summary-item">
           <label class="form-label">Brutto Total (€)</label>
           <div class="form-result-item">{{ summary.gross_total }}</div>
         </div>
-        <div class="positions-total-item">
+        <div class="summary-item">
           <label class="form-label">Rabatt (€)</label>
           <div class="form-result-item">{{ summary.early_payment_discount }}</div>
         </div>
-        <div class="positions-total-item">
+        <div class="summary-item">
           <label class="form-label">Endpreis (€)</label>
           <div class="form-result-item">{{ summary.gross_total_after_discount }}</div>
         </div>
       </div>
 
     </div>
-    <div class="pt-4 text-center">
-      <button class="preview-btn">
-        <i class="bi bi-eye me-2"></i>Vorschau anzeigen
+    <div class="form-actions btn-container">
+      <button class="btn btn-preview" @click="submitStore">
+        <i class="bi bi-eye me-2 icons"></i>Vorschau anzeigen
       </button>
     </div>
   </div>

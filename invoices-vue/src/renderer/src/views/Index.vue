@@ -463,7 +463,7 @@ canvas {
       </div>
       <div class="dashboard-header-actions">
         <button class="btn btn-secondary">
-          <i class="bi bi-download btn-icon"></i>
+          <i class="bi bi-download icons"></i>
           Exportieren
         </button>
       </div>

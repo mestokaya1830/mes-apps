@@ -5,7 +5,7 @@
         {{ title }}
       </h1>
       <router-link :to="`/customers/details/${customer.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
     </div>
 
@@ -93,9 +93,11 @@
       </div>
     </div>
 
-    <button type="button" class="form-btn" @click="updateCustomer">
-      <i class="bi bi-save me-1 form-title"></i> Aktualisierung
-    </button>
+    <div class="form-section btn-container">
+      <button type="button" class="btn btn-update" @click="updateCustomer">
+        <i class="bi bi-save me-1 icons"></i> Aktualisierung
+      </button>
+    </div>
   </div>
 </template>
 

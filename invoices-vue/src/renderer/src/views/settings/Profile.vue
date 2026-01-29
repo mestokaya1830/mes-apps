@@ -309,7 +309,7 @@
 
         <!-- Submit Button -->
         <div class="form-actions">
-          <button type="submit" :disabled="isSubmitting" class="form-btn">
+          <button type="submit" :disabled="isSubmitting" class="btn-primary">
             <span v-if="isSubmitting">Wird gespeichert...</span>
             <span v-else>Profil Aktualisieren</span>
           </button>

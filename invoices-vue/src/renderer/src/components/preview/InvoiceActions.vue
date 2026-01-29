@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="action-btn-container">
+    <div class="form-section container-2">
       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
         <i class="bi bi-save me-1 form-title"></i>
         <span>Speichern</span>
