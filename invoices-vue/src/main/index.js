@@ -186,6 +186,7 @@ ipcMain.handle('login', async (event, payload) => {
       .get(email, password)
 
     if (row) {
+      row.logo = row.logo.toString('base64')
       return { success: true, user: row }
     } else {
       return { success: false, message: 'Invalid email or password' }
@@ -289,12 +290,12 @@ ipcMain.handle('email-verfication', async (event, payload) => {
 
 ipcMain.handle('get-user', async () => {
   try {
-    const row = db.prepare('SELECT * FROM users WHERE id = 1').get()
-    if (row && row.logo) {
+    const rows = db.prepare('SELECT * FROM users').get()
+    if (rows && rows.logo) {
       // Buffer → Base64 string
-      row.logo = row.logo.toString('base64')
+      rows.logo = rows.logo.toString('base64')
     }
-    return { success: true, user: row }
+    return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }

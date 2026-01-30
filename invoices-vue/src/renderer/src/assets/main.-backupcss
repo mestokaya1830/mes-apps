@@ -270,13 +270,7 @@ div[v-if='errorMessage'] {
   color: #b71c1c;
 }
 
-.logo-preview {
-  max-width: 140px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  padding: 0.25rem;
-  background: #f8fafc;
-}
+
 
 .settings-page {
   width: 100%;

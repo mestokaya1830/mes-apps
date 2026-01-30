@@ -30,7 +30,8 @@
           <input v-model="customer.company_name" type="text" class="inputs" />
           <div v-if="error.company_name" class="error">{{ error.company_name }}</div>
         </div>
-
+      </div>
+      <div class="form-row">
         <div class="form-group">
           <label class="form-label">Vorname <span class="stars">*</span></label>
           <input v-model="customer.first_name" type="text" class="inputs" />
@@ -42,17 +43,20 @@
           <input v-model="customer.last_name" type="text" class="inputs" />
           <div v-if="error.last_name" class="error">{{ error.last_name }}</div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">E-Mail <span class="stars">*</span></label>
-          <input v-model="customer.email" type="email" class="inputs" />
-          <div v-if="error.email" class="error">{{ error.email }}</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Telefonnummer <span class="stars">*</span></label>
-          <input v-model="customer.phone" type="text" class="inputs" />
-          <div v-if="error.phone" class="error">{{ error.phone }}</div>
+      </div>
+      <div class="form-row">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">E-Mail <span class="stars">*</span></label>
+            <input v-model="customer.email" type="email" class="inputs" />
+            <div v-if="error.email" class="error">{{ error.email }}</div>
+          </div>
+  
+          <div class="form-group">
+            <label class="form-label">Telefonnummer <span class="stars">*</span></label>
+            <input v-model="customer.phone" type="text" class="inputs" />
+            <div v-if="error.phone" class="error">{{ error.phone }}</div>
+          </div>
         </div>
       </div>
     </div>
@@ -72,8 +76,9 @@
           <input v-model="customer.postal_code" type="text" class="inputs" />
           <div v-if="error.postal_code" class="error">{{ error.postal_code }}</div>
         </div>
-
-        <div class="form-group">
+      </div>
+      <div class="form-row">
+         <div class="form-group">
           <label class="form-label">Stadt <span class="stars">*</span></label>
           <input v-model="customer.city" type="text" class="inputs" />
           <div v-if="error.city" class="error">{{ error.city }}</div>

@@ -10,7 +10,7 @@
         <div class="company-details">Email: {{ headerData.email }}</div>
         <div class="company-details">Web: {{ headerData.website }}</div>
       </div>
-      <img :src="logoSrc" alt="Logo" class="preview-logo" />
+      <img :src="selected_image" alt="Logo" class="preview-logo" />
     </div>
   </div>
 </template>
@@ -29,31 +29,14 @@ export default {
   },
   data() {
     return {
-      headerData: {}
-    }
-  },
-  computed: {
-    logoSrc() {
-      const logo = this.headerData.logo
-      if (!logo) return null
-      if (typeof logo === 'string') {
-        if (logo.startsWith('data:image')) return logo
-        return `data:image/png;base64,${logo}`
-      }
-      try {
-        let binary = ''
-        const bytes = new Uint8Array(Object.values(logo))
-        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
-        return `data:image/png;base64,${window.btoa(binary)}`
-      } catch (error) {
-        console.error(error)
-        return null
-      }
+      headerData: {},
+      selected_image: ''
     }
   },
   mounted() {
     if (this.auth) {
       this.headerData = this.auth
+      this.selected_image = `data:${this.auth.image_type};base64,${this.auth.logo}`
     }
   }
 }

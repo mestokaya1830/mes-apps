@@ -1,328 +1,289 @@
 <template>
-    <div class="main-container">
-      <div class="main-header">
-        <div class="editor-title">
-          📝{{ title }}
-          <div class="editor-subtitle">Bearbeiten Sie die Profile</div>
+  <div class="main-container">
+    <div class="main-header">
+      <h1 class="main-title">
+        {{ title }}
+      </h1>
+      <router-link to="/" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+      </router-link>
+    </div>
+    <form @submit.prevent="updateUser">
+      <!-- Personal Information -->
+      <section class="sections">
+        <h3 class="sections-title">👤 Persönlichedaten</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Anrede</label>
+            <label for="" class="inputs">{{ user.gender }}</label>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vorname</label>
+            <label for="" class="inputs">{{ user.first_name }}</label>
+          </div>
         </div>
-        <router-link to="/" class="add-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="3"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M15 6l-6 6 6 6" />
-          </svg>
-        </router-link>
-      </div>
-      <form @submit.prevent="updateUser">
-        <!-- Personal Information -->
-        <section class="sections">
-          <h3 class="sections-title">👤 Persönlichedaten</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Anrede</label>
-              <select v-model="user.gender" class="inputs">
-                <option value="" disabled>Bitte wählen</option>
-                <option value="Herr">Herr</option>
-                <option value="Frau">Frau</option>
-                <option value="Divers">Divers</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Vorname</label>
-              <input
-                v-model="user.first_name"
-                type="text"
-                required
-                placeholder="Enter your first name"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-field">Nachname</label>
-              <input
-                v-model="user.last_name"
-                type="text"
-                required
-                placeholder="Enter your last name"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-field">E-Mail</label>
-              <input v-model="user.email" type="email" required placeholder="example@email.com" />
-            </div>
-            <div class="form-group">
-              <label class="form-field">Passwort</label>
-              <input
-                v-model="user.password"
-                type="password"
-                placeholder="Neues Passwort eingeben"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-field">Telefon</label>
-              <input
-                v-model="user.phone"
-                type="tel"
-                class="inputs"
-                placeholder="+49 30 12345678"
-              />
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-field">Nachname</label>
+            <label for="" class="inputs">{{ user.last_name }}</label>
           </div>
           <div class="form-group">
-            <label class="form-field">Webseite</label>
+            <label class="form-field">E-Mail</label>
+            <label for="" class="inputs">{{ user.email }}</label>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-field">Passwort <i class="bi bi-pencil"></i></label>
             <input
-              v-model="user.website"
-              type="url"
+              v-model="user.password"
+              type="password"
               class="inputs"
-              placeholder="www.example.com"
+              placeholder="Neues Passwort eingeben"
             />
           </div>
-        </section>
-
-        <!-- Address Information -->
-        <section class="sections">
-          <h3 class="sections-title">📍 Adressdaten</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Adresse</label>
-              <input
-                v-model="user.address"
-                type="text"
-                class="inputs"
-                placeholder="Hauptstraße 123"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Postleitzahl</label>
-              <input
-                v-model="user.postal_code"
-                type="text"
-                class="inputs"
-                placeholder="10115"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Stadt</label>
-              <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">🇩🇪 Bundesland (Deutschland)</label>
-              <select v-model="user.state" class="inputs">
-                <option disabled value="">Bitte wählen</option>
-                <option v-for="item in german_states" :key="item.value" :value="item.value">
-                  {{ item.label }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </section>
-
-        <!-- Company Information -->
-        <section v-if="user.company_details" class="sections">
-          <h3 class="sections-title">🏢 Unternehmensdaten</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-field">Firmenname</label>
-              <input
-                v-model="user.company_name"
-                type="text"
-                class="inputs"
-                placeholder="TechSolutions GmbH"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-field">🇩🇪 Unternehmensform (Deutschland)</label>
-              <select v-model="user.company_details" class="inputs">
-                <option disabled value="">-- Bitte wählen --</option>
-                <option v-for="item in companies" :key="item.value" :value="item">
-                  {{ item.label }}
-                </option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-field">Firmenlogo (Neues Logo hochladen)</label>
-              <input type="file" @change="setLogo($event)" />
-            </div>
-            <div class="form-group">
-              <label class="form-field">Logo-Vorschau</label>
-              <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
-            </div>
-          </div>
-        </section>
-
-        <!-- Contact Person -->
-        <section v-if="user.contact_person" class="sections">
-          <h3 class="sections-title">📞 Kontaktdaten</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Anrede</label>
-              <select v-model="user.contact_person.gender" class="inputs">
-                <option value="" disabled>Bitte wählen</option>
-                <option value="Herr">Herr</option>
-                <option value="Frau">Frau</option>
-                <option value="Divers">Divers</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Vorname</label>
-              <input
-                v-model="user.contact_person.first_name"
-                type="text"
-                class="inputs"
-                placeholder="Hans Mueller"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Vorname</label>
-              <input
-                v-model="user.contact_person.last_name"
-                type="text"
-                class="inputs"
-                placeholder="Hans Mueller"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Telefon</label>
-              <input
-                v-model="user.contact_person.phone"
-                type="tel"
-                class="inputs"
-                placeholder="+49 30 12345678"
-              />
-            </div>
-          </div>
           <div class="form-group">
-            <label class="form-label">E-Mail</label>
-            <input
-              v-model="user.contact_person.email"
-              type="email"
-              class="inputs"
-              placeholder="example@email.com"
-            />
+            <label class="form-field">Telefon <i class="bi bi-pencil"></i></label>
+            <input v-model="user.phone" type="tel" class="inputs" placeholder="+49 30 12345678" />
           </div>
-        </section>
+        </div>
 
-        <!-- Tax Information -->
-        <section class="sections">
-          <h3 class="sections-title">💼 Steuerinformationen</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Steuernummer</label>
-              <input
-                v-model="user.tax_number"
-                type="text"
-                class="inputs"
-                placeholder="123/456/78901"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Finanzamt</label>
-              <input
-                v-model="user.tax_office"
-                type="text"
-                class="inputs"
-                placeholder="Finanzamt Berlin Mitte/Tiergarten"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">USt-IdNr.</label>
-              <input
-                v-model="user.vat_id"
-                type="text"
-                class="inputs"
-                placeholder="DE123456789"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Handelsregistereintrag</label>
-              <input
-                v-model="user.court_registration"
-                type="text"
-                class="inputs"
-                placeholder="HRB 12345 B"
-              />
-            </div>
-          </div>
+        <div class="form-group">
+          <label class="form-field">Webseite <i class="bi bi-pencil"></i></label>
+          <input v-model="user.website" type="url" class="inputs" placeholder="www.example.com" />
+        </div>
+      </section>
+
+      <!-- Address Information -->
+      <section class="sections">
+        <h3 class="sections-title">📍 Adressdaten</h3>
+        <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Gerichtsstand</label>
+            <label class="form-label">Adresse <i class="bi bi-pencil"></i></label>
             <input
-              v-model="user.court_location"
+              v-model="user.address"
               type="text"
               class="inputs"
-              placeholder="Amtsgericht Berlin"
+              placeholder="Hauptstraße 123"
             />
           </div>
-        </section>
-
-        <!-- Bank Information -->
-        <section class="sections">
-          <h3 class="sections-title">💳 Zahlungsinformationen</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-field">Bankname</label>
-              <input
-                v-model="user.bank_name"
-                type="text"
-                class="inputs"
-                placeholder="Deutsche Bank AG"
-              />
-            </div>
-            <div class="form-group">
-              <label class="form-field">BIC</label>
-              <input v-model="user.bic" type="text" class="inputs" placeholder="DEUTDEBBXXX" />
-            </div>
-            <div class="form-group">
-              <label class="form-field">IBAN</label>
-              <input v-model="user.iban" type="text" class="inputs" placeholder="DE89370400440532013000" />
-            </div>
-            <div class="form-group">
-              <label class="form-field">Kontoinhaber</label>
-               <input
-                v-model="user.bank_account_holder"
-                type="text"
-                class="inputs"
-                placeholder="TechSolutions GmbH"
-              />
-            </div>
+          <div class="form-group">
+            <label class="form-label">Postleitzahl <i class="bi bi-pencil"></i></label>
+            <input v-model="user.postal_code" type="text" class="inputs" placeholder="10115" />
           </div>
-        </section>
-
-        <!-- Company Signature -->
-        <section class="section-signature">
-          <h3 class="section-title">Unternehmenssignatur</h3>
-          <label class="form-field col-span-2">
-            <span>Signaturtext</span>
-            <textarea
-              v-model="user.company_signature"
-              rows="4"
-              placeholder="Mit freundlichen Grüßen&#10;TechSolutions GmbH&#10;Hans Mueller&#10;Geschäftsführer"
-            ></textarea>
-          </label>
-        </section>
-
-        <!-- Submit Button -->
-        <div class="form-actions">
-          <button type="submit" :disabled="isSubmitting" class="btn-primary">
-            <span v-if="isSubmitting">Wird gespeichert...</span>
-            <span v-else>Profil Aktualisieren</span>
-          </button>
         </div>
-      </form>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Stadt <i class="bi bi-pencil"></i></label>
+            <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
+          </div>
+          <div class="form-group">
+            <label class="form-label"
+              >🇩🇪 Bundesland (Deutschland) <i class="bi bi-pencil"></i
+            ></label>
+            <select v-model="user.state" class="inputs">
+              <option disabled value="">Bitte wählen</option>
+              <option v-for="item in german_states" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </section>
 
-      <!-- Messages -->
-      <p v-if="isLoading" class="status-message loading">Profil wird geladen...</p>
-      <p v-if="showSuccess" class="status-message success">
-        ✅ Profil wurde erfolgreich aktualisiert!
-      </p>
-      <p v-if="errorMessage" class="status-message error">❌ Fehler: {{ errorMessage }}</p>
-    </div>
+      <!-- Company Information -->
+      <section v-if="user.company_details" class="sections">
+        <h3 class="sections-title">🏢 Unternehmensdaten</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-field">Firmenname</label>
+            <label for="" class="inputs">{{ user.company_name }}</label>
+          </div>
+          <div class="form-group">
+            <label class="form-field">🇩🇪 Unternehmensform (Deutschland)</label>
+            <select v-model="user.company_details" class="inputs">
+              <option disabled value="">-- Bitte wählen --</option>
+              <option v-for="item in companies" :key="item.value" :value="item">
+                {{ item.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-field"
+              >Firmenlogo (Neues Logo hochladen) <i class="bi bi-pencil"></i
+            ></label>
+            <input type="file" @change="setLogo($event)" />
+          </div>
+          <div class="form-group">
+            <label class="form-field">Logo-Vorschau <i class="bi bi-pencil"></i></label>
+            <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Person -->
+      <section v-if="user.contact_person" class="sections">
+        <h3 class="sections-title">📞 Kontaktdaten</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Anrede <i class="bi bi-pencil"></i></label>
+            <select v-model="user.contact_person.gender" class="inputs">
+              <option value="" disabled>Bitte wählen</option>
+              <option value="Herr">Herr</option>
+              <option value="Frau">Frau</option>
+              <option value="Divers">Divers</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vorname <i class="bi bi-pencil"></i></label>
+            <input
+              v-model="user.contact_person.first_name"
+              type="text"
+              class="inputs"
+              placeholder="Hans Mueller"
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nachname <i class="bi bi-pencil"></i></label>
+            <input
+              v-model="user.contact_person.last_name"
+              type="text"
+              class="inputs"
+              placeholder="Hans Mueller"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefon <i class="bi bi-pencil"></i></label>
+            <input
+              v-model="user.contact_person.phone"
+              type="tel"
+              class="inputs"
+              placeholder="+49 30 12345678"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-Mail <i class="bi bi-pencil"></i></label>
+          <input
+            v-model="user.contact_person.email"
+            type="email"
+            class="inputs"
+            placeholder="example@email.com"
+          />
+        </div>
+      </section>
+
+      <!-- Tax Information -->
+      <section class="sections">
+        <h3 class="sections-title">💼 Steuerinformationen</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Steuernummer</label>
+            <label for="" class="inputs">{{ user.tax_number }}</label>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Finanzamt <i class="bi bi-pencil"></i></label>
+            <input
+              v-model="user.tax_office"
+              type="text"
+              class="inputs"
+              placeholder="Finanzamt Berlin Mitte/Tiergarten"
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">USt-IdNr.</label>
+            <label for="" class="inputs">{{ user.vat_id }}</label>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Handelsregistereintrag</label>
+            <label for="" class="inputs">{{ user.court_registration }}</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gerichtsstand <i class="bi bi-pencil"></i></label>
+          <label for="" class="inputs">{{ user.court_location }}</label>
+        </div>
+      </section>
+
+      <!-- Bank Information -->
+      <section class="sections">
+        <h3 class="sections-title">💳 Zahlungsinformationen</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-field">Bankname <i class="bi bi-pencil"></i></label>
+            <input
+              v-model="user.bank_name"
+              type="text"
+              class="inputs"
+              placeholder="Deutsche Bank AG"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-field">BIC <i class="bi bi-pencil"></i></label>
+            <input v-model="user.bic" type="text" class="inputs" placeholder="DEUTDEBBXXX" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-field">IBAN <i class="bi bi-pencil"></i></label>
+            <input
+              v-model="user.iban"
+              type="text"
+              class="inputs"
+              placeholder="DE89370400440532013000"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-field">Kontoinhaber <i class="bi bi-pencil"></i></label>
+            <input
+              v-model="user.bank_account_holder"
+              type="text"
+              class="inputs"
+              placeholder="TechSolutions GmbH"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Company Signature -->
+      <section class="sections">
+        <h3 class="sections-title">
+          <i class="bi bi-pencil ms-2 icons" style="cursor: pointer"></i>
+          Unternehmenssignatur
+        </h3>
+
+        <label class="form-field">
+          <span>Signaturtext <i class="bi bi-pencil"></i></span>
+        </label>
+        <textarea
+          v-model="user.company_signature"
+          rows="4"
+          placeholder="Mit freundlichen Grüßen&#10;TechSolutions GmbH&#10;Hans Mueller&#10;Geschäftsführer"
+        ></textarea>
+      </section>
+
+      <!-- Submit Button -->
+      <div class="form-section btn-container">
+        <button type="submit" :disabled="isSubmitting" class="btn btn-primary">
+          <span v-if="isSubmitting">Wird gespeichert...</span>
+          <span v-else>Profil Aktualisieren</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Messages -->
+    <p v-if="isLoading" class="status-message loading">Profil wird geladen...</p>
+    <p v-if="showSuccess" class="status-message success">
+      ✅ Profil wurde erfolgreich aktualisiert!
+    </p>
+    <p v-if="errorMessage" class="status-message error">❌ Fehler: {{ errorMessage }}</p>
+  </div>
 </template>
 
 <script>
@@ -387,6 +348,25 @@ export default {
       ]
     }
   },
+  computed: {
+    logoSrc() {
+      const logo = this.selectedImage
+      if (!logo) return null
+      if (typeof logo === 'string') {
+        if (logo.startsWith('data:image')) return logo
+        return `data:image/png;base64,${logo}`
+      }
+      try {
+        let binary = ''
+        const bytes = new Uint8Array(Object.values(logo))
+        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
+        return `data:image/png;base64,${window.btoa(binary)}`
+      } catch (error) {
+        console.error(error)
+        return null
+      }
+    }
+  },
   mounted() {
     this.getUser()
   },
@@ -394,15 +374,14 @@ export default {
     async getUser() {
       this.isLoading = true
       try {
-        const response = await window.api.getUser()
-        if (response.success && response.user) {
-          this.user = {
-            ...response.user,
-            contact_person: JSON.parse(response.user.contact_person),
-            company_details: JSON.parse(response.user.company_details)
-          }
-          this.selectedImage = `data:${this.user.image_type};base64,${this.user.logo}`
+        const result = await window.api.getUser()
+        if (!result) return
+        this.user = {
+          ...result.rows,
+          contact_person: JSON.parse(result.rows.contact_person),
+          company_details: JSON.parse(result.rows.company_details)
         }
+        this.selectedImage = `data:${result.rows.image_type};base64,${result.rows.logo}`
         this.isLoading = false
       } catch (error) {
         console.error(error)

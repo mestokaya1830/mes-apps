@@ -170,44 +170,48 @@
       <div class="sections-title">
         <i class="bi bi-credit-card-2-front-fill me-2 form-title"></i>Zahlung & Währung
       </div>
-      <div class="form-group">
-        <label class="form-label">Zahlungsbedingungen</label>
-        <input v-model="order.payment_terms" type="text" class="inputs" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Zahlungsart</label>
-        <select v-model="order.payment_method" class="inputs">
-          <option value="" disabled>Bitte auswählen</option>
-          <option>Überweisung</option>
-          <option>Bar</option>
-          <option>PayPal</option>
-          <option>Kreditkarte</option>
-          <option>Lastschrift</option>
-          <option>Scheck</option>
-        </select>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Zahlungsbedingungen</label>
+          <input v-model="order.payment_terms" type="text" class="inputs" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Zahlungsart</label>
+          <select v-model="order.payment_method" class="inputs">
+            <option value="" disabled>Bitte auswählen</option>
+            <option>Überweisung</option>
+            <option>Bar</option>
+            <option>PayPal</option>
+            <option>Kreditkarte</option>
+            <option>Lastschrift</option>
+            <option>Scheck</option>
+          </select>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Zahlungshinweise</label>
         <textarea v-model="order.payment_conditions" class="inputs"></textarea>
       </div>
-      <div class="form-group">
-        <label class="form-label">Währung</label>
-        <select v-model="order.currency" class="inputs">
-          <option value="EUR.de-DE">EUR</option>
-          <option value="USD.en-US">USD</option>
-          <option value="GBP.en-GB">GBP</option>
-          <option value="CHF.ch-CH">CHF</option>
-          <option value="JPY.ja-JP">JPY</option>
-          <option value="AUD.en-AU">AUD</option>
-          <option value="CAD.en-CA">CAD</option>
-          <option value="CNY.zh-CN">CNY</option>
-          <option value="SEK.sv-SE">SEK</option>
-          <option value="NZD.en-NZ">NZD</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Zahlungsreferenz</label>
-        <input v-model="order.payment_reference" type="text" class="inputs" />
+      <div class="form-row">
+         <div class="form-group">
+          <label class="form-label">Zahlungsreferenz</label>
+          <input v-model="order.payment_reference" type="text" class="inputs" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Währung</label>
+          <select v-model="order.currency" class="inputs">
+            <option value="EUR.de-DE">EUR</option>
+            <option value="USD.en-US">USD</option>
+            <option value="GBP.en-GB">GBP</option>
+            <option value="CHF.ch-CH">CHF</option>
+            <option value="JPY.ja-JP">JPY</option>
+            <option value="AUD.en-AU">AUD</option>
+            <option value="CAD.en-CA">CAD</option>
+            <option value="CNY.zh-CN">CNY</option>
+            <option value="SEK.sv-SE">SEK</option>
+            <option value="NZD.en-NZ">NZD</option>
+          </select>
+        </div>
       </div>
     </div>
 
