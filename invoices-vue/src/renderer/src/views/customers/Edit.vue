@@ -9,8 +9,8 @@
       </router-link>
     </div>
 
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-building form-title me-2"></i> Unternehmensinformationen
       </div>
       <div class="form-row">
@@ -33,8 +33,8 @@
       </div>
     </div>
 
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-geo-alt form-title me-2"></i> Adressdaten
       </div>
       <div class="form-row">
@@ -57,8 +57,8 @@
       </div>
     </div>
 
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-telephone form-title me-2"></i> Kontaktdaten
       </div>
       <div class="form-row">
@@ -73,8 +73,8 @@
       </div>
     </div>
 
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-file-earmark-text form-title me-2"></i> Steuerinformationen
       </div>
       <div class="form-row">
@@ -93,7 +93,7 @@
       </div>
     </div>
 
-    <div class="form-section btn-container">
+    <div class="sections btn-container">
       <button type="button" class="btn btn-update" @click="updateCustomer">
         <i class="bi bi-save me-1 icons"></i> Aktualisierung
       </button>

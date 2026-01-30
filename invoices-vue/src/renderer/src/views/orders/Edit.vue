@@ -9,7 +9,7 @@
     <div class="printable">
       <h2>{{ title }}</h2>
 
-      <div class="form-section">
+      <div class="sections">
         <!-- Status -->
         <div class="form-group">
           <div v-if="order.status === 'accepted' || order.status === 'rejected'">
@@ -72,8 +72,8 @@
         </div>
 
         <!-- Lieferdaten + Versand -->
-        <div class="form-section">
-          <div class="form-section-title">📦 Lieferung & Versand</div>
+        <div class="sections">
+          <div class="sections-title">📦 Lieferung & Versand</div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Gesendet am</label>

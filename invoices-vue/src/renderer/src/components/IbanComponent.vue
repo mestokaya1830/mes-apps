@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="form-section">
+    <div class="sections">
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Name der Gegenpartei</label>

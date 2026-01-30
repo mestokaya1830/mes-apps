@@ -23,8 +23,8 @@
       </div>
       <form @submit.prevent="updateUser">
         <!-- Personal Information -->
-        <section class="form-section">
-          <h3 class="form-section-title">👤 Persönlichedaten</h3>
+        <section class="sections">
+          <h3 class="sections-title">👤 Persönlichedaten</h3>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Anrede</label>
@@ -87,8 +87,8 @@
         </section>
 
         <!-- Address Information -->
-        <section class="form-section">
-          <h3 class="form-section-title">📍 Adressdaten</h3>
+        <section class="sections">
+          <h3 class="sections-title">📍 Adressdaten</h3>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Adresse</label>
@@ -125,8 +125,8 @@
         </section>
 
         <!-- Company Information -->
-        <section v-if="user.company_details" class="form-section">
-          <h3 class="form-section-title">🏢 Unternehmensdaten</h3>
+        <section v-if="user.company_details" class="sections">
+          <h3 class="sections-title">🏢 Unternehmensdaten</h3>
           <div class="form-row">
             <div class="form-group">
               <label class="form-field">Firmenname</label>
@@ -158,8 +158,8 @@
         </section>
 
         <!-- Contact Person -->
-        <section v-if="user.contact_person" class="form-section">
-          <h3 class="form-section-title">📞 Kontaktdaten</h3>
+        <section v-if="user.contact_person" class="sections">
+          <h3 class="sections-title">📞 Kontaktdaten</h3>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Anrede</label>
@@ -210,8 +210,8 @@
         </section>
 
         <!-- Tax Information -->
-        <section class="form-section">
-          <h3 class="form-section-title">💼 Steuerinformationen</h3>
+        <section class="sections">
+          <h3 class="sections-title">💼 Steuerinformationen</h3>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Steuernummer</label>
@@ -262,8 +262,8 @@
         </section>
 
         <!-- Bank Information -->
-        <section class="form-section">
-          <h3 class="form-section-title">💳 Zahlungsinformationen</h3>
+        <section class="sections">
+          <h3 class="sections-title">💳 Zahlungsinformationen</h3>
           <div class="form-row">
             <div class="form-group">
               <label class="form-field">Bankname</label>

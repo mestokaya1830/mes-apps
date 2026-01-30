@@ -8,7 +8,7 @@
     </div>
 
     <!-- 4. Send Info -->
-    <div class="form-section">
+    <div class="sections">
       <div class="form-group">
         <label class="form-label">Sent At</label>
         <input v-model="reminder.date" type="datetime-local" class="inputs date" />
@@ -31,7 +31,7 @@
     </div>
 
     <!-- 1. Level -->
-    <div class="form-section">
+    <div class="sections">
       <label class="form-label">💼 Betreff (Level)</label>
       <div class="form-group">
         <select v-model="reminder.level" class="inputs" @change="updateTexts">
@@ -44,7 +44,7 @@
     </div>
 
     <!-- 2. Payment Deadline -->
-    <div class="form-section">
+    <div class="sections">
       <div class="form-group">
         <label class="form-label">Zahlungsfrist auswählen</label>
         <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
@@ -74,7 +74,7 @@
     </div>
 
     <!-- 3. Text Sections -->
-    <div v-if="reminder.level" class="form-section">
+    <div v-if="reminder.level" class="sections">
       <div class="form-group">
         <label class="form-label">Intro Text</label>
         <textarea v-model="reminder.intro_text" class="inputs"></textarea>

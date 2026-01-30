@@ -15,7 +15,7 @@
         sent → only accepted and rejected can be selected; draft and sent are disabled.
         accepted/rejected → all options are disabled; only the current status is shown. 
       -->
-      <div class="form-section">
+      <div class="sections">
         <div class="form-group">
           <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
             <h4>Status:</h4>

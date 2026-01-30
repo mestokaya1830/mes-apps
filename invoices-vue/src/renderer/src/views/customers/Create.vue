@@ -8,8 +8,8 @@
     </div>
 
     <!-- Base -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-person-badge me-2 form-title"></i>Kundeninformationen
       </div>
 
@@ -58,8 +58,8 @@
     </div>
 
     <!-- Adressdaten -->
-    <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-geo-alt me-2 form-title"></i>Adressdaten</div>
+    <div class="sections">
+      <div class="sections-title"><i class="bi bi-geo-alt me-2 form-title"></i>Adressdaten</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Adresse <span class="stars">*</span></label>
@@ -88,8 +88,8 @@
     </div>
 
     <!-- Steuerinformationen -->
-    <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-briefcase me-2 form-title"></i>Steuerinformationen</div>
+    <div class="sections">
+      <div class="sections-title"><i class="bi bi-briefcase me-2 form-title"></i>Steuerinformationen</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Steuernummer <span class="stars">*</span></label>
@@ -106,7 +106,7 @@
     </div>
 
     <!-- Submit -->
-    <div class="form-section btn-container">
+    <div class="sections btn-container">
       <div v-if="showSuccess" class="">
         <p class="font-medium text-success">
           <i class="bi bi-check-circle me-1"></i>Kunde erfolgreich gespeichert!

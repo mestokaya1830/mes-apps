@@ -8,8 +8,8 @@
     </div>
 
     <!-- Grunddaten -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
       </div>
       <div class="form-row">
@@ -50,8 +50,8 @@
     </div>
 
     <!-- Kundendaten -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-person-fill me-2 form-icons"></i>Kundendaten
       </div>
       <div v-if="order.customer?.id" class="customer-details">
@@ -97,8 +97,8 @@
     </div>
 
     <!-- Lieferdaten + Versand -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-box-seam me-2 form-title"></i>Lieferung & Versand
       </div>
       <div class="form-group">
@@ -166,8 +166,8 @@
     </div>
 
     <!-- Zahlung & Währung -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-credit-card-2-front-fill me-2 form-title"></i>Zahlung & Währung
       </div>
       <div class="form-group">
@@ -212,8 +212,8 @@
     </div>
 
     <!-- Positionen -->
-    <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
+    <div class="sections">
+      <div class="sections-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
       <div v-if="order.positions && order.positions.length === 0">Keine Positionen vorhanden</div>
       <div v-else class="positions-editor">
         <div v-for="(pos, index) in order.positions" :key="index" class="position-item">
@@ -294,8 +294,8 @@
     </div>
 
     <!-- Notizen & Texte -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-pencil-square me-2 form-title"></i>Notizen & Texte
       </div>
       <div class="form-group">
@@ -317,7 +317,7 @@
     </div>
 
     <!-- Vorschau Button -->
-    <div class="form-section container-2">
+    <div class="sections container-2">
       <button class="btn btn-preview"><i class="bi bi-eye me-2 icons"></i>Vorschau anzeigen</button>
     </div>
   </div>

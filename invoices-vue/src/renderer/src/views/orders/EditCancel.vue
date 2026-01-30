@@ -10,7 +10,7 @@
       <!-- Header -->
       <h2>{{ title }}</h2>
 
-      <div class="form-section">
+      <div class="sections">
         <div class="custom-row">
           <div class="form-group">
             <label for="">Auftrags-Nr.:</label>

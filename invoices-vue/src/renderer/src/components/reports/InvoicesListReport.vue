@@ -1,5 +1,5 @@
 <template>
-  <div class="report-panel">
+  <div>
     <select v-model="date_range" class="inputs" @change="rangeDateFilter">
       <option value="" disabled>Wähle Daten</option>
       <option value="1">Diesen Monat</option>
@@ -8,7 +8,7 @@
       <option value="12">Letztes Jahr</option>
     </select>
 
-    <div class="form-section">
+    <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
           <label>Von</label>
@@ -34,7 +34,7 @@
     </div>
 
     <!-- REPORT STARTS -->
-    <div v-if="is_ready" class="report-container">
+    <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
           <h2>{{ title }}</h2>

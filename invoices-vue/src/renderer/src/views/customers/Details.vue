@@ -30,7 +30,7 @@
     </div>
 
     <!-- Actions -->
-    <div class="form-section btn-container">
+    <div class="sections btn-container">
       <router-link :to="`/customers/edit/${customer.id}`">
         <button class="btn btn-edit">Edit</button>
       </router-link>

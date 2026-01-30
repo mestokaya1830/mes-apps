@@ -12,8 +12,8 @@
 
     <div>
       <!-- 1️⃣ Invoice Information (readonly) -->
-      <div class="form-section">
-        <div class="form-section-title">📄 Ausgewählte Rechnung</div>
+      <div class="sections">
+        <div class="sections-title">📄 Ausgewählte Rechnung</div>
         <div class="customer-details" style="margin-top: 16px">
           <div class="form-row">
             <div class="form-group">
@@ -57,8 +57,8 @@
       </div>
 
       <!-- 2️⃣ Counterparty Information -->
-      <div class="form-section">
-        <div class="form-section-title">🏦 Gegenpartei Informationen</div>
+      <div class="sections">
+        <div class="sections-title">🏦 Gegenpartei Informationen</div>
 
         <IbanComponent
           v-model:localNamePartner="payment.counterparty_name"
@@ -71,8 +71,8 @@
       </div>
 
       <!-- 3️⃣ Currency -->
-      <div class="form-section">
-        <div class="form-section-title">💰 Währung</div>
+      <div class="sections">
+        <div class="sections-title">💰 Währung</div>
         <div class="form-group">
           <label class="form-label">Waehrung</label>
           <select v-model="payment.invoice.currency" class="inputs">
@@ -91,8 +91,8 @@
       </div>
 
       <!-- 4️⃣ Payment Details -->
-      <div class="form-section">
-        <div class="form-section-title">💰 Zahlungsdetails</div>
+      <div class="sections">
+        <div class="sections-title">💰 Zahlungsdetails</div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Zahlungsdatum *</label>

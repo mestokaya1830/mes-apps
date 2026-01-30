@@ -1,26 +1,20 @@
 <template>
-  <div>
-    <div class="report-panel">
-      <h2>{{ title }}</h2>
-      <div class="form-section">
-        <div class="form-group">
-          <select v-model="report_type" class="inputs">
-            <option value="" disabled>Waehle Bericht</option>
-            <option value="Kundenbezogener">Kundenbezogener Bericht</option>
-            <option value="Rechnungsliste">Rechnungsliste</option>
-            <option value="Umsatzbericht">Umsatzbericht</option>
-            <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
-          </select>
-        </div>
-        <CustomersReport v-if="report_type == 'Kundenbezogener'" />
-        <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
-        <SalesReport v-if="report_type == 'Umsatzbericht'" />
-        <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
+  <div class="report-container">
+    <h2>{{ title }}</h2>
+    <div class="sections">
+      <div class="form-group">
+        <select v-model="report_type" class="inputs">
+          <option value="" disabled>Waehle Bericht</option>
+          <option value="Kundenbezogener">Kundenbezogener Bericht</option>
+          <option value="Rechnungsliste">Rechnungsliste</option>
+          <option value="Umsatzbericht">Umsatzbericht</option>
+          <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
+        </select>
       </div>
-      <div class="print-actions">
-        <button class="btn-excel">📊 Excel Export</button>
-        <button class="btn btn-print" @click="printDocument">🖨️ Drucken</button>
-      </div>
+      <CustomersReport v-if="report_type == 'Kundenbezogener'" />
+      <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
+      <SalesReport v-if="report_type == 'Umsatzbericht'" />
+      <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
     </div>
   </div>
 </template>

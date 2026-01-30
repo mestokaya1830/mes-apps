@@ -11,7 +11,7 @@
         <!-- Header -->
         <h2>{{ title }}</h2>
 
-        <div class="form-section">
+        <div class="sections">
           <div class="custom-row">
             <div class="form-group">
               <label for="">Rechnung-Nr.:</label>
@@ -56,7 +56,7 @@
         </div>
       </div>
     </div>
-    <div class="form-section container-2">
+    <div class="sections container-2">
       <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
     </div>
   </div>

@@ -8,8 +8,8 @@
     </div>
 
     <!-- Grunddaten -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
       </div>
       <div class="form-group">
@@ -61,8 +61,8 @@
     </div>
 
     <!-- Status -->
-    <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-info-circle me-2 form-title"></i>Status</div>
+    <div class="sections">
+      <div class="sections-title"><i class="bi bi-info-circle me-2 form-title"></i>Status</div>
 
       <div class="form-group">
         <label class="form-label">Status</label>
@@ -96,8 +96,8 @@
     </div>
 
     <!-- Kundendaten -->
-    <div v-if="offer.customer" class="form-section">
-      <div class="form-section-title">
+    <div v-if="offer.customer" class="sections">
+      <div class="sections-title">
         <i class="bi bi-person-fill me-2 form-title"></i>Kundendaten
       </div>
       <div v-if="offer.customer?.id" class="customer-details">
@@ -137,8 +137,8 @@
     </div>
 
     <!-- Währung -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-currency-exchange me-2 form-title"></i>Währung
       </div>
       <div class="form-group">
@@ -158,8 +158,8 @@
     </div>
 
     <!-- Positionen -->
-    <div class="form-section">
-      <div class="form-section-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
+    <div class="sections">
+      <div class="sections-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
       <div v-if="offer.positions && offer.positions.length === 0">Keine Positionen vorhanden</div>
       <div v-else class="positions-editor">
         <div v-for="(pos, index) in offer.positions" :key="index" class="position-item">
@@ -175,8 +175,8 @@
     </div>
 
     <!-- Zusätzliche Informationen -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-file-text-fill me-2 form-title"></i>Zusätzliche Informationen
       </div>
 
@@ -257,7 +257,7 @@
       </div>
     </div>
 
-    <div class="form-section container-2">
+    <div class="sections container-2">
       <button class="btn btn-preview"><i class="bi bi-eye me-2 icons"></i>Vorschau anzeigen</button>
     </div>
   </div>

@@ -161,7 +161,7 @@
       </div>
 
       <!-- Lieferinformationen -->
-      <div class="form-section">
+      <div class="sections">
         <div v-if="orderPreview.delivery_address" class="meta-row">
           <span class="meta-label">Lieferadresse:</span>
           <span class="meta-value">

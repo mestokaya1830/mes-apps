@@ -8,8 +8,8 @@
     </div>
 
     <!-- Grunddaten -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
       </div>
       <div class="form-group">
@@ -52,8 +52,8 @@
     </div>
 
     <!-- Kundendaten -->
-    <div v-if="invoice.customer" class="form-section">
-      <div class="form-section-title">
+    <div v-if="invoice.customer" class="sections">
+      <div class="sections-title">
         <i class="bi bi-person-fill me-2 icons"></i>Kundendaten
       </div>
       <div v-if="invoice.customer?.id" class="customer-details">
@@ -93,11 +93,11 @@
     </div>
 
     <!-- Steueroptionen -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-briefcase-fill me-2 icons"></i>Steueroptionen
       </div>
-      <div class="form-section">
+      <div class="sections">
         <div class="switch-container">
           <label for="is_small_company" class="switch">
             <input
@@ -151,8 +151,8 @@
     </div>
 
     <!-- Währung -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-currency-exchange me-2 icons"></i>Währung
       </div>
       <div class="form-group">
@@ -172,8 +172,8 @@
     </div>
 
     <!-- Positionen -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-box-seam me-2 icons"></i>Positionen
       </div>
       <div v-if="invoice.positions && invoice.positions.length === 0">
@@ -196,8 +196,8 @@
     </div>
 
     <!-- Zahlungsinformationen -->
-    <div class="form-section">
-      <div class="form-section-title">
+    <div class="sections">
+      <div class="sections-title">
         <i class="bi bi-credit-card-2-front-fill me-2 icons"></i>Zahlungsinformationen
       </div>
       <div class="form-row">

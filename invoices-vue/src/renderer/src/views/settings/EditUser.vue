@@ -2,7 +2,7 @@
   <div class="main-container">
     <h1>{{ title }}</h1>
     <form>
-      <div class="form-section-title">ℹ️ General</div>
+      <div class="sections-title">ℹ️ General</div>
       <div>
         <label for="bank">Bank Name</label>
         <input id="bank" v-model="user.bank_name" type="text" />
@@ -24,7 +24,7 @@
         <img ref="logo" class="profile-logo" :src="imageSrc" alt="" @click="triggerFile" />
         <input id="logo" ref="logoInput" type="file" @change="setLogo" />
       </div>
-      <div class="form-section-title">👥 Contact Person</div>
+      <div class="sections-title">👥 Contact Person</div>
       <div>
         <label for="bic">Bic</label>
         <input id="bic" v-model="user.contact_person.first_name" type="text" />

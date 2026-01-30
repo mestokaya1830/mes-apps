@@ -1,5 +1,5 @@
 <template>
-  <div class="report-panel">
+  <div>
     <select v-model="date_range" class="inputs" @change="rangeDateFilter">
       <option value="" disabled>Waehle Daten</option>
       <option value="1">Diesen Monat</option>
@@ -8,7 +8,7 @@
       <option value="12">Letztes Jahr</option>
     </select>
 
-    <div class="form-section">
+    <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
           <label for="">Von</label>
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <div v-if="is_ready" class="report-container printable">
+    <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
           <h2>{{ title }}</h2>
@@ -82,7 +82,7 @@
       </div>
 
       <!-- Top Customers -->
-      <div class="top-customers-section">
+      <div class="sections">
         <h3>🏆 Kunden</h3>
         <div v-for="(item, index) in reports" :key="item.id" class="top-customer-list">
           <div class="top-customer-item">
