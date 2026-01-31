@@ -1,61 +1,73 @@
 <template>
   <div class="form-container">
-    <div v-if="!register" class="form-card">
-      <div class="form-header">
-        <h2>Willkommen beim Setup von Mes App</h2>
-        <router-link to="register" class="forgot-password">Next</router-link>
-      </div>
+    <div v-if="!register">
+      <setup-page />
     </div>
-
-    <div v-else class="form-card">
-      <div class="form-header">
-        <h2>Willkommen zurück</h2>
-        <p>Bitte melden Sie sich bei Ihrem Konto an</p>
+    <div v-else class="setup-container">
+      <!-- Logo ve Başlık -->
+      <div class="logo-section">
+        <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
 
-      <form @submit.prevent="loginUser">
-        <div class="form-group">
-          <label for="email">Email Address</label>
-          <input
-            id="email"
-            v-model="user.email"
-            type="email"
-            :class="['inputs', { error: error.email }]"
-            placeholder="Enter your email"
-          />
-          <div v-if="error.email" class="error-message">{{ error.email }}</div>
-        </div>
+      <h1 class="setup-title">Willkommen bei Mes App</h1>
+      <p class="setup-description">
+        Melden Sie sich mit Ihrem Konto an, um Ihre Rechnungen zu verwalten.
+      </p>
 
-        <div class="form-group">
-          <label for="inputPassword">Password</label>
-          <input
-            id="inputPassword"
-            v-model="user.password"
-            type="password"
-            :class="['inputs', { error: error.password }]"
-            placeholder="Enter your password"
-          />
-          <div v-if="error.password" class="error-message">{{ error.password }}</div>
+      <form @submit.prevent="loginUser" class="form-sections">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email" class="form-label">E-Mail-Adresse</label>
+            <input
+              id="email"
+              v-model="user.email"
+              type="email"
+              :class="['inputs', { error: error.email }]"
+              placeholder="Geben Sie Ihre E-Mail ein"
+            />
+            <div v-if="error.email" class="error-message">{{ error.email }}</div>
+          </div>
+        </div>
+        <div class="form-row">
+           <div class="form-group">
+            <label for="inputPassword" class="form-label">Passwort</label>
+            <input
+              id="inputPassword"
+              v-model="user.password"
+              type="password"
+              :class="['inputs', { error: error.password }]"
+              placeholder="Geben Sie Ihr Passwort ein"
+            />
+            <div v-if="error.password" class="error-message">{{ error.password }}</div>
+          </div>
         </div>
 
         <div class="form-options">
-          <router-link to="email-verfication" class="forgot-password">Forgot password?</router-link>
+          <router-link to="email-verfication" class="forgot-password"
+            >Passwort vergessen?</router-link
+          >
         </div>
 
         <div v-if="error.credential" class="text error-message">{{ error.credential }}</div>
 
         <button type="submit" class="btn">Anmelden</button>
       </form>
+      <!-- Action Button -->
+      <button class="btn btn-primary btn-setup" @click="loginUser">
+        <i class="bi bi-arrow-right ioncs"></i>
+        <span>Anmelden</span>
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 import store from '../../store/store.js'
-
+import SetupPage from '../../components/preview/SetupPage.vue'
 export default {
   name: 'Login',
-  inject:['trimFormFields'],
+  components: { SetupPage },
+  inject: ['trimFormFields'],
   data() {
     return {
       user: { email: '', password: '' },
@@ -82,6 +94,7 @@ export default {
     async checkRegister() {
       try {
         const res = await window.api.checkRegister()
+        console.log(res)
         this.register = res.success
       } catch (err) {
         console.error(err)

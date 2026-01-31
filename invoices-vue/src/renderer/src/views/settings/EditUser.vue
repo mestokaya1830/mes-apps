@@ -1,6 +1,11 @@
 <template>
   <div class="main-container">
-    <h1>{{ title }}</h1>
+    <div class="main-header">
+      <label>{{ title }}</label>
+       <router-link to="/" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+      </router-link>
+    </div>
     <form>
       <div class="sections-title">ℹ️ General</div>
       <div>

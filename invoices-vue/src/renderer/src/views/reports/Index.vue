@@ -1,6 +1,8 @@
 <template>
   <div class="report-container">
-    <h2>{{ title }}</h2>
+    <div class="main-header">
+      <label>{{ title }}</label>
+    </div>
     <div class="sections">
       <div class="form-group">
         <select v-model="report_type" class="inputs">

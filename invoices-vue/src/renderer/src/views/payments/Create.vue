@@ -1,10 +1,7 @@
 <template>
   <div v-if="payment" class="main-container">
     <div class="main-header">
-      <div class="main-title">💳 {{ title }}</div>
-      <div class="main-subtitle">
-        Erfassen Sie eingehende Zahlungen für die ausgewählte Rechnung
-      </div>
+      <label>💳 {{ title }}</label>
       <router-link to="/payments" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>

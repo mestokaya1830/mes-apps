@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
      <div class="main-header">
-      <h1 class="main-title">{{ title }}</h1>
+      <label>{{ title }}</label>
        <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>

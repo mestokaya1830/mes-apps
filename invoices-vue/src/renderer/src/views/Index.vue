@@ -456,17 +456,12 @@ canvas {
 
 <template>
   <div class="main-container">
-    <div class="dashboard-header">
-      <div>
-        <h1 class="title">{{ title }}</h1>
-        <p class="dashboard-subtitle">Übersicht Ihrer Geschäftstätigkeit</p>
-      </div>
-      <div class="dashboard-header-actions">
-        <button class="btn btn-secondary">
-          <i class="bi bi-download icons"></i>
-          Exportieren
-        </button>
-      </div>
+    <div class="main-header">
+      <label>{{ title }}</label>
+      <button class="btn btn-secondary">
+        <i class="bi bi-download icons"></i>
+        Exportieren
+      </button>
     </div>
 
     <div v-if="tablesCount" class="dashboard-grid">

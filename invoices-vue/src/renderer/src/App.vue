@@ -279,14 +279,14 @@ export default {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: #3ba55c;
+  background: #12B486;
 }
 
 .nav-icon {
   width: 36px;
   text-align: center;
   font-size: 24px;
-  color: #3ba55c;
+  color: #12B486;
 }
 .nav-label {
   padding: 0 1.5rem;

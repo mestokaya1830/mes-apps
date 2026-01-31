@@ -1,9 +1,9 @@
 <template>
   <div v-if="customer" class="main-container">
     <div class="main-header">
-      <h1 class="main-title">
+      <label>
         {{ title }}
-      </h1>
+      </label>
       <router-link :to="`/customers/details/${customer.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>

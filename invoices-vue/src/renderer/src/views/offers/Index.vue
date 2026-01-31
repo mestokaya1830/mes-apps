@@ -1,12 +1,8 @@
 <template>
   <div class="main-container">
-    <!-- Header Section -->
     <div class="main-header">
-      <div>
-        <h1 class="title">{{ title }} {{ offers.length }}</h1>
-        <p class="subtitle">Verwalten Sie alle Ihre Angebote</p>
-      </div>
-      <router-link to="/customers" class="add-btn">
+      <label>{{ title }} {{ offers.length }}</label>
+      <router-link to="/customers" class="btn add-btn">
          <i class="bi bi-plus-circle add-icon"></i>
         <span>Neues Angebot erstellen</span>
       </router-link>
