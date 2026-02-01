@@ -25,6 +25,7 @@ contextBridge.exposeInMainWorld('api', {
   customerDetails: async (id) => ipcRenderer.invoke('customer-details', id),
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
   deleteCustomerById: async (id) => ipcRenderer.invoke('delete-customer-by-id', id),
+  filterCustomersCategories: async (data) => ipcRenderer.invoke('flter-customers-categories', data),
   searchCustomers: async (data) => ipcRenderer.invoke('search-customers', data),
 
   //invoice
@@ -38,13 +39,21 @@ contextBridge.exposeInMainWorld('api', {
 
   //payment
   addPayment: (data) => ipcRenderer.invoke('add-payment', data),
+  getPayments: async (data) => ipcRenderer.invoke('get-payments', data),
   getPaymentById: (id) => ipcRenderer.invoke('get-payment-by-id', id),
-  cancelPaymentById: (data) => ipcRenderer.invoke('cancel-payment-by-id', data),  
+  cancelPaymentById: (data) => ipcRenderer.invoke('cancel-payment-by-id', data),
+  filterPaymentsCategories: async (data) => ipcRenderer.invoke('flter-Payments-categories', data),
+  searchPayments: async (term) => ipcRenderer.invoke('search-Payments', term),
+  filterPaymentsDate: async (date) => ipcRenderer.invoke('filter-Payments-date', date),
 
   //reminder
   addReminder: (data) => ipcRenderer.invoke('add-reminder', data),
+  getReminders: async (data) => ipcRenderer.invoke('get-reminders', data),
   getReminderById: (id) => ipcRenderer.invoke('get-reminder-by-id', id),
   cancelReminderById: (data) => ipcRenderer.invoke('cancel-reminder-by-id', data),
+  filterRemindersCategories: async (data) => ipcRenderer.invoke('flter-Reminders-categories', data),
+  searchReminders: async (term) => ipcRenderer.invoke('search-Reminders', term),
+  filterRemindersDate: async (date) => ipcRenderer.invoke('filter-Reminders-date', date),
 
   //offer
   addOffer: async (data) => ipcRenderer.invoke('add-offer', data),
@@ -53,6 +62,9 @@ contextBridge.exposeInMainWorld('api', {
   getOfferByStatus: async (id) => ipcRenderer.invoke('get-offer-by-status', id),
   updateOfferById: async (data) => ipcRenderer.invoke('update-offer-by-id', data),
   cancelOffer: async (id) => ipcRenderer.invoke('cancel-offer', id),
+  filterOffersCategories: async (data) => ipcRenderer.invoke('flter-Offers-categories', data),
+  searchOffers: async (term) => ipcRenderer.invoke('search-Offers', term),
+  filterOffersDate: async (date) => ipcRenderer.invoke('filter-Offers-date', date),
 
   //order
   addOrder: async (data) => ipcRenderer.invoke('add-order', data),
@@ -60,6 +72,9 @@ contextBridge.exposeInMainWorld('api', {
   getOrderById: async (id) => ipcRenderer.invoke('get-order-by-id', id),
   updateOrderById: async (data) => ipcRenderer.invoke('update-order-by-id', data),
   cancelOrder: async (data) => ipcRenderer.invoke('cancel-order', data),
+  filterOrdersCategories: async (data) => ipcRenderer.invoke('flter-Orders-categories', data),
+  searchOrders: async (term) => ipcRenderer.invoke('search-Orders', term),
+  filterOrdersDate: async (date) => ipcRenderer.invoke('filter-Orders-date', date),
 
   //reports
   reportCustomers: async (data) => ipcRenderer.invoke('report-customers', data),

@@ -1,8 +1,8 @@
 <template>
-  <div v-if="customers" class="main-container">
+  <div v-if="payments" class="main-container">
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
-      <router-link to="/customers/create" class="btn add-btn">
+      <router-link to="/payments/create" class="btn add-btn">
         <i class="bi bi-plus-circle add-icon"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
@@ -56,7 +56,7 @@
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
     </div>
     <div class="list-grid">
-      <div v-for="item in customers" :key="item.id" class="list-card">
+      <div v-for="item in payments" :key="item.id" class="list-card">
         <div class="card-header">
           <div class="card-header-left">
             <div class="list-avatar">
@@ -98,7 +98,7 @@
             Neues Auftrag erstellen
           </router-link>
 
-          <router-link :to="'/customers/details/' + item.id" class="details-btn btn-details">
+          <router-link :to="'/payments/details/' + item.id" class="details-btn btn-details">
             <i class="bi bi-eye"></i>
             Details
           </router-link>
@@ -106,7 +106,7 @@
       </div>
     </div>
 
-    <div v-if="customers.length === 0" class="empty-state">
+    <div v-if="payments.length === 0" class="empty-state">
       <i class="bi bi-people"></i>
       <h3>Keine Kunden</h3>
       <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
@@ -118,12 +118,12 @@
 <script>
 import store from '../../store/store';
 export default {
-  name: 'Customers',
+  name: 'Payments',
   inject: ['formatCustomerId'],
   data() {
     return {
       title: 'Kunden',
-      customers: [],
+      payments: [],
       search_box: '',
       isSort: true,
       categories_filter: '',
@@ -132,15 +132,15 @@ export default {
     }
   },
   mounted() {
-    this.getCustomers()
+    this.getPayments()
   },
   methods: {
-    async getCustomers() {
+    async getPayments() {
       try {
-        const result = await window.api.getCustomers()
+        const result = await window.api.getPayments()
         if (!result.success) return
-        this.customers = result.rows
-        console.log(this.customers)
+        this.payments = result.rows
+        console.log(this.payments)
       } catch (error) {
         console.error(error)
       }
@@ -153,21 +153,21 @@ export default {
     async searchFilter() {
       const term = this.search_box?.trim()
       if (!term) {
-        this.getCustomers()
+        this.getPayments()
         return
       }
       if (isNaN(term) && term.length < 3) {
         return
       }
-      const result = await window.api.searchCustomers(term)
+      const result = await window.api.searchPayments(term)
       if (!result.success) return
-      this.customers = result.rows
+      this.payments = result.rows
     },
     async filterCategories() {
       try {
-        const result = await window.api.filterCustomersCategories(this.categories_filter)
+        const result = await window.api.filterPaymentsCategories(this.categories_filter)
         if (!result.success) return
-        this.customers = result.rows.map((row) => ({
+        this.payments = result.rows.map((row) => ({
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
@@ -180,7 +180,7 @@ export default {
     },
     sorting(key) {
       if (!key) return
-      this.customers.sort((a, b) => {
+      this.payments.sort((a, b) => {
         const res = a[key] > b[key] ? 1 : -1
         return this.isSort ? res : -res
       })

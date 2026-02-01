@@ -28,7 +28,7 @@
         v-model="search_box"
         class="inputs"
         placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
-        @input="searchInvoice"
+        @input="searchFilter"
       />
 
       <div class="date-wrapper">
@@ -205,7 +205,7 @@ export default {
         console.error(error)
       }
     },
-    async searchInvoice() {
+    async searchFilter() {
       const term = this.search_box?.trim()
       if (!term) {
         this.getInvoices()

@@ -1,15 +1,15 @@
 <template>
-  <div class="main-container">
+  <div v-if="offers" class="main-container">
     <div class="main-header">
-      <label>{{ title }} {{ offers.length }}</label>
+      <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
       <router-link to="/customers" class="btn add-btn">
-         <i class="bi bi-plus-circle add-icon"></i>
-        <span>Neues Angebot erstellen</span>
+        <i class="bi bi-plus-circle icons"></i>
+        <span>Neue Angebot erstellen</span>
       </router-link>
     </div>
 
     <div class="main-filter">
-       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
+      <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
         <option value="active">Aktiv</option>
@@ -23,14 +23,15 @@
         <option value="is_late_paid">Spät bezahlt</option>
         <option value="is_reminded">Erinnert</option>
       </select>
+
       <input
         v-model="search_box"
-        type="search"
-        placeholder="Suce..."
         class="inputs"
-        @input="searchOffer()"
+        placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
+        @input="searchFilter"
       />
-     <div class="date-wrapper">
+
+      <div class="date-wrapper">
         <i class="bi bi-calendar calendar-icon"></i>
         <input
           ref="date_box_start"
@@ -51,33 +52,56 @@
           @input="formDate()"
         />
       </div>
+
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
     </div>
 
-    <!-- Offers Grid -->
+    <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
+
+    <!-- Offers card -->
     <div class="list-grid">
       <div v-for="item in offers" :key="item.id" class="list-card">
         <!-- Card Header -->
         <div class="card-header">
           <div class="card-header-left">
             <div class="list-avatar">
-              {{ getInitials(item.customer.first_name, item.customer.last_name) }}
+              {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
             </div>
             <div class="list-info">
-              <h3 class="list-name">{{ formatOfferId(item.id) }}</h3>
-              <span class="list-type-badge">{{ item.customer.company_name }}</span>
+              <h3 class="list-id">{{ formatOfferId(item.id) }}</h3>
+              <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
+              <span class="list-name"
+                >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
+              >
             </div>
           </div>
-          <div class="status-badge">
-            {{
-              item.status === 'draft'
-                ? 'Entwurf'
-                : item.status === 'sent'
-                  ? 'Gesendet'
-                  : item.status === 'accepted'
-                    ? 'Angenommen'
-                    : 'Abgelehnt'
-            }}
+          <div class="status-badge-container">
+            <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+              {{ item.is_active ? 'Aktiv' : 'Storniert' }}
+            </div>
+            <div class="status-badge total">
+              {{ formatCurrency(item.gross_total, item.currency) }}
+            </div>
+
+            <router-link
+              v-if="item.payment_status !== 'paid' && item.is_active === 1"
+              :to="`/payments/create/${item.id}`"
+              class="status-badge payment"
+              >Zahlung erfassen</router-link
+            >
+
+            <div
+              v-if="item.payment_status === 'paid' && item.is_active === 1"
+              class="status-badge paid"
+            >
+              <span v-if="item.paid_at && item.paid_at < item.due_date">⏰</span>
+              Bezahlt
+              <span v-if="item.early_paid_discount_applied">💰</span>
+            </div>
+
+            <div v-if="item.is_active === 0" class="status-badge canceled">
+              <small>Storniert am: {{ formatDate(item.cancelled_at) }}</small>
+            </div>
           </div>
         </div>
 
@@ -92,7 +116,7 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="offers" class="empty-state">
+    <div v-if="!offers || offers.length === 0" class="empty-state">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="64"
@@ -108,45 +132,124 @@
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
       </svg>
-      <h3>Keine Angebote</h3>
-      <p>Erstellen Sie neue Angebote, um sie hier zu sehen.</p>
+      <h3>Keine Rechnungen</h3>
+      <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </div>
   </div>
 </template>
 
 <script>
+import store from '../../store/store'
 export default {
-  inject: ['formatOfferId'],
+  name: 'Offers',
+  inject: ['formatOfferId', 'formatInvoiceId', 'formatCustomerId', 'formatDate', 'formatCurrency'],
   data() {
     return {
-      title: 'Angebote',
+      title: 'Rechnungen',
       offers: [],
       search_box: '',
       date_box_start: '',
       date_box_end: '',
+      categories_filter: '',
+      total_count: 0,
+      current_count: 0,
       isSort: true
     }
   },
   mounted() {
+    if (store.state.date_filter) {
+      this.date_box_start = store.state.date_filter.start
+      this.date_box_end = store.state.date_filter.end
+      this.filterDate()
+      return
+    }
+    if (store.state.category_filter) {
+      this.categories_filter = store.state.category_filter
+      this.filterCategories()
+      return
+    }
     this.getOffers()
   },
   methods: {
     async getOffers() {
       try {
         const result = await window.api.getOffers()
-        this.offers = result.rows.map((item) => ({
-          ...item,
-          customer: JSON.parse(item.customer)
+        if (!result.success) return
+        this.offers = result.rows.map((row) => ({
+          ...row,
+          customer: row.customer ? JSON.parse(row.customer) : null
         }))
-        console.log(this.offers)
+        this.total_count = result.total
+        this.current_count = result.rows.length
       } catch (error) {
         console.error(error)
       }
     },
-    getInitials(firstName, lastName) {
+    avatarStyle(firstName, lastName) {
       const first = firstName ? firstName.charAt(0).toUpperCase() : ''
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
+    },
+    async filterCategories() {
+      try {
+        const result = await window.api.filterOffersCategories(this.categories_filter)
+        if (!result.success) return
+        this.offers = result.rows.map((row) => ({
+          ...row,
+          customer: row.customer ? JSON.parse(row.customer) : null
+        }))
+        this.total_count = result.total
+        this.current_count = result.rows.length
+        await store.setStore('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async searchFilter() {
+      const term = this.search_box?.trim()
+      if (!term) {
+        this.getOffers()
+        return
+      }
+      if (isNaN(term) && term.length < 3) {
+        return
+      }
+
+      const result = await window.api.searchOffers(term)
+      if (!result.success) return
+      this.offers = result.rows.map((row) => ({
+        ...row,
+        customer: row.customer ? JSON.parse(row.customer) : null
+      }))
+      this.total_count = result.total
+      this.current_count = result.rows.length
+    },
+    async filterDate() {
+      try {
+        if (!this.date_box_start) return this.$refs.date_box_start.focus()
+        if (!this.date_box_end) return this.$refs.date_box_end.focus()
+        if (this.date_box_start > this.date_box_end) {
+          this.date_box_end = ''
+          return this.$refs.date_box_end.focus()
+        }
+        if (this.date_box_start && this.date_box_end) {
+          const date = {
+            start: this.date_box_start,
+            end: this.date_box_end
+          }
+          const result = await window.api.filterOffersDate(date)
+          if (!result.success) return
+          this.offers = result.rows.map((row) => ({
+            ...row,
+            customer: row.customer ? JSON.parse(row.customer) : null
+          }))
+          this.total_count = result.total
+          this.current_count = result.rows.length
+          await store.setStore('date_filter', JSON.parse(JSON.stringify(date)))
+        }
+      } catch (error) {
+        console.error(error)
+      }
     },
     sorting(key) {
       if (!key) return

@@ -624,6 +624,116 @@ ipcMain.handle('search-customers', async (event, term) => {
   }
 })
 
+ipcMain.handle('flter-customers-categories', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const category = payload
+    let query = ''
+    let countQuery = ''
+    let count = 0
+    let rows = []
+    let limit = 50
+
+    switch (category) {
+      case 'all':
+        query = `
+          SELECT *
+          FROM customers
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `SELECT COUNT(*) as total FROM customers`
+        break
+
+      case 'active':
+        query = `
+          SELECT * 
+          FROM customers
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+        `
+        break
+
+      case 'canceled':
+        query = `
+          SELECT *
+          FROM customers
+          WHERE is_active = 0
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM customers
+          WHERE is_active = 0
+        `
+        break
+      default:
+        query = `
+          SELECT *
+          FROM customers
+          WHERE is_active = 1 AND
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM customers
+          WHERE is_active = 1
+        `
+    }
+
+    rows = db.prepare(query).all(limit)
+
+    if (countQuery) {
+      const countResult = db.prepare(countQuery).get()
+      count = countResult.total
+    }
+
+    return { success: true, rows, count }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('filter-customers-date', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT *
+        FROM customers
+        WHERE is_active = 1 AND date BETWEEN ? AND ?
+        ORDER BY id DESC
+        LIMIT ?;`
+      )
+      .all(start, end, limit)
+    const total = db
+      .prepare(
+        `SELECT COUNT(id) As total FROM customers WHERE is_active = 1 AND date BETWEEN ? AND ?`
+      )
+      .get(start, end).total
+    return { success: true, rows, total }
+  } catch (error) {
+    console.error('dateFilter error:', error)
+    return { success: false, message: error.message }
+  }
+})
+
 //invoices
 ipcMain.handle('add-invoice', async (event, payload) => {
   if (!payload) {
@@ -1258,6 +1368,24 @@ ipcMain.handle('add-payment', async (event, payload) => {
   }
 })
 
+ipcMain.handle('get-payments', async () => {
+  try {
+    const limit = 50
+    const rows = db
+      .prepare(
+        `
+        SELECT * FROM payments ORDER BY id DESC LIMIT ?
+      `
+      )
+      .all(limit)
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 ipcMain.handle('get-payment-by-id', async (event, id) => {
   if (!id) {
     return { success: false, message: 'No data provided' }
@@ -1329,6 +1457,177 @@ ipcMain.handle('cancel-payment-by-id', async (event, payload) => {
     return { success: false, message: err.message }
   }
 })
+
+ipcMain.handle('flter-payments-categories', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const category = payload
+    let query = ''
+    let countQuery = ''
+    let count = 0
+    let rows = []
+    let limit = 50
+
+    switch (category) {
+      case 'all':
+        query = `
+          SELECT *
+          FROM payments
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `SELECT COUNT(*) as total FROM payments`
+        break
+
+      case 'active':
+        query = `
+          SELECT * 
+          FROM payments
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+        `
+        break
+
+      case 'canceled':
+        query = `
+          SELECT *
+          FROM payments
+          WHERE is_active = 0
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM payments
+          WHERE is_active = 0
+        `
+        break
+      default:
+        query = `
+          SELECT *
+          FROM payments
+          WHERE is_active = 1 AND
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM payments
+          WHERE is_active = 1
+        `
+    }
+
+    rows = db.prepare(query).all(limit)
+
+    if (countQuery) {
+      const countResult = db.prepare(countQuery).get()
+      count = countResult.total
+    }
+
+    return { success: true, rows, count }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('filter-payments-date', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT *
+        FROM payments
+        WHERE is_active = 1 AND date BETWEEN ? AND ?
+        ORDER BY id DESC
+        LIMIT ?;`
+      )
+      .all(start, end, limit)
+    const total = db
+      .prepare(
+        `SELECT COUNT(id) As total FROM payments WHERE is_active = 1 AND date BETWEEN ? AND ?`
+      )
+      .get(start, end).total
+    return { success: true, rows, total }
+  } catch (error) {
+    console.error('dateFilter error:', error)
+    return { success: false, message: error.message }
+  }
+})
+
+ipcMain.handle('search-payments', async (event, term) => {
+  if (!term) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    let rows = []
+    let total = 0
+    if (isNaN(term) && !term.includes('-')) {
+      rows = db
+        .prepare(
+          `SELECT *
+          FROM payments
+          WHERE is_active = 1 AND (
+                  json_extract(customer, '$.first_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.last_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.company_name') LIKE '${term}%'
+                )
+          ORDER BY id DESC
+          LIMIT ?`
+        )
+        .all(limit)
+      total = db.prepare(`SELECT COUNT(id) As total FROM payments WHERE is_active = 1`).get().total
+    } else {
+      if (isNaN(term) && term.includes('-')) {
+        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+
+        rows = db
+          .prepare(
+            `SELECT *
+            FROM payments
+            WHERE is_active = 1 AND id BETWEEN ? AND ?
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(start, end, limit)
+        total = db
+          .prepare(
+            `SELECT COUNT(id) As total FROM payments WHERE is_active = 1 AND id BETWEEN ? AND ?`
+          )
+          .get(start, end).total
+      } else {
+        rows = db
+          .prepare(
+            `SELECT *
+            WHERE is_active = 1 AND (id = ? OR customer_id = ?)
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(term, term, limit)
+        total = db
+          .prepare(`SELECT COUNT(id) As total FROM payments WHERE is_active = 1 AND id + 0 LIKE ?`)
+          .get(term).total
+      }
+    }
+    return { success: true, rows, total }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 
 //reminders
 ipcMain.handle('add-reminder', async (event, payload) => {
@@ -1405,6 +1704,24 @@ ipcMain.handle('add-reminder', async (event, payload) => {
   }
 })
 
+ipcMain.handle('get-reminders', async () => {
+  try {
+    const limit = 50
+    const rows = db
+      .prepare(
+        `
+        SELECT * FROM reminders ORDER BY id DESC LIMIT ?
+      `
+      )
+      .all(limit)
+
+    return { success: true, rows }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 ipcMain.handle('get-reminder-by-id', async (event, id) => {
   if (!id) {
     return { success: false, message: 'No data provided' }
@@ -1471,6 +1788,176 @@ ipcMain.handle('cancel-reminder-by-id', async (event, payload) => {
     })()
 
     return { success: true }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('flter-reminders-categories', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const category = payload
+    let query = ''
+    let countQuery = ''
+    let count = 0
+    let rows = []
+    let limit = 50
+
+    switch (category) {
+      case 'all':
+        query = `
+          SELECT *
+          FROM reminders
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `SELECT COUNT(*) as total FROM reminders`
+        break
+
+      case 'active':
+        query = `
+          SELECT * 
+          FROM reminders
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+        `
+        break
+
+      case 'canceled':
+        query = `
+          SELECT *
+          FROM reminders
+          WHERE is_active = 0
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM reminders
+          WHERE is_active = 0
+        `
+        break
+      default:
+        query = `
+          SELECT *
+          FROM reminders
+          WHERE is_active = 1 AND
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM reminders
+          WHERE is_active = 1
+        `
+    }
+
+    rows = db.prepare(query).all(limit)
+
+    if (countQuery) {
+      const countResult = db.prepare(countQuery).get()
+      count = countResult.total
+    }
+
+    return { success: true, rows, count }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('filter-reminders-date', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT *
+        FROM reminders
+        WHERE is_active = 1 AND date BETWEEN ? AND ?
+        ORDER BY id DESC
+        LIMIT ?;`
+      )
+      .all(start, end, limit)
+    const total = db
+      .prepare(
+        `SELECT COUNT(id) As total FROM reminders WHERE is_active = 1 AND date BETWEEN ? AND ?`
+      )
+      .get(start, end).total
+    return { success: true, rows, total }
+  } catch (error) {
+    console.error('dateFilter error:', error)
+    return { success: false, message: error.message }
+  }
+})
+
+ipcMain.handle('search-reminders', async (event, term) => {
+  if (!term) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    let rows = []
+    let total = 0
+    if (isNaN(term) && !term.includes('-')) {
+      rows = db
+        .prepare(
+          `SELECT *
+          FROM reminders
+          WHERE is_active = 1 AND (
+                  json_extract(customer, '$.first_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.last_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.company_name') LIKE '${term}%'
+                )
+          ORDER BY id DESC
+          LIMIT ?`
+        )
+        .all(limit)
+      total = db.prepare(`SELECT COUNT(id) As total FROM reminders WHERE is_active = 1`).get().total
+    } else {
+      if (isNaN(term) && term.includes('-')) {
+        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+
+        rows = db
+          .prepare(
+            `SELECT *
+            FROM reminders
+            WHERE is_active = 1 AND id BETWEEN ? AND ?
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(start, end, limit)
+        total = db
+          .prepare(
+            `SELECT COUNT(id) As total FROM reminders WHERE is_active = 1 AND id BETWEEN ? AND ?`
+          )
+          .get(start, end).total
+      } else {
+        rows = db
+          .prepare(
+            `SELECT *
+            WHERE is_active = 1 AND (id = ? OR customer_id = ?)
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(term, term, limit)
+        total = db
+          .prepare(`SELECT COUNT(id) As total FROM reminders WHERE is_active = 1 AND id + 0 LIKE ?`)
+          .get(term).total
+      }
+    }
+    return { success: true, rows, total }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1647,6 +2134,175 @@ ipcMain.handle('cancel-offer', async (event, payload) => {
     return { success: false, message: err.message }
   }
 })
+
+ipcMain.handle('flter-offers-categories', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const category = payload
+    let query = ''
+    let countQuery = ''
+    let count = 0
+    let rows = []
+    let limit = 50
+
+    switch (category) {
+      case 'all':
+        query = `
+          SELECT *
+          FROM offers
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `SELECT COUNT(*) as total FROM offers`
+        break
+
+      case 'active':
+        query = `
+          SELECT * 
+          FROM offers
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+        `
+        break
+
+      case 'canceled':
+        query = `
+          SELECT *
+          FROM offers
+          WHERE is_active = 0
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM offers
+          WHERE is_active = 0
+        `
+        break
+      default:
+        query = `
+          SELECT *
+          FROM offers
+          WHERE is_active = 1 AND
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM offers
+          WHERE is_active = 1
+        `
+    }
+
+    rows = db.prepare(query).all(limit)
+
+    if (countQuery) {
+      const countResult = db.prepare(countQuery).get()
+      count = countResult.total
+    }
+
+    return { success: true, rows, count }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('filter-offers-date', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT *
+        FROM offers
+        WHERE is_active = 1 AND date BETWEEN ? AND ?
+        ORDER BY id DESC
+        LIMIT ?;`
+      )
+      .all(start, end, limit)
+    const total = db
+      .prepare(`SELECT COUNT(id) As total FROM offers WHERE is_active = 1 AND date BETWEEN ? AND ?`)
+      .get(start, end).total
+    return { success: true, rows, total }
+  } catch (error) {
+    console.error('dateFilter error:', error)
+    return { success: false, message: error.message }
+  }
+})
+
+ipcMain.handle('search-offers', async (event, term) => {
+  if (!term) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    let rows = []
+    let total = 0
+    if (isNaN(term) && !term.includes('-')) {
+      rows = db
+        .prepare(
+          `SELECT *
+          FROM offers
+          WHERE is_active = 1 AND (
+                  json_extract(customer, '$.first_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.last_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.company_name') LIKE '${term}%'
+                )
+          ORDER BY id DESC
+          LIMIT ?`
+        )
+        .all(limit)
+      total = db.prepare(`SELECT COUNT(id) As total FROM offers WHERE is_active = 1`).get().total
+    } else {
+      if (isNaN(term) && term.includes('-')) {
+        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+
+        rows = db
+          .prepare(
+            `SELECT *
+            FROM offers
+            WHERE is_active = 1 AND id BETWEEN ? AND ?
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(start, end, limit)
+        total = db
+          .prepare(
+            `SELECT COUNT(id) As total FROM offers WHERE is_active = 1 AND id BETWEEN ? AND ?`
+          )
+          .get(start, end).total
+      } else {
+        rows = db
+          .prepare(
+            `SELECT *
+            WHERE is_active = 1 AND (id = ? OR customer_id = ?)
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(term, term, limit)
+        total = db
+          .prepare(`SELECT COUNT(id) As total FROM offers WHERE is_active = 1 AND id + 0 LIKE ?`)
+          .get(term).total
+      }
+    }
+    return { success: true, rows, total }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
 
 // /orders
 ipcMain.handle('add-order', async (event, payload) => {
@@ -1946,6 +2602,173 @@ ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
   }
 })
 
+ipcMain.handle('flter-orders-categories', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+
+  try {
+    const category = payload
+    let query = ''
+    let countQuery = ''
+    let count = 0
+    let rows = []
+    let limit = 50
+
+    switch (category) {
+      case 'all':
+        query = `
+          SELECT *
+          FROM orders
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `SELECT COUNT(*) as total FROM orders`
+        break
+
+      case 'active':
+        query = `
+          SELECT * 
+          FROM orders
+          WHERE is_active = 1
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM invoices
+          WHERE is_active = 1
+        `
+        break
+
+      case 'canceled':
+        query = `
+          SELECT *
+          FROM orders
+          WHERE is_active = 0
+          ORDER BY updated_at DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM orders
+          WHERE is_active = 0
+        `
+        break
+      default:
+        query = `
+          SELECT *
+          FROM orders
+          WHERE is_active = 1 AND
+          ORDER BY id DESC
+          LIMIT ?
+        `
+        countQuery = `
+          SELECT COUNT(id) as total
+          FROM orders
+          WHERE is_active = 1
+        `
+    }
+
+    rows = db.prepare(query).all(limit)
+
+    if (countQuery) {
+      const countResult = db.prepare(countQuery).get()
+      count = countResult.total
+    }
+
+    return { success: true, rows, count }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('filter-orders-date', async (event, payload) => {
+  if (!payload) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    const { start, end } = payload
+    const rows = db
+      .prepare(
+        `SELECT *
+        FROM orders
+        WHERE is_active = 1 AND date BETWEEN ? AND ?
+        ORDER BY id DESC
+        LIMIT ?;`
+      )
+      .all(start, end, limit)
+    const total = db
+      .prepare(`SELECT COUNT(id) As total FROM orders WHERE is_active = 1 AND date BETWEEN ? AND ?`)
+      .get(start, end).total
+    return { success: true, rows, total }
+  } catch (error) {
+    console.error('dateFilter error:', error)
+    return { success: false, message: error.message }
+  }
+})
+
+ipcMain.handle('search-orders', async (event, term) => {
+  if (!term) {
+    return { success: false, message: 'No data provided' }
+  }
+  try {
+    let limit = 50
+    let rows = []
+    let total = 0
+    if (isNaN(term) && !term.includes('-')) {
+      rows = db
+        .prepare(
+          `SELECT *
+          FROM orders
+          WHERE is_active = 1 AND (
+                  json_extract(customer, '$.first_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.last_name') LIKE '${term}%'
+                  OR json_extract(customer, '$.company_name') LIKE '${term}%'
+                )
+          ORDER BY id DESC
+          LIMIT ?`
+        )
+        .all(limit)
+      total = db.prepare(`SELECT COUNT(id) As total FROM orders WHERE is_active = 1`).get().total
+    } else {
+      if (isNaN(term) && term.includes('-')) {
+        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+
+        rows = db
+          .prepare(
+            `SELECT *
+            FROM orders
+            WHERE is_active = 1 AND id BETWEEN ? AND ?
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(start, end, limit)
+        total = db
+          .prepare(
+            `SELECT COUNT(id) As total FROM orders WHERE is_active = 1 AND id BETWEEN ? AND ?`
+          )
+          .get(start, end).total
+      } else {
+        rows = db
+          .prepare(
+            `SELECT *
+            WHERE is_active = 1 AND (id = ? OR customer_id = ?)
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(term, term, limit)
+        total = db
+          .prepare(`SELECT COUNT(id) As total FROM orders WHERE is_active = 1 AND id + 0 LIKE ?`)
+          .get(term).total
+      }
+    }
+    return { success: true, rows, total }
+  } catch (err) {
+    console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
 
 //reports
 ipcMain.handle('report-customers', async (event, payload) => {
