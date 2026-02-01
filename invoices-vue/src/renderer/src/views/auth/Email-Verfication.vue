@@ -1,14 +1,16 @@
 <template>
-  <div class="form-container">
-    <div class="form-card">
-      <div class="form-header">
-        <h2>E-Mail-Verifizierung</h2>
-        <p>Bitte geben Sie Ihre E-Mail-Adresse ein</p>
+  <div>
+    <div class="login-container">
+      <div class="logo-section">
+        <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
-      <form @submit.prevent="sendEmail">
-        <div class="form-group">
-          <label for="email" class="form-label">E-Mail</label>
-          <div>
+
+      <form class="login-form" @submit.prevent="sendEmail">
+        <h2 class="setup-title">E-Mail-Verifizierung</h2>
+        <!-- <p>Bitte geben Sie Ihre E-Mail-Adresse ein</p> -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email" class="form-label">E-Mail</label>
             <input
               id="email"
               v-model="email"
@@ -19,14 +21,14 @@
             />
             <p v-if="error" class="error">{{ error }}</p>
           </div>
+          <p v-if="success" class="success">{{ success }}</p>
         </div>
-        <p v-if="success" class="success">{{ success }}</p>
-        <button class="btn" type="submit">E-Mail senden</button>
       </form>
+
+      <button class="btn btn-primary btn-setup right mt-20" type="submit">E-Mail senden</button>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {

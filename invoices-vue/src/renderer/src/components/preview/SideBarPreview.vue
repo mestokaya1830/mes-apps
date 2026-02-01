@@ -70,7 +70,7 @@
       </div>
     </nav>
 
-    <div v-if="auth" class="sidebar-footer">
+    <div v-if="checkLogout" class="sidebar-footer">
       <a href="#" class="nav-link" @click="logout()">
         <div class="user-avatar">MK</div>
         <div>
@@ -89,6 +89,11 @@ export default {
   data() {
     return {
       auth: null
+    }
+  },
+  computed:{
+    checkLogout(){
+      return store.state.auth
     }
   },
   mounted() {

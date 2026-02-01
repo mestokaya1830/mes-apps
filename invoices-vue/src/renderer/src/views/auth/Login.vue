@@ -1,20 +1,15 @@
 <template>
-  <div class="form-container">
+  <div class="setup-page">
     <div v-if="!register">
       <setup-page />
     </div>
-    <div v-else class="setup-container">
-      <!-- Logo ve Başlık -->
+    <div v-else class="login-container">
       <div class="logo-section">
         <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
 
-      <h1 class="setup-title">Willkommen bei Mes App</h1>
-      <p class="setup-description">
-        Melden Sie sich mit Ihrem Konto an, um Ihre Rechnungen zu verwalten.
-      </p>
-
-      <form @submit.prevent="loginUser" class="form-sections">
+      <form class="login-form" @submit.prevent="loginUser">
+        <h1 class="setup-title">Willkommen bei Mes App</h1>
         <div class="form-row">
           <div class="form-group">
             <label for="email" class="form-label">E-Mail-Adresse</label>
@@ -42,18 +37,16 @@
           </div>
         </div>
 
-        <div class="form-options">
-          <router-link to="email-verfication" class="forgot-password"
-            >Passwort vergessen?</router-link
-          >
-        </div>
+        <router-link to="email-verfication" class="forgot-password"
+          >Passwort vergessen?</router-link
+        >
 
         <div v-if="error.credential" class="text error-message">{{ error.credential }}</div>
 
         <button type="submit" class="btn">Anmelden</button>
       </form>
-      <!-- Action Button -->
-      <button class="btn btn-primary btn-setup" @click="loginUser">
+
+      <button class="btn btn-primary btn-setup right mt-20" @click="loginUser">
         <i class="bi bi-arrow-right ioncs"></i>
         <span>Anmelden</span>
       </button>

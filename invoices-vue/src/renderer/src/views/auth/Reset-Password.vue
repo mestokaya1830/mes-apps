@@ -1,8 +1,11 @@
 <template>
-  <div class="form-container">
+  <div class="setup-page">
+     <div class="logo-section">
+        <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
+      </div>
     <div class="form-card">
       <div class="form-header">
-        <h2>Passwort zurücksetzen</h2>
+        <h2 class="setup-title">Passwort zurücksetzen</h2>
         <p>Bitte geben Sie Ihre Daten ein</p>
       </div>
       <form @submit.prevent="reset">
@@ -43,7 +46,7 @@
         <div v-if="error.success" class="text text-success mt-3 mb-3">{{ error.success }}</div>
         <div v-if="error.credential" class="error">{{ error.credential }}</div>
 
-        <button class="btn" type="submit">Zurücksetzen</button>
+        <button class="btn btn-primary btn-setup right mt-20" type="submit">Zurücksetzen</button>
       </form>
     </div>
   </div>
