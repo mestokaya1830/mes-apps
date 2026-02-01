@@ -3,11 +3,11 @@
     <div class="main-header">
       <label>{{ title }}</label>
        <router-link to="/" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
     <form>
-      <div class="sections-title">ℹ️ General</div>
+      <div class="sections-title"><i class="bi bi-info-circle icons"></i>General</div>
       <div>
         <label for="bank">Bank Name</label>
         <input id="bank" v-model="user.bank_name" type="text" />
@@ -29,7 +29,7 @@
         <img ref="logo" class="profile-logo" :src="imageSrc" alt="" @click="triggerFile" />
         <input id="logo" ref="logoInput" type="file" @change="setLogo" />
       </div>
-      <div class="sections-title">👥 Contact Person</div>
+      <div class="sections-title"><i class="bi bi-people icons"></i>Contact Person</div>
       <div>
         <label for="bic">Bic</label>
         <input id="bic" v-model="user.contact_person.first_name" type="text" />
@@ -38,7 +38,7 @@
         <input id="bic" v-model="user.contact_person.phone" type="text" />
       </div>
     </form>
-    <button class="btn-primary" @click="updateUser()">Update</button>
+    <button class="btn btn-update" @click="updateUser()">Update</button>
   </div>
 </template>
 

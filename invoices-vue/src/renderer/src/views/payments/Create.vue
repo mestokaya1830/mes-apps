@@ -1,16 +1,16 @@
 <template>
   <div v-if="payment" class="main-container">
     <div class="main-header">
-      <label>💳 {{ title }}</label>
+      <label><i class="bi bi-credit-card icons"></i>{{ title }}</label>
       <router-link to="/payments" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
 
     <div>
-      <!-- 1️⃣ Invoice Information (readonly) -->
+      <!-- 1. Invoice Information (readonly) -->
       <div class="sections">
-        <div class="sections-title">📄 Ausgewählte Rechnung</div>
+        <div class="sections-title"><i class="bi bi-file-text iocns"></i>Ausgewählte Rechnung</div>
         <div class="customer-details" style="margin-top: 16px">
           <div class="form-row">
             <div class="form-group">
@@ -53,9 +53,9 @@
         </div>
       </div>
 
-      <!-- 2️⃣ Counterparty Information -->
+      <!-- 2. Counterparty Information -->
       <div class="sections">
-        <div class="sections-title">🏦 Gegenpartei Informationen</div>
+        <div class="sections-title"><i class="bi bi-bank2 iocns"></i>Gegenpartei Informationen</div>
 
         <IbanComponent
           v-model:localNamePartner="payment.counterparty_name"
@@ -67,9 +67,9 @@
         />
       </div>
 
-      <!-- 3️⃣ Currency -->
+      <!-- 3. Currency -->
       <div class="sections">
-        <div class="sections-title">💰 Währung</div>
+        <div class="sections-title"><i class="bi bi-coin iocns"></i>Währung</div>
         <div class="form-group">
           <label class="form-label">Waehrung</label>
           <select v-model="payment.invoice.currency" class="inputs">
@@ -87,13 +87,12 @@
         </div>
       </div>
 
-      <!-- 4️⃣ Payment Details -->
+      <!-- 4. Payment Details -->
       <div class="sections">
-        <div class="sections-title">💰 Zahlungsdetails</div>
+        <div class="sections-title"><i class="bi bi-cash-stack iocns"></i>Zahlungsdetails</div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Zahlungsdatum *</label>
-            <!-- Payment Date Input -->
             <input
               ref="date"
               v-model="payment.date"
@@ -178,12 +177,11 @@
         </div>
       </div>
 
-      <!-- 5️⃣ Preview / Submit -->
-      <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
+      <!-- 5. Preview / Submit -->
+      <button class="preview-btn" @click="submitStore"><i class="bi bi-eye icons"></i>Vorschau anzeigen</button>
     </div>
   </div>
 </template>
-
 <script>
 import store from '../../store/store'
 import IbanComponent from '../../components/IbanComponent.vue'

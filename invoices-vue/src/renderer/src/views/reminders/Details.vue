@@ -60,9 +60,11 @@
         <p v-if="reminder?.intro_text">{{ reminder.intro_text }}</p>
       </div>
 
-      <!-- remeinders Details -->
+      <!-- reminders Details -->
       <div class="reminders-card">
-        <h3 class="reminders-title">📄 Offene Rechnung(en)</h3>
+        <h3 class="reminders-title">
+          <i class="bi bi-file-text icons"></i>Offene Rechnung(en)
+        </h3>
 
         <div class="info-row">
           <span>Rechnungsnummer</span>
@@ -104,7 +106,9 @@
 
       <!-- Bank Info -->
       <div v-if="auth" class="bank-box">
-        <div class="bank-title">🏦 Bankverbindung</div>
+        <div class="bank-title">
+          <i class="bi bi-bank2 icons"></i>Bankverbindung
+        </div>
         <div class="bank-info">
           <span class="bank-label">Bank:</span>
           <span class="bank-value">{{ auth.bank_name }}</span>
@@ -119,11 +123,11 @@
       <!-- Warning Box -->
       <div v-if="reminder?.level >= 2" class="warning-box">
         <div v-if="reminder.level === '2'">
-          <strong>⚠️ Wichtiger Hinweis:</strong><br />
+          <strong><i class="bi bi-exclamation-triangle-fill text-warning icons"></i>Wichtiger Hinweis:</strong><br />
           <p>{{ reminder.warning_text }}</p>
         </div>
         <div v-if="reminder.level === '3'">
-          <strong>🚨 Letzte Mahnung:</strong><br />
+          <strong><i class="bi bi-exclamation-octagon-fill text-danger icons"></i>Letzte Mahnung:</strong><br />
           <p>{{ reminder.warning_text }}</p>
         </div>
       </div>
@@ -152,8 +156,8 @@
       :fileName="actionFileName"
       sourcePage="details"
     />
-    <router-link v-if="reminder" :to="`/reminders/create/${reminder.invoice_id}`" class="back-link">
-      ← Zurück zur Rechnungserstellung
+    <router-link v-if="reminder" :to="`/reminders/create/${reminder.invoice_id}`" class="btn back-btn">
+      <i class="bi bi-arrow-left icons"></i>Zurück zur Rechnungserstellung
     </router-link>
   </div>
 </template>

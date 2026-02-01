@@ -180,6 +180,41 @@ export default {
 </script>
 
 <style>
+.titlebar {
+  height: 60px;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  color: white;
+  -webkit-app-region: drag;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+.window-controls button {
+  -webkit-app-region: no-drag;
+}
+.window-controls button {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px;
+  margin: 0 5px;
+  width: 30px;
+  transition: background-color 0.3s ease;
+}
+.window-controls button:hover {
+  background-color: rgba(255, 255, 255, 0);
+}
 .app-container {
   display: grid;
   grid-template-columns: 300px 1fr;
@@ -311,7 +346,7 @@ export default {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3ba55c 0%, #2d8a47 100%);
+  background: linear-gradient(135deg, #3ba55c 0%, #122c19 100%);
   display: flex;
   align-items: center;
   justify-content: center;

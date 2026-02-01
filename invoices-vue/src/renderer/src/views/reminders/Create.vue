@@ -1,50 +1,47 @@
 <template>
   <div v-if="reminder" class="main-container">
     <div class="main-header">
-      <div class="main-title">📝{{ title }}</div>
+      <div class="main-title">{{ title }}</div>
       <router-link to="/reminders" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
 
     <!-- 4. Send Info -->
     <div class="sections">
-      <div class="form-group">
-        <label class="form-label">Sent At</label>
-        <input v-model="reminder.date" type="datetime-local" class="inputs date" />
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Versandtermin</label>
+          <input v-model="reminder.date" type="datetime-local" class="inputs date" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Versandart</label>
+          <select v-model="reminder.sent_method" class="inputs">
+            <option value="" disabled>Wählen</option>
+            <option value="email">Email</option>
+            <option value="post">Post</option>
+            <option value="einschreiben">Einschreiben</option>
+            <option value="portal">Portal</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Sent Method</label>
-        <select v-model="reminder.sent_method" class="inputs">
-          <option value="" disabled>Wählen</option>
-          <option value="email">Email</option>
-          <option value="post">Post</option>
-          <option value="einschreiben">Einschreiben</option>
-          <option value="portal">Portal</option>
-        </select>
+      <!-- 1. Level -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Zahlungsnachweis</label>
+          <input v-model="reminder.proof_type" type="text" class="inputs" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">💼 Betreff (Level)</label>
+          <select v-model="reminder.level" class="inputs" @change="updateTexts">
+            <option value="" disabled>Wähle Betreff</option>
+            <option value="1">Zahlungserinnerung / 1. Mahnung</option>
+            <option value="2">2. Mahnung</option>
+            <option value="3">Letzte Mahnung vor gerichtlichem Mahnverfahren</option>
+          </select>
+        </div>
       </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Zahlungsnachweis</label>
-      <input v-model="reminder.proof_type" type="text" class="inputs" />
-    </div>
-
-    <!-- 1. Level -->
-    <div class="sections">
-      <label class="form-label">💼 Betreff (Level)</label>
-      <div class="form-group">
-        <select v-model="reminder.level" class="inputs" @change="updateTexts">
-          <option value="" disabled>Wähle Betreff</option>
-          <option value="1">Zahlungserinnerung / 1. Mahnung</option>
-          <option value="2">2. Mahnung</option>
-          <option value="3">Letzte Mahnung vor gerichtlichem Mahnverfahren</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- 2. Payment Deadline -->
-    <div class="sections">
+      <!-- 2. Payment Deadline -->
       <div class="form-group">
         <label class="form-label">Zahlungsfrist auswählen</label>
         <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
@@ -60,7 +57,7 @@
           <option value="nach Vereinbarung">Nach Vereinbarung</option>
         </select>
       </div>
-
+  
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Mahngebühr</label>
@@ -81,18 +78,24 @@
       </div>
 
       <div v-if="reminder.level != '1'" class="form-group">
-        <label class="form-label">⚠️ Warnung</label>
+        <label class="form-label"
+          ><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>Warnung</label
+        >
         <textarea v-model="reminder.warning_text" class="inputs"></textarea>
       </div>
 
       <div class="form-group">
-        <label class="form-label">📝 Endtext</label>
+        <label class="form-label"><i class="bi bi-clipboard me-1"></i>Endtext</label>
         <textarea v-model="reminder.closing_text" class="inputs"></textarea>
       </div>
     </div>
 
     <!-- Vorschau Button -->
-    <button class="preview-btn" @click="submitStore">👁️ Vorschau anzeigen</button>
+    <div class="sections btn-container">
+      <button class="btn btn-preview" @click="submitStore">
+        <i class="bi bi-eye icons"></i>Vorschau anzeigen
+      </button>
+    </div>
   </div>
 </template>
 

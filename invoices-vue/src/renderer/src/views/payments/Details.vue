@@ -3,7 +3,7 @@
      <div class="main-header">
       <label>{{ title }}</label>
       <router-link to="/payments" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
     <div class="printable">
@@ -150,7 +150,7 @@
       <FooterSidePreview />
     </div>
 
-    <router-link :to="'/invoices/details/' + payment.invoice_id" class="back-link"
+    <router-link :to="'/invoices/details/' + payment.invoice_id" class="btn back-btn"
       >Zuruckzahlung</router-link
     >
 
@@ -162,7 +162,7 @@
       sourcePage="details"
     />
 
-    <router-link :to="`/invoices/details/${payment.invoice_id}`" class="back-link">
+    <router-link :to="`/invoices/details/${payment.invoice_id}`" class="btn back-btn">
       ← Zurück zur Rechnungsdetails
     </router-link>
   </div>

@@ -55,7 +55,7 @@
         </div>
       </div>
     </div>
-    <router-link :to="`/invoices/details/${$route.params.id}`" class="back-link">
+    <router-link :to="`/invoices/details/${$route.params.id}`" class="back-btn back-btn">
       ← Zurück zur Rechnungsdetails
     </router-link>
   </div>

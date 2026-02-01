@@ -129,7 +129,7 @@
 
       <!-- Bank Info -->
       <div class="bank-box">
-        <div class="bank-title">🏦 Bankverbindung</div>
+       <div class="bank-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
         <div class="bank-info">
           <span class="bank-label">Bank:</span>
           <span class="bank-value">{{ auth.bank_name }}</span>

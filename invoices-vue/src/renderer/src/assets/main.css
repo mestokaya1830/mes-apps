@@ -157,6 +157,9 @@ select {
   margin-right: 6px;
   vertical-align: middle;
 }
+.bi-pencil{
+  color: #0d8a6b;
+}
 .btn-setup {
   display: inline-flex;
   align-items: center;
@@ -513,7 +516,7 @@ textarea.error {
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-    background: linear-gradient(135deg, #3dac78 0%, #2d8a47 100%);
+    background: linear-gradient(135deg, #3dac78 0%, #1f2937 100%);
   color: white;
   border-radius: 8px;
   text-decoration: none;

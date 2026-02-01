@@ -3,7 +3,7 @@
     <div class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/payments/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
     <div class="printable">
@@ -55,7 +55,7 @@
         </div>
       </div>
     </div>
-    <router-link :to="`/invoices/details/${$route.params.id}`" class="back-link">
+    <router-link :to="`/invoices/details/${$route.params.id}`" class="back-btn back-btn">
       ← Zurück zur Zahlungsdetails
     </router-link>
   </div>

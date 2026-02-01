@@ -3,7 +3,7 @@
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
       <router-link to="/payments/create" class="btn add-btn">
-        <i class="bi bi-plus-circle add-icon"></i>
+        <i class="bi bi-plus-circle icons"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
     </div>
@@ -76,15 +76,15 @@
         <div class="card-actions">
           <router-link
             :to="{ path: '/invoices/create', query: { id: item.id } }"
-            class="action-btn btn-rechnung"
+            class="btn btn-rechnung"
           >
-            <i class="bi bi-receipt"></i>
+            <i class="bi bi-receipt icons"></i>
             Rechnung erstellen
           </router-link>
 
           <router-link
             :to="{ path: '/offers/create', query: { id: item.id } }"
-            class="action-btn btn-angebot"
+            class="btn btn-angebot"
           >
             <i class="bi bi-file-earmark-text"></i>
             Neues Angebot erstellen
@@ -92,14 +92,14 @@
 
           <router-link
             :to="{ path: '/orders/create', query: { id: item.id } }"
-            class="action-btn btn-auftrag"
+            class="btn btn-auftrag"
           >
             <i class="bi bi-box-seam"></i>
             Neues Auftrag erstellen
           </router-link>
 
-          <router-link :to="'/payments/details/' + item.id" class="details-btn btn-details">
-            <i class="bi bi-eye"></i>
+          <router-link :to="'/payments/details/' + item.id" class="btn btn-details">
+            <i class="bi bi-eye icons"></i>
             Details
           </router-link>
         </div>

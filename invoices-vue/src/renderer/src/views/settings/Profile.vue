@@ -1,15 +1,15 @@
 <template>
   <div class="main-container">
-     <div class="main-header">
+    <div class="main-header">
       <label>{{ title }}</label>
        <router-link to="/" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
     <form @submit.prevent="updateUser">
       <!-- Personal Information -->
       <section class="sections">
-        <h3 class="sections-title">👤 Persönlichedaten</h3>
+        <h3 class="sections-title"><i class="bi bi-person icons"></i>Persönlichedaten</h3>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Anrede</label>
@@ -32,7 +32,7 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-field">Passwort <i class="bi bi-pencil"></i></label>
+            <label class="form-field">Passwort <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.password"
               type="password"
@@ -41,23 +41,23 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-field">Telefon <i class="bi bi-pencil"></i></label>
+            <label class="form-field">Telefon <i class="bi bi-pencil icons"></i></label>
             <input v-model="user.phone" type="tel" class="inputs" placeholder="+49 30 12345678" />
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-field">Webseite <i class="bi bi-pencil"></i></label>
+          <label class="form-field">Webseite <i class="bi bi-pencil icons"></i></label>
           <input v-model="user.website" type="url" class="inputs" placeholder="www.example.com" />
         </div>
       </section>
 
       <!-- Address Information -->
       <section class="sections">
-        <h3 class="sections-title">📍 Adressdaten</h3>
+        <h3 class="sections-title"><i class="bi bi-geo-alt me-2"></i>Adressdaten</h3>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Adresse <i class="bi bi-pencil"></i></label>
+            <label class="form-label">Adresse <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.address"
               type="text"
@@ -66,18 +66,18 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Postleitzahl <i class="bi bi-pencil"></i></label>
+            <label class="form-label">Postleitzahl <i class="bi bi-pencil icons"></i></label>
             <input v-model="user.postal_code" type="text" class="inputs" placeholder="10115" />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Stadt <i class="bi bi-pencil"></i></label>
+            <label class="form-label">Stadt <i class="bi bi-pencil icons"></i></label>
             <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
           </div>
           <div class="form-group">
             <label class="form-label"
-              >🇩🇪 Bundesland (Deutschland) <i class="bi bi-pencil"></i
+              ><i class="bi bi-flag me-1"></i>Bundesland (Deutschland) <i class="bi bi-pencil icons"></i
             ></label>
             <select v-model="user.state" class="inputs">
               <option disabled value="">Bitte wählen</option>
@@ -91,14 +91,14 @@
 
       <!-- Company Information -->
       <section v-if="user.company_details" class="sections">
-        <h3 class="sections-title">🏢 Unternehmensdaten</h3>
+        <h3 class="sections-title"><i class="bi bi-building icons"></i>Unternehmensdaten</h3>
         <div class="form-row">
           <div class="form-group">
             <label class="form-field">Firmenname</label>
             <label for="" class="inputs">{{ user.company_name }}</label>
           </div>
           <div class="form-group">
-            <label class="form-field">🇩🇪 Unternehmensform (Deutschland)</label>
+            <label class="form-field"><i class="bi bi-flag icons"></i>Unternehmensform (Deutschland)</label>
             <select v-model="user.company_details" class="inputs">
               <option disabled value="">-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
@@ -110,12 +110,12 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-field"
-              >Firmenlogo (Neues Logo hochladen) <i class="bi bi-pencil"></i
+              >Firmenlogo (Neues Logo hochladen) <i class="bi bi-pencil icons"></i
             ></label>
             <input type="file" @change="setLogo($event)" />
           </div>
           <div class="form-group">
-            <label class="form-field">Logo-Vorschau <i class="bi bi-pencil"></i></label>
+            <label class="form-field">Logo-Vorschau <i class="bi bi-pencil icons"></i></label>
             <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
           </div>
         </div>
@@ -123,10 +123,10 @@
 
       <!-- Contact Person -->
       <section v-if="user.contact_person" class="sections">
-        <h3 class="sections-title">📞 Kontaktdaten</h3>
+        <h3 class="sections-title"><i class="bi bi-telephone me-2 icons"></i>Kontaktdaten</h3>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Anrede <i class="bi bi-pencil"></i></label>
+            <label class="form-label">Anrede <i class="bi bi-pencil icons"></i></label>
             <select v-model="user.contact_person.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
@@ -135,7 +135,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Vorname <i class="bi bi-pencil"></i></label>
+            <label class="form-label">Vorname <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.contact_person.first_name"
               type="text"
@@ -155,7 +155,7 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Telefon <i class="bi bi-pencil"></i></label>
+            <label class="form-label">Telefon <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.contact_person.phone"
               type="tel"
@@ -165,7 +165,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">E-Mail <i class="bi bi-pencil"></i></label>
+          <label class="form-label">E-Mail <i class="bi bi-pencil icons"></i></label>
           <input
             v-model="user.contact_person.email"
             type="email"
@@ -177,14 +177,14 @@
 
       <!-- Tax Information -->
       <section class="sections">
-        <h3 class="sections-title">💼 Steuerinformationen</h3>
+        <h3 class="sections-title"><i class="bi bi-briefcase icons"></i>Steuerinformationen</h3>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Steuernummer</label>
             <label for="" class="inputs">{{ user.tax_number }}</label>
           </div>
           <div class="form-group">
-            <label class="form-label">Finanzamt <i class="bi bi-pencil"></i></label>
+            <label class="form-label">Finanzamt <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.tax_office"
               type="text"
@@ -211,10 +211,10 @@
 
       <!-- Bank Information -->
       <section class="sections">
-        <h3 class="sections-title">💳 Zahlungsinformationen</h3>
+        <h3 class="sections-title"><i class="bi bi-credit-card icons"></i>Zahlungsinformationen</h3>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-field">Bankname <i class="bi bi-pencil"></i></label>
+            <label class="form-field">Bankname <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.bank_name"
               type="text"
@@ -223,13 +223,13 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-field">BIC <i class="bi bi-pencil"></i></label>
+            <label class="form-field">BIC <i class="bi bi-pencil icons"></i></label>
             <input v-model="user.bic" type="text" class="inputs" placeholder="DEUTDEBBXXX" />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-field">IBAN <i class="bi bi-pencil"></i></label>
+            <label class="form-field">IBAN <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.iban"
               type="text"
@@ -238,7 +238,7 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-field">Kontoinhaber <i class="bi bi-pencil"></i></label>
+            <label class="form-field">Kontoinhaber <i class="bi bi-pencil icons"></i></label>
             <input
               v-model="user.bank_account_holder"
               type="text"
@@ -252,12 +252,12 @@
       <!-- Company Signature -->
       <section class="sections">
         <h3 class="sections-title">
-          <i class="bi bi-pencil ms-2 icons" style="cursor: pointer"></i>
+          <i class="bi bi-pen icons" style="cursor: pointer"></i>
           Unternehmenssignatur
         </h3>
 
         <label class="form-field">
-          <span>Signaturtext <i class="bi bi-pencil"></i></span>
+          <span>Signaturtext <i class="bi bi-pencil icons"></i></span>
         </label>
         <textarea
           v-model="user.company_signature"
@@ -278,9 +278,9 @@
     <!-- Messages -->
     <p v-if="isLoading" class="status-message loading">Profil wird geladen...</p>
     <p v-if="showSuccess" class="status-message success">
-      ✅ Profil wurde erfolgreich aktualisiert!
+      <i class="bi bi-check-circle-fill text-success icons"></i> Profil wurde erfolgreich aktualisiert!
     </p>
-    <p v-if="errorMessage" class="status-message error">❌ Fehler: {{ errorMessage }}</p>
+    <p v-if="errorMessage" class="status-message error"><i class="bi bi-x-circle-fill text-danger icons"></i> Fehler: {{ errorMessage }}</p>
   </div>
 </template>
 
