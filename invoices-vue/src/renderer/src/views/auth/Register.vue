@@ -10,7 +10,7 @@
         <h3 class="section-title"><i class="bi bi-person-circle"></i> Persönliche Informationen</h3>
         <div class="form-row">
           <label class="form-group">
-            <span>Anrede <span class="required">*</span></span>
+            <span>Anrede <span class="stars">*</span></span>
             <select v-model="user.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
@@ -23,14 +23,14 @@
         <div class="form-row">
           <!-- First Name -->
           <label class="form-group">
-            <span>Vorname <span class="required">*</span></span>
+            <span>Vorname <span class="stars">*</span></span>
             <input v-model="user.first_name" type="text" class="inputs" placeholder="Max" />
             <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
           </label>
 
           <!-- Last Name -->
           <label class="form-group">
-            <span>Nachname <span class="required">*</span></span>
+            <span>Nachname <span class="stars">*</span></span>
             <input v-model="user.last_name" type="text" class="inputs" placeholder="Mustermann" />
             <div v-if="error.last_name" class="error">{{ error.last_name }}</div>
           </label>
@@ -38,14 +38,14 @@
         <div class="form-row">
           <!-- Email -->
           <label class="form-group">
-            <span>E-Mail <span class="required">*</span></span>
+            <span>E-Mail <span class="stars">*</span></span>
             <input v-model="user.email" type="email" class="inputs" placeholder="max@beispiel.de" />
             <div v-if="error.email" class="error">{{ error.email }}</div>
           </label>
 
           <!-- Password -->
           <label class="form-group">
-            <span>Passwort <span class="required">*</span></span>
+            <span>Passwort <span class="stars">*</span></span>
             <input
               v-model="user.password"
               type="password"
@@ -83,7 +83,7 @@
         <h3 class="section-title"><i class="bi bi-geo-alt-fill"></i> Adressinformationen</h3>
         <div class="form-row">
           <label class="form-group">
-            <span>Adresse <span class="required">*</span></span>
+            <span>Adresse <span class="stars">*</span></span>
             <input
               v-model="user.address"
               type="text"
@@ -95,7 +95,7 @@
           </label>
 
           <label class="form-group">
-            <span>Postleitzahl <span class="required">*</span></span>
+            <span>Postleitzahl <span class="stars">*</span></span>
             <input
               v-model="user.postal_code"
               type="text"
@@ -109,13 +109,13 @@
 
         <div class="form-row">
           <label class="form-group">
-            <span>Stadt <span class="required">*</span></span>
+            <span>Stadt <span class="stars">*</span></span>
             <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
             <div v-if="error.city" class="error">{{ error.city }}</div>
           </label>
 
           <label class="form-group">
-            <span>🇩🇪 Bundesland <span class="required">*</span></span>
+            <span>🇩🇪 Bundesland <span class="stars">*</span></span>
             <select v-model="user.state" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Baden-Württemberg">Baden-Württemberg</option>
@@ -145,7 +145,7 @@
         <h3 class="section-title"><i class="bi bi-building"></i> Unternehmensinformationen</h3>
         <div class="form-row">
           <label class="form-group">
-            <span>Firmenname <span class="required">*</span></span>
+            <span>Firmenname <span class="stars">*</span></span>
             <input
               v-model="user.company_name"
               type="text"
@@ -156,7 +156,7 @@
           </label>
 
           <label class="form-group">
-            <span>🇩🇪 Unternehmensform <span class="required">*</span></span>
+            <span>🇩🇪 Unternehmensform <span class="stars">*</span></span>
             <select v-model="user.company_details" class="inputs">
               <option :value="null" disabled>-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
@@ -268,7 +268,7 @@
         </div>
         <div class="form-row">
           <label class="form-group">
-            <span>Steuernummer <span class="required">*</span></span>
+            <span>Steuernummer <span class="stars">*</span></span>
             <input
               v-model="user.tax_number"
               type="text"
@@ -281,7 +281,7 @@
           </label>
 
           <label class="form-group">
-            <span>USt-IdNr. <span class="required">*</span></span>
+            <span>USt-IdNr. <span class="stars">*</span></span>
             <input
               v-model="user.vat_id"
               type="text"
@@ -337,7 +337,7 @@
         <h3 class="section-title"><i class="bi bi-bank"></i> Bankinformationen</h3>
         <div class="form-row">
           <label class="form-group">
-            <span>IBAN <span class="required">*</span></span>
+            <span>IBAN <span class="stars">*</span></span>
             <input
               v-model="user.iban"
               type="text"
@@ -351,7 +351,7 @@
           </label>
 
           <label class="form-group">
-            <span>Kontoinhaber <span class="required">*</span></span>
+            <span>Kontoinhaber <span class="stars">*</span></span>
             <input
               v-model="user.bank_account_holder"
               type="text"

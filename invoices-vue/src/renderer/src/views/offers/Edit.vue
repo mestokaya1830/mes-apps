@@ -3,7 +3,7 @@
      <div class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
     <div class="printable">
@@ -32,8 +32,8 @@
             </div>
           </div>
           <div v-else>
-            <label class="form-label">Status</label>
-            <select v-model="offer.status" class="inputs">
+            <label class="form-label">Status<span class="stars">*</span></label>
+            <select v-model="offer.status" class="inputs" required>
               <option value="" disabled>Status auswählen</option>
               <option value="draft" :disabled="offer.status !== 'sent' ? true : true">
                 Entwurf
@@ -46,17 +46,19 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Bearbeitet von:</label>
+          <label class="form-label">Bearbeitet von:<span class="stars">*</span></label>
           <input
             v-model="offer.status_by"
             type="text"
+            class="inputs"
             placeholder="Name der bearbeitenden Person eingeben"
+            required
           />
         </div>
 
         <div class="form-group">
-          <label class="form-label">Bearbeitet am:</label>
-          <input v-model="offer.date" type="date" class="inputs date" />
+          <label class="form-label">Bearbeitet am:<span class="stars">*</span></label>
+          <input v-model="offer.date" type="date" class="inputs date" required />
         </div>
 
         <div class="form-group">

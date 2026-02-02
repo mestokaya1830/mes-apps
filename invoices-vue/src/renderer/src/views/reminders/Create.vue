@@ -11,11 +11,11 @@
     <div class="sections">
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Versandtermin</label>
+          <label class="form-label">Versandtermin <span class="star">*</span></label>
           <input v-model="reminder.date" type="datetime-local" class="inputs date" />
         </div>
         <div class="form-group">
-          <label class="form-label">Versandart</label>
+          <label class="form-label">Versandart <span class="star">*</span></label>
           <select v-model="reminder.sent_method" class="inputs">
             <option value="" disabled>Wählen</option>
             <option value="email">Email</option>
@@ -32,7 +32,7 @@
           <input v-model="reminder.proof_type" type="text" class="inputs" />
         </div>
         <div class="form-group">
-          <label class="form-label">💼 Betreff (Level)</label>
+          <label class="form-label">💼 Betreff (Level) <span class="star">*</span></label>
           <select v-model="reminder.level" class="inputs" @change="updateTexts">
             <option value="" disabled>Wähle Betreff</option>
             <option value="1">Zahlungserinnerung / 1. Mahnung</option>
@@ -43,7 +43,7 @@
       </div>
       <!-- 2. Payment Deadline -->
       <div class="form-group">
-        <label class="form-label">Zahlungsfrist auswählen</label>
+        <label class="form-label">Zahlungsfrist auswählen <span class="star">*</span></label>
         <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
           <option value="" disabled selected>Bitte auswählen</option>
           <option value="innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
@@ -57,7 +57,7 @@
           <option value="nach Vereinbarung">Nach Vereinbarung</option>
         </select>
       </div>
-  
+
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Mahngebühr</label>
@@ -73,19 +73,22 @@
     <!-- 3. Text Sections -->
     <div v-if="reminder.level" class="sections">
       <div class="form-group">
-        <label class="form-label">Intro Text</label>
+        <label class="form-label">Intro Text <span class="star">*</span></label>
         <textarea v-model="reminder.intro_text" class="inputs"></textarea>
       </div>
 
       <div v-if="reminder.level != '1'" class="form-group">
         <label class="form-label"
-          ><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>Warnung</label
+          ><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>Warnung
+          <span class="star">*</span></label
         >
         <textarea v-model="reminder.warning_text" class="inputs"></textarea>
       </div>
 
       <div class="form-group">
-        <label class="form-label"><i class="bi bi-clipboard me-1"></i>Endtext</label>
+        <label class="form-label"
+          ><i class="bi bi-clipboard me-1"></i>Endtext <span class="star">*</span></label
+        >
         <textarea v-model="reminder.closing_text" class="inputs"></textarea>
       </div>
     </div>

@@ -3,7 +3,7 @@
     <div class="main-header">
       <label>{{ title }}</label>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
 
@@ -63,7 +63,7 @@
 
     <!-- Adressdaten -->
     <div class="sections">
-      <div class="sections-title"><i class="bi bi-geo-alt me-2 form-title"></i>Adressdaten</div>
+      <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i>Adressdaten</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Adresse <span class="stars">*</span></label>
@@ -94,7 +94,7 @@
 
     <!-- Steuerinformationen -->
     <div class="sections">
-      <div class="sections-title"><i class="bi bi-briefcase me-2 form-title"></i>Steuerinformationen</div>
+      <div class="sections-title"><i class="bi bi-briefcase form-title icons"></i>Steuerinformationen</div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Steuernummer <span class="stars">*</span></label>
@@ -114,12 +114,12 @@
     <div class="sections btn-container">
       <div v-if="showSuccess" class="">
         <p class="font-medium text-success">
-          <i class="bi bi-check-circle me-1"></i>Kunde erfolgreich gespeichert!
+          <i class="bi bi-check-circle icons"></i>Kunde erfolgreich gespeichert!
         </p>
       </div>
 
       <button type="button" class="btn btn-primary">
-        <i class="bi bi-save me-1 icons"></i>Speichern
+        <i class="bi bi-save icons"></i>Speichern
       </button>
     </div>
   </div>

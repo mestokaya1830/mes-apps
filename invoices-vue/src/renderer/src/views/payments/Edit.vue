@@ -18,33 +18,36 @@
           </div>
 
           <div class="form-group">
-            <label for="">Storniert am</label>
+            <label for="">Storniert am<span class="stars">*</span></label>
             <input
               v-model="cancelled_at"
               type="date"
               class="inputs"
               placeholder="Datum der Stornierung auswählen"
+              required
             />
             <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
           </div>
 
           <div class="form-group">
-            <label for="">Storniert von</label>
+            <label for="">Storniert von<span class="stars">*</span></label>
             <input
               v-model="cancelled_by"
               type="text"
               class="inputs"
               placeholder="Name der Person, die storniert"
+              required
             />
             <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
           </div>
 
           <div class="form-group">
-            <label for="">Stornierungsgrund</label>
+            <label for="">Stornierungsgrund<span class="stars">*</span></label>
             <textarea
               v-model="cancellation_reason"
               class="inputs"
               placeholder="Grund der Stornierung hier eingeben"
+              required
             ></textarea>
             <div v-if="error.cancellation_reason" class="error">
               {{ error.cancellation_reason }}
@@ -55,7 +58,7 @@
         </div>
       </div>
     </div>
-    <router-link :to="`/invoices/details/${$route.params.id}`" class="back-btn back-btn">
+    <router-link :to="`/invoices/details/${$route.params.id}`" class="btn back-btn">
       ← Zurück zur Zahlungsdetails
     </router-link>
   </div>

@@ -14,7 +14,7 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Auftragsnummer *</label>
+          <label class="form-label">Auftragsnummer <span class="stars">*</span></label>
           <input
             v-model="order.id"
             type="text"
@@ -24,7 +24,7 @@
           />
         </div>
         <div class="form-group">
-          <label class="form-label">Datum *</label>
+          <label class="form-label">Datum <span class="stars">*</span></label>
           <div class="date-wrapper">
             <i class="bi bi-calendar3 calendar-icon"></i>
             <input v-model="order.date" type="date" class="inputs date" />
@@ -33,14 +33,14 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Leistungszeitraum Von *</label>
+          <label class="form-label">Leistungszeitraum Von <span class="stars">*</span></label>
           <div class="date-wrapper">
             <i class="bi bi-calendar3 calendar-icon"></i>
-            <input v-model="order.service_period_start" type="date" class="inputs date" />
+            <input v-model="order.service_period_starst" type="date" class="inputs date" />
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Leistungszeitraum Bis *</label>
+          <label class="form-label">Leistungszeitraum Bis <span class="stars">*</span></label>
           <div class="date-wrapper">
             <i class="bi bi-calendar3 calendar-icon"></i>
             <input v-model="order.service_period_end" type="date" class="inputs date" />
@@ -51,39 +51,37 @@
 
     <!-- Kundendaten -->
     <div class="sections">
-      <div class="sections-title">
-        <i class="bi bi-person-fill me-2 form-icons"></i>Kundendaten
-      </div>
+      <div class="sections-title"><i class="bi bi-person-fill me-2 form-icons"></i>Kundendaten</div>
       <div v-if="order.customer?.id" class="customer-details">
         <div class="form-group">
-          <label class="form-label">Kunden-Nr. *</label>
+          <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
           <input v-model="order.customer.id" type="text" class="inputs" readonly />
         </div>
         <div class="form-group">
-          <label class="form-label">Firmname *</label>
+          <label class="form-label">Firmenname <span class="stars">*</span></label>
           <input v-model="order.customer.company_name" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Vorname *</label>
+            <label class="form-label">Vorname <span class="stars">*</span></label>
             <input v-model="order.customer.first_name" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Nachname *</label>
+            <label class="form-label">Nachname <span class="stars">*</span></label>
             <input v-model="order.customer.last_name" type="text" class="inputs" readonly />
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Adresse *</label>
+          <label class="form-label">Adresse <span class="stars">*</span></label>
           <input v-model="order.customer.address" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">PLZ *</label>
+            <label class="form-label">PLZ <span class="stars">*</span></label>
             <input v-model="order.customer.postal_code" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Stadt *</label>
+            <label class="form-label">Stadt <span class="stars">*</span></label>
             <input v-model="order.customer.city" type="text" class="inputs" readonly />
           </div>
         </div>
@@ -92,7 +90,7 @@
 
     <!-- Subject -->
     <div class="form-group">
-      <label class="form-label">Subject *</label>
+      <label class="form-label">Betreff <span class="stars">*</span></label>
       <input v-model="order.subject" type="text" class="inputs" />
     </div>
 
@@ -193,12 +191,12 @@
         <textarea v-model="order.payment_conditions" class="inputs"></textarea>
       </div>
       <div class="form-row">
-         <div class="form-group">
+        <div class="form-group">
           <label class="form-label">Zahlungsreferenz</label>
           <input v-model="order.payment_reference" type="text" class="inputs" />
         </div>
         <div class="form-group">
-          <label class="form-label">Währung</label>
+          <label class="form-label">Währung <span class="stars">*</span></label>
           <select v-model="order.currency" class="inputs">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
@@ -217,7 +215,9 @@
 
     <!-- Positionen -->
     <div class="sections">
-      <div class="sections-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
+      <div class="sections-title">
+        <i class="bi bi-box-seam me-2 form-title"></i>Positionen <span class="stars">*</span>
+      </div>
       <div v-if="order.positions && order.positions.length === 0">Keine Positionen vorhanden</div>
       <div v-else class="positions-editor">
         <div v-for="(pos, index) in order.positions" :key="index" class="position-item">
@@ -228,7 +228,7 @@
             </button>
           </div>
           <div class="form-group">
-            <label class="form-label">Bezeichnung</label>
+            <label class="form-label">Bezeichnung <span class="stars">*</span></label>
             <input v-model="pos.title" type="text" class="inputs" />
           </div>
           <div class="form-group">
@@ -237,7 +237,7 @@
           </div>
           <div class="form-row form-row-4">
             <div class="form-group">
-              <label class="form-label">Einheit</label>
+              <label class="form-label">Einheit <span class="stars">*</span></label>
               <select v-model="pos.unit" class="inputs">
                 <option value="Stk">Stk</option>
                 <option value="Std">Std</option>
@@ -249,7 +249,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Menge</label>
+              <label class="form-label">Menge <span class="stars">*</span></label>
               <input
                 v-model.number="pos.quantity"
                 type="number"
@@ -258,7 +258,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">Preis (€)</label>
+              <label class="form-label">Preis (€) <span class="stars">*</span></label>
               <input
                 v-model.number="pos.price"
                 type="number"
@@ -268,7 +268,7 @@
               />
             </div>
             <div class="form-group">
-              <label class="form-label">MwSt. (%)</label>
+              <label class="form-label">MwSt. (%) <span class="stars">*</span></label>
               <select
                 v-model.number="pos.vat"
                 class="inputs"
@@ -343,7 +343,7 @@ export default {
         subject: '',
         date: '',
         validity_date: '',
-        service_period_start: '',
+        service_period_starst: '',
         service_period_end: '',
         status: 'pending',
         status_by: '',
@@ -406,7 +406,7 @@ export default {
       this.order.positions.push({
         title: 'Neue Position',
         description: '',
-        service_period_start: '',
+        service_period_starst: '',
         service_period_end: '',
         quantity: 1,
         unit: 'Stk',

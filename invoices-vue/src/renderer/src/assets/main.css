@@ -157,6 +157,10 @@ select {
   margin-right: 6px;
   vertical-align: middle;
 }
+.stars {
+  color: #ef4444;
+  margin-left: 5px;
+}
 .bi-pencil{
   color: #0d8a6b;
 }
@@ -700,9 +704,7 @@ textarea.error {
   margin-bottom: 0.35rem;
 }
 
-.stars {
-  color: #ef4444;
-}
+
 .form-title{
   margin-right: 10px;
 }

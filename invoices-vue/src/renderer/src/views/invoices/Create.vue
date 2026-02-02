@@ -174,7 +174,7 @@
     <!-- Positionen -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-box-seam me-2 icons"></i>Positionen
+        <i class="bi bi-box-seam me-2 icons"></i>Positionen <span class="stars">*</span>
       </div>
       <div v-if="invoice.positions && invoice.positions.length === 0">
         Keine Positionen vorhanden

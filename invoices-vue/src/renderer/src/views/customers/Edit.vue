@@ -11,71 +11,71 @@
 
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-building form-title me-2"></i> Unternehmensinformationen
+        <i class="bi bi-building form-title icons"></i> Unternehmensinformationen
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Unternehmenstyp</label>
-          <input v-model="customer.company_type" type="text" class="inputs" />
+          <label class="form-label">Unternehmenstyp<span class="stars">*</span></label>
+          <input v-model="customer.company_type" type="text" class="inputs" required />
         </div>
         <div class="form-group">
-          <label class="form-label">Firmenname</label>
-          <input v-model="customer.company_name" type="text" class="inputs" />
+          <label class="form-label">Firmenname<span class="stars">*</span></label>
+          <input v-model="customer.company_name" type="text" class="inputs" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Vorname<span class="stars">*</span></label>
+          <input v-model="customer.first_name" type="text" class="inputs" required />
         </div>
         <div class="form-group">
-          <label class="form-label">Vorname</label>
-          <input v-model="customer.first_name" type="text" class="inputs" />
+          <label class="form-label">Nachname<span class="stars">*</span></label>
+          <input v-model="customer.last_name" type="text" class="inputs" required />
+        </div>
+      </div>
+    </div>
+
+    <div class="sections">
+      <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i> Adressdaten</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Adresse <span class="stars">*</span></label>
+          <input v-model="customer.address" type="text" class="inputs" required />
         </div>
         <div class="form-group">
-          <label class="form-label">Nachname</label>
-          <input v-model="customer.last_name" type="text" class="inputs" />
+          <label class="form-label">Postleitzahl <span class="stars">*</span></label>
+          <input v-model="customer.postal_code" type="text" class="inputs" required />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Stadt <span class="stars">*</span></label>
+          <input v-model="customer.city" type="text" class="inputs" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Land <span class="stars">*</span></label>
+          <input v-model="customer.country" type="text" class="inputs" required />
+        </div>
+      </div>
+    </div>
+
+    <div class="sections">
+      <div class="sections-title"><i class="bi bi-telephone form-title icons"></i> Kontaktdaten</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">E-Mail<span class="stars">*</span></label>
+          <input v-model="customer.email" type="text" class="inputs" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefonnummer<span class="stars">*</span></label>
+          <input v-model="customer.phone" type="text" class="inputs" required />
         </div>
       </div>
     </div>
 
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-geo-alt form-title me-2"></i> Adressdaten
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Adresse</label>
-          <input v-model="customer.address" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Postleitzahl</label>
-          <input v-model="customer.postal_code" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Stadt</label>
-          <input v-model="customer.city" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Land</label>
-          <input v-model="customer.country" type="text" class="inputs" />
-        </div>
-      </div>
-    </div>
-
-    <div class="sections">
-      <div class="sections-title">
-        <i class="bi bi-telephone form-title me-2"></i> Kontaktdaten
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">E-Mail</label>
-          <input v-model="customer.email" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Telefonnummer</label>
-          <input v-model="customer.phone" type="text" class="inputs" />
-        </div>
-      </div>
-    </div>
-
-    <div class="sections">
-      <div class="sections-title">
-        <i class="bi bi-file-earmark-text form-title me-2"></i> Steuerinformationen
+        <i class="bi bi-file-earmark-text form-title icons"></i> Steuerinformationen
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -95,7 +95,7 @@
 
     <div class="sections btn-container">
       <button type="button" class="btn btn-update" @click="updateCustomer">
-        <i class="bi bi-save me-1 icons"></i> Aktualisierung
+        <i class="bi bi-save icons"></i> Aktualisierung
       </button>
     </div>
   </div>

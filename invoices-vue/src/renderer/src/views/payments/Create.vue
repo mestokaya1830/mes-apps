@@ -14,22 +14,22 @@
         <div class="customer-details" style="margin-top: 16px">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Rechnung-Nr.:</label>
+              <label class="form-label">Rechnung-Nr. <span class="star">*</span></label>
               <label class="inputs">{{ formatInvoiceId(payment.invoice.id) }}</label>
             </div>
             <div class="form-group">
-              <label class="form-label">Kunden-Nr.:</label>
+              <label class="form-label">Kunden-Nr. <span class="star">*</span></label>
               <label class="inputs">{{ formatCustomerId(payment.invoice.customer_id) }}</label>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Rechnungsdatum</label>
+              <label class="form-label">Rechnungsdatum <span class="star">*</span></label>
               <label class="inputs">{{ formatDate(payment.invoice.date) }}</label>
             </div>
             <div class="form-group">
-              <label class="form-label">Fälligkeitsdatum</label>
+              <label class="form-label">Fälligkeitsdatum <span class="star">*</span></label>
               <label class="inputs">{{ formatDate(payment.invoice.due_date) }}</label>
             </div>
           </div>
@@ -71,7 +71,7 @@
       <div class="sections">
         <div class="sections-title"><i class="bi bi-coin iocns"></i>Währung</div>
         <div class="form-group">
-          <label class="form-label">Waehrung</label>
+          <label class="form-label">Währung <span class="star">*</span></label>
           <select v-model="payment.invoice.currency" class="inputs">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
@@ -92,7 +92,7 @@
         <div class="sections-title"><i class="bi bi-cash-stack iocns"></i>Zahlungsdetails</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Zahlungsdatum *</label>
+            <label class="form-label">Zahlungsdatum <span class="star">*</span></label>
             <input
               ref="date"
               v-model="payment.date"
@@ -104,7 +104,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Betrag (€) *</label>
+            <label class="form-label">Betrag (€) <span class="star">*</span></label>
             <input
               ref="payment_amount"
               v-model="payment.payment_amount"
@@ -119,7 +119,7 @@
             >
             <div class="payment-row">
               <div class="form-group">
-                <small class="form-label">Rabbat</small>
+                <small class="form-label">Rabatt</small>
                 <small v-if="is_early_payment_selected">{{
                   payment.invoice.early_payment_discount
                 }}</small>
@@ -135,7 +135,7 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Zahlungsmethode</label>
+            <label class="form-label">Zahlungsmethode <span class="star">*</span></label>
             <select v-model="payment.payment_method" class="inputs">
               <option>Überweisung</option>
               <option>Bar</option>
