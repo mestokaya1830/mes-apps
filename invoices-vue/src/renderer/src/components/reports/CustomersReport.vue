@@ -11,7 +11,7 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label for="">Von</label>
+          <label for=""><i class="bi bi-calendar-event me-1"></i> Von</label>
           <input
             v-model="date_box_start"
             type="date"
@@ -20,7 +20,7 @@
           />
         </div>
         <div class="form-group">
-          <label for="">Bis</label>
+          <label for=""><i class="bi bi-calendar-check me-1"></i> Bis</label>
           <input
             v-model="date_box_end"
             type="date"
@@ -34,14 +34,16 @@
     <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
-          <h2>{{ title }}</h2>
-          <p class="report-period">Zeitraum: {{ selectedPeriod }}</p>
+          <h2><i class="bi bi-bar-chart-line-fill me-1 icons"></i>{{ title }}</h2>
+          <p class="report-period">
+            <i class="bi bi-clock-history me-1"></i> Zeitraum: {{ selectedPeriod }}
+          </p>
         </div>
       </div>
-      <!-- Summary Cards -->
+
       <div class="report-summary-cards">
         <div class="report-summary-card">
-          <div class="card-icon">👥</div>
+          <div class="card-icon"><i class="bi bi-people-fill"></i></div>
           <div class="card-content">
             <p class="card-label">Aktive Kunden</p>
             <h3 class="card-value">{{ reports.length }}</h3>
@@ -50,7 +52,7 @@
         </div>
 
         <div class="report-summary-card">
-          <div class="card-icon">💰</div>
+          <div class="card-icon"><i class="bi bi-cash-stack"></i></div>
           <div class="card-content">
             <p class="card-label">Ø Gesamtumsatz</p>
             <h3 class="card-value">{{ formatCurrency(summary.total_revenue) }}</h3>
@@ -59,7 +61,7 @@
         </div>
 
         <div v-if="summary.top_customer" class="report-summary-card">
-          <div class="card-icon">🏆</div>
+          <div class="card-icon"><i class="bi bi-trophy-fill text-warning"></i></div>
           <div class="card-content">
             <p class="card-label">Top Kunde</p>
             <h3 class="card-value">
@@ -72,7 +74,7 @@
         </div>
 
         <div class="report-summary-card">
-          <div class="card-icon">📊</div>
+          <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
           <div class="card-content">
             <p class="card-label">Umsatz pro Kunde</p>
             <h3 class="card-value">{{ formatCurrency(summary.total_avarage) }}</h3>
@@ -81,9 +83,8 @@
         </div>
       </div>
 
-      <!-- Top Customers -->
       <div class="sections">
-        <h3>🏆 Kunden</h3>
+        <h3><i class="bi bi-award me-1 icons"></i>Kunden</h3>
         <div v-for="(item, index) in reports" :key="item.id" class="top-customer-list">
           <div class="top-customer-item">
             <div class="customer-rank gold">{{ index + 1 }}</div>
@@ -104,47 +105,10 @@
         </div>
       </div>
 
-      <!-- Detailed Table -->
       <div class="table-section">
-        <h3>Detaillierte Kundenübersicht</h3>
+        <h3><i class="bi bi-list-check me-1 icons"></i>Detaillierte Kundenübersicht</h3>
         <table class="report-table">
-          <thead>
-            <tr>
-              <th>Kunde</th>
-              <th class="center">Rechnungen</th>
-              <th>Gesamtumsatz</th>
-              <th>Bezahlt</th>
-              <th>Teilweise bezahlt</th>
-              <th>Ausstehend</th>
-              <th>Un­be­rfällig</th>
-              <th>Letzte Aktivität</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in reports" :key="item.id">
-              <td>
-                <strong>{{ item.company_name || item.full_name }}</strong>
-              </td>
-              <td>{{ item.invoice_count }}</td>
-              <td>{{ formatCurrency(item.invoice_total) }}</td>
-              <td>{{ item.paid }}</td>
-              <td>{{ item.partially_paid }}</td>
-              <td>{{ item.unpaid }}</td>
-              <td>{{ item.overdue }}</td>
-              <td>{{ item.last_activity }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr class="total-row">
-              <td><strong>SUMME / DURCHSCHNITT</strong></td>
-              <td><strong>30</strong></td>
-              <td class="amount"><strong>€39.665,00</strong></td>
-              <td class="amount"><strong>€1.322,17</strong></td>
-              <td class="amount"><strong>€30.955,90</strong></td>
-              <td class="amount"><strong>€8.709,10</strong></td>
-              <td colspan="2"></td>
-            </tr>
-          </tfoot>
+          ...
         </table>
       </div>
     </div>

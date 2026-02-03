@@ -2,22 +2,22 @@
   <div>
     <div class="sections container-2">
       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
-        <i class="bi bi-save me-1 form-title"></i>
+        <i class="bi bi-save form-title icons"></i>
         <span>Speichern</span>
       </button>
 
       <button class="btn btn-secondary" @click="sendEmail">
-        <i class="bi bi-envelope me-1 form-title"></i>
+        <i class="bi bi-envelope form-title icons"></i>
         <span>E-Mail</span>
       </button>
 
       <button class="btn btn-pdf" @click="exportPDF">
-        <i class="bi bi-file-earmark-pdf me-1 form-title"></i>
+        <i class="bi bi-file-earmark-pdf form-title icons"></i>
         <span>PDF</span>
       </button>
 
       <button class="btn btn-print" @click="printDocument">
-        <i class="bi bi-printer me-1 form-title"></i>
+        <i class="bi bi-printer form-title icons"></i>
         <span>Drucken</span>
       </button>
 
@@ -26,7 +26,7 @@
           v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
           class="btn btn-cancel"
         >
-          <i class="bi bi-pencil-square me-1 icons"></i>
+          <i class="bi bi-pencil-square icons"></i>
           <span>Stornieren</span>
         </button>
       </router-link>

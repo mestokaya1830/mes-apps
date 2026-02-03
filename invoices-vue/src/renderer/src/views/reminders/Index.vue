@@ -2,7 +2,7 @@
   <div v-if="reminders" class="main-container">
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
-      <router-link to="/reminders/create" class="btn add-btn">
+      <router-link to="/reminders/create" class="btn btn-primary">
         <i class="bi bi-plus-circle icons"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>

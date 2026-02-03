@@ -1,7 +1,7 @@
 <template>
   <div v-if="offer && auth" class="main-container">
     <router-link to="/offers" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+      <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     <div class="printable">
       <!-- Header -->

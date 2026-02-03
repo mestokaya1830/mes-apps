@@ -10,7 +10,7 @@
     <!-- Grunddaten -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
+        <i class="bi bi-pin-angle-fill form-title icons"></i>Grunddaten
       </div>
       <div class="form-group">
         <label class="form-label">Angebotsnummer <span class="stars">*</span></label>
@@ -62,7 +62,7 @@
 
     <!-- Status -->
     <div class="sections">
-      <div class="sections-title"><i class="bi bi-info-circle me-2 form-title"></i>Status</div>
+      <div class="sections-title"><i class="bi bi-info-circle form-title icons"></i>Status</div>
 
       <div class="form-group">
         <label class="form-label">Status</label>
@@ -98,7 +98,7 @@
     <!-- Kundendaten -->
     <div v-if="offer.customer" class="sections">
       <div class="sections-title">
-        <i class="bi bi-person-fill me-2 form-title"></i>Kundendaten
+        <i class="bi bi-person-fill form-title icons"></i>Kundendaten
       </div>
       <div v-if="offer.customer?.id" class="customer-details">
         <div class="form-group">
@@ -139,7 +139,7 @@
     <!-- Währung -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-currency-exchange me-2 form-title"></i>Währung
+        <i class="bi bi-currency-exchange form-title icons"></i>Währung
       </div>
       <div class="form-group">
         <select v-model="offer.currency" class="inputs">
@@ -159,7 +159,7 @@
 
     <!-- Positionen -->
     <div class="sections">
-      <div class="sections-title"><i class="bi bi-box-seam me-2 form-title"></i>Positionen</div>
+      <div class="sections-title"><i class="bi bi-box-seam form-title icons"></i>Positionen</div>
       <div v-if="offer.positions && offer.positions.length === 0">Keine Positionen vorhanden</div>
       <div v-else class="positions-editor">
         <div v-for="(pos, index) in offer.positions" :key="index" class="position-item">
@@ -170,14 +170,14 @@
         </div>
       </div>
       <button class="add-position-btn">
-        <i class="bi bi-plus-circle me-1 form-title"></i>Position hinzufügen
+        <i class="bi bi-plus-circle form-title icons"></i>Position hinzufügen
       </button>
     </div>
 
     <!-- Zusätzliche Informationen -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-file-text-fill me-2 form-title"></i>Zusätzliche Informationen
+        <i class="bi bi-file-text-fill form-title icons"></i>Zusätzliche Informationen
       </div>
 
       <div class="form-group">
@@ -252,7 +252,7 @@
         <span class="slider round"></span>
       </label>
       <div class="switch-text">
-        <i class="bi bi-pencil-square me-1 form-title"></i
+        <i class="bi bi-pencil-square form-title icons"></i
         ><strong>Legally binding signature</strong>
       </div>
     </div>

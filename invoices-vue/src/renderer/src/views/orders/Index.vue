@@ -2,7 +2,7 @@
   <div v-if="orders" class="main-container">
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
-      <router-link to="/customers" class="btn add-btn">
+      <router-link to="/customers" class="btn btn-primary">
         <i class="bi bi-plus-circle icons"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>
@@ -107,7 +107,7 @@
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/orders/details/' + item.id" class="details-btn btn-details">
+          <router-link :to="'/orders/details/' + item.id" class="btn btn-details">
             <i class="bi bi-eye"></i>
             Details
           </router-link>
@@ -115,25 +115,11 @@
       </div>
     </div>
 
-    <!-- Empty State -->
-    <div v-if="!orders || orders.length === 0" class="empty-state">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
-      <h3>Keine Rechnungen</h3>
-      <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
+    <div v-if="!orders || orders.length === 0" class="empty-state text-center py-5">
+      <i class="bi bi-file-earmark-x text-muted icons" style="font-size: 4rem"></i>
+
+      <h3 class="mt-3">Keine Rechnungen</h3>
+      <p class="text-secondary">Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </div>
   </div>
 </template>

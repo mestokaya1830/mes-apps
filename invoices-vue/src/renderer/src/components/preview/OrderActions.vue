@@ -2,33 +2,38 @@
   <div>
     <div class="action-btn">
       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveOrder">
-        <span class="nav-icon">💾</span>
+        <i class="bi bi-floppy-fill icons"></i>
         <span>Speichern</span>
       </button>
+
       <button class="btn btn-secondary" @click="sendEmail">
-        <span class="nav-icon">📧</span>
+        <i class="bi bi-envelope-fill icons"></i>
         <span>E-Mail</span>
       </button>
+
       <button class="btn btn-pdf" @click="exportPDF">
-        <span class="nav-icon">📄</span>
+        <i class="bi bi-file-earmark-pdf-fill icons"></i>
         <span>PDF</span>
       </button>
+
       <button class="btn btn-print" @click="printDocument">
-        <span class="nav-icon">🖨</span>
+        <i class="bi bi-printer-fill icons"></i>
         <span>Drucken</span>
       </button>
-      <button v-if="sourcePage !== 'preview'" class="btn">
-        <router-link :to="`/orders/edit/${tableData.id}`">
-          <span class="nav-icon">✏</span>
+
+      <button v-if="sourcePage !== 'preview'" class="btn btn-edit">
+        <router-link :to="`/orders/edit/${tableData.id}`" class="text-decoration-none">
+          <i class="bi bi-pencil-square icons"></i>
           <span>Bearbeiten</span>
         </router-link>
       </button>
-       <button
+
+      <button
         v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
         class="btn btn-cancel"
       >
-        <router-link :to="`/orders/edit-cancel/${tableData.id}`">
-          <span class="nav-icon">✏</span>
+        <router-link :to="`/orders/edit-cancel/${tableData.id}`" class="text-decoration-none">
+          <i class="bi bi-dash-circle-fill icons"></i>
           <span>Stornieren</span>
         </router-link>
       </button>

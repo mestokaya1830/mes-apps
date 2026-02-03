@@ -1,7 +1,7 @@
 <template lang="">
   <div>
     <div v-if="contact" class="contact-box">
-      <div class="bank-title">👤 Kontaktdaten</div>
+      <i class="bi bi-person-lines-fill" icons></i> Kontaktdaten
       <div class="bank-info">
         <span class="bank-label">SM:</span>
         <span class="bank-value">{{ contact.first_name }} {{ contact.last_name }}</span>

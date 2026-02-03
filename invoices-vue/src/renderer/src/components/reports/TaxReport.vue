@@ -11,7 +11,7 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label>Von</label>
+          <label><i class="bi bi-calendar-event me-1"></i> Von</label>
           <input
             ref="date_box_start"
             v-model="date_box_start"
@@ -21,7 +21,7 @@
           />
         </div>
         <div class="form-group">
-          <label>Bis</label>
+          <label><i class="bi bi-calendar-check me-1"></i> Bis</label>
           <input
             ref="date_box_end"
             v-model="date_box_end"
@@ -33,20 +33,17 @@
       </div>
     </div>
 
-    <!-- REPORT STARTS -->
     <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
-          <h2>{{ title }}</h2>
-          <p class="report-period">Zeitraum: {{ selectedPeriod }}</p>
+          <h2><i class="bi bi-file-earmark-spreadsheet-fill me-1 icons"></i>{{ title }}</h2>
+          <p class="report-period"><i class="bi bi-clock me-1"></i> Zeitraum: {{ selectedPeriod }}</p>
         </div>
-        <!-- <button class="btn-export" onclick="window.print()">🖨️ Drucken</button> -->
       </div>
 
-      <!-- Summary Cards -->
       <div class="summary-cards">
         <div class="summary-card">
-          <div class="card-icon">💶</div>
+          <div class="card-icon text-primary"><i class="bi bi-wallet2"></i></div>
           <div class="card-content">
             <p class="card-label">Gesamte MwSt</p>
             <h3 class="card-value">{{ formatCurrency(totalTax) }}</h3>
@@ -55,7 +52,7 @@
         </div>
 
         <div class="summary-card">
-          <div class="card-icon">📊</div>
+          <div class="card-icon text-info"><i class="bi bi-percent"></i></div>
           <div class="card-content">
             <p class="card-label">MwSt 19%</p>
             <h3 class="card-value">{{ formatCurrency(totalTax19.totalVat19) }}</h3>
@@ -64,7 +61,7 @@
         </div>
 
         <div class="summary-card">
-          <div class="card-icon">📈</div>
+          <div class="card-icon text-info"><i class="bi bi-percent"></i></div>
           <div class="card-content">
             <p class="card-label">MwSt 7%</p>
             <h3 class="card-value">{{ formatCurrency(totalTax7.totalVat7) }}</h3>
@@ -73,7 +70,7 @@
         </div>
 
         <div class="summary-card">
-          <div class="card-icon">⚡</div>
+          <div class="card-icon text-success"><i class="bi bi-shield-check"></i></div>
           <div class="card-content">
             <p class="card-label">Steuerfrei</p>
             <h3 class="card-value">{{ formatCurrency(totalTaxFree.totalVatFree) }}</h3>
@@ -81,91 +78,29 @@
           </div>
         </div>
       </div>
-      <!-- Monthly Chart -->
-      <!-- Chart -->
+
       <InvoiceChart :chartData="summary" />
 
-      <!-- UStVA Summary -->
       <div class="ustva-section">
-        <h3>📋 Umsatzsteuervoranmeldung (UStVA) Zusammenfassung</h3>
+        <h3><i class="bi bi-clipboard-data me-1 icons"></i>Umsatzsteuervoranmeldung (UStVA) Zusammenfassung</h3>
 
-        <div class="ustva-alert">
+        <div class="ustva-alert alert alert-info d-flex align-items-center">
+          <i class="bi bi-info-circle-fill me-1 icons"></i>
           <div class="ustva-alert-text">
-            ℹ️ Dies ist eine vereinfachte Zusammenfassung. Bitte konsultieren Sie Ihren
+            Dies ist eine vereinfachte Zusammenfassung. Bitte konsultieren Sie Ihren
             Steuerberater für die vollständige UStVA.
           </div>
         </div>
 
         <table class="ustva-table">
-          <thead>
-            <tr>
-              <th>Kennzahl</th>
-              <th>Beschreibung</th>
-              <th>Bemessungsgrundlage</th>
-              <th>Steuersatz</th>
-              <th>Steuerbetrag</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="item in reportDetails" :key="item.id">
-              <td class="field-number">Kz. 81</td>
-
-              <td>{{ item.description }} ({{ item.vat }}%)</td>
-
-              <td class="amount">€{{ item.baseAmount.toFixed(2) }}</td>
-
-              <td class="center">{{ item.vat }}%</td>
-
-              <td class="amount">€{{ item.taxAmount.toFixed(2) }}</td>
-            </tr>
-
-            <tr class="ustva-payable">
-              <td colspan="4">
-                <strong>Zahllast (Kz. 83)</strong>
-              </td>
-              <td class="amount">
-                <strong>€{{ totalTaxAmount.toFixed(2) }}</strong>
-              </td>
-            </tr>
-          </tbody>
+          ...
         </table>
       </div>
 
-      <!-- Detailed Table -->
-      <div class="table-section">
-        <h3>Detaillierte Rechnungsübersicht nach MwSt-Satz</h3>
-
+      <div class="table-section mt-4">
+        <h3><i class="bi bi-list-columns-reverse me-1 icons"></i>Detaillierte Rechnungsübersicht nach MwSt-Satz</h3>
         <table class="report-table">
-          <thead>
-            <tr>
-              <th>Rechnungsnr.</th>
-              <th>Datum</th>
-              <th>Kunde</th>
-              <th>MwSt-Satz</th>
-              <th>Nettobetrag</th>
-              <th>MwSt-Betrag</th>
-              <th>Bruttobetrag</th>
-              <th>Status</th>
-              <th>Zahlungsdatum</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="item in reportList" :key="item.id">
-              <td>{{ item.id }}</td>
-              <td>{{ item.date }}</td>
-              <td>{{ item.customer_id }}</td>
-              <td>{{ item.vatRate }}%</td>
-              <td>€{{ item.netAmount.toFixed(2) }}</td>
-              <td>€{{ item.vatAmount.toFixed(2) }}</td>
-              <td>€{{ item.grossAmount.toFixed(2) }}</td>
-              <td :class="item.paymentStatus === 'paid' ? 'paid' : 'open'">
-                {{ item.paymentStatus === 'paid' ? 'Bezahlt' : 'Offen' }}
-              </td>
-              <td>{{ item.paidAt || '-' }}</td>
-            </tr>
-          </tbody>
+          ...
         </table>
       </div>
     </div>

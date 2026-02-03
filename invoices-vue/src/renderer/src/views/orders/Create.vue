@@ -3,14 +3,14 @@
     <div class="main-header">
       <label>{{ title }}</label>
       <router-link to="/orders" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
 
     <!-- Grunddaten -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
+        <i class="bi bi-pin-angle-fill form-title icons"></i>Grunddaten
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -97,7 +97,7 @@
     <!-- Lieferdaten + Versand -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-box-seam me-2 form-title"></i>Lieferung & Versand
+        <i class="bi bi-box-seam form-title icons"></i>Lieferung & Versand
       </div>
       <div class="form-group">
         <label class="form-label">Lieferbedingungen</label>
@@ -166,7 +166,7 @@
     <!-- Zahlung & Währung -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-credit-card-2-front-fill me-2 form-title"></i>Zahlung & Währung
+        <i class="bi bi-credit-card-2-front-fill form-title icons"></i>Zahlung & Währung
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -216,7 +216,7 @@
     <!-- Positionen -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-box-seam me-2 form-title"></i>Positionen <span class="stars">*</span>
+        <i class="bi bi-box-seam form-title icons"></i>Positionen <span class="stars">*</span>
       </div>
       <div v-if="order.positions && order.positions.length === 0">Keine Positionen vorhanden</div>
       <div v-else class="positions-editor">
@@ -293,14 +293,14 @@
         </div>
       </div>
       <button class="add-position-btn" @click="addPosition()">
-        <i class="bi bi-plus-circle me-1 form-title"></i>Position hinzufügen
+        <i class="bi bi-plus-circle form-title icons"></i>Position hinzufügen
       </button>
     </div>
 
     <!-- Notizen & Texte -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-pencil-square me-2 form-title"></i>Notizen & Texte
+        <i class="bi bi-pencil-square form-title icons"></i>Notizen & Texte
       </div>
       <div class="form-group">
         <label class="form-label">Einleitungstext</label>

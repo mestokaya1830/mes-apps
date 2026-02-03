@@ -11,7 +11,7 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label>Von</label>
+          <label><i class="bi bi-calendar-range me-1 icons"></i> Von</label>
           <input
             ref="date_box_start"
             v-model="date_box_start"
@@ -21,7 +21,7 @@
           />
         </div>
         <div class="form-group">
-          <label>Bis</label>
+          <label><i class="bi bi-calendar-check me-1 icons"></i> Bis</label>
           <input
             ref="date_box_end"
             v-model="date_box_end"
@@ -33,20 +33,17 @@
       </div>
     </div>
 
-    <!-- REPORT STARTS -->
     <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
-          <h2>{{ title }}</h2>
-          <p class="report-period">Zeitraum: {{ selectedPeriod }}</p>
+          <h2><i class="bi bi-file-earmark-bar-graph me-2"></i>{{ title }}</h2>
+          <p class="report-period"><i class="bi bi-clock me-1 icons"></i> Zeitraum: {{ selectedPeriod }}</p>
         </div>
-        <!-- <button class="btn-export" onclick="window.print()">🖨️ Drucken</button> -->
       </div>
 
-      <!-- Summary Cards -->
       <div class="report-summary-cards">
         <div class="report-summary-card">
-          <div class="card-icon">📊</div>
+          <div class="card-icon text-primary"><i class="bi bi-bar-chart-fill"></i></div>
           <div class="card-content">
             <p class="card-label">Summe Ø</p>
             <h3 class="card-value">{{ formatCurrency(summary.all_total) }}</h3>
@@ -55,7 +52,7 @@
         </div>
 
         <div class="report-summary-card">
-          <div class="card-icon">✅</div>
+          <div class="card-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
           <div class="card-content">
             <p class="card-label">Pünktlich Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.paid_total) }}</h3>
@@ -66,7 +63,7 @@
         </div>
 
         <div class="report-summary-card">
-          <div class="card-icon">✅</div>
+          <div class="card-icon text-info"><i class="bi bi-pie-chart-fill"></i></div>
           <div class="card-content">
             <p class="card-label">Teilzhaltig Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.partially_paid_total) }}</h3>
@@ -79,7 +76,7 @@
         </div>
 
         <div class="report-summary-card">
-          <div class="card-icon">⏳</div>
+          <div class="card-icon text-secondary"><i class="bi bi-hourglass-split"></i></div>
           <div class="card-content">
             <p class="card-label">Unbezahlt (fällig)</p>
             <h3 class="card-value">{{ formatCurrency(summary.unpaid_total) }}</h3>
@@ -90,7 +87,7 @@
         </div>
 
         <div class="report-summary-card">
-          <div class="card-icon">⚠️</div>
+          <div class="card-icon text-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
           <div class="card-content">
             <p class="card-label">Überfällig</p>
             <h3 class="card-value">{{ formatCurrency(summary.overdue_total) }}</h3>
@@ -101,46 +98,39 @@
         </div>
       </div>
 
-      <!-- Chart -->
       <InvoiceChart :chartData="summary" />
 
-      <!-- Detailed Table -->
       <div class="report-table-container">
         <div class="filter-tabs">
           <button
             :class="['filter-tab', { active: activeTab === 'all' }]"
-            class="filter-tab"
             @click="activeTab = 'all'"
           >
-            Alle ({{ summary.all_count }})
+            <i class="bi bi-list-ul me-1 icons"></i> Alle ({{ summary.all_count }})
           </button>
           <button
             :class="['filter-tab', { active: activeTab === 'paid' }]"
-            class="filter-tab"
             @click="activeTab = 'paid'"
           >
-            Bezahlt ({{ summary.paid_count }})
+            <i class="bi bi-check2-all me-1 icons"></i> Bezahlt ({{ summary.paid_count }})
           </button>
           <button
             :class="['filter-tab', { active: activeTab === 'partially_paid' }]"
-            class="filter-tab"
             @click="activeTab = 'partially_paid'"
           >
-            Teilweizeltig ({{ summary.partially_paid_count }})
+            <i class="bi bi-hash me-1 icons"></i> Teilweizeltig ({{ summary.partially_paid_count }})
           </button>
           <button
             :class="['filter-tab', { active: activeTab === 'unpaid' }]"
-            class="filter-tab"
             @click="activeTab = 'unpaid'"
           >
-            Unbezahlt ({{ summary.unpaid_count }})
+            <i class="bi bi-clock me-1 icons"></i> Unbezahlt ({{ summary.unpaid_count }})
           </button>
           <button
             :class="['filter-tab', { active: activeTab === 'overdue' }]"
-            class="filter-tab"
             @click="activeTab = 'overdue'"
           >
-            Überfällig ({{ summary.overdue_count }})
+            <i class="bi bi-shield-exclamation me-1 icons"></i> Überfällig ({{ summary.overdue_count }})
           </button>
         </div>
 
@@ -148,14 +138,14 @@
           <thead>
             <tr>
               <th class="sortable" @click="sorting('id')">
-                Rechnungsnr. <span class="sort-icon">▼</span>
+                Rechnungsnr. <i class="bi bi-caret-down-fill ms-1"></i>
               </th>
-              <th class="sortable">Datum <span class="sort-icon">▼</span></th>
+              <th class="sortable">Datum <i class="bi bi-caret-down-fill ms-1"></i></th>
               <th>Kunde</th>
-              <th class="sortable">Fälligkeitsdatum <span class="sort-icon">▼</span></th>
-              <th class="sortable amount">Netto <span class="sort-icon">▼</span></th>
-              <th class="sortable amount">MwSt-Betrag <span class="sort-icon">▼</span></th>
-              <th class="sortable amount">Brutto <span class="sort-icon">▼</span></th>
+              <th class="sortable">Fälligkeitsdatum <i class="bi bi-caret-down-fill ms-1"></i></th>
+              <th class="sortable amount">Netto <i class="bi bi-caret-down-fill ms-1"></i></th>
+              <th class="sortable amount">MwSt-Betrag <i class="bi bi-caret-down-fill ms-1"></i></th>
+              <th class="sortable amount">Brutto <i class="bi bi-caret-down-fill ms-1"></i></th>
               <th>Status</th>
               <th>Zahlungsdatum</th>
               <th>Aktionen</th>
@@ -163,31 +153,24 @@
           </thead>
           <tbody>
             <tr v-for="item in filteredReports" :key="item.id">
-              <td>
-                <span class="invoice-number">{{ formatInvoiceId(item.id) }}</span>
-              </td>
+              <td><span class="invoice-number">{{ formatInvoiceId(item.id) }}</span></td>
               <td>{{ formatDate(item.date) }}</td>
-              <td>
-                <span class="customer-name">{{ item.customer_id }}</span>
-              </td>
+              <td><span class="customer-name">{{ item.customer_id }}</span></td>
               <td>{{ formatDate(item.due_date) }}</td>
               <td class="amount">{{ formatCurrency(item.net_total) }}</td>
               <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
               <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
               <td>
-                <span
-                  :class="[
-                    'report-table-status-badge',
-                    item.isOverdue ? 'overdue' : item.payment_status
-                  ]"
-                >
+                <span :class="['report-table-status-badge', item.isOverdue ? 'overdue' : item.payment_status]">
                   {{ item.isOverdue ? 'overdue' : item.payment_status }}
                 </span>
               </td>
               <td>{{ formatDate(item.paid_at) || '--------' }}</td>
               <td>
                 <div class="action-btn">
-                  <button class="action-btn">👁️</button>
+                  <button class="btn btn-sm btn-light">
+                    <i class="bi bi-eye"></i>
+                  </button>
                 </div>
               </td>
             </tr>

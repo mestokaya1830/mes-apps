@@ -2,8 +2,8 @@
   <div v-if="offers" class="main-container">
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
-      <router-link to="/customers" class="btn add-btn">
-        <i class="bi bi-plus-circle icons"></i>
+      <router-link to="/customers" class="btn btn-primary">
+        <i class="bi bi-plus-circle-fill icons"></i>
         <span>Neue Angebot erstellen</span>
       </router-link>
     </div>
@@ -24,15 +24,18 @@
         <option value="is_reminded">Erinnert</option>
       </select>
 
-      <input
-        v-model="search_box"
-        class="inputs"
-        placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
-        @input="searchFilter"
-      />
+      <div class="search-wrapper flex-grow-1">
+        <i class="bi bi-search search-icon-inner"></i>
+        <input
+          v-model="search_box"
+          class="inputs"
+          placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
+          @input="searchFilter"
+        />
+      </div>
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <i class="bi bi-calendar-event calendar-icon"></i>
         <input
           ref="date_box_start"
           v-model="date_box_start"
@@ -43,7 +46,7 @@
       </div>
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <i class="bi bi-calendar-check calendar-icon"></i>
         <input
           ref="date_box_end"
           v-model="date_box_end"
@@ -53,15 +56,15 @@
         />
       </div>
 
-      <div class="sort-btn" @click="sorting('id')">&#8645;</div>
+      <div class="sort-btn" @click="sorting('id')">
+        <i class="bi bi-arrow-down-up"></i>
+      </div>
     </div>
 
     <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
 
-    <!-- Offers card -->
     <div class="list-grid">
       <div v-for="item in offers" :key="item.id" class="list-card">
-        <!-- Card Header -->
         <div class="card-header">
           <div class="card-header-left">
             <div class="list-avatar">
@@ -69,7 +72,7 @@
             </div>
             <div class="list-info">
               <h3 class="list-id">{{ formatOfferId(item.id) }}</h3>
-              <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
+              <span class="list-type-badge"><i class="bi bi-building icons"></i>{{ item.customer.company_name }}</span> <br />
               <span class="list-name"
                 >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
               >
@@ -77,6 +80,7 @@
           </div>
           <div class="status-badge-container">
             <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+              <i :class="item.is_active ? 'bi bi-check-circle' : 'bi bi-x-circle'" class="icons"></i>
               {{ item.is_active ? 'Aktiv' : 'Storniert' }}
             </div>
             <div class="status-badge total">
@@ -87,16 +91,17 @@
               v-if="item.payment_status !== 'paid' && item.is_active === 1"
               :to="`/payments/create/${item.id}`"
               class="status-badge payment"
-              >Zahlung erfassen</router-link
             >
+              <i class="bi bi-plus-lg icons"></i>Zahlung erfassen
+            </router-link>
 
             <div
               v-if="item.payment_status === 'paid' && item.is_active === 1"
               class="status-badge paid"
             >
-              <span v-if="item.paid_at && item.paid_at < item.due_date">⏰</span>
+              <i v-if="item.paid_at && item.paid_at < item.due_date" class="bi bi-alarm-fill icons"></i>
               Bezahlt
-              <span v-if="item.early_paid_discount_applied">💰</span>
+              <i v-if="item.early_paid_discount_applied" class="bi bi-piggy-bank-fill icons"></i>
             </div>
 
             <div v-if="item.is_active === 0" class="status-badge canceled">
@@ -105,34 +110,18 @@
           </div>
         </div>
 
-        <!-- Card Actions -->
         <div class="card-actions">
           <router-link :to="'/offers/details/' + item.id" class="details-btn btn-details">
-            <i class="bi bi-eye"></i>
+            <i class="bi bi-eye-fill icons"></i>
             Details
           </router-link>
         </div>
       </div>
     </div>
 
-    <!-- Empty State -->
-    <div v-if="!offers || offers.length === 0" class="empty-state">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
-      <h3>Keine Rechnungen</h3>
+    <div v-if="!offers || offers.length === 0" class="empty-state text-center py-5">
+      <i class="bi bi-file-earmark-x text-muted icons" style="font-size: 4rem;"></i>
+      <h3 class="mt-3">Keine Rechnungen</h3>
       <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </div>
   </div>

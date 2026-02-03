@@ -2,7 +2,7 @@
   <div v-if="invoices" class="main-container">
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
-      <router-link to="/customers" class="btn add-btn">
+      <router-link to="/customers" class="btn btn-primary">
         <i class="bi bi-plus-circle icons"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>

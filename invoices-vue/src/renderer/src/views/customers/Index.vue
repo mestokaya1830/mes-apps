@@ -2,8 +2,8 @@
   <div v-if="customers" class="main-container">
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
-      <router-link to="/customers/create" class="btn add-btn">
-        <i class="bi bi-plus-circle add-icon"></i>
+      <router-link to="/customers/create" class="btn btn-primary">
+        <i class="bi bi-plus-circle icons"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
     </div>

@@ -3,7 +3,7 @@
      <div class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
     <div class="printable">

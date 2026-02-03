@@ -150,10 +150,6 @@
       <FooterSidePreview />
     </div>
 
-    <router-link :to="'/invoices/details/' + payment.invoice_id" class="btn back-btn"
-      >Zuruckzahlung</router-link
-    >
-
     <!-- Actions Button -->
     <PaymentActions
       v-if="payment"

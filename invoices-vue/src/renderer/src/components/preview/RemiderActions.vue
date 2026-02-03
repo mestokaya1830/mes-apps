@@ -2,21 +2,25 @@
   <div>
     <div class="action-btn">
       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveReminder">
-        <span class="nav-icon">💾</span>
+        <i class="bi bi-floppy-fill icons"></i>
         <span>Speichern</span>
       </button>
+
       <button class="btn btn-secondary" @click="sendEmail">
-        <span class="nav-icon">📧</span>
+        <i class="bi bi-envelope-at-fill icons"></i>
         <span>E-Mail</span>
       </button>
+
       <button class="btn btn-pdf" @click="exportPDF">
-        <span class="nav-icon">📄</span>
+        <i class="bi bi-file-earmark-pdf-fill icons"></i>
         <span>PDF</span>
       </button>
+
       <button class="btn btn-print" @click="printDocument">
-        <span class="nav-icon">🖨</span>
+        <i class="bi bi-printer-fill icons"></i>
         <span>Drucken</span>
       </button>
+
       <button
         v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
         class="btn btn-edit"
@@ -26,8 +30,9 @@
             path: '/reminders/edit/' + tableData.id,
             query: { id: tableData.id, invoice_id: tableData.invoice.id }
           }"
+          class="text-decoration-none"
         >
-          <span class="nav-icon">✏</span>
+          <i class="bi bi-pencil-square icons"></i>
           <span>Bearbeiten</span>
         </router-link>
       </button>

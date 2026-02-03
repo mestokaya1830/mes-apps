@@ -1,19 +1,17 @@
 <template>
   <div v-if="invoice && auth" class="main-container">
-   <div class="container-2">
-       <router-link to="/invoices" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+    <div class="container-2">
+      <router-link to="/invoices" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
     <div>
       <div class="printable">
-        <!-- Header -->
         <HeaderSidePreview :title="title" :auth="auth" />
 
-        <!-- customers -->
         <div v-if="invoice" class="recipient">
           <div class="recipient-address">
-            <div class="recipient-title">Empfänger</div>
+            <div class="recipient-title"><i class="bi bi-person-badge me-2"></i>Empfänger</div>
             <div class="company-name-subtitle">
               {{ invoice.customer.company_name }}
             </div>
@@ -25,16 +23,14 @@
             </div>
           </div>
 
-          <!-- recipient details -->
           <div class="recipient-details">
-            <div class="recipient-title">Rechnungsdetails</div>
+            <div class="recipient-title"><i class="bi bi-file-earmark-text me-2"></i>Rechnungsdetails</div>
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
               <span class="meta-value">{{ formatInvoiceId(invoice.id) }}</span>
             </div>
 
-            <!-- Service date -->
             <div v-if="invoice.service_date" class="meta-row">
               <span class="meta-label">Leistungsdatum:</span>
               <span class="meta-value">{{ formatDate(invoice.service_date) }}</span>
@@ -59,26 +55,18 @@
               <span class="meta-label">Steuer-Nr.:</span>
               <span class="meta-value">{{ invoice.tax_number }}</span>
             </div>
-
-            <div v-else-if="invoice.is_in_eu && invoice.vat_id" class="meta-row">
-              <span class="meta-label">USt-IdNr.:</span>
-              <span class="meta-value">{{ invoice.vat_id }}</span>
-            </div>
-
-            <div v-else-if="!invoice.is_in_eu && invoice.vat_id" class="meta-row">
+            <div v-else-if="invoice.vat_id" class="meta-row">
               <span class="meta-label">USt-IdNr.:</span>
               <span class="meta-value">{{ invoice.vat_id }}</span>
             </div>
           </div>
         </div>
 
-        <!-- Intro Text -->
         <div class="intro-text">
           Sehr geehrter Kunde,<br />
           für die erbrachten Leistungen erlauben wir uns, Ihnen wie folgt in Rechnung zu stellen:
         </div>
 
-        <!-- Positions Table -->
         <table class="positions-table">
           <thead>
             <tr>
@@ -99,13 +87,6 @@
                 <div v-if="item.description" class="position-description">
                   {{ item.description }}
                 </div>
-                <div
-                  v-if="item.service_period_start && item.service_period_end"
-                  class="position-service-period"
-                >
-                  Leistungszeitraum: {{ formatDate(item.service_period_start) }} -
-                  {{ formatDate(item.service_period_end) }}
-                </div>
               </td>
               <td class="center">{{ item.quantity }}</td>
               <td class="center">{{ item.unit }}</td>
@@ -120,226 +101,114 @@
           </tbody>
         </table>
 
-        <!-- summary -->
         <div class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{
-              formatCurrency(invoice.net_total, invoice.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(invoice.net_total, invoice.currency) }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{
-              formatCurrency(invoice.vat_total, invoice.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(invoice.vat_total, invoice.currency) }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{
-              formatCurrency(invoice.gross_total, invoice.currency)
-            }}</span>
+            <span class="total-value">{{ formatCurrency(invoice.gross_total, invoice.currency) }}</span>
           </div>
 
           <div class="preview-section">
             <div v-if="invoice.is_small_company" class="tax-note small-company">
-              ⚠️ Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
+              <i class="bi bi-exclamation-triangle-fill icons"></i> Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
             </div>
-
             <div v-else-if="invoice.is_reverse_charge" class="tax-note">
-              ⚠️ Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span
-                >§13b UStG</span
-              >)
+              <i class="bi bi-info-circle-fill icons"></i> Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span>§13b UStG</span>)
             </div>
-
             <div v-else-if="invoice.is_eu_delivery" class="tax-note">
-              ⚠️ Innergemeinschaftliche Lieferung – steuerfrei gemäß
-              <span>§4 Nr.1b UStG</span>
+              <i class="bi bi-globe icons"></i> Innergemeinschaftliche Lieferung – steuerfrei gemäß <span>§4 Nr.1b UStG</span>
             </div>
           </div>
         </div>
 
-        <!-- payment -->
         <div class="payment-terms-box">
-          <div class="payment-terms-title">💳 Zahlungsbedingungen</div>
-
+          <div class="payment-terms-title"><i class="bi bi-credit-card-fill me-2"></i>Zahlungsbedingungen</div>
           <div class="payment-terms-content">
             <div v-if="invoice.payment_terms" class="payment-term-item">
-              <strong>Zahlungsziel:</strong>
-              {{ invoice.payment_terms }} Tage netto (fällig bis {{ formatDate(invoice.due_date) }})
+              <strong>Zahlungsziel:</strong> {{ invoice.payment_terms }} Tage (bis {{ formatDate(invoice.due_date) }})
             </div>
-
             <div v-if="invoice.early_payment_offer" class="payment-term-item skonto-highlight">
-              <strong>💰 Skonto:</strong>
-              {{ invoice.early_payment_percentage }}% Skonto bei Zahlung innerhalb von
-              {{ invoice.early_payment_days }} Tagen (bis
-              {{ formatDate(invoice.early_payment_deadline) }})
-              <div class="skonto-amount">
-                <span
-                  >Skonto-Betrag:
-                  {{ formatCurrency(invoice.early_payment_discount, invoice.currency) }}</span
-                >
-                <span
-                  >Zahlbetrag:
-                  {{ formatCurrency(invoice.gross_total_after_discount, invoice.currency) }}</span
-                >
-              </div>
-            </div>
-
-            <div v-if="invoice.payment_conditions" class="payment-term-item">
-              <strong>Zusätzliche Bedingungen:</strong>
-              <div class="payment-conditions-text">
-                {{ invoice.payment_conditions }}
-              </div>
+              <strong><i class="bi bi-piggy-bank-fill icons"></i> Skonto:</strong>
+              {{ invoice.early_payment_percentage }}% Skonto bis {{ formatDate(invoice.early_payment_deadline) }}
             </div>
           </div>
         </div>
-        <!-- Contact Person -->
+
         <ContactPersonPreview :contactData="auth.contact_person" />
 
-        <!-- Bank Info -->
         <div class="bank-box">
-          <div class="bank-title">🏦 Bankverbindung</div>
+          <div class="bank-title"><i class="bi bi-bank2 me-2"></i>Bankverbindung</div>
           <div class="bank-info">
-            <span class="bank-label">Bank:</span>
-            <span class="bank-value">{{ auth.bank_name }}</span>
-            <span class="bank-label">IBAN:</span>
-            <span class="bank-value">{{ auth.iban }}</span>
-            <span class="bank-label">BIC:</span>
-            <span class="bank-value">{{ auth.bic }}</span>
+            <span class="bank-label">Bank:</span> <span class="bank-value">{{ auth.bank_name }}</span>
+            <span class="bank-label">IBAN:</span> <span class="bank-value">{{ auth.iban }}</span>
+            <span class="bank-label">BIC:</span> <span class="bank-value">{{ auth.bic }}</span>
           </div>
         </div>
-
         <FooterSidePreview />
       </div>
 
-      <InvoiceActions
-        v-if="invoice"
-        :tableData="invoice"
-        :fileName="actionFileName"
-        sourcePage="details"
-      />
+      <InvoiceActions v-if="invoice" :tableData="invoice" :fileName="actionFileName" sourcePage="details" />
 
-      <!-- payment list -->
-      <div v-if="payments && payments.length" class="report-table-container">
+      <div v-if="payments && payments.length" class="report-table-container mt-4">
+        <h4 class="mb-3"><i class="bi bi-cash-stack me-2"></i>Zahlungshistorie</h4>
         <table class="report-table">
           <thead>
             <tr>
               <th>Zahlungs-ID</th>
               <th>Zahlungsdatum</th>
               <th>Summe</th>
-              <th v-if="invoice.early_paid_discount_applied">Rabatt</th>
-              <th v-if="invoice.early_paid_discount_applied">Summe nach Rabatt</th>
               <th>Gezahlter Betrag</th>
               <th>Details</th>
             </tr>
           </thead>
-          <tbody v-if="payments">
+          <tbody>
             <tr v-for="item in payments" :key="item.id">
               <td>{{ formatPaymentId(item.id) }}</td>
               <td>{{ formatDate(item.date) }}</td>
+              <td>{{ formatCurrency(item.invoice.gross_total, item.invoice.currency) }}</td>
+              <td>{{ formatCurrency(item.payment_amount, item.invoice.currency) }}</td>
               <td>
-                {{ formatCurrency(item.invoice.gross_total, item.invoice.currency) }}
-              </td>
-              <td v-if="invoice.early_paid_discount_applied">
-                {{ formatCurrency(item.invoice.early_payment_discount, item.invoice.currency) }}
-              </td>
-              <td v-if="invoice.early_paid_discount_applied">
-                {{ formatCurrency(item.invoice.gross_total_after_discount, item.invoice.currency) }}
-              </td>
-              <td>
-                {{ formatCurrency(item.payment_amount, item.invoice.currency) }}
-              </td>
-
-              <td>
-                <router-link :to="'/payments/details/' + item.id" class="action-btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  👁️
+                <router-link :to="'/payments/details/' + item.id" class="btn btn-sm btn-outline-primary">
+                  <i class="bi bi-eye-fill"></i>
                 </router-link>
               </td>
             </tr>
           </tbody>
         </table>
-        <div class="outstanding">
-          <label for="">Summe: </label>
-          <span>
-            {{ formatCurrency(invoice.gross_total, invoice.currency) }}
-          </span>
-          <div v-if="invoice.early_paid_discount_applied" class="fl-1">
-            <label for="">Discount: </label>
-            <span>
-              {{ formatCurrency(invoice.early_payment_discount, invoice.currency) }}
-            </span>
-          </div>
-          <label for=""> Bereitbezahlt: </label>
-          <span>
-            {{ formatCurrency(payment_total, invoice.currency) }}
-          </span>
-          <label for="">Restbetrag: </label>
-          <span v-if="invoice.early_paid_discount_applied">
-            {{
-              formatCurrency(invoice.gross_total_after_discount - payment_total, invoice.currency)
-            }}
-          </span>
-          <span>
-            {{ formatCurrency(invoice.gross_total - payment_total, invoice.currency) }}
-          </span>
-        </div>
       </div>
 
-      <router-link :to="`/reminders/create/${invoice.id}`" class="btn btn-reminder"
-        >Mahnung erstellen</router-link
-      >
+      <div class="mt-4">
+        <router-link :to="`/reminders/create/${invoice.id}`" class="btn btn-warning">
+          <i class="bi bi-bell-fill icons"></i> Mahnung erstellen
+        </router-link>
+      </div>
 
-      <!-- reminders list -->
-      <div v-if="reminders && reminders.length" class="customer-grid">
+      <div v-if="reminders && reminders.length" class="customer-grid mt-4">
+        <h4 class="mb-3"><i class="bi bi-exclamation-octagon-fill me-2 text-danger"></i>Mahnungen</h4>
         <table class="table-auto w-full border">
           <thead>
             <tr>
               <th class="payment-head">Mahnungs-ID</th>
               <th class="payment-head">Mahnungsdatum</th>
-              <th class="payment-head">Mahnfrist</th>
               <th class="payment-head">Details</th>
             </tr>
           </thead>
-          <tbody v-if="reminders">
+          <tbody>
             <tr v-for="item in reminders" :key="item.id">
               <td class="payment-row">{{ formatReminderId(item.id) }}</td>
               <td class="payment-row">{{ formatDate(item.date) }}</td>
               <td class="payment-row">
-                {{ item.payment_deadline }}
-              </td>
-
-              <td class="payment-row">
-                <router-link :to="'/reminders/details/' + item.id" class="action-btn details-btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                  Details
+                <router-link :to="'/reminders/details/' + item.id" class="btn btn-sm btn-outline-secondary">
+                  <i class="bi bi-search icons"></i> Details
                 </router-link>
               </td>
             </tr>

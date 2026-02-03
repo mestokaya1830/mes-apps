@@ -10,7 +10,7 @@
     <!-- Grunddaten -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-pin-angle-fill me-2 form-title"></i>Grunddaten
+        <i class="bi bi-pin-angle-fill form-title"></i>Grunddaten
       </div>
       <div class="form-group">
         <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
@@ -54,7 +54,7 @@
     <!-- Kundendaten -->
     <div v-if="invoice.customer" class="sections">
       <div class="sections-title">
-        <i class="bi bi-person-fill me-2 icons"></i>Kundendaten
+        <i class="bi bi-person-fill icons"></i>Kundendaten
       </div>
       <div v-if="invoice.customer?.id" class="customer-details">
         <div class="form-group">
@@ -95,7 +95,7 @@
     <!-- Steueroptionen -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-briefcase-fill me-2 icons"></i>Steueroptionen
+        <i class="bi bi-briefcase-fill icons"></i>Steueroptionen
       </div>
       <div class="sections">
         <div class="switch-container">
@@ -153,7 +153,7 @@
     <!-- Währung -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-currency-exchange me-2 icons"></i>Währung
+        <i class="bi bi-currency-exchange icons"></i>Währung
       </div>
       <div class="form-group">
         <select v-model="invoice.currency" class="inputs">
@@ -174,7 +174,7 @@
     <!-- Positionen -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-box-seam me-2 icons"></i>Positionen <span class="stars">*</span>
+        <i class="bi bi-box-seam icons"></i>Positionen <span class="stars">*</span>
       </div>
       <div v-if="invoice.positions && invoice.positions.length === 0">
         Keine Positionen vorhanden
@@ -198,7 +198,7 @@
     <!-- Zahlungsinformationen -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-credit-card-2-front-fill me-2 icons"></i>Zahlungsinformationen
+        <i class="bi bi-credit-card-2-front-fill icons"></i>Zahlungsinformationen
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -277,7 +277,7 @@
     </div>
     <div class="form-actions btn-container">
       <button class="btn btn-preview" @click="submitStore">
-        <i class="bi bi-eye me-2 icons"></i>Vorschau anzeigen
+        <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>
     </div>
   </div>

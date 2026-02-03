@@ -2,7 +2,7 @@
   <div v-if="payments" class="main-container">
     <div class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
-      <router-link to="/payments/create" class="btn add-btn">
+      <router-link to="/payments/create" class="btn btn-primary">
         <i class="bi bi-plus-circle icons"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
@@ -107,7 +107,7 @@
     </div>
 
     <div v-if="payments.length === 0" class="empty-state">
-      <i class="bi bi-people"></i>
+      <i class="bi bi-people icons"></i>
       <h3>Keine Kunden</h3>
       <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
     </div>

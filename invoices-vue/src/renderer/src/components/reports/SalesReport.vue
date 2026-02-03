@@ -11,7 +11,7 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label>Von</label>
+          <label><i class="bi bi-calendar-date me-1"></i> Von</label>
           <input
             ref="date_box_start"
             v-model="date_box_start"
@@ -21,7 +21,7 @@
           />
         </div>
         <div class="form-group">
-          <label>Bis</label>
+          <label><i class="bi bi-calendar-check me-1"></i> Bis</label>
           <input
             ref="date_box_end"
             v-model="date_box_end"
@@ -33,20 +33,17 @@
       </div>
     </div>
 
-    <!-- REPORT STARTS -->
     <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
-          <h2>{{ title }}</h2>
-          <p class="report-period">Zeitraum: {{ selectedPeriod }}</p>
+          <h2><i class="bi bi-pie-chart-fill me-2"></i>{{ title }}</h2>
+          <p class="report-period"><i class="bi bi-clock-history me-1"></i> Zeitraum: {{ selectedPeriod }}</p>
         </div>
-        <!-- <button class="btn-export" onclick="window.print()">🖨️ Drucken</button> -->
       </div>
 
-      <!-- Summary Cards -->
       <div class="summary-cards">
         <div class="summary-card">
-          <div class="card-icon">💰</div>
+          <div class="card-icon text-primary"><i class="bi bi-cash-stack"></i></div>
           <div class="card-content">
             <p class="card-label">Gesamtumsatz</p>
             <h3 class="card-value">{{ formatCurrency(all.totalAmount) }}</h3>
@@ -55,7 +52,7 @@
         </div>
 
         <div class="summary-card">
-          <div class="card-icon">✅</div>
+          <div class="card-icon text-success"><i class="bi bi-check-all"></i></div>
           <div class="card-content">
             <p class="card-label">Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(allPaid.totalAmount) }}</h3>
@@ -66,7 +63,7 @@
         </div>
 
         <div class="summary-card">
-          <div class="card-icon">⏳</div>
+          <div class="card-icon text-warning"><i class="bi bi-hourglass-split"></i></div>
           <div class="card-content">
             <p class="card-label">Ausstehend</p>
             <h3 class="card-value">{{ formatCurrency(allUnpaid.totalAmount) }}</h3>
@@ -77,7 +74,7 @@
         </div>
 
         <div class="summary-card">
-          <div class="card-icon">📊</div>
+          <div class="card-icon text-info"><i class="bi bi-calculator"></i></div>
           <div class="card-content">
             <p class="card-label">Durchschnitt pro Rechnung</p>
             <h3 class="card-value">{{ formatCurrency(average.averagePerInvoice) }}</h3>
@@ -86,12 +83,10 @@
         </div>
       </div>
 
-      <!-- Chart -->
       <InvoiceChart :chartData="summary" />
 
-      <!-- Tax Breakdown -->
-      <div class="tax-breakdown">
-        <h3>MwSt-Aufschlüsselung</h3>
+      <div class="tax-breakdown me-1 icons">
+        <h3><i class="bi bi-receipt-cutoff me-2"></i>MwSt-Aufschlüsselung</h3>
         <table class="tax-table">
           <thead>
             <tr>
@@ -103,7 +98,7 @@
           </thead>
           <tbody>
             <tr v-for="item in taxBreakdown" :key="item.rate">
-              <td>{{ item.rate }}%</td>
+              <td><strong>%{{ item.rate }}</strong></td>
               <td class="amount">{{ formatCurrency(item.net) }}</td>
               <td class="amount">{{ formatCurrency(item.tax) }}</td>
               <td class="amount">{{ formatCurrency(item.gross) }}</td>

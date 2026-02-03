@@ -10,7 +10,7 @@
     <!-- Base -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-person-badge me-2 form-title"></i>Kundeninformationen
+        <i class="bi bi-person-badge me-2 form-title icons"></i>Kundeninformationen
       </div>
 
       <div class="form-row">
