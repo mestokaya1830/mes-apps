@@ -346,25 +346,6 @@ export default {
       ]
     }
   },
-  computed: {
-    logoSrc() {
-      const logo = this.selectedImage
-      if (!logo) return null
-      if (typeof logo === 'string') {
-        if (logo.startsWith('data:image')) return logo
-        return `data:image/png;base64,${logo}`
-      }
-      try {
-        let binary = ''
-        const bytes = new Uint8Array(Object.values(logo))
-        for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i])
-        return `data:image/png;base64,${window.btoa(binary)}`
-      } catch (error) {
-        console.error(error)
-        return null
-      }
-    }
-  },
   mounted() {
     this.getUser()
   },
@@ -379,6 +360,7 @@ export default {
           contact_person: JSON.parse(result.rows.contact_person),
           company_details: JSON.parse(result.rows.company_details)
         }
+        console.log(result)
         this.selectedImage = `data:${result.rows.image_type};base64,${result.rows.logo}`
         this.isLoading = false
       } catch (error) {

@@ -417,8 +417,6 @@ export default {
         })
         this.payment_total = result.payment_total
         this.reminders = result.reminders
-        console.log('result:', result)
-        console.log('invoice Data:', this.payments)
       } catch (error) {
         console.error(error)
       }
