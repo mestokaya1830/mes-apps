@@ -114,9 +114,8 @@
   </div>
 </template>
 
-
 <script>
-import store from '../../store/store';
+import store from '../../store/store'
 export default {
   name: 'Customers',
   inject: ['formatCustomerId'],
@@ -126,6 +125,8 @@ export default {
       customers: [],
       search_box: '',
       isSort: true,
+      date_box_start: '',
+      date_box_end: '',
       categories_filter: '',
       total_count: 0,
       current_count: 0
@@ -198,7 +199,8 @@ export default {
 }
 
 .action-btn,
-.details-btn, .preview-btn {
+.details-btn,
+.preview-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;

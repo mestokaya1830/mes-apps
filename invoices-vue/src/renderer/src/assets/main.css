@@ -378,7 +378,14 @@ select {
 .btn-reminder {
   background: var(--gradient-orange);
 }
-
+.btn-report-details{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 30px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
 .status-badge.active {
   background: var(--status-active-bg);
   color: var(--status-active-text);
@@ -1226,7 +1233,6 @@ textarea.error {
   border-collapse: collapse;
   font-size: var(--font-size-sm);
   margin-top: var(--spacing-3xl);
-  table-layout: fixed;
   overflow-x: auto;
 }
 

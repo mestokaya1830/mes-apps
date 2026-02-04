@@ -108,7 +108,30 @@
       <div class="table-section">
         <h3><i class="bi bi-list-check me-1 icons"></i>Detaillierte Kundenübersicht</h3>
         <table class="report-table">
-          ...
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>ID</th>
+              <th>Firma</th>
+              <th>Name</th>
+              <th>Stadt</th>
+              <th>Rechnungen</th>
+              <th>Gesamtumsatz</th>
+              <th>Anteil %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in reports" :key="item.id">
+              <td>{{ index + 1 }}</td>
+              <td>{{ item.id }}</td>
+              <td>{{ item.company_name || '-' }}</td>
+              <td>{{ item.full_name || '-' }}</td>
+              <td>{{ item.city || '-' }}</td>
+              <td class="text-center">{{ item.invoice_count }}</td>
+              <td class="text-right">{{ formatCurrency(item.invoice_total) }}</td>
+              <td class="text-center">{{ item.percentage }}%</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>

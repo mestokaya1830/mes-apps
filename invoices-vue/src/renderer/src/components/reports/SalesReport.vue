@@ -11,7 +11,7 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label><i class="bi bi-calendar-date me-1"></i> Von</label>
+          <label><i class="bi bi-calendar-date icons"></i> Von</label>
           <input
             ref="date_box_start"
             v-model="date_box_start"
@@ -21,7 +21,7 @@
           />
         </div>
         <div class="form-group">
-          <label><i class="bi bi-calendar-check me-1"></i> Bis</label>
+          <label><i class="bi bi-calendar-check icons"></i> Bis</label>
           <input
             ref="date_box_end"
             v-model="date_box_end"
@@ -36,8 +36,8 @@
     <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
-          <h2><i class="bi bi-pie-chart-fill me-2"></i>{{ title }}</h2>
-          <p class="report-period"><i class="bi bi-clock-history me-1"></i> Zeitraum: {{ selectedPeriod }}</p>
+          <h2><i class="bi bi-pie-chart-fill icons"></i>{{ title }}</h2>
+          <p class="report-period"><i class="bi bi-clock-history icons"></i> Zeitraum: {{ selectedPeriod }}</p>
         </div>
       </div>
 
@@ -86,7 +86,7 @@
       <InvoiceChart :chartData="summary" />
 
       <div class="tax-breakdown me-1 icons">
-        <h3><i class="bi bi-receipt-cutoff me-2"></i>MwSt-Aufschlüsselung</h3>
+        <h3><i class="bi bi-receipt-cutoff icons"></i>MwSt-Aufschlüsselung</h3>
         <table class="tax-table">
           <thead>
             <tr>

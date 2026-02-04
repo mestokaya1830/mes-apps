@@ -101,36 +101,36 @@
       <InvoiceChart :chartData="summary" />
 
       <div class="report-table-container">
-        <div class="filter-tabs">
+        <div class="report-filter-tabs">
           <button
-            :class="['filter-tab', { active: activeTab === 'all' }]"
+            :class="['report-filter-tab', { active: activeTab === 'all' }]"
             @click="activeTab = 'all'"
           >
-            <i class="bi bi-list-ul me-1 icons"></i> Alle ({{ summary.all_count }})
+            Alle ({{ summary.all_count }})
           </button>
           <button
-            :class="['filter-tab', { active: activeTab === 'paid' }]"
+            :class="['report-filter-tab', { active: activeTab === 'paid' }]"
             @click="activeTab = 'paid'"
           >
-            <i class="bi bi-check2-all me-1 icons"></i> Bezahlt ({{ summary.paid_count }})
+            Bezahlt ({{ summary.paid_count }})
           </button>
           <button
-            :class="['filter-tab', { active: activeTab === 'partially_paid' }]"
+            :class="['report-filter-tab', { active: activeTab === 'partially_paid' }]"
             @click="activeTab = 'partially_paid'"
           >
-            <i class="bi bi-hash me-1 icons"></i> Teilweizeltig ({{ summary.partially_paid_count }})
+             Teilweizeltig ({{ summary.partially_paid_count }})
           </button>
           <button
-            :class="['filter-tab', { active: activeTab === 'unpaid' }]"
+            :class="['report-filter-tab', { active: activeTab === 'unpaid' }]"
             @click="activeTab = 'unpaid'"
           >
-            <i class="bi bi-clock me-1 icons"></i> Unbezahlt ({{ summary.unpaid_count }})
+             Unbezahlt ({{ summary.unpaid_count }})
           </button>
           <button
-            :class="['filter-tab', { active: activeTab === 'overdue' }]"
+            :class="['report-filter-tab', { active: activeTab === 'overdue' }]"
             @click="activeTab = 'overdue'"
           >
-            <i class="bi bi-shield-exclamation me-1 icons"></i> Überfällig ({{ summary.overdue_count }})
+            Überfällig ({{ summary.overdue_count }})
           </button>
         </div>
 
@@ -167,11 +167,9 @@
               </td>
               <td>{{ formatDate(item.paid_at) || '--------' }}</td>
               <td>
-                <div class="action-btn">
-                  <button class="btn btn-sm btn-light">
-                    <i class="bi bi-eye"></i>
-                  </button>
-                </div>
+                <button class="btn-report-details">
+                  <i class="bi bi-eye"></i>
+                </button>
               </td>
             </tr>
           </tbody>

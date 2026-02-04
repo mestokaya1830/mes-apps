@@ -11,7 +11,7 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label><i class="bi bi-calendar-event me-1"></i> Von</label>
+          <label><i class="bi bi-calendar-event icons"></i> Von</label>
           <input
             ref="date_box_start"
             v-model="date_box_start"
@@ -21,7 +21,7 @@
           />
         </div>
         <div class="form-group">
-          <label><i class="bi bi-calendar-check me-1"></i> Bis</label>
+          <label><i class="bi bi-calendar-check icons"></i> Bis</label>
           <input
             ref="date_box_end"
             v-model="date_box_end"
@@ -36,8 +36,8 @@
     <div v-if="is_ready" class="printable">
       <div class="report-header-2">
         <div>
-          <h2><i class="bi bi-file-earmark-spreadsheet-fill me-1 icons"></i>{{ title }}</h2>
-          <p class="report-period"><i class="bi bi-clock me-1"></i> Zeitraum: {{ selectedPeriod }}</p>
+          <h2><i class="bi bi-file-earmark-spreadsheet-fill icons"></i>{{ title }}</h2>
+          <p class="report-period"><i class="bi bi-clock"></i> Zeitraum: {{ selectedPeriod }}</p>
         </div>
       </div>
 
@@ -82,10 +82,10 @@
       <InvoiceChart :chartData="summary" />
 
       <div class="ustva-section">
-        <h3><i class="bi bi-clipboard-data me-1 icons"></i>Umsatzsteuervoranmeldung (UStVA) Zusammenfassung</h3>
+        <h3><i class="bi bi-clipboard-data icons"></i>Umsatzsteuervoranmeldung (UStVA) Zusammenfassung</h3>
 
         <div class="ustva-alert alert alert-info d-flex align-items-center">
-          <i class="bi bi-info-circle-fill me-1 icons"></i>
+          <i class="bi bi-info-circle-fill icons"></i>
           <div class="ustva-alert-text">
             Dies ist eine vereinfachte Zusammenfassung. Bitte konsultieren Sie Ihren
             Steuerberater für die vollständige UStVA.
@@ -93,14 +93,86 @@
         </div>
 
         <table class="ustva-table">
-          ...
+          <thead>
+            <tr>
+              <th>Kennziffer</th>
+              <th>Beschreibung</th>
+              <th class="text-right">Betrag (Netto)</th>
+              <th class="text-right">MwSt-Betrag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>81</strong></td>
+              <td>Lieferungen und Leistungen (19% MwSt)</td>
+              <td class="text-right">{{ formatCurrency(totalTax19.totalNet19) }}</td>
+              <td class="text-right">{{ formatCurrency(totalTax19.totalVat19) }}</td>
+            </tr>
+            <tr>
+              <td><strong>86</strong></td>
+              <td>Lieferungen und Leistungen (7% MwSt)</td>
+              <td class="text-right">{{ formatCurrency(totalTax7.totalNet7) }}</td>
+              <td class="text-right">{{ formatCurrency(totalTax7.totalVat7) }}</td>
+            </tr>
+            <tr>
+              <td><strong>43</strong></td>
+              <td>Steuerfreie Umsätze</td>
+              <td class="text-right">{{ formatCurrency(totalTaxFree.totalVatFree) }}</td>
+              <td class="text-right">0,00 €</td>
+            </tr>
+            <tr class="ustva-total">
+              <td colspan="2"><strong>Gesamte MwSt (Zeile 83)</strong></td>
+              <td class="text-right"><strong>{{ formatCurrency(totalTax19.totalNet19 + totalTax7.totalNet7 + totalTaxFree.totalVatFree) }}</strong></td>
+              <td class="text-right"><strong>{{ formatCurrency(totalTax) }}</strong></td>
+            </tr>
+          </tbody>
         </table>
       </div>
 
       <div class="table-section mt-4">
-        <h3><i class="bi bi-list-columns-reverse me-1 icons"></i>Detaillierte Rechnungsübersicht nach MwSt-Satz</h3>
+        <h3><i class="bi bi-list-columns-reverse icons"></i>Detaillierte Rechnungsübersicht nach MwSt-Satz</h3>
         <table class="report-table">
-          ...
+          <thead>
+            <tr>
+              <th>Rechnungsnr.</th>
+              <th>Datum</th>
+              <th>Kunde</th>
+              <th>MwSt-Satz</th>
+              <th class="text-right">Netto</th>
+              <th class="text-right">MwSt-Betrag</th>
+              <th class="text-right">Brutto</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in filteredReports" :key="item.id">
+              <td><span class="invoice-number">{{ formatInvoiceId(item.id) }}</span></td>
+              <td>{{ formatDate(item.date) }}</td>
+              <td><span class="customer-name">{{ item.customer_name }}</span></td>
+              <td class="text-center">
+                <span :class="['vat-badge', `vat-${item.vat_rate}`]">
+                  {{ item.vat_rate }}%
+                </span>
+              </td>
+              <td class="text-right amount">{{ formatCurrency(item.net_total) }}</td>
+              <td class="text-right amount">{{ formatCurrency(item.vat_total) }}</td>
+              <td class="text-right amount">{{ formatCurrency(item.gross_total) }}</td>
+              <td class="text-center">
+                <span :class="['status-badge', item.payment_status]">
+                  {{ item.payment_status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="4"><strong>Gesamt</strong></td>
+              <td class="text-right"><strong>{{ formatCurrency(summary.total_net) }}</strong></td>
+              <td class="text-right"><strong>{{ formatCurrency(totalTax) }}</strong></td>
+              <td class="text-right"><strong>{{ formatCurrency(summary.total_gross) }}</strong></td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
