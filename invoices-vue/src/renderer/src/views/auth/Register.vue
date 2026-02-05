@@ -174,9 +174,10 @@
             <div v-if="error.company_logo" class="error">{{ error.company_logo }}</div>
           </label>
 
-          <figure v-if="selectedImage" class="form-group logo-preview-wrapper">
+          <figure class="form-group logo-preview-wrapper">
             <figcaption>Logo-Vorschau</figcaption>
             <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
+            <div v-if="error.selectedImage" class="error">{{ error.selectedImage }}</div>
           </figure>
         </div>
       </section>
@@ -587,68 +588,71 @@ export default {
     },
 
     validateForm() {
-      const u = this.user
       let valid = true
       this.error = {}
 
       // Personal info
-      if (!u.gender) {
+      if (!this.user.gender) {
         this.error.gender = 'Bitte Anrede auswählen.'
         valid = false
       }
-      if (!u.first_name || u.first_name.length < 2) {
+      if (!this.user.first_name || this.user.first_name.length < 2) {
         this.error.first_name = 'Vorname muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
-      if (!u.last_name || u.last_name.length < 2) {
+      if (!this.user.last_name || this.user.last_name.length < 2) {
         this.error.last_name = 'Nachname muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
-      if (!emailRegex.test(u.email)) {
+      if (!emailRegex.test(this.user.email)) {
         this.error.email = 'Ungültige E-Mail-Adresse.'
         valid = false
       }
-      if (u.password.length < 6) {
+      if (this.user.password.length < 6) {
         this.error.password = 'Passwort muss mindestens 6 Zeichen enthalten.'
         valid = false
       }
 
       // Address
-      if (!u.address || u.address.trim().length < 3) {
+      if (!this.user.address || this.user.address.trim().length < 3) {
         this.error.address = 'Adresse muss mindestens 3 Zeichen enthalten.'
         valid = false
-      } else if (!/^[A-Za-zÄÖÜäöüß\s\-.]+\s+\d+[A-Za-z]?$/.test(u.address)) {
+      } else if (!/^[A-Za-zÄÖÜäöüß\s\-.]+\s+\d+[A-Za-z]?$/.test(this.user.address)) {
         this.error.address = 'Adresse muss Straße und Hausnummer enthalten (z.B. Musterstraße 12).'
         valid = false
       }
 
-      if (u.postal_code && !/^\d{5}$/.test(u.postal_code)) {
+      if (this.user.postal_code && !/^\d{5}$/.test(this.user.postal_code)) {
         this.error.postal_code = 'Postleitzahl muss 5 Ziffern enthalten.'
         valid = false
       }
-      if (u.city && u.city.length < 2) {
+      if (this.user.city && this.user.city.length < 2) {
         this.error.city = 'Stadt muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
-      if (!u.state) {
+      if (!this.user.state) {
         this.error.state = 'Bitte Bundesland auswählen.'
         valid = false
       }
 
       // Company
-      if (!u.company_name || u.company_name.length < 3) {
+      if (!this.user.company_name || this.user.company_name.length < 3) {
         this.error.company_name = 'Firmenname muss mindestens 3 Zeichen enthalten.'
         valid = false
       }
-      if (!u.company_details || !u.company_details.value) {
+      if (!this.user.company_details || !this.user.company_details.value) {
         this.error.company_details = 'Bitte Unternehmensform auswählen.'
+        valid = false
+      }
+      if (!this.selectedImage) {
+        this.error.selectedImage = 'Bitte Unternehmenlogo auswählen.'
         valid = false
       }
 
       // Contact person
-      const cp = u.contact_person
+      const cp = this.user.contact_person
       if (!cp.gender) {
         this.error['contact_person.gender'] = 'Bitte Anrede auswählen.'
         valid = false
@@ -667,8 +671,8 @@ export default {
       }
 
       // Tax info - ✅ DÜZELTME
-      if (u.tax_number && u.tax_number.trim() !== '') {
-        const cleanTaxNumber = u.tax_number.replace(/[\s\/\-]/g, '')
+      if (this.user.tax_number && this.user.tax_number.trim() !== '') {
+        const cleanTaxNumber = this.user.tax_number.replace(/[\s\/\-]/g, '')
         if (!/^\d+$/.test(cleanTaxNumber)) {
           this.error.tax_number = 'Steuernummer darf nur Zahlen enthalten.'
           valid = false
@@ -678,8 +682,8 @@ export default {
         }
       }
 
-      if (u.vat_id && u.vat_id.trim() !== '') {
-        const cleanVatId = u.vat_id.replace(/\s/g, '').toUpperCase()
+      if (this.user.vat_id && this.user.vat_id.trim() !== '') {
+        const cleanVatId = this.user.vat_id.replace(/\s/g, '').toUpperCase()
         if (!/^DE\d{9}$/.test(cleanVatId)) {
           this.error.vat_id = 'USt-IdNr. muss mit "DE" beginnen und 9 Ziffern enthalten.'
           valid = false
@@ -687,8 +691,8 @@ export default {
       }
 
       // Bank info
-      if (u.iban && u.iban.trim() !== '') {
-        const cleanIban = u.iban.replace(/\s/g, '')
+      if (this.user.iban && this.user.iban.trim() !== '') {
+        const cleanIban = this.user.iban.replace(/\s/g, '')
         if (!/^DE\d{20}$/.test(cleanIban)) {
           this.error.iban = 'Ungültige deutsche IBAN (Format: DE + 20 Ziffern).'
           valid = false
