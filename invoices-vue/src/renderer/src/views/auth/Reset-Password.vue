@@ -1,8 +1,8 @@
 <template>
   <div class="setup-page">
-     <div class="logo-section">
-        <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
-      </div>
+    <div class="logo-section">
+      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
+    </div>
     <div class="form-card">
       <div class="form-header">
         <h2 class="setup-title">Passwort zurücksetzen</h2>
@@ -47,11 +47,11 @@
         <div v-if="error.credential" class="error">{{ error.credential }}</div>
 
         <button class="btn btn-primary btn-setup right mt-20" type="submit">Zurücksetzen</button>
+        <h2>{{ error.success }}</h2>
       </form>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -93,7 +93,7 @@ export default {
         valid = false
       }
 
-      if (rd.password && rd.passwordConfirmation && rd.password !== this.passwordConfirmation) {
+      if (rd.password && rd.passwordConfirmation && rd.password !== rd.passwordConfirmation) {
         this.error.confirm = 'Passwords do not match!'
         valid = false
       }
@@ -101,7 +101,7 @@ export default {
     },
 
     async reset() {
-      this.trimFormFields(this.user)
+      this.trimFormFields(this.reset_data)
       if (!this.validateForm()) return
 
       try {
@@ -112,16 +112,16 @@ export default {
         const res = await window.api.resetPassword(data)
 
         if (!res.success) {
-          this.message.credential = res.error
+          this.error.credential = res.error
           return
         }
 
-        this.message.success = 'Password reset successfully!'
-        this.token = ''
-        this.password = ''
-        this.passwordConfirmation = ''
+        this.error.success = 'Password reset successfully!'
+        this.reset_data.token = ''
+        this.reset_data.password = ''
+        this.reset_data.passwordConfirmation = ''
       } catch (err) {
-        this.message.credential = err.message || 'Server error'
+        this.error.credential = err.message || 'Server error'
       }
     }
   }

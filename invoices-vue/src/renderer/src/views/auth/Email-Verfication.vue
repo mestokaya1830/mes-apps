@@ -2,7 +2,7 @@
   <div>
     <div class="login-container">
       <div class="logo-section">
-        <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
+        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
 
       <form class="login-form" @submit.prevent="sendEmail">
@@ -23,9 +23,11 @@
           </div>
           <p v-if="success" class="success">{{ success }}</p>
         </div>
+        <div class="btn-container">
+          <button class="btn btn-primary mt-20" type="submit">E-Mail senden</button>
+        </div>
       </form>
 
-      <button class="btn btn-primary btn-setup right mt-20" type="submit">E-Mail senden</button>
     </div>
   </div>
 </template>
@@ -46,6 +48,7 @@ export default {
     },
 
     async sendEmail() {
+      console.log('hello')
       this.success = ''
       this.error = ''
       if (!this.email.trim()) {

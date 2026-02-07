@@ -2,10 +2,35 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import db from '../db/sqliteConn.js'
-import nodeMailer from 'nodemailer'
+import nodemailer from 'nodemailer'
 import fs from 'fs'
+import Cryptr from 'cryptr'
+import 'dotenv/config'
+import db from '../db/sqliteConn.js'
 
+const cryptr = new Cryptr('security')
+
+//elastic
+// const transporter = nodeMailer.createTransport({
+//   host: 'smtp.elasticemail.com',
+//   port: 2525,
+//   secure: false,
+//   auth: {
+//     user: 'no-reply@yourdomain.com',
+//     pass: process.env.ELASTIC_SMTP_KEY
+//   }
+// })
+
+//gmail
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
+  auth: {
+    user: 'mesto1830@gmail.com',
+    pass: 'ycla bewp jcax ginn' //google gmail unique password
+  }
+})
 let win = null
 function createWindow() {
   win = new BrowserWindow({
@@ -228,72 +253,53 @@ ipcMain.handle('reset-password', async (event, payload) => {
   }
 })
 
-ipcMain.handle('email-verfication', async (event, payload) => {
-  const { email } = payload
-  const expiresAt = new Date(Date.now() + 60000 * 1)
-  const token = Math.random().toString(36).substring(2, 50)
+ipcMain.handle('email-verification', async (event, { email }) => {
   try {
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email)
-    if (user) {
-      db.prepare('INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)').run(
-        token,
-        user.id,
-        expiresAt.toISOString()
-      )
-      return { success: true, message: 'Email sent and token insert' }
-    } else {
-      return { success: false, message: 'No user found with that email' }
-    }
-  } catch (err) {
-    console.error('DB error:', err.message)
-    return { success: false, message: 'DB insert failed' }
-  }
+    // Token
+    const token = Math.floor(10000000 + Math.random() * 90000000).toString()
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 minuts
 
-  // const { email } = data
-  // const token = Math.random().toString(36).substring(2, 50)
-  // const expiresAt = new Date(Date.now() + 60000 * 15) // 15 minutes
-  // //email host settings
-  // const transporter = nodeMailer.createTransport({
-  //   host: 'smtp.gmail.com',
-  //   port: 465,
-  //   auth: {
-  //     user: 'mesto1830@gmail.com',
-  //     pass: 'taao aisb gkkc evwx'
-  //   }
-  // })
-  // //email options
-  // const mailoption = {
-  //   from: 'mesto1830@gmail.com',
-  //   to: email,
-  //   subject: 'Password Reset Request',
-  //   text: 'To reset password please click link below...',
-  //   html: `
-  //   <h2>To reset password please use this token'</h2>
-  //   <h1>${token}</h1>
-  //   `
-  // }
-  // transporter.sendMail(mailoption, (err, info) => {
-  //   if (err) {
-  //     console.error('Email error:', err.message)
-  //     return { success: false, message: err.message }
-  //   } else {
-  //     console.log('Email sent:', info.response, token)
-  //     try {
-  //       const row = db
-  //         .prepare('INSERT INTO tokens (token, user_id, expires_at) VALUES (?,?,?)')
-  //         .run(token, 1, expiresAt)
-  //       if (!row) {
-  //         console.warn('No user found with that email')
-  //         return { success: false, message: 'No user found with that email' }
-  //       } else {
-  //         return { success: true, message: 'Email sent and token updated' }
-  //       }
-  //     } catch {
-  //       console.error('DB error:', err.message)
-  //       return { success: false, message: err.message }
-  //     }
-  //   }
-  // })
+    // save to db
+    db.prepare(
+      `
+      INSERT INTO tokens
+      (user_id, token, expires_at)
+      VALUES (1, ?, ?)
+    `
+    ).run(token, expiresAt.toISOString())
+
+    // send email by elastic
+    // await transporter.sendMail({
+    //   from: 'YourApp <no-reply@senindomainin.com>', // elastic domain
+    //   to: email, // user email
+    //   subject: 'Verify your email',
+    //   html: `
+    //     <h2>Email Verification</h2>
+    //     <p>Click the link below to verify your email:</p>
+    //     <h1>Verify Email</h1>
+    //     <h2>${token}</h2>
+    //     <p>This link expires in 15 minutes.</p>
+    //   `
+    // })
+
+    //send email by gmail
+    await transporter.sendMail({
+      from: 'mesto1830@gmail.com>',
+      to: email,
+      subject: 'Verify your email',
+      html: `
+      <h2>Email Verification</h2>
+      <h1>Verify Email</h1>
+      <h1>${token}</h1>
+      <p>This token expires in 15 minutes.</p>
+    `
+    })
+
+    return { success: true }
+  } catch (err) {
+    console.error('Verification email error:', err)
+    return { success: false, message: err.message }
+  }
 })
 
 ipcMain.handle('get-user', async () => {

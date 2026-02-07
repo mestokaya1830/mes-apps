@@ -1,6 +1,7 @@
 //get all tables--------------------------------------------------------------
 try {
-  db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
+ const rows =  db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
+ console.log(rows)
 } catch (err) {
   console.error(err.message)
 }

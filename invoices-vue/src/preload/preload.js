@@ -11,7 +11,7 @@ contextBridge.exposeInMainWorld('api', {
   //login and user
   login: async (data) => ipcRenderer.invoke('login', data),
   resetPassword: async (data) => ipcRenderer.invoke('reset-password', data),
-  emailVerfication: async (data) => ipcRenderer.invoke('email-verfication', data),
+  emailVerfication: async (data) => ipcRenderer.invoke('email-verification', data),
   getUser: async (data) => ipcRenderer.invoke('get-user', data),
   updateUser: async (data) => ipcRenderer.invoke('update-user', data),
 

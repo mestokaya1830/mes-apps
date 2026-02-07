@@ -17,8 +17,22 @@ process.on('exit', () => db.close())
 
 export default db
 
+try {
+  const rows = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
+  console.log(rows)
+} catch (err) {
+  console.error(err.message)
+}
+
+try {
+  const rows = db.prepare(`Delete from tokens`).run()
+  console.log(rows)
+} catch (err) {
+  console.error(err.message)
+}
+
 // try {
-//   const result = db.prepare(`PRAGMA table_info(invoices);`).all()
+//   const result = db.prepare(`PRAGMA table_info(tokens);`).all()
 //   const fields = result.map((r) => r.name)
 //   console.log(fields)
 // } catch (err) {
@@ -26,7 +40,7 @@ export default db
 // }
 
 // try {
-//   db.prepare(`Alter table users DROP COLUMN  invoice_approved;`).run()
+//   db.prepare(`Alter table tokens DROP COLUMN  user_id;`).run()
 // } catch (error) {
 //   console.error(error)
 // }
@@ -48,15 +62,11 @@ export default db
 //   console.log(error)
 // }
 
-
-
 // try {
 //   db.prepare('drop table users').run()
 // } catch (error) {
 //   console.log(error)
 // }
-
-
 
 // db.exec(`CREATE TABLE IF NOT EXISTS users (
 //   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -91,8 +101,7 @@ export default db
 //   bic TEXT DEFAULT NULL,
 //   iban TEXT DEFAULT NULL,
 //   bank_account_holder TEXT DEFAULT NULL,
-  
+
 //   created_at DATETIME DEFAULT (datetime('now')),
 //   updated_at DATETIME DEFAULT (datetime('now'))
 // );`)
-
