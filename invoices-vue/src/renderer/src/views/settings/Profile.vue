@@ -119,7 +119,13 @@
           </div>
           <div class="form-group">
             <label class="form-field">Logo-Vorschau <i class="bi bi-pencil icons"></i></label>
-            <img :src="`uploads/user/${user.logo}`" class="logo-preview" alt="Company Logo" />
+            <img
+              v-if="!selectedImage"
+              :src="`uploads/user/${user.logo}`"
+              class="logo-preview"
+              alt="Company Logo"
+            />
+            <img v-else :src="`${selectedImage}`" class="logo-preview" alt="Company Logo" />
           </div>
         </div>
       </section>
@@ -277,7 +283,6 @@
         </button>
       </div>
     </form>
-
     <!-- Messages -->
     <p v-if="isLoading" class="status-message loading">Profil wird geladen...</p>
     <p v-if="showSuccess" class="status-message success">
@@ -380,36 +385,20 @@ export default {
         this.user.logo = file.name
       }
       reader.readAsDataURL(file)
-      // const file = event.target.files[0]
-      // if (file) {
-      //   const reader = new FileReader()
-      //   reader.onload = (e) => {
-      //     this.selectedImage = e.target.result
-      //   }
-      //   reader.readAsDataURL(file)
-
-      //   //binary for db storage
-      //   const binaryReader = new FileReader()
-      //   binaryReader.onload = () => {
-      //     this.binaryImage = new Uint8Array(binaryReader.result) // ArrayBuffer → Uint8Array
-      //   }
-      //   this.user.image_type = file.type
-      //   binaryReader.readAsArrayBuffer(file)
-    }
-  },
-
-  // Update profile
-  async updateUser() {
-    if (this.user) {
-      if (!this.user.logo) return (this.errorMessage = 'Logo is required')
-      const data = {
-        image_file: this.selectedImage,
-        user: JSON.parse(JSON.stringify(this.user))
-      }
-      const result = await window.api.updateUser(data)
-      if (result.success) {
-        this.errorMessage = ''
-        this.$router.push('/login')
+    },
+    // Update profile
+    async updateUser() {
+      console.log(this.user)
+      if (this.user) {
+        const data = {
+          image_file: this.selectedImage,
+          user: JSON.parse(JSON.stringify(this.user))
+        }
+        const result = await window.api.updateUser(data)
+        if (result.success) {
+          this.errorMessage = ''
+          this.$router.push('/login')
+        }
       }
     }
   }

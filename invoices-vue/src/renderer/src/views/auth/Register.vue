@@ -576,24 +576,6 @@ export default {
         this.user.logo = file.name
       }
       reader.readAsDataURL(file)
-      // const file = event.target.files[0]
-      // if (!file) return
-
-      // this.user.image_type = file.type
-
-      // // Preview
-      // const previewReader = new FileReader()
-      // previewReader.onload = () => {
-      //   this.selectedImage = previewReader.result
-      // }
-      // previewReader.readAsDataURL(file)
-
-      // // Binary
-      // const binaryReader = new FileReader()
-      // binaryReader.onload = () => {
-      //   this.binaryImage = new Uint8Array(binaryReader.result)
-      // }
-      // binaryReader.readAsArrayBuffer(file)
     },
 
     validateForm() {

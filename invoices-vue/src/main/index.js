@@ -129,7 +129,6 @@ ipcMain.handle('register', async (event, payload) => {
           court_location,
 
           logo,
-          image_type,
 
           bank_name,
           bic,
@@ -162,7 +161,6 @@ ipcMain.handle('register', async (event, payload) => {
       user.court_location,
 
       user.logo,
-      user.image_type,
 
       user.bank_name,
       user.bic,
@@ -181,6 +179,7 @@ ipcMain.handle('register', async (event, payload) => {
       user.logo
     ) // inner app uploads folder
     await fs.promises.writeFile(savePath, buffer)
+    return { success: true }
   } catch (error) {
     console.log(error)
   }
@@ -316,8 +315,7 @@ ipcMain.handle('update-user', async (event, payload) => {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const user = payload
-    console.log(user)
+    const { user, image_file } = payload
     db.prepare('DELETE FROM users WHERE id != 1').run()
     console.log(user)
     const rows = db
@@ -345,7 +343,6 @@ ipcMain.handle('update-user', async (event, payload) => {
           court_registration = ?,
           court_location = ?,
           logo = ?,
-          image_type = ?,
           bank_name = ?,
           bic = ?,
           iban = ?,
@@ -374,7 +371,6 @@ ipcMain.handle('update-user', async (event, payload) => {
         user.court_registration,
         user.court_location,
         user.logo,
-        user.image_type,
         user.bank_name,
         user.bic,
         user.iban,
@@ -382,6 +378,19 @@ ipcMain.handle('update-user', async (event, payload) => {
       )
 
     if (rows.changes > 0) {
+      if (image_file !== null) {
+        const buffer = Buffer.from(image_file.split(',')[1], 'base64')
+        const savePath = path.join(
+          app.getAppPath(),
+          'src',
+          'renderer',
+          'public',
+          'uploads',
+          'user',
+          user.logo
+        ) // inner app uploads folder
+        await fs.promises.writeFile(savePath, buffer)
+      }
       return { success: true, message: 'Profil wurde erfolgreich aktualisiert' }
     } else {
       return { success: false, message: 'Profil konnte nicht aktualisiert werden' }
