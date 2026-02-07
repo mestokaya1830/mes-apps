@@ -2,7 +2,7 @@
   <div class="setup-container">
     <!-- Logo ve Başlık -->
     <div class="logo-section">
-      <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
+      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
     </div>
 
     <h1 class="setup-title">Willkommen beim Setup von Mes App</h1>

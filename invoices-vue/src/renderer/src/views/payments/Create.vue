@@ -351,7 +351,6 @@ export default {
       if (!this.checkPaymentDate()) return
       if (!this.checkPaymentAmount()) return
       if (this.setPaymentStatus()) return
-      this.payment.image_file = this.selectedImage
       await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
       this.$router.push('/payments/preview')
     }

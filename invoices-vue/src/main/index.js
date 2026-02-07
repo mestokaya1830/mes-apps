@@ -98,13 +98,12 @@ ipcMain.handle('register', async (event, payload) => {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const { image, data } = payload
-    const companyDetailsJSON = JSON.stringify(data.company_details || {})
-    const contactPersonJSON = JSON.stringify(data.contact_person || {})
+    const { user, image_file } = payload
+    const companyDetailsJSON = JSON.stringify(user.company_details || {})
+    const contactPersonJSON = JSON.stringify(user.contact_person || {})
 
-    const user = db
-      .prepare(
-        `INSERT INTO users (
+    db.prepare(
+      `INSERT INTO users (
           gender,
           first_name,
           last_name,
@@ -137,41 +136,51 @@ ipcMain.handle('register', async (event, payload) => {
           iban,
           bank_account_holder
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-      )
-      .run(
-        data.gender,
-        data.first_name,
-        data.last_name,
-        data.password,
-        data.email,
-        data.phone,
-        data.address,
-        data.postal_code,
-        data.city,
-        data.state,
-        data.country,
-        data.website,
+    ).run(
+      user.gender,
+      user.first_name,
+      user.last_name,
+      user.password,
+      user.email,
+      user.phone,
+      user.address,
+      user.postal_code,
+      user.city,
+      user.state,
+      user.country,
+      user.website,
 
-        data.company_name,
-        companyDetailsJSON,
-        data.company_signature,
-        contactPersonJSON,
+      user.company_name,
+      companyDetailsJSON,
+      user.company_signature,
+      contactPersonJSON,
 
-        data.tax_number,
-        data.tax_office,
-        data.vat_id,
-        data.court_registration,
-        data.court_location,
+      user.tax_number,
+      user.tax_office,
+      user.vat_id,
+      user.court_registration,
+      user.court_location,
 
-        Buffer.from(image),
-        data.image_type,
+      user.logo,
+      user.image_type,
 
-        data.bank_name,
-        data.bic,
-        data.iban,
-        data.bank_account_holder
-      )
-    return { success: true, user: user }
+      user.bank_name,
+      user.bic,
+      user.iban,
+      user.bank_account_holder
+    )
+
+    const buffer = Buffer.from(image_file.split(',')[1], 'base64')
+    const savePath = path.join(
+      app.getAppPath(),
+      'src',
+      'renderer',
+      'public',
+      'uploads',
+      'user',
+      user.logo
+    ) // inner app uploads folder
+    await fs.promises.writeFile(savePath, buffer)
   } catch (error) {
     console.log(error)
   }
@@ -307,9 +316,11 @@ ipcMain.handle('update-user', async (event, payload) => {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const { image, user } = payload
+    const user = payload
+    console.log(user)
     db.prepare('DELETE FROM users WHERE id != 1').run()
-    const info = db
+    console.log(user)
+    const rows = db
       .prepare(
         `UPDATE users SET
           gender = ?,
@@ -338,9 +349,7 @@ ipcMain.handle('update-user', async (event, payload) => {
           bank_name = ?,
           bic = ?,
           iban = ?,
-          bank_account_holder = ?,
-          invoice_approved = ?
-        WHERE id = 1`
+          bank_account_holder = ? WHERE id = 1`
       )
       .run(
         user.gender,
@@ -364,16 +373,15 @@ ipcMain.handle('update-user', async (event, payload) => {
         user.vat_id,
         user.court_registration,
         user.court_location,
-        Buffer.from(image),
+        user.logo,
         user.image_type,
         user.bank_name,
         user.bic,
         user.iban,
-        user.bank_account_holder,
-        user.invoice_approved
+        user.bank_account_holder
       )
 
-    if (info.changes > 0) {
+    if (rows.changes > 0) {
       return { success: true, message: 'Profil wurde erfolgreich aktualisiert' }
     } else {
       return { success: false, message: 'Profil konnte nicht aktualisiert werden' }
@@ -1293,7 +1301,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
   if (!payload) return { success: false, message: 'No data provided' }
 
   try {
-    const data = payload
+    const payment = payload
 
     const info = db
       .prepare(
@@ -1319,7 +1327,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
           cancellation_reason,
 
           notes,
-          file_name,
+          logo,
 
           invoice
         ) VALUES (
@@ -1328,37 +1336,37 @@ ipcMain.handle('add-payment', async (event, payload) => {
       `
       )
       .run(
-        data.is_active ? 1 : 0,
-        data.date,
+        payment.is_active ? 1 : 0,
+        payment.date,
 
-        data.invoice_id,
-        data.customer_id,
+        payment.invoice_id,
+        payment.customer_id,
 
-        data.payment_amount,
-        data.payment_method,
-        data.payment_reference ?? '',
+        payment.payment_amount,
+        payment.payment_method,
+        payment.payment_reference ?? '',
 
-        data.counterparty_name ?? '',
-        data.counterparty_iban ?? '',
-        data.counterparty_bic ?? '',
-        data.counterparty_bank ?? '',
+        payment.counterparty_name ?? '',
+        payment.counterparty_iban ?? '',
+        payment.counterparty_bic ?? '',
+        payment.counterparty_bank ?? '',
 
-        data.cancelled_at ?? '',
-        data.cancelled_by ?? '',
-        data.cancellation_reason ?? '',
+        payment.cancelled_at ?? '',
+        payment.cancelled_by ?? '',
+        payment.cancellation_reason ?? '',
 
-        data.notes ?? '',
-        data.file_name ?? '',
+        payment.notes ?? '',
+        payment.logo ?? '',
 
-        JSON.stringify(data.invoice)
+        JSON.stringify(payment.invoice)
       )
     db.prepare(
       'UPDATE invoices SET payment_status = ?, paid_at = ?, early_paid_discount_applied = ? WHERE id = ?'
     ).run(
-      data.invoice.payment_status,
-      data.date,
-      data.invoice.early_paid_discount_applied ? 1 : 0,
-      data.invoice.id
+      payment.invoice.payment_status,
+      payment.date,
+      payment.invoice.early_paid_discount_applied ? 1 : 0,
+      payment.invoice.id
     )
 
     return { success: true, lastInsertId: info.lastInsertRowid }
@@ -1627,7 +1635,6 @@ ipcMain.handle('search-payments', async (event, term) => {
     return { success: false, message: err.message }
   }
 })
-
 
 //reminders
 ipcMain.handle('add-reminder', async (event, payload) => {
@@ -2302,7 +2309,6 @@ ipcMain.handle('search-offers', async (event, term) => {
     return { success: false, message: err.message }
   }
 })
-
 
 // /orders
 ipcMain.handle('add-order', async (event, payload) => {

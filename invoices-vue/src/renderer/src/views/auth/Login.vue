@@ -5,7 +5,7 @@
     </div>
     <div v-else class="login-container">
       <div class="logo-section">
-        <img src="/logo.png" class="app-logo" alt="Mes App Logo" />
+        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
 
       <form class="login-form" @submit.prevent="loginUser">

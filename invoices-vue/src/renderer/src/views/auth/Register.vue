@@ -260,12 +260,11 @@
 
       <!-- Tax Information -->
       <section class="sections">
-        <h3 class="section-title">
-          <i class="bi bi-calculator"></i> Steuerinformationen
-        </h3>
+        <h3 class="section-title"><i class="bi bi-calculator"></i> Steuerinformationen</h3>
         <div class="alert-info">
           <i class="bi bi-info-circle"></i>
-          <strong>Wichtig:</strong> Für rechtsgültige Rechnungen ist mindestens eine Steuernummer oder USt-IdNr. erforderlich.
+          <strong>Wichtig:</strong> Für rechtsgültige Rechnungen ist mindestens eine Steuernummer
+          oder USt-IdNr. erforderlich.
         </div>
         <div class="form-row">
           <label class="form-group">
@@ -469,7 +468,8 @@ export default {
         bank_name: '',
         bic: '',
         iban: '',
-        bank_account_holder: ''
+        bank_account_holder: '',
+        logo: ''
       },
       binaryImage: null,
       selectedImage: null,
@@ -515,8 +515,8 @@ export default {
         gender: 'Herr',
         first_name: 'Maximilian',
         last_name: 'Schmidt',
-        password: 'Test123!',
-        email: 'max.schmidt@beispiel-gmbh.de',
+        password: '121212',
+        email: 'admin@admin.de',
         phone: '+49 30 12345678',
         address: 'Friedrichstraße 123',
         postal_code: '10117',
@@ -543,7 +543,8 @@ export default {
         bank_name: 'Deutsche Bank',
         bic: 'DEUTDEBBXXX',
         iban: 'DE89370400440532013000',
-        bank_account_holder: 'Beispiel Consulting GmbH'
+        bank_account_holder: 'Beispiel Consulting GmbH',
+        logo: ''
       }
     },
 
@@ -569,22 +570,30 @@ export default {
     async setLogo(event) {
       const file = event.target.files[0]
       if (!file) return
-
-      this.user.image_type = file.type
-
-      // Preview
-      const previewReader = new FileReader()
-      previewReader.onload = () => {
-        this.selectedImage = previewReader.result
+      const reader = new FileReader()
+      reader.onload = () => {
+        this.selectedImage = reader.result
+        this.user.logo = file.name
       }
-      previewReader.readAsDataURL(file)
+      reader.readAsDataURL(file)
+      // const file = event.target.files[0]
+      // if (!file) return
 
-      // Binary
-      const binaryReader = new FileReader()
-      binaryReader.onload = () => {
-        this.binaryImage = new Uint8Array(binaryReader.result)
-      }
-      binaryReader.readAsArrayBuffer(file)
+      // this.user.image_type = file.type
+
+      // // Preview
+      // const previewReader = new FileReader()
+      // previewReader.onload = () => {
+      //   this.selectedImage = previewReader.result
+      // }
+      // previewReader.readAsDataURL(file)
+
+      // // Binary
+      // const binaryReader = new FileReader()
+      // binaryReader.onload = () => {
+      //   this.binaryImage = new Uint8Array(binaryReader.result)
+      // }
+      // binaryReader.readAsArrayBuffer(file)
     },
 
     validateForm() {
@@ -716,11 +725,11 @@ export default {
       this.showError = false
 
       try {
+        console.log(this.user)
         const data = {
-          image: this.binaryImage ? Array.from(this.binaryImage) : [],
-          data: JSON.parse(JSON.stringify(this.user))
+          image_file: this.selectedImage,
+          user: JSON.parse(JSON.stringify(this.user))
         }
-
         const result = await window.api.register(data)
 
         if (!result.success) {
@@ -744,4 +753,3 @@ export default {
   }
 }
 </script>
-

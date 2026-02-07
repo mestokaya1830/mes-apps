@@ -2,11 +2,11 @@
   <div class="main-container">
     <div class="main-header">
       <label>{{ title }}</label>
-       <router-link to="/" class="btn btn-secondary">
+      <router-link to="/" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
-    <form @submit.prevent="updateUser">
+    <form v-if="user" @submit.prevent="updateUser">
       <!-- Personal Information -->
       <section class="sections">
         <h3 class="sections-title"><i class="bi bi-person icons"></i>Persönlichedaten</h3>
@@ -77,7 +77,8 @@
           </div>
           <div class="form-group">
             <label class="form-label"
-              ><i class="bi bi-flag me-1"></i>Bundesland (Deutschland) <i class="bi bi-pencil icons"></i
+              ><i class="bi bi-flag me-1"></i>Bundesland (Deutschland)
+              <i class="bi bi-pencil icons"></i
             ></label>
             <select v-model="user.state" class="inputs">
               <option disabled value="">Bitte wählen</option>
@@ -98,7 +99,9 @@
             <label for="" class="inputs">{{ user.company_name }}</label>
           </div>
           <div class="form-group">
-            <label class="form-field"><i class="bi bi-flag icons"></i>Unternehmensform (Deutschland)</label>
+            <label class="form-field"
+              ><i class="bi bi-flag icons"></i>Unternehmensform (Deutschland)</label
+            >
             <select v-model="user.company_details" class="inputs">
               <option disabled value="">-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
@@ -116,7 +119,7 @@
           </div>
           <div class="form-group">
             <label class="form-field">Logo-Vorschau <i class="bi bi-pencil icons"></i></label>
-            <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
+            <img :src="`uploads/user/${user.logo}`" class="logo-preview" alt="Company Logo" />
           </div>
         </div>
       </section>
@@ -278,9 +281,12 @@
     <!-- Messages -->
     <p v-if="isLoading" class="status-message loading">Profil wird geladen...</p>
     <p v-if="showSuccess" class="status-message success">
-      <i class="bi bi-check-circle-fill text-success icons"></i> Profil wurde erfolgreich aktualisiert!
+      <i class="bi bi-check-circle-fill text-success icons"></i> Profil wurde erfolgreich
+      aktualisiert!
     </p>
-    <p v-if="errorMessage" class="status-message error"><i class="bi bi-x-circle-fill text-danger icons"></i> Fehler: {{ errorMessage }}</p>
+    <p v-if="errorMessage" class="status-message error">
+      <i class="bi bi-x-circle-fill text-danger icons"></i> Fehler: {{ errorMessage }}
+    </p>
   </div>
 </template>
 
@@ -294,9 +300,8 @@ export default {
       isSubmitting: false,
       showSuccess: false,
       errorMessage: '',
-      user: {},
+      user: null,
       selectedImage: null,
-      binaryImage: null,
 
       //data
       german_states: [
@@ -360,8 +365,6 @@ export default {
           contact_person: JSON.parse(result.rows.contact_person),
           company_details: JSON.parse(result.rows.company_details)
         }
-        console.log(result)
-        this.selectedImage = `data:${result.rows.image_type};base64,${result.rows.logo}`
         this.isLoading = false
       } catch (error) {
         console.error(error)
@@ -370,35 +373,43 @@ export default {
 
     setLogo(event) {
       const file = event.target.files[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          this.selectedImage = e.target.result
-        }
-        reader.readAsDataURL(file)
-
-        //binary for db storage
-        const binaryReader = new FileReader()
-        binaryReader.onload = () => {
-          this.binaryImage = new Uint8Array(binaryReader.result) // ArrayBuffer → Uint8Array
-        }
-        this.user.image_type = file.type
-        binaryReader.readAsArrayBuffer(file)
+      if (!file) return
+      const reader = new FileReader()
+      reader.onload = () => {
+        this.selectedImage = reader.result
+        this.user.logo = file.name
       }
-    },
+      reader.readAsDataURL(file)
+      // const file = event.target.files[0]
+      // if (file) {
+      //   const reader = new FileReader()
+      //   reader.onload = (e) => {
+      //     this.selectedImage = e.target.result
+      //   }
+      //   reader.readAsDataURL(file)
 
-    // Update profile
-    async updateUser() {
-      if (this.user) {
-        if (!this.binaryImage) return (this.errorMessage = 'Logo is required')
-        const result = await window.api.updateUser(
-          Array.from(this.binaryImage),
-          JSON.parse(JSON.stringify(this.user))
-        )
-        if (result.success) {
-          this.errorMessage = ''
-          this.$router.push('/login')
-        }
+      //   //binary for db storage
+      //   const binaryReader = new FileReader()
+      //   binaryReader.onload = () => {
+      //     this.binaryImage = new Uint8Array(binaryReader.result) // ArrayBuffer → Uint8Array
+      //   }
+      //   this.user.image_type = file.type
+      //   binaryReader.readAsArrayBuffer(file)
+    }
+  },
+
+  // Update profile
+  async updateUser() {
+    if (this.user) {
+      if (!this.user.logo) return (this.errorMessage = 'Logo is required')
+      const data = {
+        image_file: this.selectedImage,
+        user: JSON.parse(JSON.stringify(this.user))
+      }
+      const result = await window.api.updateUser(data)
+      if (result.success) {
+        this.errorMessage = ''
+        this.$router.push('/login')
       }
     }
   }
