@@ -809,6 +809,7 @@ textarea.error {
 /* Form section */
 .sections {
   width: 100%;
+  height: auto;
   background: var(--bg-white);
   border: 1px solid var(--bg-gray-100);
   border-radius: var(--border-radius-lg);

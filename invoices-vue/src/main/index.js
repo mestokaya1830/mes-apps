@@ -503,7 +503,7 @@ ipcMain.handle('get-customer-by-id', async (event, payload) => {
   }
   try {
     const rows = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
-    const last_id = db.prepare(`SELECT MAX(id) AS last_id FROM ${table_name}`).get().last_id
+    const last_id = db.prepare(`SELECT MAX(id) AS last_id FROM ${table_name}`).get().last_id || 0
     return { success: true, rows, last_id }
   } catch (err) {
     console.error('DB error:', err.message)

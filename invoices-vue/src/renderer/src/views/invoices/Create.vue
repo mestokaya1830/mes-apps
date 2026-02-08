@@ -367,6 +367,7 @@
         ></textarea>
       </div>
     </div>
+    
     <div class="form-actions btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
