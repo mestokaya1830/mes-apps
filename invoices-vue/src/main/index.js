@@ -496,14 +496,15 @@ ipcMain.handle('get-customers', async () => {
   }
 })
 
-ipcMain.handle('get-customer-by-id', async (event, id) => {
-  console.log('get-customer-by-id called with id:', id)
+ipcMain.handle('get-customer-by-id', async (event, payload) => {
+  const { id, table_name } = payload
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
   try {
     const rows = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
-    return { success: true, rows }
+    const last_id = db.prepare(`SELECT MAX(id) AS last_id FROM ${table_name}`).get().last_id
+    return { success: true, rows, last_id }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }

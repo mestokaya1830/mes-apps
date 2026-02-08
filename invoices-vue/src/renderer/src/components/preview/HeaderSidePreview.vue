@@ -10,7 +10,7 @@
         <div class="company-details">Email: {{ headerData.email }}</div>
         <div class="company-details">Web: {{ headerData.website }}</div>
       </div>
-      <img :src="selected_image" alt="Logo" class="preview-logo" />
+      <img :src="`/uploads/user/${auth.logo}`" alt="Logo" class="user-logo" />
     </div>
   </div>
 </template>
@@ -36,7 +36,6 @@ export default {
   mounted() {
     if (this.auth) {
       this.headerData = this.auth
-      this.selected_image = `data:${this.auth.image_type};base64,${this.auth.logo}`
     }
   }
 }
@@ -89,13 +88,11 @@ export default {
   color: var(--darkColor);
   line-height: 1.6;
 }
-
-.preview-logo {
+.user-logo {
   max-width: 160px;
   max-height: 100px;
   width: auto;
   height: auto;
   display: block;
 }
-
 </style>

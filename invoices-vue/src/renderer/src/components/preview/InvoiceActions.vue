@@ -1,11 +1,6 @@
 <template>
   <div>
     <div class="sections container-2">
-      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
-        <i class="bi bi-save form-title icons"></i>
-        <span>Speichern</span>
-      </button>
-
       <button class="btn btn-secondary" @click="sendEmail">
         <i class="bi bi-envelope form-title icons"></i>
         <span>E-Mail</span>
@@ -19,6 +14,11 @@
       <button class="btn btn-print" @click="printDocument">
         <i class="bi bi-printer form-title icons"></i>
         <span>Drucken</span>
+      </button>
+
+      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
+        <i class="bi bi-save form-title icons"></i>
+        <span>Speichern</span>
       </button>
 
       <router-link :to="`/invoices/edit/${tableData.id}`">

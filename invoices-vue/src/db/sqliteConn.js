@@ -24,13 +24,6 @@ try {
   console.error(err.message)
 }
 
-try {
-  const rows = db.prepare(`Delete from tokens`).run()
-  console.log(rows)
-} catch (err) {
-  console.error(err.message)
-}
-
 // try {
 //   const result = db.prepare(`PRAGMA table_info(tokens);`).all()
 //   const fields = result.map((r) => r.name)

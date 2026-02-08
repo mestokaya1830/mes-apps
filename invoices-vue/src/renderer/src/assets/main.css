@@ -428,19 +428,14 @@ select {
 }
 
 .date::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }
 
-.date::-webkit-inner-spin-button,
-.date::-webkit-clear-button {
-  display: none;
-  -webkit-appearance: none;
-}
-
-.date::-moz-calendar-picker-indicator {
-  display: none;
-}
 
 .date-wrapper {
   position: relative;
@@ -1894,10 +1889,6 @@ textarea.error {
 
 .ustva-refund td {
   color: var(--status-paid-bg);
-}
-
-.logo-preview {
-  max-width: 140px;
 }
 
 .mt-20 {

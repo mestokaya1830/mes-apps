@@ -6,122 +6,125 @@
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
-
-    <!-- Base -->
-    <div class="sections">
-      <div class="sections-title">
-        <i class="bi bi-person-badge me-2 form-title icons"></i>Kundeninformationen
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Unternehmenstyp <span class="stars">*</span></label>
-          <select v-model="customer.company_type" class="inputs">
-            <option disabled value="">Wähle Unternehmenstyp</option>
-            <option v-for="item in companies" :key="item.value" :value="item.value">
-              {{ item.label }}
-            </option>
-          </select>
-          <div v-if="error.company_type" class="error">{{ error.company_type }}</div>
+    <form @submit.prevent="saveCustomer">
+      <!-- Base -->
+      <div class="sections">
+        <div class="sections-title">
+          <i class="bi bi-person-badge me-2 form-title icons"></i>Kundeninformationen
         </div>
 
-        <div class="form-group">
-          <label class="form-label">Firmenname <span class="stars">*</span></label>
-          <input v-model="customer.company_name" type="text" class="inputs" />
-          <div v-if="error.company_name" class="error">{{ error.company_name }}</div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Vorname <span class="stars">*</span></label>
-          <input v-model="customer.first_name" type="text" class="inputs" />
-          <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Nachname <span class="stars">*</span></label>
-          <input v-model="customer.last_name" type="text" class="inputs" />
-          <div v-if="error.last_name" class="error">{{ error.last_name }}</div>
-        </div>
-      </div>
-      <div class="form-row">
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">E-Mail <span class="stars">*</span></label>
-            <input v-model="customer.email" type="email" class="inputs" />
-            <div v-if="error.email" class="error">{{ error.email }}</div>
+            <label class="form-label">Unternehmenstyp <span class="stars">*</span></label>
+            <select v-model="customer.company_type" class="inputs">
+              <option disabled value="">Wähle Unternehmenstyp</option>
+              <option v-for="item in companies" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+            <div v-if="error.company_type" class="error">{{ error.company_type }}</div>
           </div>
-  
+
           <div class="form-group">
-            <label class="form-label">Telefonnummer <span class="stars">*</span></label>
-            <input v-model="customer.phone" type="text" class="inputs" />
-            <div v-if="error.phone" class="error">{{ error.phone }}</div>
+            <label class="form-label">Firmenname <span class="stars">*</span></label>
+            <input v-model="customer.company_name" type="text" class="inputs" />
+            <div v-if="error.company_name" class="error">{{ error.company_name }}</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Vorname <span class="stars">*</span></label>
+            <input v-model="customer.first_name" type="text" class="inputs" />
+            <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nachname <span class="stars">*</span></label>
+            <input v-model="customer.last_name" type="text" class="inputs" />
+            <div v-if="error.last_name" class="error">{{ error.last_name }}</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">E-Mail <span class="stars">*</span></label>
+              <input v-model="customer.email" type="email" class="inputs" />
+              <div v-if="error.email" class="error">{{ error.email }}</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Telefonnummer <span class="stars">*</span></label>
+              <input v-model="customer.phone" type="text" class="inputs" />
+              <div v-if="error.phone" class="error">{{ error.phone }}</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Adressdaten -->
-    <div class="sections">
-      <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i>Adressdaten</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Adresse <span class="stars">*</span></label>
-          <input v-model="customer.address" type="text" class="inputs" />
-          <div v-if="error.address" class="error">{{ error.address }}</div>
-        </div>
+      <!-- Adressdaten -->
+      <div class="sections">
+        <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i>Adressdaten</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Adresse <span class="stars">*</span></label>
+            <input v-model="customer.address" type="text" class="inputs" />
+            <div v-if="error.address" class="error">{{ error.address }}</div>
+          </div>
 
-        <div class="form-group">
-          <label class="form-label">Postleitzahl <span class="stars">*</span></label>
-          <input v-model="customer.postal_code" type="text" class="inputs" />
-          <div v-if="error.postal_code" class="error">{{ error.postal_code }}</div>
+          <div class="form-group">
+            <label class="form-label">Postleitzahl <span class="stars">*</span></label>
+            <input v-model="customer.postal_code" type="text" class="inputs" />
+            <div v-if="error.postal_code" class="error">{{ error.postal_code }}</div>
+          </div>
         </div>
-      </div>
-      <div class="form-row">
-         <div class="form-group">
-          <label class="form-label">Stadt <span class="stars">*</span></label>
-          <input v-model="customer.city" type="text" class="inputs" />
-          <div v-if="error.city" class="error">{{ error.city }}</div>
-        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Stadt <span class="stars">*</span></label>
+            <input v-model="customer.city" type="text" class="inputs" />
+            <div v-if="error.city" class="error">{{ error.city }}</div>
+          </div>
 
-        <div class="form-group">
-          <label class="form-label">Land <span class="stars">*</span></label>
-          <input v-model="customer.country" type="text" class="inputs" />
-          <div v-if="error.country" class="error">{{ error.country }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Steuerinformationen -->
-    <div class="sections">
-      <div class="sections-title"><i class="bi bi-briefcase form-title icons"></i>Steuerinformationen</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Steuernummer <span class="stars">*</span></label>
-          <input v-model="customer.tax_number" type="text" class="inputs" />
-          <div v-if="error.tax_number" class="error">{{ error.tax_number }}</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">USt-IdNr. <span class="stars">*</span></label>
-          <input v-model="customer.vat_id" type="text" class="inputs" />
-          <div v-if="error.vat_id" class="error">{{ error.vat_id }}</div>
+          <div class="form-group">
+            <label class="form-label">Land <span class="stars">*</span></label>
+            <input v-model="customer.country" type="text" class="inputs" />
+            <div v-if="error.country" class="error">{{ error.country }}</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Submit -->
-    <div class="sections btn-container">
-      <div v-if="showSuccess" class="">
-        <p class="font-medium text-success">
-          <i class="bi bi-check-circle icons"></i>Kunde erfolgreich gespeichert!
-        </p>
+      <!-- Steuerinformationen -->
+      <div class="sections">
+        <div class="sections-title">
+          <i class="bi bi-briefcase form-title icons"></i>Steuerinformationen
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Steuernummer <span class="stars">*</span></label>
+            <input v-model="customer.tax_number" type="text" class="inputs" />
+            <div v-if="error.tax_number" class="error">{{ error.tax_number }}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">USt-IdNr. <span class="stars">*</span></label>
+            <input v-model="customer.vat_id" type="text" class="inputs" />
+            <div v-if="error.vat_id" class="error">{{ error.vat_id }}</div>
+          </div>
+        </div>
       </div>
 
-      <button type="button" class="btn btn-primary">
-        <i class="bi bi-save icons"></i>Speichern
-      </button>
-    </div>
+      <!-- Submit -->
+      <div class="sections btn-container">
+        <div v-if="showSuccess" class="">
+          <p class="font-medium text-success">
+            <i class="bi bi-check-circle icons"></i>Kunde erfolgreich gespeichert!
+          </p>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-save icons"></i>Speichern
+        </button>
+      </div>
+    </form>
   </div>
 </template>
 

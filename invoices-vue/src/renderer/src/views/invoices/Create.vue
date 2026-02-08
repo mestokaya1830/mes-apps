@@ -2,16 +2,14 @@
   <div v-if="invoice" class="main-container">
     <div class="main-header">
       <label>{{ title }}</label>
-       <router-link to="/invoices" class="btn btn-secondary">
+      <router-link to="/invoices" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
     </div>
 
     <!-- Grunddaten -->
     <div class="sections">
-      <div class="sections-title">
-        <i class="bi bi-pin-angle-fill form-title"></i>Grunddaten
-      </div>
+      <div class="sections-title"><i class="bi bi-pin-angle-fill form-title"></i>Grunddaten</div>
       <div class="form-group">
         <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
         <input v-model="invoice.id" type="text" class="inputs" readonly />
@@ -53,16 +51,14 @@
 
     <!-- Kundendaten -->
     <div v-if="invoice.customer" class="sections">
-      <div class="sections-title">
-        <i class="bi bi-person-fill icons"></i>Kundendaten
-      </div>
+      <div class="sections-title"><i class="bi bi-person-fill icons"></i>Kundendaten</div>
       <div v-if="invoice.customer?.id" class="customer-details">
         <div class="form-group">
           <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
           <input v-model="invoice.customer.id" type="text" class="inputs" readonly />
         </div>
         <div class="form-group">
-          <label class="form-label">Firmname <span class="stars">*</span></label>
+          <label class="form-label">Firmenname <span class="stars">*</span></label>
           <input v-model="invoice.customer.company_name" type="text" class="inputs" readonly />
         </div>
         <div class="form-row">
@@ -94,9 +90,7 @@
 
     <!-- Steueroptionen -->
     <div class="sections">
-      <div class="sections-title">
-        <i class="bi bi-briefcase-fill icons"></i>Steueroptionen
-      </div>
+      <div class="sections-title"><i class="bi bi-briefcase-fill icons"></i>Steueroptionen</div>
       <div class="sections">
         <div class="switch-container">
           <label for="is_small_company" class="switch">
@@ -104,7 +98,7 @@
               id="is_small_company"
               v-model="invoice.is_small_company"
               type="checkbox"
-              @change="checkTaxOptions('is_small_company')"
+              @change="checkVatOptions('is_small_company')"
             />
             <span class="slider round"></span>
           </label>
@@ -119,7 +113,7 @@
               id="is_reverse_charge"
               v-model="invoice.is_reverse_charge"
               type="checkbox"
-              @change="checkTaxOptions('is_reverse_charge')"
+              @change="checkVatOptions('is_reverse_charge')"
             />
             <span class="slider round"></span>
           </label>
@@ -136,7 +130,7 @@
               id="is_eu_delivery"
               v-model="invoice.is_eu_delivery"
               type="checkbox"
-              @change="checkTaxOptions('is_eu_delivery')"
+              @change="checkVatOptions('is_eu_delivery')"
             />
             <span class="slider round"></span>
           </label>
@@ -152,9 +146,7 @@
 
     <!-- Währung -->
     <div class="sections">
-      <div class="sections-title">
-        <i class="bi bi-currency-exchange icons"></i>Währung
-      </div>
+      <div class="sections-title"><i class="bi bi-currency-exchange icons"></i>Währung</div>
       <div class="form-group">
         <select v-model="invoice.currency" class="inputs">
           <option value="EUR.de-DE">EUR</option>
@@ -174,24 +166,148 @@
     <!-- Positionen -->
     <div class="sections">
       <div class="sections-title">
-        <i class="bi bi-box-seam icons"></i>Positionen <span class="stars">*</span>
+        <i class="bi bi-box-seam icons"></i>
+        Positionen <span class="stars">*</span>
       </div>
+
       <div v-if="invoice.positions && invoice.positions.length === 0">
         Keine Positionen vorhanden
       </div>
+      <div v-if="error.positions" class="error">
+        {{ error.positions }}
+      </div>
       <div v-else class="positions-editor">
         <div v-for="(item, index) in invoice.positions" :key="index" class="position-item">
-          <div class="positions-header">
-            <span class="position-number">Position {{ index + 1 }}</span>
-            <button class="delete-position-btn">
-              <i class="bi bi-trash3 me-1"></i>Löschen
-            </button>
+          <div class="sections">
+            <div class="positions-header">
+              <span class="position-number"> Position {{ index + 1 }} </span>
+              <button type="button" class="delete-position-btn" @click="deletePosition(index)">
+                <i class="bi bi-trash3 me-1"></i>Löschen
+              </button>
+            </div>
+            <!-- FORM FIELDS -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Leistungsdatum Von <span class="stars">*</span></label>
+                <div class="date-wrapper">
+                  <i class="bi bi-calendar3 calendar-icon"></i>
+                  <input
+                    :ref="`service_period_start_${index}`"
+                    v-model="item.service_period_start"
+                    type="date"
+                    class="inputs date"
+                    required
+                    @input="error.service_period_start = ''"
+                  />
+                </div>
+                <div v-if="error.service_period_start" class="error">
+                  {{ error.service_period_start }}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Leistungsdatum Bis <span class="stars">*</span></label>
+                <div class="date-wrapper">
+                  <i class="bi bi-calendar3 calendar-icon"></i>
+                  <input
+                    :ref="`service_period_end_${index}`"
+                    v-model="item.service_period_end"
+                    type="date"
+                    class="inputs date"
+                    required
+                    @input="error.service_period_end = ''"
+                  />
+                </div>
+                <div v-if="error.service_period_end" class="error">
+                  {{ error.service_period_end }}
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Bezeichnung</label>
+                <input
+                  v-model="item.title"
+                  type="text"
+                  class="inputs"
+                  placeholder="Produkt / Leistung"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Beschreibung</label>
+                <input
+                  v-model="item.description"
+                  type="text"
+                  class="inputs"
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Menge</label>
+                <input v-model.number="item.quantity" type="number" class="inputs" min="1" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Einzelpreis</label>
+                <input v-model.number="item.price" type="number" class="inputs" step="0.01" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">MwSt %</label>
+                <select v-model.number="item.vat" class="inputs">
+                  <option :value="0">0 %</option>
+                  <option :value="7">7 %</option>
+                  <option :value="19">19 %</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Gesamt</label>
+                <input type="text" class="inputs" :value="positionTotal(item)" disabled />
+              </div>
+            </div>
           </div>
-          <!-- form fields hier bleiben unverändert -->
+        </div>
+        <div v-if="invoice.positions.length > 0" class="sections">
+          <div class="container-2">
+            <div class="summary-item">
+              <label class="form-label">Nettobetrag</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.net_total, invoice.currency) }}
+              </div>
+            </div>
+            <div class="summary-item">
+              <label class="form-label">MwSt Gesamt</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.vat_total, invoice.currency) }}
+              </div>
+            </div>
+            <div class="summary-item">
+              <label class="form-label">Bruttobetrag</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.gross_total, invoice.currency) }}
+              </div>
+            </div>
+            <div class="summary-item">
+              <label class="form-label">Rabatt</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.early_payment_discount, invoice.currency) }}
+              </div>
+            </div>
+            <div class="summary-item">
+              <label class="form-label">Endbetrag</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.gross_total_after_discount, invoice.currency) }}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <button class="add-position-btn">
-        <i class="bi bi-plus-circle me-1 icons"></i>Position hinzufügen
+      <button type="button" class="add-position-btn" @click="addPosition">
+        <i class="bi bi-plus-circle icons"></i>
+        Position hinzufügen
       </button>
     </div>
 
@@ -250,30 +366,6 @@
           placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
         ></textarea>
       </div>
-
-      <div v-if="invoice.positions" class="container-2">
-        <div class="summary-item">
-          <label class="form-label">Net Total (€)</label>
-          <div class="form-result-item">{{ summary.net_total }}</div>
-        </div>
-        <div class="summary-item">
-          <label class="form-label">Vat Total (€)</label>
-          <div class="form-result-item">{{ summary.vat_total }}</div>
-        </div>
-        <div class="summary-item">
-          <label class="form-label">Brutto Total (€)</label>
-          <div class="form-result-item">{{ summary.gross_total }}</div>
-        </div>
-        <div class="summary-item">
-          <label class="form-label">Rabatt (€)</label>
-          <div class="form-result-item">{{ summary.early_payment_discount }}</div>
-        </div>
-        <div class="summary-item">
-          <label class="form-label">Endpreis (€)</label>
-          <div class="form-result-item">{{ summary.gross_total_after_discount }}</div>
-        </div>
-      </div>
-
     </div>
     <div class="form-actions btn-container">
       <button class="btn btn-preview" @click="submitStore">
@@ -283,12 +375,11 @@
   </div>
 </template>
 
-
 <script>
 import store from '../../store/store.js'
 export default {
   name: 'Createinvoice',
-  inject: ['formatInvoiceId', 'checkPositionsDates', 'checkServiceDates'],
+  inject: ['formatInvoiceId', 'checkPositionsDates', 'checkServiceDates', 'formatCurrency'],
   data() {
     return {
       title: 'Rechnung erstellen',
@@ -368,19 +459,93 @@ export default {
         }
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
-        this.invoice.id = result.data.last_id + 1
-        this.invoice.customer = result.data.customer
+        this.invoice.id = result.last_id + 1
+        this.invoice.customer = result.rows
       } catch (error) {
         console.error(error)
       }
     },
-    checkTaxOptions(current) {
-      if (!current) return
-      for (const item in this.invoice[current]) {
-        if (item !== current) {
-          this.invoice[item] = 0
+    // validateDates method
+    validateDates() {
+      let isValid = true
+
+      // Check (service date)
+      if (!this.invoice.service_date) {
+        this.error.service_date = 'Leistungsdatum ist erforderlich'
+        this.$refs.service_date.focus()
+        isValid = false
+        return isValid
+      }
+
+      // Check (invoice date)
+      if (!this.invoice.date) {
+        this.error.date = 'Rechnungsdatum ist erforderlich'
+        this.$refs.date.focus()
+        isValid = false
+        return isValid
+      }
+
+      // NEW: Invoice date cannot be before service date
+      if (new Date(this.invoice.date) < new Date(this.invoice.service_date)) {
+        this.error.date = 'Rechnungsdatum kann nicht vor dem Leistungsdatum liegen'
+        this.$refs.date.focus()
+        isValid = false
+        return isValid
+      }
+
+      // Check dates in positions
+      for (let i = 0; i < this.invoice.positions.length; i++) {
+        const position = this.invoice.positions[i]
+
+        // Check service period start date
+        if (!position.service_period_start) {
+          this.error.service_period_start = 'Leistungsdatum Von ist erforderlich'
+          if (this.$refs[`service_period_start_${i}`]) {
+            this.$refs[`service_period_start_${i}`][0].focus()
+          }
+          isValid = false
+          return isValid
+        }
+
+        // Check service period end date
+        if (!position.service_period_end) {
+          this.error.service_period_end = 'Leistungsdatum Bis ist erforderlich'
+          if (this.$refs[`service_period_end_${i}`]) {
+            this.$refs[`service_period_end_${i}`][0].focus()
+          }
+          isValid = false
+          return isValid
+        }
+
+        // NEW: End date cannot be before start date
+        if (new Date(position.service_period_end) < new Date(position.service_period_start)) {
+          this.error.service_period_end = 'Enddatum kann nicht vor dem Startdatum liegen'
+          if (this.$refs[`service_period_end_${i}`]) {
+            this.$refs[`service_period_end_${i}`][0].focus()
+          }
+          isValid = false
+          return isValid
         }
       }
+
+      return isValid
+    },
+    positionTotal(item) {
+      const net = item.quantity * item.price
+      return (net * (1 + item.vat / 100)).toFixed(2)
+    },
+    checkVatOptions(current) {
+      if (!this.invoice[current]) {
+        this.calculateVatAsCompanyType()
+        return
+      }
+      const vatOptions = ['is_small_company', 'is_reverse_charge', 'is_eu_delivery']
+      vatOptions.forEach((option) => {
+        if (option !== current) {
+          this.invoice[option] = false
+        }
+      })
+
       this.calculateVatAsCompanyType()
     },
     calculateVatAsCompanyType() {
@@ -449,12 +614,10 @@ export default {
     },
     setNewDates() {
       if (!this.invoice.date) return
-      //due date
       const date = new Date(this.invoice.date)
       date.setDate(date.getDate() + this.invoice.payment_terms)
       this.invoice.due_date = date.toISOString().split('T')[0]
 
-      //early payment date
       if (!this.invoice.early_payment_offer) return
       const early_payment_deadline = new Date(this.invoice.date)
       early_payment_deadline.setDate(
@@ -467,16 +630,21 @@ export default {
         this.error.positions = 'Es muss mindestens eine Position hinzugefügt werden.'
         return
       }
+      if (!this.validateDates()) {
+        return
+      }
+
       this.setNewDates()
+      console.log(this.invoice)
       this.invoice.customer_id = this.invoice.customer.id
       this.invoice.net_total = this.summary.net_total
       this.invoice.vat_total = this.summary.vat_total
       this.invoice.gross_total = this.summary.gross_total
       this.invoice.early_payment_discount = this.summary.early_payment_discount
       this.invoice.gross_total_after_discount = this.summary.gross_total_after_discount
+
       if (
         !this.checkServiceDates(
-          //comt from app provider
           this.invoice.service_date,
           this.invoice.date,
           'service_date',
