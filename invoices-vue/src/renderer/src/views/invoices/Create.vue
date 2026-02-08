@@ -164,7 +164,7 @@
     </div>
 
     <!-- Positionen -->
-    <div class="sections">
+    <div class="sections positions-error">
       <div class="sections-title">
         <i class="bi bi-box-seam icons"></i>
         Positionen <span class="stars">*</span>
@@ -367,8 +367,8 @@
         ></textarea>
       </div>
     </div>
-    
-    <div class="form-actions btn-container">
+
+    <div class="btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>
@@ -466,7 +466,6 @@ export default {
         console.error(error)
       }
     },
-    // validateDates method
     validateDates() {
       let isValid = true
 
@@ -546,7 +545,6 @@ export default {
           this.invoice[option] = false
         }
       })
-
       this.calculateVatAsCompanyType()
     },
     calculateVatAsCompanyType() {
@@ -627,16 +625,22 @@ export default {
       this.invoice.early_payment_deadline = early_payment_deadline.toISOString().split('T')[0]
     },
     async submitStore() {
-      if (this.invoice.positions.length === 0) {
-        this.error.positions = 'Es muss mindestens eine Position hinzugefügt werden.'
-        return
-      }
       if (!this.validateDates()) {
         return
       }
 
+      // Check positions exist
+      if (!this.invoice.positions || this.invoice.positions.length === 0) {
+        this.error.positions = 'Mindestens eine Position ist erforderlich'
+        this.$nextTick(() => {
+          const positionsError = document.querySelector('.positions-error')
+          if (positionsError) {
+            positionsError.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        })
+        return false
+      }
       this.setNewDates()
-      console.log(this.invoice)
       this.invoice.customer_id = this.invoice.customer.id
       this.invoice.net_total = this.summary.net_total
       this.invoice.vat_total = this.summary.vat_total
@@ -653,7 +657,7 @@ export default {
         )
       )
         return
-      if (!this.checkPositionsDates(this.invoice.positions)) return
+      // if (!this.checkPositionsDates(this.invoice.positions)) return
 
       await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
       this.$router.push('/invoices/preview')

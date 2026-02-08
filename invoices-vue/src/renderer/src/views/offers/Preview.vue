@@ -74,11 +74,6 @@
         </div>
       </div>
 
-      <!-- Document Title -->
-      <div class="document-title">
-        <h1>{{ offerPreview.title || 'Angebot' }}</h1>
-      </div>
-
       <!-- Subject / Description -->
       <div v-if="offerPreview.subject" class="form-group">
         <label class="form-label">Betreff / Beschreibung</label>

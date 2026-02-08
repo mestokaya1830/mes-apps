@@ -1,11 +1,6 @@
 <template lang="">
   <div>
     <div class="action-btn">
-      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveOrder">
-        <i class="bi bi-floppy-fill icons"></i>
-        <span>Speichern</span>
-      </button>
-
       <button class="btn btn-secondary" @click="sendEmail">
         <i class="bi bi-envelope-fill icons"></i>
         <span>E-Mail</span>
@@ -28,6 +23,11 @@
         </router-link>
       </button>
 
+       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveOrder">
+        <i class="bi bi-floppy-fill icons"></i>
+        <span>Speichern</span>
+      </button>
+      
       <button
         v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
         class="btn btn-cancel"

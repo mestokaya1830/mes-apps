@@ -24,10 +24,19 @@
           />
         </div>
         <div class="form-group">
-          <label class="form-label">Datum <span class="stars">*</span></label>
+          <label class="form-label">Auftragsdatum <span class="stars">*</span></label>
           <div class="date-wrapper">
             <i class="bi bi-calendar3 calendar-icon"></i>
-            <input v-model="order.date" type="date" class="inputs date" />
+            <input
+              v-model="order.date"
+              type="date"
+              class="inputs date"
+              ref="date"
+              @input="error.date = ''"
+            />
+          </div>
+          <div v-if="error.date" class="error">
+            {{ error.date }}
           </div>
         </div>
       </div>
@@ -36,14 +45,32 @@
           <label class="form-label">Leistungszeitraum Von <span class="stars">*</span></label>
           <div class="date-wrapper">
             <i class="bi bi-calendar3 calendar-icon"></i>
-            <input v-model="order.service_period_starst" type="date" class="inputs date" />
+            <input
+              v-model="order.service_period_start"
+              ref="service_period_start"
+              type="date"
+              class="inputs date"
+              @input="error.service_period_start = ''"
+            />
+          </div>
+          <div v-if="error.service_period_start" class="error">
+            {{ error.service_period_start }}
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Leistungszeitraum Bis <span class="stars">*</span></label>
           <div class="date-wrapper">
             <i class="bi bi-calendar3 calendar-icon"></i>
-            <input v-model="order.service_period_end" type="date" class="inputs date" />
+            <input
+              v-model="order.service_period_end"
+              type="date"
+              ref="service_period_end"
+              class="inputs date"
+              @input="error.service_period_end = ''"
+            />
+          </div>
+          <div v-if="error.service_period_end" class="error">
+            {{ error.service_period_end }}
           </div>
         </div>
       </div>
@@ -213,87 +240,149 @@
       </div>
     </div>
 
-    <!-- Positionen -->
-    <div class="sections">
+    <!-- Positions -->
+    <div class="sections positions-error">
       <div class="sections-title">
-        <i class="bi bi-box-seam form-title icons"></i>Positionen <span class="stars">*</span>
+        <i class="bi bi-box-seam icons"></i>
+        Positionen <span class="stars">*</span>
       </div>
+
       <div v-if="order.positions && order.positions.length === 0">Keine Positionen vorhanden</div>
+      <div v-if="error.positions" class="error">
+        {{ error.positions }}
+      </div>
       <div v-else class="positions-editor">
-        <div v-for="(pos, index) in order.positions" :key="index" class="position-item">
-          <div class="positions-header">
-            <span class="position-number">Position {{ index + 1 }}</span>
-            <button class="delete-position-btn" @click="deletePosition(index)">
-              <i class="bi bi-trash3 me-1"></i>Löschen
-            </button>
+        <div v-for="(item, index) in order.positions" :key="index" class="position-item">
+          <div class="sections">
+            <div class="positions-header">
+              <span class="position-number"> Position {{ index + 1 }} </span>
+              <button type="button" class="delete-position-btn" @click="deletePosition(index)">
+                <i class="bi bi-trash3 me-1"></i>Löschen
+              </button>
+            </div>
+            <!-- FORM FIELDS -->
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Leistungsdatum Von <span class="stars">*</span></label>
+                <div class="date-wrapper">
+                  <i class="bi bi-calendar3 calendar-icon"></i>
+                  <input
+                    :ref="`service_period_start_${index}`"
+                    v-model="item.service_period_start"
+                    type="date"
+                    class="inputs date"
+                    required
+                    @input="delete error[`service_period_start_${index}`]"
+                  />
+                </div>
+                <div v-if="error[`service_period_start_${index}`]" class="error">
+                  {{ error[`service_period_start_${index}`] }}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Leistungsdatum Bis <span class="stars">*</span></label>
+                <div class="date-wrapper">
+                  <i class="bi bi-calendar3 calendar-icon"></i>
+                  <input
+                    :ref="`service_period_end_${index}`"
+                    v-model="item.service_period_end"
+                    type="date"
+                    class="inputs date"
+                    required
+                    @input="delete error[`service_period_end_${index}`]"
+                  />
+                </div>
+                <div v-if="error[`service_period_end_${index}`]" class="error">
+                  {{ error[`service_period_end_${index}`] }}
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Bezeichnung</label>
+                <input
+                  v-model="item.title"
+                  type="text"
+                  class="inputs"
+                  placeholder="Produkt / Leistung"
+                />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Beschreibung</label>
+                <input
+                  v-model="item.description"
+                  type="text"
+                  class="inputs"
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Menge</label>
+                <input v-model.number="item.quantity" type="number" class="inputs" min="1" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Einzelpreis</label>
+                <input v-model.number="item.price" type="number" class="inputs" step="0.01" />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">MwSt %</label>
+                <select v-model.number="item.vat" class="inputs">
+                  <option :value="0">0 %</option>
+                  <option :value="7">7 %</option>
+                  <option :value="19">19 %</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Gesamt</label>
+                <input type="text" class="inputs" :value="positionTotal(item)" disabled />
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Bezeichnung <span class="stars">*</span></label>
-            <input v-model="pos.title" type="text" class="inputs" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Beschreibung</label>
-            <input v-model="pos.description" type="text" class="inputs" />
-          </div>
-          <div class="form-row form-row-4">
-            <div class="form-group">
-              <label class="form-label">Einheit <span class="stars">*</span></label>
-              <select v-model="pos.unit" class="inputs">
-                <option value="Stk">Stk</option>
-                <option value="Std">Std</option>
-                <option value="Tag">Tag</option>
-                <option value="Monat">Monat</option>
-                <option value="Pauschal">Pauschal</option>
-                <option value="m²">m²</option>
-                <option value="kg">kg</option>
-              </select>
+        </div>
+        <div v-if="order.positions.length > 0" class="sections">
+          <div class="container-2">
+            <div class="summary-item">
+              <label class="form-label">Nettobetrag</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.net_total, order.currency) }}
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Menge <span class="stars">*</span></label>
-              <input
-                v-model.number="pos.quantity"
-                type="number"
-                class="inputs"
-                @input="getUnitTotal(pos.quantity, pos.price, index)"
-              />
+            <div class="summary-item">
+              <label class="form-label">MwSt Gesamt</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.vat_total, order.currency) }}
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Preis (€) <span class="stars">*</span></label>
-              <input
-                v-model.number="pos.price"
-                type="number"
-                class="inputs"
-                step="0.01"
-                @input="getUnitTotal(pos.quantity, pos.price, index)"
-              />
+            <div class="summary-item">
+              <label class="form-label">Bruttobetrag</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.gross_total, order.currency) }}
+              </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">MwSt. (%) <span class="stars">*</span></label>
-              <select
-                v-model.number="pos.vat"
-                class="inputs"
-                @change="getUnitTotal(pos.quantity, pos.price, index)"
-              >
-                <option :value="0">0</option>
-                <option :value="7">7</option>
-                <option :value="19">19</option>
-              </select>
+            <div class="summary-item">
+              <label class="form-label">Rabatt</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.early_payment_discount, order.currency) }}
+              </div>
             </div>
-          </div>
-          <div class="positions-total">
-            <div class="positions-total-item">
-              <label class="form-label">Vat Unit (€)</label>
-              <div class="form-result-item">{{ pos.vat_unit || '0.00' }}</div>
-            </div>
-            <div class="positions-total-item">
-              <label class="form-label">Unit Total (€)</label>
-              <div class="form-result-item">{{ pos.unit_total || '0.00' }}</div>
+            <div class="summary-item">
+              <label class="form-label">Endbetrag</label>
+              <div class="form-result-item">
+                {{ formatCurrency(summary.gross_total_after_discount, order.currency) }}
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <button class="add-position-btn" @click="addPosition()">
-        <i class="bi bi-plus-circle form-title icons"></i>Position hinzufügen
+      <button type="button" class="add-position-btn" @click="addPosition">
+        <i class="bi bi-plus-circle icons"></i>
+        Position hinzufügen
       </button>
     </div>
 
@@ -321,8 +410,10 @@
     </div>
 
     <!-- Vorschau Button -->
-    <div class="sections container-2">
-      <button class="btn btn-preview"><i class="bi bi-eye me-2 icons"></i>Vorschau anzeigen</button>
+    <div class="btn-container">
+      <button class="btn btn-preview" @click="submitStore">
+        <i class="bi bi-eye icons"></i>Vorschau anzeigen
+      </button>
     </div>
   </div>
 </template>
@@ -332,6 +423,7 @@ import store from '../../store/store.js'
 
 export default {
   name: 'CreateOrder',
+  inject: ['formatCurrency'],
   data() {
     return {
       title: 'Auftrag erstellen',
@@ -343,7 +435,7 @@ export default {
         subject: '',
         date: '',
         validity_date: '',
-        service_period_starst: '',
+        service_period_start: '',
         service_period_end: '',
         status: 'pending',
         status_by: '',
@@ -391,9 +483,9 @@ export default {
         const data = { id: this.$route.query.id, table_name: 'orders' }
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
-        this.order.id = result.data.last_id == 0 ? 1 : result.data.last_id
-        this.order.customer = result.data.customer
-        this.order.customer_id = result.data.customer.id
+        this.order.id = result.last_id == 0 ? 1 : result.last_id
+        this.order.customer = result.rows
+        this.order.customer_id = result.rows.id
       } catch (error) {
         console.error(error)
       }
@@ -406,7 +498,7 @@ export default {
       this.order.positions.push({
         title: 'Neue Position',
         description: '',
-        service_period_starst: '',
+        service_period_start: '',
         service_period_end: '',
         quantity: 1,
         unit: 'Stk',
@@ -415,9 +507,116 @@ export default {
         vat_unit: 0,
         unit_total: 0
       })
+      this.error.positions = ''
     },
     deletePosition(index) {
       if (this.order.positions.length > 0) this.order.positions.splice(index, 1)
+    },
+    validateDates() {
+      // Clear all errors first
+      this.error = {}
+
+      // 1. Check Auftragsdatum (order date) - EN ÖNCELİKLİ
+      if (!this.order.date) {
+        this.error.date = 'Auftragsdatum ist erforderlich'
+        this.$nextTick(() => {
+          const dateInput = this.$refs.date
+          if (dateInput) {
+            dateInput.focus()
+          }
+        })
+        return false
+      }
+
+      // 2. Check service_period_start (Leistungszeitraum Von)
+      if (!this.order.service_period_start) {
+        this.error.service_period_start = 'Leistungszeitraum Von ist erforderlich'
+        this.$nextTick(() => {
+          const startInput = this.$refs.service_period_start
+          if (startInput) {
+            startInput.focus()
+          }
+        })
+        return false
+      }
+
+      // 3. Check service_period_end (Leistungszeitraum Bis)
+      if (!this.order.service_period_end) {
+        this.error.service_period_end = 'Leistungszeitraum Bis ist erforderlich'
+        this.$nextTick(() => {
+          const endInput = this.$refs.service_period_end
+          if (endInput) {
+            endInput.focus()
+          }
+        })
+        return false
+      }
+
+      // 4. Check: service_period_end cannot be before service_period_start
+      if (new Date(this.order.service_period_end) < new Date(this.order.service_period_start)) {
+        this.error.service_period_end =
+          'Leistungszeitraum Bis kann nicht vor Leistungszeitraum Von liegen'
+        this.$nextTick(() => {
+          const endInput = this.$refs.service_period_end
+          if (endInput) {
+            endInput.focus()
+          }
+        })
+        return false
+      }
+
+      // 5. Check positions exist
+      if (!this.order.positions || this.order.positions.length === 0) {
+        this.error.positions = 'Mindestens eine Position ist erforderlich'
+        return false
+      }
+
+      // 6. Check dates in positions
+      for (let i = 0; i < this.order.positions.length; i++) {
+        const position = this.order.positions[i]
+
+        // Check service period start date
+        if (!position.service_period_start) {
+          this.error[`service_period_start_${i}`] = 'Leistungsdatum Von ist erforderlich'
+          this.$nextTick(() => {
+            const refElement = this.$refs[`service_period_start_${i}`]
+            if (refElement && refElement.length > 0) {
+              refElement[0].focus()
+            }
+          })
+          return false
+        }
+
+        // Check service period end date
+        if (!position.service_period_end) {
+          this.error[`service_period_end_${i}`] = 'Leistungsdatum Bis ist erforderlich'
+          this.$nextTick(() => {
+            const refElement = this.$refs[`service_period_end_${i}`]
+            if (refElement && refElement.length > 0) {
+              refElement[0].focus()
+            }
+          })
+          return false
+        }
+
+        // Check: End date cannot be before start date
+        if (new Date(position.service_period_end) < new Date(position.service_period_start)) {
+          this.error[`service_period_end_${i}`] = 'Enddatum kann nicht vor dem Startdatum liegen'
+          this.$nextTick(() => {
+            const refElement = this.$refs[`service_period_end_${i}`]
+            if (refElement && refElement.length > 0) {
+              refElement[0].focus()
+            }
+          })
+          return false
+        }
+      }
+
+      return true
+    },
+    positionTotal(item) {
+      const net = item.quantity * item.price
+      return (net * (1 + item.vat / 100)).toFixed(2)
     },
     getUnitTotal(quantity, price, index) {
       const vat = this.order.positions[index].vat || 0
@@ -442,6 +641,21 @@ export default {
     },
     async submitStore() {
       if (!this.order) return
+      if (!this.validateDates()) return
+      // if (!this.checkPositionsDates(this.order.positions)) return
+
+      // Check positions exist
+      if (!this.order.positions || this.order.positions.length === 0) {
+        this.error.positions = 'Mindestens eine Position ist erforderlich'
+        this.$nextTick(() => {
+          const positionsError = document.querySelector('.positions-error')
+          if (positionsError) {
+            positionsError.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          }
+        })
+        return false
+      }
+
       this.summary()
       await store.setStore('order', JSON.parse(JSON.stringify(this.order)))
       this.$router.push('/orders/preview')

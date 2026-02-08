@@ -168,11 +168,11 @@
     </div>
 
     <InvoiceActions v-if="invoicePreview" :tableData="invoicePreview" :fileName="actionFileName" sourcePage="preview" />
+    
+      <router-link to="/invoices/create" class="back-link">
+        <i class="bi bi-arrow-left icons"></i> Zurück zur Rechnungserstellung
+      </router-link>
   </div>
-
-  <router-link to="/invoices/create" class="back-link d-inline-flex align-items-center">
-    <i class="bi bi-arrow-left icons"></i> Zurück zur Rechnungserstellung
-  </router-link>
 </template>
 
 <script>

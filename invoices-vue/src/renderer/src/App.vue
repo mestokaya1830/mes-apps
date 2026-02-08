@@ -226,7 +226,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow-y: auto;
+  overflow: auto;
 }
 .go-top-button {
   display: flex;
@@ -261,6 +261,7 @@ export default {
   color: white;
   background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+  overflow-x: auto;
 }
 
 .sidebar-header {
