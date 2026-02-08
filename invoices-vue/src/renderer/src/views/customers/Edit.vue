@@ -117,7 +117,11 @@ export default {
   methods: {
     async getCustomer() {
       try {
-        const result = await window.api.getCustomerById(this.$route.params.id)
+        const data = {
+          id: this.$route.params.id,
+          table_name: 'customers'
+        }
+        const result = await window.api.getCustomerById(data)
         if (!result.success) return
         this.customer = result.rows
         console.log(result)

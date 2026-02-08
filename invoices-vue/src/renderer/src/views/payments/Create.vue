@@ -1,7 +1,7 @@
 <template>
   <div v-if="payment" class="main-container">
     <div class="main-header">
-      <label><i class="bi bi-credit-card icons"></i>{{ title }}</label>
+      <label>{{ title }}</label>
       <router-link to="/payments" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>

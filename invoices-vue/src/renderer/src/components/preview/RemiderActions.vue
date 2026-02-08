@@ -1,11 +1,6 @@
 <template lang="">
   <div>
-    <div class="action-btn">
-      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveReminder">
-        <i class="bi bi-floppy-fill icons"></i>
-        <span>Speichern</span>
-      </button>
-
+    <div class="sections btn-container">
       <button class="btn btn-secondary" @click="sendEmail">
         <i class="bi bi-envelope-at-fill icons"></i>
         <span>E-Mail</span>
@@ -35,6 +30,10 @@
           <i class="bi bi-pencil-square icons"></i>
           <span>Bearbeiten</span>
         </router-link>
+      </button>
+      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveReminder">
+        <i class="bi bi-floppy-fill icons"></i>
+        <span>Speichern</span>
       </button>
     </div>
   </div>
