@@ -93,6 +93,25 @@
       </div>
     </div>
 
+     <!-- 6. Rechtliche Hinweise (Almanya) -->
+    <div class="sections">
+      <div class="compliance-notice legal">
+        <i class="bi bi-shield-check"></i>
+        <div>
+          <strong>Rechtliche Hinweise (Deutschland):</strong>
+          <ul>
+            <li>Mahngebühren müssen angemessen sein (üblicherweise 5-10€ für 1. Mahnung)</li>
+            <li>Verzugszinsen: Basiszinssatz + 5% (B2C) oder + 9% (B2B) gem. §§ 288, 247 BGB</li>
+            <li>Bei Einschreiben mit Rückschein wird Zustellung rechtssicher dokumentiert</li>
+            <li>
+              Verjährungsfrist beachten: 3 Jahre ab Ende des Jahres der Fälligkeit (§ 195 BGB)
+            </li>
+            <li>Mahnung muss bestimmt sein und Zahlungsaufforderung enthalten</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
     <!-- Vorschau Button -->
     <div class="sections btn-container">
       <button class="btn btn-preview" @click="submitStore">

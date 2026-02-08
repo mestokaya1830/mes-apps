@@ -10,7 +10,7 @@
     <div>
       <!-- 1. Invoice Information (readonly) -->
       <div class="sections">
-        <div class="sections-title"><i class="bi bi-file-text iocns"></i>Ausgewählte Rechnung</div>
+        <div class="sections-title"><i class="bi bi-file-text icons"></i>Ausgewählte Rechnung</div>
         <div class="customer-details" style="margin-top: 16px">
           <div class="form-row">
             <div class="form-group">
@@ -55,7 +55,7 @@
 
       <!-- 2. Counterparty Information -->
       <div class="sections">
-        <div class="sections-title"><i class="bi bi-bank2 iocns"></i>Gegenpartei Informationen</div>
+        <div class="sections-title"><i class="bi bi-bank2 icons"></i>Gegenpartei Informationen</div>
 
         <IbanComponent
           v-model:localNamePartner="payment.counterparty_name"
@@ -69,7 +69,7 @@
 
       <!-- 3. Currency -->
       <div class="sections">
-        <div class="sections-title"><i class="bi bi-coin iocns"></i>Währung</div>
+        <div class="sections-title"><i class="bi bi-coin icons"></i>Währung</div>
         <div class="form-group">
           <label class="form-label">Währung <span class="star">*</span></label>
           <select v-model="payment.invoice.currency" class="inputs">
@@ -89,17 +89,19 @@
 
       <!-- 4. Payment Details -->
       <div class="sections">
-        <div class="sections-title"><i class="bi bi-cash-stack iocns"></i>Zahlungsdetails</div>
+        <div class="sections-title"><i class="bi bi-cash-stack icons"></i>Zahlungsdetails</div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Zahlungsdatum <span class="star">*</span></label>
-            <input
-              ref="date"
-              v-model="payment.date"
-              type="date"
-              class="inputs date"
-              @change="checkEarlyPayment"
-            />
+            <div class="date-wrapper">
+              <input
+                ref="date"
+                v-model="payment.date"
+                type="date"
+                class="inputs date"
+                @change="checkEarlyPayment"
+              />
+            </div>
             <small class="form-hint">Datum des Zahlungseingangs</small>
           </div>
 
@@ -177,8 +179,22 @@
         </div>
       </div>
 
-      <!-- 5. Preview / Submit -->
-      <button class="preview-btn" @click="submitStore"><i class="bi bi-eye icons"></i>Vorschau anzeigen</button>
+      <!-- GoBD Compliance Hinweis -->
+      <div class="compliance-notice">
+        <i class="bi bi-info-circle-fill"></i>
+        <div>
+          <strong>GoBD-Hinweis:</strong> Alle mit * markierten Felder sind für die ordnungsgemäße
+          Buchführung nach deutschen Steuergesetzen erforderlich. Die Daten werden revisionssicher
+          gespeichert.
+        </div>
+      </div>
+
+      <!-- Vorschau Button -->
+      <div class="btn-container">
+        <button class="btn btn-preview" @click="submitStore">
+          <i class="bi bi-eye icons"></i>Vorschau anzeigen
+        </button>
+      </div>
     </div>
   </div>
 </template>

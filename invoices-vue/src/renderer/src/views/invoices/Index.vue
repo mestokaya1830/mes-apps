@@ -94,9 +94,12 @@
               v-if="item.payment_status === 'paid' && item.is_active === 1"
               class="status-badge paid"
             >
-              <span v-if="item.paid_at && item.paid_at < item.due_date">⏰</span>
+              <i
+                v-if="item.paid_at && item.paid_at < item.due_date"
+                class="bi bi-clock-history"
+              ></i>
               Bezahlt
-              <span v-if="item.early_paid_discount_applied">💰</span>
+              <i v-if="item.early_paid_discount_applied" class="bi bi-currency-euro"></i>
             </div>
 
             <div v-if="item.is_active === 0" class="status-badge canceled">
@@ -117,21 +120,7 @@
 
     <!-- Empty State -->
     <div v-if="!invoices || invoices.length === 0" class="empty-state">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      >
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-        <circle cx="9" cy="7" r="4"></circle>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-      </svg>
+    <i class="bi bi-receipt-cutoff empty-icon"></i>
       <h3>Keine Rechnungen</h3>
       <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </div>

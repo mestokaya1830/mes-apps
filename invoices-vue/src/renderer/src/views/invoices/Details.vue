@@ -11,7 +11,7 @@
 
         <div v-if="invoice" class="recipient">
           <div class="recipient-address">
-            <div class="recipient-title"><i class="bi bi-person-badge me-2"></i>Empfänger</div>
+            <div class="recipient-title"><i class="bi bi-person-badge icons"></i>Empfänger</div>
             <div class="company-name-subtitle">
               {{ invoice.customer.company_name }}
             </div>
@@ -24,7 +24,9 @@
           </div>
 
           <div class="recipient-details">
-            <div class="recipient-title"><i class="bi bi-file-earmark-text me-2"></i>Rechnungsdetails</div>
+            <div class="recipient-title">
+              <i class="bi bi-file-earmark-text icons"></i>Rechnungsdetails
+            </div>
 
             <div class="meta-row">
               <span class="meta-label">Rechnung-Nr.:</span>
@@ -104,41 +106,54 @@
         <div class="summary-section">
           <div class="total-row">
             <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{ formatCurrency(invoice.net_total, invoice.currency) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoice.net_total, invoice.currency)
+            }}</span>
           </div>
 
           <div class="total-row">
             <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{ formatCurrency(invoice.vat_total, invoice.currency) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoice.vat_total, invoice.currency)
+            }}</span>
           </div>
 
           <div class="total-row subtotal">
             <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{ formatCurrency(invoice.gross_total, invoice.currency) }}</span>
+            <span class="total-value">{{
+              formatCurrency(invoice.gross_total, invoice.currency)
+            }}</span>
           </div>
 
           <div class="preview-section">
             <div v-if="invoice.is_small_company" class="tax-note small-company">
-              <i class="bi bi-exclamation-triangle-fill icons"></i> Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
+              <i class="bi bi-exclamation-triangle-fill icons"></i> Gemäß <span>§19 UStG</span> wird
+              keine Umsatzsteuer berechnet.
             </div>
             <div v-else-if="invoice.is_reverse_charge" class="tax-note">
-              <i class="bi bi-info-circle-fill icons"></i> Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span>§13b UStG</span>)
+              <i class="bi bi-info-circle-fill icons"></i> Reverse-Charge-Verfahren –
+              Steuerschuldnerschaft des Leistungsempfängers (<span>§13b UStG</span>)
             </div>
             <div v-else-if="invoice.is_eu_delivery" class="tax-note">
-              <i class="bi bi-globe icons"></i> Innergemeinschaftliche Lieferung – steuerfrei gemäß <span>§4 Nr.1b UStG</span>
+              <i class="bi bi-globe icons"></i> Innergemeinschaftliche Lieferung – steuerfrei gemäß
+              <span>§4 Nr.1b UStG</span>
             </div>
           </div>
         </div>
 
         <div class="payment-terms-box">
-          <div class="payment-terms-title"><i class="bi bi-credit-card-fill me-2"></i>Zahlungsbedingungen</div>
+          <div class="payment-terms-title">
+            <i class="bi bi-credit-card-fill icons"></i>Zahlungsbedingungen
+          </div>
           <div class="payment-terms-content">
             <div v-if="invoice.payment_terms" class="payment-term-item">
-              <strong>Zahlungsziel:</strong> {{ invoice.payment_terms }} Tage (bis {{ formatDate(invoice.due_date) }})
+              <strong>Zahlungsziel:</strong> {{ invoice.payment_terms }} Tage (bis
+              {{ formatDate(invoice.due_date) }})
             </div>
             <div v-if="invoice.early_payment_offer" class="payment-term-item skonto-highlight">
               <strong><i class="bi bi-piggy-bank-fill icons"></i> Skonto:</strong>
-              {{ invoice.early_payment_percentage }}% Skonto bis {{ formatDate(invoice.early_payment_deadline) }}
+              {{ invoice.early_payment_percentage }}% Skonto bis
+              {{ formatDate(invoice.early_payment_deadline) }}
             </div>
           </div>
         </div>
@@ -146,9 +161,10 @@
         <ContactPersonPreview :contactData="auth.contact_person" />
 
         <div class="bank-box">
-          <div class="bank-title"><i class="bi bi-bank2 me-2"></i>Bankverbindung</div>
+          <div class="bank-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
           <div class="bank-info">
-            <span class="bank-label">Bank:</span> <span class="bank-value">{{ auth.bank_name }}</span>
+            <span class="bank-label">Bank:</span>
+            <span class="bank-value">{{ auth.bank_name }}</span>
             <span class="bank-label">IBAN:</span> <span class="bank-value">{{ auth.iban }}</span>
             <span class="bank-label">BIC:</span> <span class="bank-value">{{ auth.bic }}</span>
           </div>
@@ -156,10 +172,15 @@
         <FooterSidePreview />
       </div>
 
-      <InvoiceActions v-if="invoice" :tableData="invoice" :fileName="actionFileName" sourcePage="details" />
+      <InvoiceActions
+        v-if="invoice"
+        :tableData="invoice"
+        :fileName="actionFileName"
+        sourcePage="details"
+      />
 
       <div v-if="payments && payments.length" class="report-table-container mt-4">
-        <h4 class="mb-3"><i class="bi bi-cash-stack me-2"></i>Zahlungshistorie</h4>
+        <h4 class="mb-3"><i class="bi bi-cash-stack icons"></i>Zahlungshistorie</h4>
         <table class="report-table">
           <thead>
             <tr>
@@ -177,7 +198,10 @@
               <td>{{ formatCurrency(item.invoice.gross_total, item.invoice.currency) }}</td>
               <td>{{ formatCurrency(item.payment_amount, item.invoice.currency) }}</td>
               <td>
-                <router-link :to="'/payments/details/' + item.id" class="btn btn-sm btn-outline-primary">
+                <router-link
+                  :to="'/payments/details/' + item.id"
+                  class="btn btn-sm btn-outline-primary"
+                >
                   <i class="bi bi-eye-fill"></i>
                 </router-link>
               </td>
@@ -186,14 +210,14 @@
         </table>
       </div>
 
-      <div class="mt-4">
-        <router-link :to="`/reminders/create/${invoice.id}`" class="btn btn-warning">
+      <div>
+        <router-link :to="`/reminders/create/${invoice.id}`" class="btn btn-reminder">
           <i class="bi bi-bell-fill icons"></i> Mahnung erstellen
         </router-link>
       </div>
 
-      <div v-if="reminders && reminders.length" class="customer-grid mt-4">
-        <h4 class="mb-3"><i class="bi bi-exclamation-octagon-fill me-2 text-danger"></i>Mahnungen</h4>
+      <div v-if="reminders && reminders.length">
+        <h4 class="mb-3"><i class="bi bi-exclamation-octagon-fill btn-reminder"></i>Mahnungen</h4>
         <table class="table-auto w-full border">
           <thead>
             <tr>
@@ -207,7 +231,10 @@
               <td class="payment-row">{{ formatReminderId(item.id) }}</td>
               <td class="payment-row">{{ formatDate(item.date) }}</td>
               <td class="payment-row">
-                <router-link :to="'/reminders/details/' + item.id" class="btn btn-sm btn-outline-secondary">
+                <router-link
+                  :to="'/reminders/details/' + item.id"
+                  class="btn btn-sm btn-outline-secondary"
+                >
                   <i class="bi bi-search icons"></i> Details
                 </router-link>
               </td>
