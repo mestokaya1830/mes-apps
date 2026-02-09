@@ -46,7 +46,16 @@
           <small v-if="error.level" class="error">{{ error.level }}</small>
         </div>
       </div>
-
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Mahngebühr</label>
+          <input v-model="reminder.reminder_fee" type="number" class="inputs" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Verzugszinsen</label>
+          <input v-model="reminder.late_interest" type="number" class="inputs" />
+        </div>
+      </div>
       <div class="form-group">
         <label class="form-label">Zahlungsfrist auswählen <span class="stars">*</span></label>
         <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
@@ -62,17 +71,6 @@
           <option value="nach Vereinbarung">Nach Vereinbarung</option>
         </select>
         <small v-if="error.payment_deadline" class="error">{{ error.payment_deadline }}</small>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Mahngebühr</label>
-          <input v-model="reminder.reminder_fee" type="number" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Verzugszinsen</label>
-          <input v-model="reminder.late_interest" type="number" class="inputs" />
-        </div>
       </div>
     </div>
 
@@ -95,23 +93,18 @@
 
     <div class="sections">
       <div class="compliance-notice legal">
-        <i class="bi bi-shield-check"></i>
-        <div>
-          <strong>Rechtliche Hinweise (Deutschland):</strong>
-          <ul>
-            <li>Mahngebühren müssen angemessen sein (üblicherweise 5-10€ für 1. Mahnung)</li>
-            <li>Verzugszinsen: Basiszinssatz + 5% (B2C) oder + 9% (B2B) gem. §§ 288, 247 BGB</li>
-            <li>Bei Einschreiben mit Rückschein wird Zustellung rechtssicher dokumentiert</li>
-            <li>
-              Verjährungsfrist beachten: 3 Jahre ab Ende des Jahres der Fälligkeit (§ 195 BGB)
-            </li>
-            <li>Mahnung muss bestimmt sein und Zahlungsaufforderung enthalten</li>
-          </ul>
-        </div>
+        <i class="bi bi-shield-check icons"></i><strong>Rechtliche Hinweise (Deutschland):</strong>
+        <ul>
+          <li>Mahngebühren müssen angemessen sein (üblicherweise 5-10€ für 1. Mahnung)</li>
+          <li>Verzugszinsen: Basiszinssatz + 5% (B2C) oder + 9% (B2B) gem. §§ 288, 247 BGB</li>
+          <li>Bei Einschreiben mit Rückschein wird Zustellung rechtssicher dokumentiert</li>
+          <li>Verjährungsfrist beachten: 3 Jahre ab Ende des Jahres der Fälligkeit (§ 195 BGB)</li>
+          <li>Mahnung muss bestimmt sein und Zahlungsaufforderung enthalten</li>
+        </ul>
       </div>
     </div>
 
-    <div class="sections btn-container">
+    <div class="btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>

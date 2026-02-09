@@ -11,22 +11,28 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label for=""><i class="bi bi-calendar-event me-1"></i> Von</label>
-          <input
-            v-model="date_box_start"
-            type="date"
-            class="inputs date"
-            @change="flexDateFilter()"
-          />
+          <label for=""> Von</label>
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input
+              v-model="date_box_start"
+              type="date"
+              class="inputs date"
+              @change="flexDateFilter()"
+            />
+          </div>
         </div>
         <div class="form-group">
-          <label for=""><i class="bi bi-calendar-check me-1"></i> Bis</label>
-          <input
-            v-model="date_box_end"
-            type="date"
-            class="inputs date"
-            @change="flexDateFilter()"
-          />
+          <label for=""> Bis</label>
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input
+              v-model="date_box_end"
+              type="date"
+              class="inputs date"
+              @change="flexDateFilter()"
+            />
+          </div>
         </div>
       </div>
     </div>

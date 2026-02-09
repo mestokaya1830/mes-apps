@@ -122,10 +122,10 @@
             <img
               v-if="!selectedImage"
               :src="`uploads/user/${user.logo}`"
-              class="logo-preview"
+              class="form-logo-preview"
               alt="Company Logo"
             />
-            <img v-else :src="`${selectedImage}`" class="logo-preview" alt="Company Logo" />
+            <img v-else :src="`${selectedImage}`" class="form-logo-preview" alt="Company Logo" />
           </div>
         </div>
       </section>

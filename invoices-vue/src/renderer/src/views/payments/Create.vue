@@ -163,7 +163,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Beleg / Zahlungsnachweis (optional)</label>
-            <input type="file" class="inputs" accept=".pdf,image/*" @change="loadImage" />
+            <input type="file" accept=".pdf,image/*" @change="loadImage" />
           </div>
 
           <div class="form-group">
@@ -181,12 +181,9 @@
 
       <!-- GoBD Compliance Hinweis -->
       <div class="compliance-notice">
-        <i class="bi bi-info-circle-fill"></i>
-        <div>
-          <strong>GoBD-Hinweis:</strong> Alle mit * markierten Felder sind für die ordnungsgemäße
-          Buchführung nach deutschen Steuergesetzen erforderlich. Die Daten werden revisionssicher
-          gespeichert.
-        </div>
+        <i class="bi bi-info-circle-fill icons"></i> <strong>GoBD-Hinweis:</strong> Alle mit *
+        markierten Felder sind für die ordnungsgemäße Buchführung nach deutschen Steuergesetzen
+        erforderlich. Die Daten werden revisionssicher gespeichert.
       </div>
 
       <div class="btn-container">
