@@ -7,15 +7,18 @@
       </router-link>
     </div>
 
-    <!-- 4. Send Info -->
     <div class="sections">
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Versandtermin <span class="star">*</span></label>
-          <input v-model="reminder.date" type="datetime-local" class="inputs date" />
+          <label class="form-label">Versandtermin <span class="stars">*</span></label>
+          <div class="date-wrapper">
+            <i class="bi bi-calendar3 calendar-icon"></i>
+            <input v-model="reminder.date" type="datetime-local" class="inputs date" />
+          </div>
+          <small v-if="error.date" class="error">{{ error.date }}</small>
         </div>
         <div class="form-group">
-          <label class="form-label">Versandart <span class="star">*</span></label>
+          <label class="form-label">Versandart <span class="stars">*</span></label>
           <select v-model="reminder.sent_method" class="inputs">
             <option value="" disabled>Wählen</option>
             <option value="email">Email</option>
@@ -23,27 +26,29 @@
             <option value="einschreiben">Einschreiben</option>
             <option value="portal">Portal</option>
           </select>
+          <small v-if="error.sent_method" class="error">{{ error.sent_method }}</small>
         </div>
       </div>
-      <!-- 1. Level -->
+
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Zahlungsnachweis</label>
           <input v-model="reminder.proof_type" type="text" class="inputs" />
         </div>
         <div class="form-group">
-          <label class="form-label">💼 Betreff (Level) <span class="star">*</span></label>
+          <label class="form-label">💼 Betreff (Level) <span class="stars">*</span></label>
           <select v-model="reminder.level" class="inputs" @change="updateTexts">
             <option value="" disabled>Wähle Betreff</option>
             <option value="1">Zahlungserinnerung / 1. Mahnung</option>
             <option value="2">2. Mahnung</option>
             <option value="3">Letzte Mahnung vor gerichtlichem Mahnverfahren</option>
           </select>
+          <small v-if="error.level" class="error">{{ error.level }}</small>
         </div>
       </div>
-      <!-- 2. Payment Deadline -->
+
       <div class="form-group">
-        <label class="form-label">Zahlungsfrist auswählen <span class="star">*</span></label>
+        <label class="form-label">Zahlungsfrist auswählen <span class="stars">*</span></label>
         <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
           <option value="" disabled selected>Bitte auswählen</option>
           <option value="innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
@@ -56,6 +61,7 @@
           <option value="sofort zahlbar">Sofort zahlbar</option>
           <option value="nach Vereinbarung">Nach Vereinbarung</option>
         </select>
+        <small v-if="error.payment_deadline" class="error">{{ error.payment_deadline }}</small>
       </div>
 
       <div class="form-row">
@@ -70,30 +76,23 @@
       </div>
     </div>
 
-    <!-- 3. Text Sections -->
     <div v-if="reminder.level" class="sections">
       <div class="form-group">
-        <label class="form-label">Intro Text <span class="star">*</span></label>
+        <label class="form-label">Intro Text <span class="stars">*</span></label>
         <textarea v-model="reminder.intro_text" class="inputs"></textarea>
       </div>
 
       <div v-if="reminder.level != '1'" class="form-group">
-        <label class="form-label"
-          ><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i>Warnung
-          <span class="star">*</span></label
-        >
+        <label class="form-label">Warnung <span class="stars">*</span></label>
         <textarea v-model="reminder.warning_text" class="inputs"></textarea>
       </div>
 
       <div class="form-group">
-        <label class="form-label"
-          ><i class="bi bi-clipboard me-1"></i>Endtext <span class="star">*</span></label
-        >
+        <label class="form-label">Endtext <span class="stars">*</span></label>
         <textarea v-model="reminder.closing_text" class="inputs"></textarea>
       </div>
     </div>
 
-     <!-- 6. Rechtliche Hinweise (Almanya) -->
     <div class="sections">
       <div class="compliance-notice legal">
         <i class="bi bi-shield-check"></i>
@@ -111,8 +110,7 @@
         </div>
       </div>
     </div>
-    
-    <!-- Vorschau Button -->
+
     <div class="sections btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
@@ -146,6 +144,12 @@ export default {
         payment_deadline: '',
         customer: null,
         invoice: null
+      },
+      error: {
+        date: '',
+        sent_method: '',
+        level: '',
+        payment_deadline: ''
       },
       introTexts: [
         null,
@@ -203,8 +207,29 @@ export default {
       this.updateTexts()
       console.log('create-reminder', result)
     },
+    validate() {
+      let isValid = true
+      if (!this.reminder.date) {
+        this.error.date = 'Versandtermin ist erforderlich'
+        isValid = false
+      }
+      if (!this.reminder.sent_method) {
+        this.error.sent_method = 'Versandart ist erforderlich'
+        isValid = false
+      }
+      if (!this.reminder.level) {
+        this.error.level = 'Betreff (Level) ist erforderlich'
+        isValid = false
+      }
+      if (!this.reminder.payment_deadline) {
+        this.error.payment_deadline = 'Zahlungsfrist ist erforderlich'
+        isValid = false
+      }
+      return isValid
+    },
     submitStore() {
       if (!this.reminder) return
+      if (!this.validate()) return
       store.setStore('reminder', JSON.parse(JSON.stringify(this.reminder)))
       this.$router.push('/reminders/preview')
     }

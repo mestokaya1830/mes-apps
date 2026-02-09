@@ -3,7 +3,8 @@
     <div class="sections">
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">Name der Gegenpartei</label>
+          <label class="form-label">Name der Gegenpartei <span class="stars">*</span></label>
+
           <input
             v-model="localNamePartner"
             type="text"
@@ -11,9 +12,10 @@
             placeholder="z.B. Kunde / Lieferant"
             @input="updateName"
           />
+          <p class="error" v-if="nameError">{{ nameError }}</p>
         </div>
         <div class="form-group">
-          <label class="form-label">IBAN</label>
+          <label class="form-label">IBAN <span class="stars">*</span></label>
           <input
             type="text"
             :value="iban"
@@ -25,10 +27,10 @@
           <p class="error" v-if="ibanError">{{ ibanError }}</p>
         </div>
       </div>
-  
+
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label">BIC</label>
+          <label class="form-label">BIC <span class="stars">*</span></label>
           <input
             type="text"
             :value="bic"
@@ -38,9 +40,9 @@
           />
           <p class="error" v-if="bicError">{{ bicError }}</p>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Bankname (automatisch)</label>
+          <label class="form-label">Bankname (automatisch) <span class="stars">*</span></label>
           <input type="text" :value="bankName" readonly class="inputs" />
         </div>
       </div>
@@ -51,7 +53,15 @@
 <script>
 export default {
   name: 'IbanComponent',
-
+  emits: [
+    'update:localNamePartner',
+    'update:iban',
+    'update:bic',
+    'update:bank',
+    'ibanValid',
+    'bicValid',
+    'nameValid'
+  ],
   data() {
     return {
       iban: '',
@@ -61,7 +71,10 @@ export default {
       ibanCountryFlag: '',
       bankName: '',
       localNamePartner: '',
-
+      nameError: '',
+      nameValid: false,
+      ibanTouched: false,
+      bicTouched: false,
       // BIC directory
       bicDirectory: {
         MARKDEF1100: 'Sparkasse Mark Brandenburg',
@@ -187,12 +200,33 @@ export default {
   // DE89370400440532013000
   methods: {
     updateName() {
+      if (!this.localNamePartner.trim()) {
+        this.nameError = 'Name ist erforderlich'
+        this.nameValid = false
+      } else if (this.localNamePartner.length < 2) {
+        this.nameError = 'Name ist zu kurz'
+        this.nameValid = false
+      } else {
+        this.nameError = ''
+        this.nameValid = true
+      }
+
       this.$emit('update:localNamePartner', this.localNamePartner)
+      this.$emit('nameValid', this.nameValid)
     },
     handleIban(input) {
+      this.ibanTouched = true
+
       let iban = input.toUpperCase().replace(/[^A-Z0-9]/g, '')
       iban = iban.replace(/(.{4})/g, '$1 ').trim()
       this.iban = iban
+
+      if (!iban) {
+        this.ibanError = 'IBAN ist erforderlich'
+        this.$emit('ibanValid', false)
+        this.$emit('update:iban', '')
+        return
+      }
 
       const country = iban.slice(0, 2)
       this.ibanCountryFlag = this.countryFlags[country] || ''
@@ -200,28 +234,37 @@ export default {
       const v = this.validateIban(iban)
       this.ibanError = v.valid ? '' : v.message
 
-      // Parent'a gönder
       this.$emit('update:iban', iban)
       this.$emit('ibanValid', v.valid)
     },
 
     handleBic(input) {
+      this.bicTouched = true
+
       const bic = input.toUpperCase().replace(/[^A-Z0-9]/g, '')
       this.bic = bic
+
+      if (!bic) {
+        this.bicError = 'BIC ist erforderlich'
+        this.bankName = ''
+        this.$emit('update:bic', '')
+        this.$emit('update:bank', '')
+        this.$emit('bicValid', false)
+        return
+      }
 
       if (bic.length < 8 || bic.length > 11) {
         this.bicError = 'Ungültiger BIC'
         this.bankName = ''
+        this.$emit('update:bic', bic)
         this.$emit('update:bank', '')
         this.$emit('bicValid', false)
-        this.$emit('update:bic', bic)
         return
       }
 
       this.bicError = ''
       this.bankName = this.bicDirectory[bic] || 'Unbekannte Bank'
 
-      // Parent'a gönder
       this.$emit('update:bic', bic)
       this.$emit('update:bank', this.bankName)
       this.$emit('bicValid', true)

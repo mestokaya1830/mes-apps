@@ -1,6 +1,6 @@
 <template lang="">
   <div>
-    <div class="action-btn">
+    <div class="btn-container">
       <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="savePayment">
         <i class="bi bi-floppy-fill icons"></i>
         <span>Speichern</span>

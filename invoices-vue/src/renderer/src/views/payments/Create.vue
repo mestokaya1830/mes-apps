@@ -8,7 +8,6 @@
     </div>
 
     <div>
-      <!-- 1. Invoice Information (readonly) -->
       <div class="sections">
         <div class="sections-title"><i class="bi bi-file-text icons"></i>Ausgewählte Rechnung</div>
         <div class="customer-details" style="margin-top: 16px">
@@ -53,21 +52,21 @@
         </div>
       </div>
 
-      <!-- 2. Counterparty Information -->
-      <div class="sections">
+      <div class="sections iban-section">
         <div class="sections-title"><i class="bi bi-bank2 icons"></i>Gegenpartei Informationen</div>
 
         <IbanComponent
+          ref="ibanSection"
           v-model:localNamePartner="payment.counterparty_name"
           v-model:iban="payment.counterparty_iban"
           v-model:bic="payment.counterparty_bic"
+          @nameValid="nameValid = $event"
           @ibanValid="ibanValid = $event"
           @bicValid="bicValid = $event"
           @update:bank="setBank"
         />
       </div>
 
-      <!-- 3. Currency -->
       <div class="sections">
         <div class="sections-title"><i class="bi bi-coin icons"></i>Währung</div>
         <div class="form-group">
@@ -87,13 +86,13 @@
         </div>
       </div>
 
-      <!-- 4. Payment Details -->
       <div class="sections">
         <div class="sections-title"><i class="bi bi-cash-stack icons"></i>Zahlungsdetails</div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Zahlungsdatum <span class="star">*</span></label>
             <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon"></i>
               <input
                 ref="date"
                 v-model="payment.date"
@@ -102,7 +101,7 @@
                 @change="checkEarlyPayment"
               />
             </div>
-            <small class="form-hint">Datum des Zahlungseingangs</small>
+            <small v-if="error.date" class="error">{{ error.date }}</small>
           </div>
 
           <div class="form-group">
@@ -116,6 +115,7 @@
               :disabled="isPaymentAmountDisabled"
               @input="onAmountInput"
             />
+            <small v-if="error.payment_amount" class="error">{{ error.payment_amount }}</small>
             <small v-if="paymentAmountError" class="form-warning"
               >Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small
             >
@@ -189,7 +189,6 @@
         </div>
       </div>
 
-      <!-- Vorschau Button -->
       <div class="btn-container">
         <button class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons"></i>Vorschau anzeigen
@@ -198,6 +197,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import store from '../../store/store'
 import IbanComponent from '../../components/IbanComponent.vue'
@@ -219,12 +219,19 @@ export default {
       paymentAmountError: false,
       isPaymentAmountDisabled: false,
       is_early_payment_selected: false,
-      outstanding: 0
+      outstanding: 0,
+      nameValid: false,
+      ibanValid: false,
+      bicValid: false,
+      error: {}
     }
   },
   computed: {
     setOutstanding() {
       return this.outstanding - this.payment.payment_amount
+    },
+    formValid() {
+      return this.nameValid && this.ibanValid && this.bicValid
     }
   },
   mounted() {
@@ -341,13 +348,6 @@ export default {
     setBank(bankName) {
       this.payment.counterparty_bank = bankName
     },
-    checkPaymentAmount() {
-      if (!this.payment.payment_amount || this.payment.payment_amount < 0) {
-        this.$refs.payment_amount.focus()
-        return false
-      }
-      return true
-    },
     setPaymentStatus() {
       let result = this.calculateOutstanding()
       if (result === 0) {
@@ -363,9 +363,49 @@ export default {
       }
       return true
     },
+    validate() {
+      let isValid = true
+      if (!this.payment.date) {
+        this.error.date = 'Datum ist erforderlich'
+        this.$refs.date.focus()
+        isValid = false
+      } else {
+        this.error.date = ''
+      }
+
+      if (!this.payment.payment_amount) {
+        this.error.payment_amount = 'Zahlungsbetrag ist erforderlich'
+        isValid = false
+      } else if (this.payment.payment_amount <= 0) {
+        this.error.payment_amount = 'Zahlungsbetrag muss größer als 0 sein'
+        isValid = false
+      } else if (this.payment.payment_amount > this.outstanding) {
+        this.error.payment_amount = 'Zahlungsbetrag darf den offenen Betrag nicht überschreiten'
+        isValid = false
+      } else {
+        this.error.payment_amount = ''
+      }
+
+      return isValid
+    },
+    scrollToIban() {
+      this.$nextTick(() => {
+        const el = document.querySelector('.iban-section')
+        if (!el) return
+
+        el.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        })
+      })
+    },
     async submitStore() {
-      if (!this.checkPaymentDate()) return
-      if (!this.checkPaymentAmount()) return
+      // if (!this.formValid) {
+      //   this.scrollToIban()
+      //   console.log('Form is invalid. Please correct the errors before submitting.')
+      //   return
+      // }
+      if (!this.validate()) return
       if (this.setPaymentStatus()) return
       await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
       this.$router.push('/payments/preview')
