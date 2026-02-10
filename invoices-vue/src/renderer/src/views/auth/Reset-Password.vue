@@ -3,11 +3,13 @@
     <div class="logo-section">
       <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
     </div>
+
     <div class="form-card">
       <div class="form-header">
         <h2 class="setup-title">Passwort zurücksetzen</h2>
         <p>Bitte geben Sie Ihre Daten ein</p>
       </div>
+
       <form @submit.prevent="reset">
         <div class="form-group">
           <label for="token" class="form-label">Token</label>
@@ -43,11 +45,15 @@
           </div>
         </div>
 
-        <div v-if="error.success" class="text text-success mt-3 mb-3">{{ error.success }}</div>
-        <div v-if="error.credential" class="error">{{ error.credential }}</div>
+        <div v-if="error.success" class="text text-success mt-3 mb-3">
+          {{ error.success }}
+        </div>
+
+        <div v-if="error.credential" class="error">
+          {{ error.credential }}
+        </div>
 
         <button class="btn btn-primary btn-setup right mt-20" type="submit">Zurücksetzen</button>
-        <h2>{{ error.success }}</h2>
       </form>
     </div>
   </div>
@@ -84,19 +90,20 @@ export default {
       let valid = true
 
       if (!rd.token) {
-        this.error.token = "Token can't be empty!"
+        this.error.token = 'Token darf nicht leer sein.'
         valid = false
       }
 
       if (!rd.password) {
-        this.error.password = "Password can't be empty!"
+        this.error.password = 'Passwort darf nicht leer sein.'
         valid = false
       }
 
       if (rd.password && rd.passwordConfirmation && rd.password !== rd.passwordConfirmation) {
-        this.error.confirm = 'Passwords do not match!'
+        this.error.confirm = 'Die Passwörter stimmen nicht überein.'
         valid = false
       }
+
       return valid
     },
 
@@ -112,16 +119,16 @@ export default {
         const res = await window.api.resetPassword(data)
 
         if (!res.success) {
-          this.error.credential = res.error
+          this.error.credential = res.error || 'Ungültige Anfrage.'
           return
         }
 
-        this.error.success = 'Password reset successfully!'
+        this.error.success = 'Passwort wurde erfolgreich zurückgesetzt.'
         this.reset_data.token = ''
         this.reset_data.password = ''
         this.reset_data.passwordConfirmation = ''
       } catch (err) {
-        this.error.credential = err.message || 'Server error'
+        this.error.credential = err.message || 'Serverfehler.'
       }
     }
   }

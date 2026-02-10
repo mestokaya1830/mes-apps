@@ -605,7 +605,7 @@ import store from '../store/store'
 export default {
   data() {
     return {
-      title: 'Dashboard',
+      title: 'Übersicht',
       tablesCount: null,
       titles: {
         customers: 'Alle Kunden',

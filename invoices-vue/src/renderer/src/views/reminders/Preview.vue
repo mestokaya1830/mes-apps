@@ -205,17 +205,13 @@ export default {
   },
   mounted() {
     this.getReminderPreview()
-    this.getAuth()
   },
   methods: {
     getReminderPreview() {
-      if (!store.state.reminder) return
+      if (!store.state.reminder && !store.state.auth) return
       this.reminderPreview = store.state.reminder
-      console.log('preview', this.reminderPreview)
-    },
-    getAuth() {
-      if (!store.state.auth) return
       this.auth = store.state.auth
+      console.log('preview', this.reminderPreview)
     }
   }
 }

@@ -8,7 +8,7 @@
       </div>
     </div>
     <div v-if="showGoTop" class="go-top-button" @click="scrollToTop">
-        <i class="bi bi-arrow-up go-top-icon"></i>
+      <i class="bi bi-arrow-up go-top-icon"></i>
     </div>
   </div>
 </template>
@@ -315,14 +315,14 @@ export default {
   top: 0;
   bottom: 0;
   width: 4px;
-  background: #12B486;
+  background: #12b486;
 }
 
 .nav-icon {
   width: 36px;
   text-align: center;
   font-size: 24px;
-  color: #12B486;
+  color: #12b486;
 }
 .nav-label {
   padding: 0 1.5rem;
@@ -365,13 +365,19 @@ export default {
   font-size: 0.8rem;
   color: #9ca3af;
 }
-
 .logout-link {
-  color: #f87171;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
 }
-
-.logout-link:hover {
-  background: rgba(248, 113, 113, 0.1);
+.logout-icon {
+  font-size: 30px;
+  color: #e53e3e;
+}
+.logout-text {
+  color: #e53e3e;
+  font-size: 18px;
 }
 
 @media (max-width: 768px) {

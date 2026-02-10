@@ -59,7 +59,7 @@
         </div>
       </div>
     </div>
-    <div class="sections container-2">
+    <div class="sections btn-container">
       <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
     </div>
   </div>

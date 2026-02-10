@@ -293,17 +293,13 @@ export default {
   },
   mounted() {
     this.getOfferPreview()
-    this.getAuth()
   },
   methods: {
     getOfferPreview() {
-      if (!store.state.offer) return
+      if (!store.state.offer && !store.state.auth) return
       this.offerPreview = store.state.offer
-      console.log('preview', this.offerPreview)
-    },
-    getAuth() {
-      if (!store.state.auth) return
       this.auth = store.state.auth
+      console.log('preview', this.offerPreview)
     },
     getStatusText(status) {
       const statusMap = {

@@ -10,7 +10,7 @@
         <!-- <p>Bitte geben Sie Ihre E-Mail-Adresse ein</p> -->
         <div class="form-row">
           <div class="form-group">
-            <label for="email" class="form-label">E-Mail</label>
+            <label for="email" class="form-label">E-Mail-Adresse</label>
             <input
               id="email"
               v-model="email"
@@ -27,7 +27,6 @@
           <button class="btn btn-primary mt-20" type="submit">E-Mail senden</button>
         </div>
       </form>
-
     </div>
   </div>
 </template>
@@ -48,30 +47,31 @@ export default {
     },
 
     async sendEmail() {
-      console.log('hello')
       this.success = ''
       this.error = ''
+
       if (!this.email.trim()) {
-        this.error = 'Email cant be empty'
+        this.error = 'E-Mail darf nicht leer sein.'
         return
       }
 
       if (!this.validateEmail(this.email.trim())) {
-        this.error = 'Invalid email format'
+        this.error = 'Ungültiges E-Mail-Format.'
         return
       }
 
       try {
         const res = await window.api.emailVerfication({ email: this.email })
         if (!res.success) {
-          this.error = res || 'Something went wrong'
+          this.error = res || 'Etwas ist schiefgelaufen.'
           return
         }
-        this.success = res.success
+        this.success = 'E-Mail wurde erfolgreich gesendet.'
         this.error = ''
         this.$router.push('/reset-password')
-      } catch (err) {
-        this.error = err || 'Server error'
+      } catch (error) {
+        console.log(error)
+        this.error = 'Serverfehler.'
       }
     }
   }

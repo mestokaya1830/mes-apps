@@ -207,17 +207,13 @@ export default {
   },
   mounted() {
     this.getPaymentPreview()
-    this.getAuth()
   },
   methods: {
     getPaymentPreview() {
-      if (!store.state.payment) return
+      if (!store.state.payment && !store.state.auth) return
       this.paymentPreview = store.state.payment
-      console.log('Payment Preview', this.paymentPreview)
-    },
-    getAuth() {
-      if (!store.state.auth) return
       this.auth = store.state.auth
+      console.log('Payment Preview', this.paymentPreview)
     }
   }
 }

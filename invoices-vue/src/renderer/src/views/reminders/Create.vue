@@ -104,7 +104,7 @@
       </div>
     </div>
 
-    <div class="btn-container">
+    <div class="sections btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>

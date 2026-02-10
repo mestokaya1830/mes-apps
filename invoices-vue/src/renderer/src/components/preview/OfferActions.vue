@@ -1,6 +1,6 @@
 <template lang="">
   <div>
-    <div class="btn-container">
+    <div class="sections btn-container">
       <button class="btn btn-secondary" @click="sendEmail">
         <i class="bi bi-envelope-at-fill icons"></i>
         <span>E-Mail</span>

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="orderPreview" class="main-container">
+  <div v-if="orderPreview && auth" class="main-container">
     <div class="printable">
       <!-- Header section -->
       <HeaderSidePreview :title="title" :auth="auth" />
@@ -24,8 +24,7 @@
         <div class="recipient-details">
           <div class="recipient-title">Auftragsdetails</div>
           <div class="meta-row">
-            <span class="meta-label">Auftrags-Nr.:</span>
-            <span class="meta-value">{{ formatOrderId(orderPreview.id) }}</span>
+            <span class="meta-label">Auftrags-Nr.:</span>{{ formatOrderId(orderPreview.id) }}
           </div>
           <div class="meta-row">
             <span class="meta-label">Datum:</span>
@@ -345,20 +344,16 @@ export default {
     },
     actionFileName() {
       if (!this.orderPreview) return
-      return this.formatOrderd(this.orderPreview.id)
+      return this.formatOrderId(this.orderPreview.id)
     }
   },
   mounted() {
     this.getOrderPreview()
-    this.getAuth()
   },
   methods: {
     getOrderPreview() {
-      if (!store.state.order) return
+      if (!store.state.order && !store.state.auth) return
       this.orderPreview = store.state.order
-    },
-    getAuth() {
-      if (!store.state.auth) return
       this.auth = store.state.auth
     },
     orderStatus(status) {

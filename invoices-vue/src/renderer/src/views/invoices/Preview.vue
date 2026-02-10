@@ -17,7 +17,9 @@
           </div>
         </div>
         <div class="recipient-details">
-          <div class="recipient-title"><i class="bi bi-info-circle-fill icons"></i>Rechnungsdetails</div>
+          <div class="recipient-title">
+            <i class="bi bi-info-circle-fill icons"></i>Rechnungsdetails
+          </div>
 
           <div class="meta-row">
             <span class="meta-label">Rechnung-Nr.:</span>
@@ -44,7 +46,12 @@
             <span class="meta-value">{{ formatCustomerId(invoicePreview.customer.id) }}</span>
           </div>
 
-          <div v-if="invoicePreview.customer.country === 'Germany' && invoicePreview.customer.tax_number" class="meta-row">
+          <div
+            v-if="
+              invoicePreview.customer.country === 'Germany' && invoicePreview.customer.tax_number
+            "
+            class="meta-row"
+          >
             <span class="meta-label">Steuer-Nr.:</span>
             <span class="meta-value">{{ invoicePreview.customer.tax_number }}</span>
           </div>
@@ -82,8 +89,12 @@
               <div v-if="item.description" class="position-description">
                 {{ item.description }}
               </div>
-              <div v-if="item.service_period_start && item.service_period_end" class="position-service-period">
-                <i class="bi bi-calendar3 me-1"></i> {{ formatDate(item.service_period_start) }} - {{ formatDate(item.service_period_end) }}
+              <div
+                v-if="item.service_period_start && item.service_period_end"
+                class="position-service-period"
+              >
+                <i class="bi bi-calendar3 me-1"></i> {{ formatDate(item.service_period_start) }} -
+                {{ formatDate(item.service_period_end) }}
               </div>
             </td>
             <td class="center">{{ item.quantity }}</td>
@@ -102,54 +113,73 @@
       <div class="summary-section">
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">{{ formatCurrency(invoicePreview.net_total, invoicePreview.currency) }}</span>
+          <span class="total-value">{{
+            formatCurrency(invoicePreview.net_total, invoicePreview.currency)
+          }}</span>
         </div>
 
         <div class="total-row">
           <span class="total-label">MwSt.:</span>
-          <span class="total-value">{{ formatCurrency(invoicePreview.vat_total, invoicePreview.currency) }}</span>
+          <span class="total-value">{{
+            formatCurrency(invoicePreview.vat_total, invoicePreview.currency)
+          }}</span>
         </div>
 
         <div class="total-row subtotal">
           <span class="total-label">Rechnungsbetrag (brutto):</span>
-          <span class="total-value">{{ formatCurrency(invoicePreview.gross_total, invoicePreview.currency) }}</span>
+          <span class="total-value">{{
+            formatCurrency(invoicePreview.gross_total, invoicePreview.currency)
+          }}</span>
         </div>
 
         <div class="total-row paid text-success">
-          <span class="total-label"><i class="bi bi-check-circle-fill me-1"></i> Bereits bezahlt:</span>
+          <span class="total-label"
+            ><i class="bi bi-check-circle-fill me-1"></i> Bereits bezahlt:</span
+          >
           <span class="total-value"> - {{ formatCurrency(0, invoicePreview.currency) }} </span>
         </div>
 
         <div class="total-row outstanding text-danger">
-          <span class="total-label"><i class="bi bi-exclamation-circle-fill me-1"></i> Offener Betrag:</span>
-          <span class="total-value">{{ formatCurrency(invoicePreview.gross_total, invoicePreview.currency) }}</span>
+          <span class="total-label"
+            ><i class="bi bi-exclamation-circle-fill me-1"></i> Offener Betrag:</span
+          >
+          <span class="total-value">{{
+            formatCurrency(invoicePreview.gross_total, invoicePreview.currency)
+          }}</span>
         </div>
 
         <div class="preview-section">
           <div v-if="invoicePreview.is_small_company" class="tax-note small-company">
-            <i class="bi bi-info-square-fill me-1"></i> Gemäß <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
+            <i class="bi bi-info-square-fill me-1"></i> Gemäß <span>§19 UStG</span> wird keine
+            Umsatzsteuer berechnet.
           </div>
 
           <div v-else-if="invoicePreview.is_reverse_charge" class="tax-note">
-            <i class="bi bi-arrow-repeat me-1"></i> Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span>§13b UStG</span>)
+            <i class="bi bi-arrow-repeat me-1"></i> Reverse-Charge-Verfahren – Steuerschuldnerschaft
+            des Leistungsempfängers (<span>§13b UStG</span>)
           </div>
 
           <div v-else-if="invoicePreview.is_eu_delivery" class="tax-note">
-            <i class="bi bi-globe-europe-africa me-1"></i> Innergemeinschaftliche Lieferung – steuerfrei gemäß <span>§4 Nr.1b UStG</span>
+            <i class="bi bi-globe-europe-africa me-1"></i> Innergemeinschaftliche Lieferung –
+            steuerfrei gemäß <span>§4 Nr.1b UStG</span>
           </div>
         </div>
       </div>
 
       <div class="payment-terms-box">
-        <div class="payment-terms-title"><i class="bi bi-credit-card-2-back-fill icons"></i>Zahlungsbedingungen</div>
+        <div class="payment-terms-title">
+          <i class="bi bi-credit-card-2-back-fill icons"></i>Zahlungsbedingungen
+        </div>
         <div class="payment-terms-content">
           <div v-if="invoicePreview.payment_terms" class="payment-term-item">
-            <strong>Zahlungsziel:</strong> {{ invoicePreview.payment_terms }} Tage (bis {{ formatDate(invoicePreview.due_date) }})
+            <strong>Zahlungsziel:</strong> {{ invoicePreview.payment_terms }} Tage (bis
+            {{ formatDate(invoicePreview.due_date) }})
           </div>
 
           <div v-if="invoicePreview.early_payment_offer" class="payment-term-item skonto-highlight">
             <strong><i class="bi bi-lightning-charge-fill me-1"></i> Skonto:</strong>
-            {{ invoicePreview.early_payment_percentage }}% Skonto bis {{ formatDate(invoicePreview.early_payment_deadline) }}
+            {{ invoicePreview.early_payment_percentage }}% Skonto bis
+            {{ formatDate(invoicePreview.early_payment_deadline) }}
           </div>
         </div>
       </div>
@@ -159,7 +189,8 @@
       <div class="bank-box">
         <div class="bank-title"><i class="bi bi-bank icons"></i>Bankverbindung</div>
         <div class="bank-info">
-          <span class="bank-label">Bank:</span> <span class="bank-value">{{ auth.bank_name }}</span>
+          <span class="bank-label">Bank:</span>
+          <span class="bank-value">{{ auth.bank_name }}</span>
           <span class="bank-label">IBAN:</span> <span class="bank-value">{{ auth.iban }}</span>
           <span class="bank-label">BIC:</span> <span class="bank-value">{{ auth.bic }}</span>
         </div>
@@ -167,11 +198,16 @@
       <FooterSidePreview />
     </div>
 
-    <InvoiceActions v-if="invoicePreview" :tableData="invoicePreview" :fileName="actionFileName" sourcePage="preview" />
-    
-      <router-link to="/invoices/create" class="back-link">
-        <i class="bi bi-arrow-left icons"></i> Zurück zur Rechnungserstellung
-      </router-link>
+    <InvoiceActions
+      v-if="invoicePreview"
+      :tableData="invoicePreview"
+      :fileName="actionFileName"
+      sourcePage="preview"
+    />
+
+    <router-link to="/invoices/create" class="back-link">
+      <i class="bi bi-arrow-left icons"></i> Zurück zur Rechnungserstellung
+    </router-link>
   </div>
 </template>
 
@@ -206,17 +242,13 @@ export default {
   },
   mounted() {
     this.getInvoicePreview()
-    this.getAuth()
   },
   methods: {
     getInvoicePreview() {
-      if (!store.state.invoice) return
+      if (!store.state.invoice || !store.state.auth) return
       this.invoicePreview = store.state.invoice
-      console.log('invoice-preview', this.invoicePreview)
-    },
-    getAuth() {
-      if (!store.state.auth) return
       this.auth = store.state.auth
+      console.log('invoice-preview', this.invoicePreview)
     }
   }
 }

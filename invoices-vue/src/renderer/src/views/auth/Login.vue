@@ -10,6 +10,7 @@
 
       <form class="login-form" @submit.prevent="loginUser">
         <h1 class="setup-title">Willkommen bei Mes App</h1>
+
         <div class="form-row">
           <div class="form-group">
             <label for="email" class="form-label">E-Mail-Adresse</label>
@@ -18,13 +19,14 @@
               v-model="user.email"
               type="email"
               :class="['inputs', { error: error.email }]"
-              placeholder="Geben Sie Ihre E-Mail ein"
+              placeholder="Geben Sie Ihre E-Mail-Adresse ein"
             />
             <div v-if="error.email" class="error-message">{{ error.email }}</div>
           </div>
         </div>
+
         <div class="form-row">
-           <div class="form-group">
+          <div class="form-group">
             <label for="inputPassword" class="form-label">Passwort</label>
             <input
               id="inputPassword"
@@ -37,11 +39,13 @@
           </div>
         </div>
 
-        <router-link to="email-verfication" class="forgot-password"
-          >Passwort vergessen?</router-link
-        >
+        <router-link to="email-verfication" class="forgot-password">
+          Passwort vergessen?
+        </router-link>
 
-        <div v-if="error.credential" class="text error-message">{{ error.credential }}</div>
+        <div v-if="error.credential" class="text error-message">
+          {{ error.credential }}
+        </div>
 
         <button type="submit" class="btn">Anmelden</button>
       </form>
@@ -57,6 +61,7 @@
 <script>
 import store from '../../store/store.js'
 import SetupPage from '../../components/preview/SetupPage.vue'
+
 export default {
   name: 'Login',
   components: { SetupPage },
@@ -87,29 +92,29 @@ export default {
     async checkRegister() {
       try {
         const res = await window.api.checkRegister()
-        console.log(res)
         this.register = res.success
       } catch (err) {
         console.error(err)
       }
     },
+
     validateForm() {
       let valid = true
       this.error = { email: '', password: '', credential: '' }
 
       if (!this.user.email) {
-        this.error.email = 'Email cannot be empty'
+        this.error.email = 'E-Mail darf nicht leer sein.'
         valid = false
       } else if (!this.user.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-        this.error.email = 'Invalid email format'
+        this.error.email = 'Ungültiges E-Mail-Format.'
         valid = false
       }
 
       if (!this.user.password) {
-        this.error.password = 'Password cannot be empty'
+        this.error.password = 'Passwort darf nicht leer sein.'
         valid = false
       } else if (this.user.password.length < 6) {
-        this.error.password = 'Password must be at least 6 characters'
+        this.error.password = 'Das Passwort muss mindestens 6 Zeichen lang sein.'
         valid = false
       }
 
@@ -123,13 +128,13 @@ export default {
       try {
         const res = await window.api.login(JSON.parse(JSON.stringify(this.user)))
         if (!res.success) {
-          this.error.credential = res.message || 'Invalid credentials'
+          this.error.credential = res.message || 'Ungültige Anmeldedaten.'
           return
         }
         await store.setStore('auth', res.user)
         this.$router.push('/')
       } catch (err) {
-        this.error.credential = err.message || 'Server error'
+        this.error.credential = err.message || 'Serverfehler.'
       }
     }
   }

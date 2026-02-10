@@ -71,12 +71,9 @@
     </nav>
 
     <div v-if="checkLogout" class="sidebar-footer">
-      <a href="#" class="nav-link" @click="logout()">
-        <div class="user-avatar">MK</div>
-        <div>
-          <h4>Max Keller</h4>
-          <p>Administrator</p>
-        </div>
+        <a href="#" class="logout-link" @click="logout()">
+        <i class="bi bi-box-arrow-left logout-icon"></i>
+        <span class="logout-text">Abmelden</span>
       </a>
     </div>
   </div>
