@@ -489,7 +489,9 @@ ipcMain.handle('get-customers', async () => {
       )
       .all(limit)
 
-    return { success: true, rows }
+    const total = db.prepare(`SELECT COUNT(*) as count FROM customers`).get().count
+
+    return { success: true, rows, total }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }

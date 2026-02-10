@@ -2,7 +2,7 @@
   <div v-if="invoice" class="main-container">
     <div class="main-header">
       <label>{{ title }}</label>
-      <router-link to="/invoices" class="btn btn-secondary">
+      <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
     </div>

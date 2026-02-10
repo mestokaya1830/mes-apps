@@ -2,7 +2,7 @@
   <div v-if="order" class="main-container">
     <div class="main-header">
       <label>{{ title }}</label>
-      <router-link to="/orders" class="btn btn-secondary">
+      <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </div>
