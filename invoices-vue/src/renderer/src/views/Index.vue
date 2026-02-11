@@ -28,7 +28,6 @@
         </div>
         <h3 class="dashboard-title">Rechnungen</h3>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.invoices : 0 }}</span>
-        
       </div>
 
       <div class="dashboard-card offers" @click="goTo('offers')">
@@ -197,7 +196,8 @@ export default {
       chartData: null,
       chartDataDonat: null,
       selectedPeriod: '1M',
-      chartKey: 0
+      chartKey: 0,
+      last_activities: null
     }
   },
   computed: {
@@ -252,11 +252,8 @@ export default {
           unpaid_count: result.rows.unpaid_count || 0,
           overdue_count: result.rows.overdue_count || 0
         }
-
         await this.updateChartData(this.selectedPeriod)
-
-        const activities = await window.api.getLatestActivities()
-        console.log('Latest activities:', activities)
+        await this.getLatestActivities()
       } catch (error) {
         console.error(error)
       }
@@ -289,6 +286,12 @@ export default {
       }
     },
 
+    async getLatestActivities() {
+      const result = await window.api.getLatestActivities()
+      if (!result) return
+      this.last_activities = result.rows || null
+      console.log('Letzte Aktivitäten:', this.last_activities)
+    },
     goTo(path) {
       this.$router.push(`/${path}`)
     },

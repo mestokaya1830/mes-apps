@@ -450,7 +450,9 @@ ipcMain.handle('get-dashboard', async () => {
 
 ipcMain.handle('get-latest-activities', async () => {
   try {
-    const stmt = db.prepare(`
+    const rows = db
+      .prepare(
+        `
         SELECT 
           i.id AS invoice_id,
           i.payment_status,
@@ -461,40 +463,67 @@ ipcMain.handle('get-latest-activities', async () => {
         LEFT JOIN customers c ON c.id = i.customer_id
         ORDER BY i.created_at DESC
         LIMIT 1
-    `)
+    `
+      )
+      .all()
 
-    const rows = stmt.all()
-
-    const activities = rows.map((row) => {
-      let icon = 'bi-file-earmark-text'
-      let title = `Rechnung #${row.invoice_number} erstellt`
-
-      if (row.payment_status === 'paid') {
-        icon = 'bi-check-circle-fill'
-        title = `Rechnung #${row.invoice_number} bezahlt`
-      }
-
-      if (row.payment_status === 'overdue') {
-        icon = 'bi-exclamation-triangle-fill'
-        title = `Rechnung #${row.invoice_number} überfällig`
-      }
-
-      return {
-        id: row.id,
-        title,
-        subtitle: `Kunde: ${row.customer_name || '-'}`,
-        icon,
-        time: row.created_at
-      }
-    })
-
-    return { success: true, rows: activities }
+    return { success: true, rows }
   } catch (err) {
     return { success: false, message: err.message }
   }
 })
 
 ipcMain.handle('get-dashboard-chart', (event, payload) => {
+  // Better-sqlite3 sync query
+  function queryDatabase(query) {
+    try {
+      return db.prepare(query).all()
+    } catch (err) {
+      console.error('DB query error:', err.message)
+      return []
+    }
+  }
+
+  // Format monthly/weekly data, 0 değerleri önceki değere doldurur
+  function formatMonthlyData(data, monthCount) {
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mär',
+      'Apr',
+      'Mai',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Okt',
+      'Nov',
+      'Dez'
+    ]
+    const labels = [],
+      values = []
+    const dataMap = {}
+
+    data.forEach((row) => {
+      dataMap[row.month_key] = row.revenue ? parseFloat(row.revenue.toFixed(2)) : 0
+    })
+
+    const now = new Date()
+    let lastValue = 0
+    for (let i = monthCount - 1; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+      const monthLabel = monthNames[date.getMonth()]
+      labels.push(monthLabel)
+
+      let val = dataMap[monthKey] || 0
+      if (val === 0) val = lastValue // eksik ayları önceki değer ile doldur
+      values.push(val)
+      lastValue = val
+    }
+
+    return { labels, values }
+  }
   try {
     const period = payload
     let query,
@@ -614,57 +643,6 @@ ipcMain.handle('get-dashboard-chart', (event, payload) => {
     return { success: false, message: err.message }
   }
 })
-
-// Better-sqlite3 sync query
-function queryDatabase(query) {
-  try {
-    return db.prepare(query).all()
-  } catch (err) {
-    console.error('DB query error:', err.message)
-    return []
-  }
-}
-
-// Format monthly/weekly data, 0 değerleri önceki değere doldurur
-function formatMonthlyData(data, monthCount) {
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mär',
-    'Apr',
-    'Mai',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Okt',
-    'Nov',
-    'Dez'
-  ]
-  const labels = [],
-    values = []
-  const dataMap = {}
-
-  data.forEach((row) => {
-    dataMap[row.month_key] = row.revenue ? parseFloat(row.revenue.toFixed(2)) : 0
-  })
-
-  const now = new Date()
-  let lastValue = 0
-  for (let i = monthCount - 1; i >= 0; i--) {
-    const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
-    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-    const monthLabel = monthNames[date.getMonth()]
-    labels.push(monthLabel)
-
-    let val = dataMap[monthKey] || 0
-    if (val === 0) val = lastValue // eksik ayları önceki değer ile doldur
-    values.push(val)
-    lastValue = val
-  }
-
-  return { labels, values }
-}
 
 //customers
 ipcMain.handle('add-customer', async (event, payload) => {
