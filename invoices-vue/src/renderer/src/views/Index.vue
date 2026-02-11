@@ -136,7 +136,7 @@
         </div>
       </div>
 
-      <div class="info-card">
+      <div v-if="last_activities" class="info-card">
         <h3 class="info-title">
           <i class="bi bi-clock-history info-title-icon icons"></i>
           Letzte Aktivitäten
@@ -145,28 +145,37 @@
         <div class="activity-item">
           <i class="bi bi-check-circle-fill icons"></i>
           <div class="activity-content">
-            <div class="activity-title">Rechnung #1045 bezahlt</div>
-            <div class="activity-subtitle">Kunde: Müller GmbH</div>
+            <div class="activity-title">
+              Rechnung {{ last_activities.lastPaidInvoice?.id }} bezahlt
+            </div>
+            <div class="activity-subtitle">
+              Kunde-Nr: {{ last_activities.lastPaidInvoice?.customer_id }}
+            </div>
           </div>
           <div class="activity-time">Vor 2 Std.</div>
-        </div>
-
-        <div class="activity-item">
-          <i class="bi bi-file-earmark-text icons"></i>
-          <div class="activity-content">
-            <div class="activity-title">Neues Angebot erstellt</div>
-            <div class="activity-subtitle">Angebot #342 – Weber KG</div>
-          </div>
-          <div class="activity-time">Vor 5 Std.</div>
         </div>
 
         <div class="activity-item">
           <i class="bi bi-exclamation-triangle-fill icons"></i>
           <div class="activity-content">
             <div class="activity-title">Rechnung fällig</div>
-            <div class="activity-subtitle">Rechnung #1038 – Fällig in 2 Tagen</div>
+            <div class="activity-subtitle">
+              Rechnung-Nr: {{ last_activities.lastOverdueInvoice?.id }} – Fällig in 2 Tagen
+            </div>
           </div>
           <div class="activity-time">Gestern</div>
+        </div>
+
+        <div class="activity-item">
+          <i class="bi bi-file-earmark-text icons"></i>
+          <div class="activity-content">
+            <div class="activity-title">Neues Angebot erstellt</div>
+            <div class="activity-subtitle">
+              Angebot-Nr: {{ last_activities.lastOffer?.id }} –
+              {{ last_activities.lastOffer?.customer_name }}
+            </div>
+          </div>
+          <div class="activity-time">Vor 5 Std.</div>
         </div>
 
         <div class="activity-item">

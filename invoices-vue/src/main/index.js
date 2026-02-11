@@ -450,23 +450,75 @@ ipcMain.handle('get-dashboard', async () => {
 
 ipcMain.handle('get-latest-activities', async () => {
   try {
-    const rows = db
+    const lastCustomer = db
       .prepare(
         `
-        SELECT 
-          i.id AS invoice_id,
-          i.payment_status,
-          i.created_at,
-          c.id AS customer_id,
-          c.full_name AS customer_name
-        FROM invoices i
-        LEFT JOIN customers c ON c.id = i.customer_id
-        ORDER BY i.created_at DESC
+        SELECT created_at, company_name, full_name, email, phone
+        FROM customers WHERE is_active = 1 AND created_at >= date('now', '-2 day')
+        ORDER BY created_at DESC
         LIMIT 1
     `
       )
-      .all()
+      .get()
+    const lastInvoice = db
+      .prepare(
+        `
+        SELECT created_at, id, customer_id
+        FROM invoices WHERE is_active = 1 AND created_at >= date('now', '-2 day')
+        ORDER BY created_at DESC
+        LIMIT 1
+    `
+      )
+      .get()
+    const lastPaidInvoice = db
+      .prepare(
+        `
+        SELECT created_at, id, customer_id
+            FROM invoices WHERE is_active = 1 AND payment_status IN ('paid', 'partially_paid') AND date <= date('now', '+2 day')
+            ORDER BY created_at DESC
+        LIMIT 1 
+    `
+      )
+      .get()
+    const lastOverdueInvoice = db
+      .prepare(
+        `
+        SELECT created_at, id, customer_id
+        FROM invoices WHERE is_active = 1 AND payment_status = 'unpaid' AND created_at >= date('now', '-2 day')
+        ORDER BY created_at DESC
+        LIMIT 1
+    `
+      )
+      .get()
+    const lastOffer = db
+      .prepare(
+        `
+        SELECT created_at, id, customer_id
+        FROM offers WHERE is_active = 1 AND status = 'open' AND created_at >= date('now', '-2 day')
+        ORDER BY created_at DESC
+        LIMIT 1
+    `
+      )
+      .get()
+    const lastOrder = db
+      .prepare(
+        `
+        SELECT created_at, id, customer_id
+        FROM orders WHERE is_active = 1 AND created_at >= date('now', '-2 day')
+        ORDER BY created_at DESC
+        LIMIT 1
+    `
+      )
+      .get()
 
+    const rows = {
+      lastCustomer,
+      lastInvoice,
+      lastPaidInvoice,
+      lastOverdueInvoice,
+      lastOffer,
+      lastOrder
+    }
     return { success: true, rows }
   } catch (err) {
     return { success: false, message: err.message }
