@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('api', {
   //dashboard
   getDashboard: async (data) => ipcRenderer.invoke('get-dashboard', data),
   getDashboardChart: async (data) => ipcRenderer.invoke('get-dashboard-chart', data),
+  getLatestActivities: async (data) => ipcRenderer.invoke('get-latest-activities', data),
   //customer
   addCustomer: async (data) => ipcRenderer.invoke('add-customer', data),
   getCustomers: async (data) => ipcRenderer.invoke('get-customers', data),

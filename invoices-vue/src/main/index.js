@@ -417,13 +417,79 @@ ipcMain.handle('get-dashboard', async () => {
         invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1').get()
           .count,
         offers: db.prepare('SELECT COUNT(*) AS count FROM offers WHERE is_active = 1').get().count,
-        orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count
+        orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count,
+        paid_count: db
+          .prepare(
+            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'paid'"
+          )
+          .get().count,
+        unpaid_count: db
+          .prepare(
+            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'unpaid'"
+          )
+          .get().count,
+        partially_paid_count: db
+          .prepare(
+            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'partially_paid'"
+          )
+          .get().count,
+        overdue_count: db
+          .prepare(
+            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'overdue'"
+          )
+          .get().count
       }
     })()
 
     return { success: true, rows }
   } catch (err) {
     console.error('DB error:', err.message)
+    return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('get-latest-activities', async () => {
+  try {
+    const stmt = db.prepare(`
+        SELECT 
+          i.id AS invoice_id,
+          i.payment_status,
+          i.created_at,
+          c.id AS customer_id,
+          c.full_name AS customer_name
+        FROM invoices i
+        LEFT JOIN customers c ON c.id = i.customer_id
+        ORDER BY i.created_at DESC
+        LIMIT 1
+    `)
+
+    const rows = stmt.all()
+
+    const activities = rows.map((row) => {
+      let icon = 'bi-file-earmark-text'
+      let title = `Rechnung #${row.invoice_number} erstellt`
+
+      if (row.payment_status === 'paid') {
+        icon = 'bi-check-circle-fill'
+        title = `Rechnung #${row.invoice_number} bezahlt`
+      }
+
+      if (row.payment_status === 'overdue') {
+        icon = 'bi-exclamation-triangle-fill'
+        title = `Rechnung #${row.invoice_number} überfällig`
+      }
+
+      return {
+        id: row.id,
+        title,
+        subtitle: `Kunde: ${row.customer_name || '-'}`,
+        icon,
+        time: row.created_at
+      }
+    })
+
+    return { success: true, rows: activities }
+  } catch (err) {
     return { success: false, message: err.message }
   }
 })
@@ -436,7 +502,6 @@ ipcMain.handle('get-dashboard-chart', (event, payload) => {
       values = []
     let data, result
 
-    // --- Chart verilerini hesapla ---
     switch (period) {
       case '1M':
         query = `

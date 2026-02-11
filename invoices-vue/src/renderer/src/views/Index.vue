@@ -7,24 +7,50 @@
         Exportieren
       </button>
     </div>
-
-    <!-- Status count / dashboard kartları -->
-    <div v-if="tablesCount" class="dashboard-grid">
-      <div
-        v-for="(count, key) in tablesCount"
-        :key="key"
-        class="dashboard-card"
-        :class="key"
-        @click="goTo(key)"
-      >
+    <div class="dashboard-grid">
+      <div class="dashboard-card customers" @click="goTo('customers')">
         <div class="dashboard-card-header">
-          <div class="dashboard-avatar" :class="key">
-            <i :class="`bi ${icons[key]} icons`"></i>
+          <div class="dashboard-avatar">
+            <i :class="`bi bi-people-fill icons`"></i>
           </div>
           <div class="dashboard-badge">Aktiv</div>
         </div>
-        <h3 class="dashboard-title">{{ titles[key] }}</h3>
-        <span class="dashboard-value">{{ count }}</span>
+        <h3 class="dashboard-title">Kunden</h3>
+        <span class="dashboard-value">{{ tablesCount ? tablesCount.customers : 0 }}</span>
+      </div>
+
+      <div class="dashboard-card invoices" @click="goTo('invoices')">
+        <div class="dashboard-card-header">
+          <div class="dashboard-avatar">
+            <i :class="`bi bi-file-earmark-text-fill icons`"></i>
+          </div>
+          <div class="dashboard-badge">Aktiv</div>
+        </div>
+        <h3 class="dashboard-title">Rechnungen</h3>
+        <span class="dashboard-value">{{ tablesCount ? tablesCount.invoices : 0 }}</span>
+        
+      </div>
+
+      <div class="dashboard-card offers" @click="goTo('offers')">
+        <div class="dashboard-card-header">
+          <div class="dashboard-avatar">
+            <i :class="`bi bi-file-earmark-text-fill icons`"></i>
+          </div>
+          <div class="dashboard-badge">Aktiv</div>
+        </div>
+        <h3 class="dashboard-title">Angebote</h3>
+        <span class="dashboard-value">{{ tablesCount ? tablesCount.offers : 0 }}</span>
+      </div>
+
+      <div class="dashboard-card orders" @click="goTo('orders')">
+        <div class="dashboard-card-header">
+          <div class="dashboard-avatar">
+            <i :class="`bi bi-file-earmark-text-fill icons`"></i>
+          </div>
+          <div class="dashboard-badge">Aktiv</div>
+        </div>
+        <h3 class="dashboard-title">Bestellungen</h3>
+        <span class="dashboard-value">{{ tablesCount ? tablesCount.orders : 0 }}</span>
       </div>
     </div>
 
@@ -55,11 +81,10 @@
         <div class="chart-header">
           <h3>Verteilung</h3>
         </div>
-        <canvas id="distributionChart"></canvas>
+        <DashboardChartDonat v-if="chartDataDonat" :chartData="chartDataDonat" :key="chartKey" />
       </div>
     </div>
 
-    <!-- Bilgi / info kartları -->
     <div class="info-grid">
       <div class="info-card">
         <h3 class="info-title">Stammdaten</h3>
@@ -82,29 +107,31 @@
         <div style="margin-top: 1.5rem">
           <div class="progress-item">
             <div class="progress-header">
-              <span>Kundenzufriedenheit</span>
-              <span>94%</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" data-width="94"></div>
-            </div>
-          </div>
-          <div class="progress-item">
-            <div class="progress-header">
               <span>Zahlungspünktlichkeit</span>
-              <span>87%</span>
+              <span>{{ invoiceStats.paymentRate }}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-width="87"></div>
+              <div class="progress-fill" :style="{ width: invoiceStats.paymentRate + '%' }"></div>
             </div>
           </div>
+
           <div class="progress-item">
             <div class="progress-header">
-              <span>Projekterfolgsrate</span>
-              <span>96%</span>
+              <span>Unbezahlt Quote</span>
+              <span>{{ invoiceStats.unpaidRate }}%</span>
             </div>
             <div class="progress-bar">
-              <div class="progress-fill" data-width="96"></div>
+              <div class="progress-fill" :style="{ width: invoiceStats.unpaidRate + '%' }"></div>
+            </div>
+          </div>
+
+          <div class="progress-item">
+            <div class="progress-header">
+              <span>Überfällig Quote</span>
+              <span>{{ invoiceStats.overdueRate }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: invoiceStats.overdueRate + '%' }"></div>
             </div>
           </div>
         </div>
@@ -158,28 +185,50 @@
 
 <script>
 import DashboardChart from '../components/chart/DashboardChart.vue'
+import DashboardChartDonat from '../components/chart/DashBoardChartDonat.vue'
 import store from '../store/store'
 
 export default {
-  components: { DashboardChart },
+  components: { DashboardChart, DashboardChartDonat },
   data() {
     return {
       title: 'Übersicht',
       tablesCount: null,
       chartData: null,
+      chartDataDonat: null,
       selectedPeriod: '1M',
-      chartKey: 0,
-      titles: {
-        customers: 'Alle Kunden',
-        invoices: 'Alle Rechnungen',
-        offers: 'Alle Angebote',
-        orders: 'Alle Aufträge'
-      },
-      icons: {
-        customers: 'bi-people-fill',
-        invoices: 'bi-receipt',
-        offers: 'bi-file-earmark-text',
-        orders: 'bi-box-seam'
+      chartKey: 0
+    }
+  },
+  computed: {
+    invoiceStats() {
+      if (!this.tablesCount) {
+        return {
+          paymentRate: 0,
+          unpaidRate: 0,
+          overdueRate: 0
+        }
+      }
+
+      const paid = this.tablesCount.paid_count || 0
+      const partial = this.tablesCount.partially_paid_count || 0
+      const unpaid = this.tablesCount.unpaid_count || 0
+      const overdue = this.tablesCount.overdue_count || 0
+
+      const total = paid + partial + unpaid + overdue
+
+      if (total === 0) {
+        return {
+          paymentRate: 0,
+          unpaidRate: 0,
+          overdueRate: 0
+        }
+      }
+
+      return {
+        paymentRate: Math.round(((paid + partial) / total) * 100),
+        unpaidRate: Math.round((unpaid / total) * 100),
+        overdueRate: Math.round((overdue / total) * 100)
       }
     }
   },
@@ -191,12 +240,13 @@ export default {
       try {
         this.clearDate()
         const result = await window.api.getDashboard()
+        console.log('Dashboard verisi:', result)
         if (!result.success) return
         this.tablesCount = {
-          customers: result.rows.customers_count || 0,
-          invoices: result.rows.invoices_count || 0,
-          offers: result.rows.offers_count || 0,
-          orders: result.rows.orders_count || 0,
+          customers: result.rows.customers || 0,
+          invoices: result.rows.invoices || 0,
+          offers: result.rows.offers || 0,
+          orders: result.rows.orders || 0,
           paid_count: result.rows.paid_count || 0,
           partially_paid_count: result.rows.partially_paid_count || 0,
           unpaid_count: result.rows.unpaid_count || 0,
@@ -204,6 +254,9 @@ export default {
         }
 
         await this.updateChartData(this.selectedPeriod)
+
+        const activities = await window.api.getLatestActivities()
+        console.log('Latest activities:', activities)
       } catch (error) {
         console.error(error)
       }
@@ -219,6 +272,15 @@ export default {
           this.chartData = {
             labels: result.rows.labels,
             values: result.rows.values
+          }
+          this.chartDataDonat = {
+            labels: ['Bezahlt', 'Teilweise bezahlt', 'Unbezahlt', 'Überfällig'],
+            values: [
+              result.rows.paid_count,
+              result.rows.partially_paid_count,
+              result.rows.unpaid_count,
+              result.rows.overdue_count
+            ]
           }
           this.chartKey++
         }
