@@ -26,33 +26,33 @@
 
         <div class="recipient-details">
           <div class="recipient-title">Auftragsdetails</div>
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Auftrags-Nr.:</span>
             <span class="meta-value">{{ formatOrderId(order.id) }}</span>
           </div>
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Datum:</span>
             <span class="meta-value">{{ formatDate(order.date) }}</span>
           </div>
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Kunden-Nr.:</span>
             <span class="meta-value">{{ formatCustomerId(order.customer.id) }}</span>
           </div>
-          <div v-if="auth.tax_number" class="meta-row">
+          <div v-if="auth.tax_number" class="recipient-row">
             <span class="meta-label">Steuernummer:</span>
             <span class="meta-value">{{ auth.tax_number }}</span>
           </div>
-          <div v-if="auth.vat_id" class="meta-row">
+          <div v-if="auth.vat_id" class="recipient-row">
             <span class="meta-label">USt-ID:</span>
             <span class="meta-value">{{ auth.vat_id }}</span>
           </div>
-          <div v-if="order.customer_reference" class="meta-row">
+          <div v-if="order.customer_reference" class="recipient-row">
             <span class="meta-label">Kundenreferenz:</span>
             <span class="meta-value">{{ order.customer_reference }}</span>
           </div>
 
           <!-- Leistungszeitraum -->
-          <div v-if="order.service_period_start && order.service_period_end" class="meta-row">
+          <div v-if="order.service_period_start && order.service_period_end" class="recipient-row">
             <span class="meta-label">Leistungszeitraum:</span>
             <span class="meta-value">
               {{ formatDate(order.service_period_start) }} -
@@ -61,33 +61,33 @@
           </div>
 
           <!-- Status, Priorität, Versandinfo -->
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Status:</span>
             <div class="" :class="orderStatus(order.status).class">
               {{ orderStatus(order.status).text }}
             </div>
           </div>
-          <div v-if="order.status_by" class="meta-row">
+          <div v-if="order.status_by" class="recipient-row">
             <span class="meta-label">Bearbeitet von:</span>
             <span class="meta-value">{{ order.status_by }}</span>
           </div>
-          <div v-if="order.status_date" class="meta-row">
+          <div v-if="order.status_date" class="recipient-row">
             <span class="meta-label">Bearbeitet am:</span>
             <span class="meta-value">{{ formatDate(order.status_date) }}</span>
           </div>
-          <div v-if="order.status_comments" class="meta-row">
+          <div v-if="order.status_comments" class="recipient-row">
             <span class="meta-label">Kommentare:</span>
             <span class="meta-value">{{ order.status_comments }}</span>
           </div>
-          <div v-if="order.priority" class="meta-row">
+          <div v-if="order.priority" class="recipient-row">
             <span class="meta-label">Priorität:</span>
             <span class="meta-value">{{ order.priority }}</span>
           </div>
-          <div v-if="order.sent_at" class="meta-row">
+          <div v-if="order.sent_at" class="recipient-row">
             <span class="meta-label">Gesendet am:</span>
             <span class="meta-value">{{ formatDate(order.sent_at) }}</span>
           </div>
-          <div v-if="order.sent_method" class="meta-row">
+          <div v-if="order.sent_method" class="recipient-row">
             <span class="meta-label">Gesendet per:</span>
             <span class="meta-value">{{ order.sent_method }}</span>
           </div>
@@ -238,15 +238,15 @@
       <ContactPersonPreview :contactData="auth.contact_person" />
 
       <!-- Bankinformationen -->
-      <div class="bank-box">
-        <div class="bank-title">🏦 Bankinformationen</div>
+      <div class="preview-box">
+        <div class="preview-box-title">🏦 Bankinformationen</div>
         <div class="bank-info">
-          <span class="bank-label">Bank:</span>
-          <span class="bank-value">{{ auth.bank_name }}</span>
-          <span class="bank-label">IBAN:</span>
-          <span class="bank-value">{{ auth.iban }}</span>
-          <span class="bank-label">BIC:</span>
-          <span class="bank-value">{{ auth.bic }}</span>
+          <span class="preview-box-label">Bank:</span>
+          <span class="preview-box-value">{{ auth.bank_name }}</span>
+          <span class="preview-box-label">IBAN:</span>
+          <span class="preview-box-value">{{ auth.iban }}</span>
+          <span class="preview-box-label">BIC:</span>
+          <span class="preview-box-value">{{ auth.bic }}</span>
         </div>
       </div>
 

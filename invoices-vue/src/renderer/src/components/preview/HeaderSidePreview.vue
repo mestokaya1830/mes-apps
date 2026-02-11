@@ -89,10 +89,8 @@ export default {
   line-height: 1.6;
 }
 .user-logo {
+  width: 140px;
   max-width: 160px;
-  max-height: 100px;
-  width: auto;
-  height: auto;
   display: block;
 }
 </style>

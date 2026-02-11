@@ -128,15 +128,15 @@
       <ContactPersonPreview :contactData="auth.contact_person" />
 
       <!-- Bank Info -->
-      <div class="bank-box">
-       <div class="bank-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
+      <div class="preview-box">
+       <div class="preview-box-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
         <div class="bank-info">
-          <span class="bank-label">Bank:</span>
-          <span class="bank-value">{{ auth.bank_name }}</span>
-          <span class="bank-label">IBAN:</span>
-          <span class="bank-value">{{ auth.iban }}</span>
-          <span class="bank-label">BIC:</span>
-          <span class="bank-value">{{ auth.bic }}</span>
+          <span class="preview-box-label">Bank:</span>
+          <span class="preview-box-value">{{ auth.bank_name }}</span>
+          <span class="preview-box-label">IBAN:</span>
+          <span class="preview-box-value">{{ auth.iban }}</span>
+          <span class="preview-box-label">BIC:</span>
+          <span class="preview-box-value">{{ auth.bic }}</span>
         </div>
       </div>
       <FooterSidePreview />

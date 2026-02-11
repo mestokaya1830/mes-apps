@@ -28,36 +28,36 @@
               <i class="bi bi-file-earmark-text icons"></i>Rechnungsdetails
             </div>
 
-            <div class="meta-row">
+            <div class="recipient-row">
               <span class="meta-label">Rechnung-Nr.:</span>
               <span class="meta-value">{{ formatInvoiceId(invoice.id) }}</span>
             </div>
 
-            <div v-if="invoice.service_date" class="meta-row">
+            <div v-if="invoice.service_date" class="recipient-row">
               <span class="meta-label">Leistungsdatum:</span>
               <span class="meta-value">{{ formatDate(invoice.service_date) }}</span>
             </div>
 
-            <div class="meta-row">
+            <div class="recipient-row">
               <span class="meta-label">Datum:</span>
               <span class="meta-value">{{ formatDate(invoice.date) }}</span>
             </div>
 
-            <div class="meta-row">
+            <div class="recipient-row">
               <span class="meta-label">Fälligkeitsdatum:</span>
               <span class="meta-value">{{ formatDate(invoice.due_date) }}</span>
             </div>
 
-            <div class="meta-row">
+            <div class="recipient-row">
               <span class="meta-label">Kunden-Nr.:</span>
               <span class="meta-value">{{ formatCustomerId(invoice.customer.id) }}</span>
             </div>
 
-            <div v-if="invoice.country === 'Germany' && invoice.tax_number" class="meta-row">
+            <div v-if="invoice.country === 'Germany' && invoice.tax_number" class="recipient-row">
               <span class="meta-label">Steuer-Nr.:</span>
               <span class="meta-value">{{ invoice.tax_number }}</span>
             </div>
-            <div v-else-if="invoice.vat_id" class="meta-row">
+            <div v-else-if="invoice.vat_id" class="recipient-row">
               <span class="meta-label">USt-IdNr.:</span>
               <span class="meta-value">{{ invoice.vat_id }}</span>
             </div>
@@ -141,11 +141,11 @@
           </div>
         </div>
 
-        <div class="payment-terms-box">
-          <div class="payment-terms-title">
+        <div class="preview-box">
+          <div class="preview-box-title">
             <i class="bi bi-credit-card-fill icons"></i>Zahlungsbedingungen
           </div>
-          <div class="payment-terms-content">
+          <div class="preview-box-contentt">
             <div v-if="invoice.payment_terms" class="payment-term-item">
               <strong>Zahlungsziel:</strong> {{ invoice.payment_terms }} Tage (bis
               {{ formatDate(invoice.due_date) }})
@@ -160,13 +160,13 @@
 
         <ContactPersonPreview :contactData="auth.contact_person" />
 
-        <div class="bank-box">
-          <div class="bank-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
+        <div class="preview-box">
+          <div class="preview-box-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
           <div class="bank-info">
-            <span class="bank-label">Bank:</span>
-            <span class="bank-value">{{ auth.bank_name }}</span>
-            <span class="bank-label">IBAN:</span> <span class="bank-value">{{ auth.iban }}</span>
-            <span class="bank-label">BIC:</span> <span class="bank-value">{{ auth.bic }}</span>
+            <span class="preview-box-label">Bank:</span>
+            <span class="preview-box-value">{{ auth.bank_name }}</span>
+            <span class="preview-box-label">IBAN:</span> <span class="preview-box-value">{{ auth.iban }}</span>
+            <span class="preview-box-label">BIC:</span> <span class="preview-box-value">{{ auth.bic }}</span>
           </div>
         </div>
         <FooterSidePreview />

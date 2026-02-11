@@ -26,33 +26,33 @@
         <div class="invoice-details">
           <div class="section-title">Angebotsdetails</div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Angebots-Nr.:</span>
             <span class="meta-value">{{ formatOfferId(offer.id) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Datum:</span>
             <span class="meta-value">{{ formatDate(offer.date) }}</span>
           </div>
 
           <!-- Leistungsdatum hinzugefügt -->
-          <div v-if="offer.service_date" class="meta-row">
+          <div v-if="offer.service_date" class="recipient-row">
             <span class="meta-label">Leistungsdatum:</span>
             <span class="meta-value">{{ formatDate(offer.service_date) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Kunden-Nr.:</span>
             <span class="meta-value">{{ formatCustomerId(offer.customer.id) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Steuer-Nr.:</span>
             <span class="meta-value">{{ offer.customer.vat_id }}</span>
           </div>
 
-          <div v-if="offer.valid_until" class="meta-row">
+          <div v-if="offer.valid_until" class="recipient-row">
             <span class="meta-label">Gültig bis:</span>
             <span class="meta-value">{{ formatDate(offer.valid_until) }}</span>
           </div>

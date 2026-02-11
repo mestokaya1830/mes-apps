@@ -113,7 +113,7 @@
 .nav-icon {
   margin-right: 8px;
 }
-.contact-box {
+.preview-box {
   background: #f1f5f9;
   margin: 10px;
   padding: 10px;

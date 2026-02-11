@@ -21,27 +21,27 @@
             <i class="bi bi-info-circle-fill icons"></i>Rechnungsdetails
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Rechnung-Nr.:</span>
             <span class="meta-value">{{ formatInvoiceId(invoicePreview.id) }}</span>
           </div>
 
-          <div v-if="invoicePreview.service_date" class="meta-row">
+          <div v-if="invoicePreview.service_date" class="recipient-row">
             <span class="meta-label">Leistungsdatum:</span>
             <span class="meta-value">{{ formatDate(invoicePreview.service_date) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Datum:</span>
             <span class="meta-value">{{ formatDate(invoicePreview.date) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Fälligkeitsdatum:</span>
             <span class="meta-value">{{ formatDate(invoicePreview.due_date) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Kunden-Nr.:</span>
             <span class="meta-value">{{ formatCustomerId(invoicePreview.customer.id) }}</span>
           </div>
@@ -50,13 +50,13 @@
             v-if="
               invoicePreview.customer.country === 'Germany' && invoicePreview.customer.tax_number
             "
-            class="meta-row"
+            class="recipient-row"
           >
             <span class="meta-label">Steuer-Nr.:</span>
             <span class="meta-value">{{ invoicePreview.customer.tax_number }}</span>
           </div>
 
-          <div v-else-if="invoicePreview.customer.vat_id" class="meta-row">
+          <div v-else-if="invoicePreview.customer.vat_id" class="recipient-row">
             <span class="meta-label">USt-IdNr.:</span>
             <span class="meta-value">{{ invoicePreview.customer.vat_id }}</span>
           </div>
@@ -166,11 +166,11 @@
         </div>
       </div>
 
-      <div class="payment-terms-box">
-        <div class="payment-terms-title">
+      <div class="preview-box">
+        <div class="preview-box-title">
           <i class="bi bi-credit-card-2-back-fill icons"></i>Zahlungsbedingungen
         </div>
-        <div class="payment-terms-content">
+        <div class="preview-box-contentt">
           <div v-if="invoicePreview.payment_terms" class="payment-term-item">
             <strong>Zahlungsziel:</strong> {{ invoicePreview.payment_terms }} Tage (bis
             {{ formatDate(invoicePreview.due_date) }})
@@ -184,15 +184,17 @@
         </div>
       </div>
 
+      <!-- Kontaktperson -->
       <ContactPersonPreview :contactData="auth.contact_person" />
 
-      <div class="bank-box">
-        <div class="bank-title"><i class="bi bi-bank icons"></i>Bankverbindung</div>
-        <div class="bank-info">
-          <span class="bank-label">Bank:</span>
-          <span class="bank-value">{{ auth.bank_name }}</span>
-          <span class="bank-label">IBAN:</span> <span class="bank-value">{{ auth.iban }}</span>
-          <span class="bank-label">BIC:</span> <span class="bank-value">{{ auth.bic }}</span>
+       <!-- Bankinformationen -->
+      <div class="preview-box">
+        <div class="preview-box-title"><i class="bi bi-bank icons"></i>Bankverbindung</div>
+        <div class="preview-box-content">
+          <span class="preview-box-label">Bank:</span>
+          <span class="preview-box-value">{{ auth.bank_name }}</span>
+          <span class="preview-box-label">IBAN:</span> <span class="preview-box-value">{{ auth.iban }}</span>
+          <span class="preview-box-label">BIC:</span> <span class="preview-box-value">{{ auth.bic }}</span>
         </div>
       </div>
       <FooterSidePreview />

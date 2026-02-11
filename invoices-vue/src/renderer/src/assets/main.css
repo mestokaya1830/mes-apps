@@ -386,6 +386,13 @@ select {
   border: 1px solid #ddd;
   border-radius: 4px;
 }
+.status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 0;
+  border-radius: 5px;
+}
 .status-badge.active {
   background: var(--status-active-bg);
   color: var(--status-active-text);
@@ -939,7 +946,17 @@ textarea.error {
   color: var(--lightColor);
   font-size: var(--font-size-xs);
 }
+.recipient-details {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xl);
+}
 
+.recipient-row{
+  display: flex;
+}
 .meta-row {
   display: grid;
   grid-template-columns: 100px 1fr;
@@ -947,6 +964,7 @@ textarea.error {
 }
 
 .meta-label {
+  width: 180px;
   font-weight: 600;
   color: var(--lightColor);
   font-size: var(--font-size-xs);
@@ -986,32 +1004,7 @@ textarea.error {
   width: 100px;
 }
 
-.bank-box {
-  background: var(--bg-slate);
-  margin: 10px;
-  padding: 10px;
-  border-radius: var(--border-radius-md);
-  border: 1px solid transparent;
-}
 
-.bank-info {
-  display: grid;
-  grid-template-columns: 50px 1fr;
-  gap: var(--spacing-xs);
-  line-height: 1.6;
-  font-size: var(--font-size-xs);
-  page-break-inside: avoid;
-  break-inside: avoid;
-}
-
-.bank-label {
-  color: var(--text-label);
-}
-
-.bank-value {
-  font-weight: 600;
-  color: var(--text-darker);
-}
 
 .back-link {
   display: inline-block;
@@ -1089,10 +1082,10 @@ textarea.error {
 
 .recipient-title {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  color: #94a3b8;
+  letter-spacing: 2px;
+  color: var(--gradient-sky);
   margin-bottom: var(--spacing-lg);
 }
 
@@ -1104,39 +1097,36 @@ textarea.error {
   font-size: var(--font-size-sm);
 }
 
-.payment-terms-box {
+
+.preview-box {
   margin: var(--spacing-3xl) 0;
   padding: var(--spacing-xl);
-  background-color: var(--bg-gray-light);
   border: 1px solid var(--border-darker);
   border-radius: var(--border-radius-md);
 }
 
-.payment-terms-title {
+.preview-box-title {
   font-size: var(--font-size-base);
   font-weight: 700;
   margin-bottom: 15px;
   color: #0066cc;
 }
-
-.payment-terms-content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-}
-
-.payment-term-item {
-  font-size: 13px;
+.preview-box-content {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: var(--spacing-xs);
   line-height: 1.6;
-  padding: var(--spacing-sm) 0;
+  font-size: var(--font-size-xs);
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
-
-.payment-term-item strong {
+.preview-box-label {
+  font-weight: 600;
   color: var(--text-darker);
-  display: block;
-  margin-bottom: var(--spacing-xs);
 }
-
+.preview-box-value {
+  color: var(--text-label);
+}
 .skonto-highlight {
   background-color: var(--bg-info);
   padding: var(--spacing-md);

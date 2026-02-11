@@ -20,27 +20,27 @@
             </div>
           </div>
         </div>
-        <div class="invoice-details">
+        <div class="recipient-details">
           <div class="section-title">Angebotsdetails</div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Angebots-Nr.:</span>
             <span class="meta-value">{{ formatOfferId(offerPreview.id) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Datum:</span>
             <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
           </div>
 
-          <div class="meta-row">
+          <div class="recipient-row">
             <span class="meta-label">Kunden-Nr.:</span>
             <span class="meta-value">{{ formatCustomerId(offerPreview.customer.id) }}</span>
           </div>
 
           <div
             v-if="offerPreview.customer.country === 'Germany' && offerPreview.customer.tax_number"
-            class="meta-row"
+            class="recipient-row"
           >
             <span class="meta-label">Steuer-Nr.:</span>
             <span class="meta-value">{{ offerPreview.customer.tax_number }}</span>
@@ -48,7 +48,7 @@
 
           <div
             v-else-if="offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
-            class="meta-row"
+            class="recipient-row"
           >
             <span class="meta-label">USt-IdNr.:</span>
             <span class="meta-value">{{ offerPreview.customer.vat_id }}</span>
@@ -56,18 +56,18 @@
 
           <div
             v-else-if="!offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
-            class="meta-row"
+            class="recipient-row"
           >
             <span class="meta-label">VAT ID:</span>
             <span class="meta-value">{{ offerPreview.customer.vat_id }}</span>
           </div>
 
-          <div v-if="offerPreview.valid_until" class="meta-row">
+          <div v-if="offerPreview.valid_until" class="recipient-row">
             <span class="meta-label">Gültig bis:</span>
             <span class="meta-value">{{ formatDate(offerPreview.valid_until) }}</span>
           </div>
 
-          <div v-if="offerPreview.status" class="meta-row">
+          <div v-if="offerPreview.status" class="recipient-row">
             <span class="meta-label">Status:</span>
             <span class="meta-value">{{ getStatusText(offerPreview.status) }}</span>
           </div>

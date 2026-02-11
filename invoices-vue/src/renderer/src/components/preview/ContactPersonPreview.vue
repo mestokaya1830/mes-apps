@@ -1,14 +1,14 @@
 <template lang="">
   <div>
-    <div v-if="contact" class="contact-box">
-      <i class="bi bi-person-lines-fill" icons></i> Kontaktdaten
-      <div class="bank-info">
-        <span class="bank-label">SM:</span>
-        <span class="bank-value">{{ contact.first_name }} {{ contact.last_name }}</span>
-        <span class="bank-label">Tel: </span>
-        <span class="bank-value">+{{ contact.phone }}</span>
-        <span class="bank-label">Email: </span>
-        <span class="bank-value">{{ contact.email }}</span>
+    <div v-if="contact" class="preview-box">
+      <div class="preview-box-title"><i class="bi bi-person-lines-fill icons"></i>Kontaktdaten</div>
+      <div class="preview-box-content">
+        <span class="preview-box-label">SM:</span>
+        <span class="preview-box-value">{{ contact.first_name }} {{ contact.last_name }}</span>
+        <span class="preview-box-label">Tel: </span>
+        <span class="preview-box-value">+{{ contact.phone }}</span>
+        <span class="preview-box-label">Email: </span>
+        <span class="preview-box-value">{{ contact.email }}</span>
       </div>
     </div>
   </div>
