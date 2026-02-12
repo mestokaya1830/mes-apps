@@ -270,12 +270,13 @@ export default {
 }
 
 .app-logo {
-  padding: 2rem 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  max-width: 150px;
+  padding: 2rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
 }

@@ -126,6 +126,7 @@ ipcMain.handle('register', async (event, payload) => {
     const { user, image_file } = payload
     const companyDetailsJSON = JSON.stringify(user.company_details || {})
     const contactPersonJSON = JSON.stringify(user.contact_person || {})
+    const encryptPass = cryptr.encrypt(user.password)
 
     db.prepare(
       `INSERT INTO users (
@@ -159,12 +160,12 @@ ipcMain.handle('register', async (event, payload) => {
           bic,
           iban,
           bank_account_holder
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       user.gender,
       user.first_name,
       user.last_name,
-      user.password,
+      encryptPass,
       user.email,
       user.phone,
       user.address,
@@ -213,14 +214,18 @@ ipcMain.handle('register', async (event, payload) => {
 //user and login
 ipcMain.handle('login', async (event, payload) => {
   const { email, password } = payload
+
   try {
-    const row = db
-      .prepare('SELECT * FROM users WHERE email = ? AND password = ?')
-      .get(email, password)
+    const row = db.prepare('SELECT * FROM users WHERE email = ?').get(email)
 
     if (row) {
-      row.logo = row.logo.toString('base64')
-      return { success: true, user: row }
+      const decryptedPass = cryptr.decrypt(row.password)
+      if (decryptedPass === password) {
+        row.logo = row.logo.toString('base64')
+        return { success: true, user: row }
+      } else {
+        return { success: false, message: 'Invalid email or password' }
+      }
     } else {
       return { success: false, message: 'Invalid email or password' }
     }

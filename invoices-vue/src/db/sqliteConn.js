@@ -24,6 +24,19 @@ try {
   console.error(err.message)
 }
 
+try {
+  const result = db.prepare(`SELECT * FROM users LIMIT 1;`).all()
+  console.log(result)
+} catch (err) {
+  console.error(err.message)
+}
+
+// try {
+//   db.prepare(`DELETE FROM users;`).run()
+//   db.prepare(`DELETE FROM sqlite_sequence WHERE name = 'users';`).run()
+// } catch (error) {
+//   console.error(error)
+// }
 // try {
 //   const result = db.prepare(`PRAGMA table_info(tokens);`).all()
 //   const fields = result.map((r) => r.name)

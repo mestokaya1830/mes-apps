@@ -73,12 +73,6 @@
   display: inline-block;
 }
 
-.app-logo {
-  max-width: 400px;
-  object-fit: contain;
-  animation: logoFloat 3s ease-in-out infinite;
-}
-
 @keyframes logoFloat {
   0%,
   100% {

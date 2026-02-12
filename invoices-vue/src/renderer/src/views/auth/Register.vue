@@ -176,7 +176,7 @@
 
           <figure class="form-group logo-preview-wrapper">
             <figcaption>Logo-Vorschau</figcaption>
-            <img :src="selectedImage" class="logo-preview" alt="Company Logo" />
+            <img :src="selectedImage" class="user-logo" alt="Company Logo" />
             <div v-if="error.selectedImage" class="error">{{ error.selectedImage }}</div>
           </figure>
         </div>

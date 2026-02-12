@@ -20,6 +20,13 @@ try {
   console.error(err.message)
 }
 
+//truncate table
+try {
+  db.prepare(`DELETE FROM users;`).run()
+  db.prepare(`DELETE FROM sqlite_sequence WHERE name = 'users';`).run()
+} catch (error) {
+  console.error(error)
+}
 
 //insert into table---------------------------------------------------------------------------
 try {
