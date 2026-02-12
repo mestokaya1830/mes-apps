@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="login-container">
-      <div class="logo-section">
+      <header class="logo-header">
         <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
-      </div>
+      </header>
 
       <form class="login-form" @submit.prevent="sendEmail">
         <h2 class="setup-title">E-Mail-Verifizierung</h2>

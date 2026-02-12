@@ -1,15 +1,15 @@
 <template>
   <div v-if="customer" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>
         {{ title }}
       </label>
       <router-link :to="`/customers/details/${customer.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
 
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-building form-title icons"></i> Unternehmensinformationen
       </div>
@@ -33,9 +33,9 @@
           <input v-model="customer.last_name" type="text" class="inputs" required />
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i> Adressdaten</div>
       <div class="form-row">
         <div class="form-group">
@@ -57,9 +57,9 @@
           <input v-model="customer.country" type="text" class="inputs" required />
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-telephone form-title icons"></i> Kontaktdaten</div>
       <div class="form-row">
         <div class="form-group">
@@ -71,9 +71,9 @@
           <input v-model="customer.phone" type="text" class="inputs" required />
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-file-earmark-text form-title icons"></i> Steuerinformationen
       </div>
@@ -91,13 +91,13 @@
         <label class="form-label">Erstellungsdatum</label>
         <input v-model="customer.created_at" type="text" class="inputs" />
       </div>
-    </div>
+    </section>
 
-    <div class="sections btn-container">
+    <section class="sections btn-container">
       <button type="button" class="btn btn-update" @click="updateCustomer">
         <i class="bi bi-save icons"></i> Aktualisierung
       </button>
-    </div>
+    </section>
   </div>
 </template>
 

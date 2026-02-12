@@ -1,16 +1,16 @@
 <template>
   <div v-if="$route.params.id" class="main-container">
-     <div class="main-header">
+     <header class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <div class="printable">
       <!-- Header -->
       <h2>{{ title }}</h2>
 
-      <div class="sections">
+      <section class="sections">
         <div class="custom-row">
           <div class="form-group">
             <label for="">Rechnung-Nr.:</label>
@@ -53,7 +53,7 @@
 
           <button @click="updateOffer" class="btn btn-cancel">Aktualisieren</button>
         </div>
-      </div>
+      </section>
     </div>
     <router-link :to="`/offers/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Angebotsdetails

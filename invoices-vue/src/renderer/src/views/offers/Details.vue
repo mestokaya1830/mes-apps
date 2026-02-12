@@ -1,8 +1,10 @@
 <template>
   <div v-if="offer && auth" class="main-container">
-    <router-link to="/offers" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+    <header class="main-header-right">
+      <router-link to="/offers" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
+    </header>
     <div class="printable">
       <!-- Header -->
       <HeaderSidePreview :title="title" :auth="auth" />
@@ -71,11 +73,13 @@
           {{ offer.subject }}
         </div>
       </div>
+
       <!-- Intro Text -->
       <div class="intro-text">
         Sehr geehrte Damen und Herren,<br /><br />
         vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:
       </div>
+
       <div>
         <div class="section-title">introduction_text</div>
         <div class="intro-text">
@@ -168,6 +172,7 @@
         Wir freuen uns auf Ihre Rückmeldung und stehen für Rückfragen gerne zur Verfügung.<br /><br />
         Mit freundlichen Grüßen
       </div>
+
       <div>
         <div class="section-title">Notes</div>
         <div class="intro-text">
@@ -210,7 +215,6 @@
     <OfferActions v-if="offer" :tableData="offer" :fileName="actionFileName" sourcePage="details" />
 
     <router-link to="/offers" class="back-link"> ← Zurück zur Angebotsliste </router-link>
-
   </div>
 </template>
 

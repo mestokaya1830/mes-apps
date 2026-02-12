@@ -1,15 +1,15 @@
 <template>
   <div class="main-container">
-     <div class="main-header">
+     <header class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <div class="printable">
       <h2>{{ title }}</h2>
 
-      <div class="sections">
+      <section class="sections">
         <!-- Status -->
         <div class="form-group">
           <div v-if="order.status === 'accepted' || order.status === 'rejected'">
@@ -152,7 +152,7 @@
           <label class="form-label">Interne Hinweise:</label>
           <textarea v-model="order.internal_notes" class="inputs"></textarea>
         </div>
-      </div>
+      </section>
     </div>
 
     <button

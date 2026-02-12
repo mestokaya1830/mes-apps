@@ -1,11 +1,11 @@
 <template>
   <div class="main-container">
-     <div class="main-header">
+     <header class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <div class="printable">
       <!-- Header -->
       <h2>{{ title }}</h2>
@@ -15,7 +15,7 @@
         sent → only accepted and rejected can be selected; draft and sent are disabled.
         accepted/rejected → all options are disabled; only the current status is shown. 
       -->
-      <div class="sections">
+      <section class="sections">
         <div class="form-group">
           <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
             <h4>Status:</h4>
@@ -69,7 +69,7 @@
             placeholder="Kommentare oder Notizen hier eingeben"
           ></textarea>
         </div>
-      </div>
+      </section>
     </div>
     <button
       :disabled="original_status == 'accepted' || original_status == 'rejected'"

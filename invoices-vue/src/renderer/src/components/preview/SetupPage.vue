@@ -1,7 +1,7 @@
 <template>
   <div class="setup-container">
     <!-- Logo ve Başlık -->
-    <div class="logo-section">
+    <div class="logo-header">
       <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
     </div>
 
@@ -67,7 +67,7 @@
   }
 }
 
-.logo-section {
+.logo-header {
   margin-bottom: 35px;
   padding: 20px;
   display: inline-block;
@@ -140,7 +140,7 @@
 }
 
 @media screen and (min-width: 1610px) {
-  .logo-section {
+  .logo-header {
     margin-bottom: 45px;
   }
 

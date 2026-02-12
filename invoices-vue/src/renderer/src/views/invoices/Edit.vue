@@ -1,17 +1,14 @@
 <template>
   <div v-if="$route.params.id" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/invoices/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <div>
       <div class="printable">
-        <!-- Header -->
-        <h2>{{ title }}</h2>
-
-        <div class="sections">
+        <section class="sections">
           <div class="custom-row">
             <div class="form-group">
               <label for="">Rechnung-Nr.:</label>
@@ -56,12 +53,12 @@
             </div>
 
           </div>
-        </div>
+        </section>
       </div>
     </div>
-    <div class="sections btn-container">
+    <section class="sections btn-container">
       <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
-    </div>
+    </section>
   </div>
 </template>
 

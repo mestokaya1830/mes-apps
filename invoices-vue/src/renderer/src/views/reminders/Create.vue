@@ -1,13 +1,13 @@
 <template>
   <div v-if="reminder" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <div class="main-title">{{ title }}</div>
       <router-link :to="`/invoices/details/${reminder.invoice_id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
 
-    <div class="sections">
+    <section class="sections">
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Versandtermin <span class="stars">*</span></label>
@@ -72,9 +72,9 @@
         </select>
         <small v-if="error.payment_deadline" class="error">{{ error.payment_deadline }}</small>
       </div>
-    </div>
+    </section>
 
-    <div v-if="reminder.level" class="sections">
+    <section v-if="reminder.level" class="sections">
       <div class="form-group">
         <label class="form-label">Intro Text <span class="stars">*</span></label>
         <textarea v-model="reminder.intro_text" class="inputs"></textarea>
@@ -89,9 +89,9 @@
         <label class="form-label">Endtext <span class="stars">*</span></label>
         <textarea v-model="reminder.closing_text" class="inputs"></textarea>
       </div>
-    </div>
+    </section>
 
-    <div class="sections">
+    <section class="sections">
       <div class="compliance-notice legal">
         <i class="bi bi-shield-check icons"></i><strong>Rechtliche Hinweise (Deutschland):</strong>
         <ul>
@@ -102,13 +102,13 @@
           <li>Mahnung muss bestimmt sein und Zahlungsaufforderung enthalten</li>
         </ul>
       </div>
-    </div>
+    </section>
 
-    <div class="sections btn-container">
+    <section class="sections btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>
-    </div>
+    </section>
   </div>
 </template>
 

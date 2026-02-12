@@ -1,8 +1,8 @@
 <template>
   <div class="setup-page">
-    <div class="logo-section">
+    <header class="logo-header">
       <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
-    </div>
+    </header>
 
     <div class="form-card">
       <div class="form-header">

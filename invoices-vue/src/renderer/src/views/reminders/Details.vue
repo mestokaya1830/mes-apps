@@ -1,11 +1,11 @@
 <template>
   <div v-if="reminder && auth" class="main-container">
-     <div class="main-header">
-      <h1 class="main-title">{{ title }}</h1>
+     <header class="main-header">
+      <label class="main-title">{{ title }}</label>
       <router-link to="/reminders" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <div class="printable">
       <!-- Header -->
       <HeaderSidePreview :title="title" :auth="auth" />

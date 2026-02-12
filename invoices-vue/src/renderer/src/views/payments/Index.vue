@@ -1,12 +1,12 @@
 <template>
   <div v-if="payments" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
       <router-link to="/payments/create" class="btn btn-primary">
         <i class="bi bi-plus-circle icons"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
-    </div>
+    </header>
 
     <div class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">

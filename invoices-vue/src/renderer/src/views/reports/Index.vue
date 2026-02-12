@@ -1,8 +1,8 @@
 <template>
   <div class="report-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
-    </div>
+    </header>
     <div class="sections">
       <div class="form-group">
         <select v-model="report_type" class="inputs">

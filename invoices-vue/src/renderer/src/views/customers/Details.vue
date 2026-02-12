@@ -1,12 +1,12 @@
 <template>
   <div v-if="customer" class="main-container">
     <!-- Header -->
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
 
     <!-- Customer Info Card -->
     <div class="customer-info card">
@@ -30,12 +30,12 @@
     </div>
 
     <!-- Actions -->
-    <div class="sections btn-container">
+    <section class="sections btn-container">
       <router-link :to="`/customers/edit/${customer.id}`">
         <button class="btn btn-edit">Edit</button>
       </router-link>
       <button class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
-    </div>
+    </section>
   </div>
 </template>
 

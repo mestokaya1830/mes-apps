@@ -1,14 +1,14 @@
 <template>
   <div v-if="payment" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/invoices" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
 
     <div>
-      <div class="sections">
+      <section class="sections">
         <div class="sections-title"><i class="bi bi-file-text icons"></i>Ausgewählte Rechnung</div>
         <div class="customer-details" style="margin-top: 16px">
           <div class="form-row">
@@ -50,9 +50,9 @@
             </label>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="sections iban-section">
+      <section class="sections iban-section">
         <div class="sections-title"><i class="bi bi-bank2 icons"></i>Gegenpartei Informationen</div>
 
         <IbanComponent
@@ -65,9 +65,9 @@
           @bicValid="bicValid = $event"
           @update:bank="setBank"
         />
-      </div>
+      </section>
 
-      <div class="sections">
+      <section class="sections">
         <div class="sections-title"><i class="bi bi-coin icons"></i>Währung</div>
         <div class="form-group">
           <label class="form-label">Währung <span class="star">*</span></label>
@@ -84,9 +84,9 @@
             <option value="NZD.en-NZ">NZD</option>
           </select>
         </div>
-      </div>
+      </section>
 
-      <div class="sections">
+      <section class="sections">
         <div class="sections-title"><i class="bi bi-cash-stack icons"></i>Zahlungsdetails</div>
         <div class="form-row">
           <div class="form-group">
@@ -177,7 +177,7 @@
           <label class="form-label">Notizen (optional)</label>
           <textarea v-model="payment.notes" class="inputs" rows="3"></textarea>
         </div>
-      </div>
+      </section>
 
       <!-- GoBD Compliance Hinweis -->
       <div class="compliance-notice">
@@ -186,11 +186,11 @@
         erforderlich. Die Daten werden revisionssicher gespeichert.
       </div>
 
-      <div class="sections btn-container">
+      <section class="sections btn-container">
         <button class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons"></i>Vorschau anzeigen
         </button>
-      </div>
+      </section>
     </div>
   </div>
 </template>

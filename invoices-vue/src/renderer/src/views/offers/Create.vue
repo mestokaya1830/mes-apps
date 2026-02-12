@@ -1,14 +1,14 @@
 <template>
   <div v-if="offer" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
 
     <!-- Grunddaten -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-pin-angle-fill form-title"></i>Grunddaten</div>
       <div class="form-group">
         <label class="form-label">Angebotsnummer <span class="stars">*</span></label>
@@ -56,10 +56,10 @@
           placeholder="z.B. Webentwicklung Projekt XYZ"
         />
       </div>
-    </div>
+    </section>
 
     <!-- Kundendaten -->
-    <div v-if="offer.customer" class="sections">
+    <section v-if="offer.customer" class="sections">
       <div class="sections-title">
         <i class="bi bi-person-fill form-title icons"></i>Kundendaten
       </div>
@@ -97,10 +97,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Status -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-info-circle form-title icons"></i>Status</div>
 
       <div class="form-group">
@@ -132,10 +132,10 @@
           placeholder="Interne Anmerkung zum Status"
         ></textarea>
       </div>
-    </div>
+    </section>
 
     <!-- Währung -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-currency-exchange form-title icons"></i>Währung
       </div>
@@ -153,10 +153,10 @@
           <option value="NZD.en-NZ">NZD</option>
         </select>
       </div>
-    </div>
+    </section>
 
     <!-- Positions -->
-    <div class="sections positions-error">
+    <section class="sections positions-error">
       <div class="sections-title">
         <i class="bi bi-box-seam icons"></i>
         Positionen <span class="stars">*</span>
@@ -299,10 +299,10 @@
         <i class="bi bi-plus-circle icons"></i>
         Position hinzufügen
       </button>
-    </div>
+    </section>
 
     <!-- Zusätzliche Informationen -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-file-text-fill form-title icons"></i>Zusätzliche Informationen
       </div>
@@ -373,7 +373,7 @@
           placeholder="z. B. Kunde wünscht Expressversand • Rabatt nur bei Vorkasse • Material aktuell knapp"
         ></textarea>
       </div>
-    </div>
+    </section>
 
     <div class="switch-container">
       <label for="is_legal" class="switch">
@@ -386,11 +386,11 @@
       </div>
     </div>
 
-    <div class="sections btn-container">
+    <section class="sections btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>
-    </div>
+    </section>
   </div>
 </template>
 

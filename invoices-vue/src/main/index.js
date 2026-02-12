@@ -34,8 +34,8 @@ const transporter = nodemailer.createTransport({
 let win = null
 function createWindow() {
   win = new BrowserWindow({
-    width: 1600,
-    height: 1000,
+    width: 1720,
+    height: 1020,
     show: false, // Pencereyi gizle
     frame: false,
     autoHideMenuBar: true,

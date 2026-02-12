@@ -1,11 +1,11 @@
 <template>
   <div v-if="$route.params.id" class="main-container">
-    <div class="main-header">
-      <h1 class="main-title">{{ title }}</h1>
+    <header class="main-header">
+      <label class="main-title">{{ title }}</label>
        <router-link :to="`/reminders/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <div class="printable">
       <!-- Header -->
       <h2>{{ title }}</h2>

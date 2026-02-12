@@ -1,16 +1,16 @@
 <template>
   <div v-if="$route.params.id" class="main-container">
-     <div class="main-header">
+     <section class="main-header">
       <label>{{ title }}</label>
        <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </section>
     <div class="printable">
       <!-- Header -->
       <h2>{{ title }}</h2>
 
-      <div class="sections">
+      <section class="sections">
         <div class="custom-row">
           <div class="form-group">
             <label for="">Auftrags-Nr.:</label>
@@ -53,7 +53,7 @@
 
           <button @click="updateOrder" class="btn btn-cancel">Aktualisieren</button>
         </div>
-      </div>
+      </section>
     </div>
     <router-link :to="`/orders/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Auftragsdetails

@@ -4,9 +4,9 @@
       <setup-page />
     </div>
     <div v-else class="login-container">
-      <div class="logo-section">
+      <header class="logo-header">
         <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
-      </div>
+      </header>
 
       <form class="login-form" @submit.prevent="loginUser">
         <h1 class="setup-title">Willkommen bei Mes App</h1>

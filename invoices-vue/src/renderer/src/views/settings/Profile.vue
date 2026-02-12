@@ -1,11 +1,11 @@
 <template>
   <div class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <form v-if="user" @submit.prevent="updateUser">
       <!-- Personal Information -->
       <section class="sections">

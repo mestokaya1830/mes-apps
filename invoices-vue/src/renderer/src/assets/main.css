@@ -234,7 +234,10 @@ select {
   align-items: center;
   gap: var(--spacing-md);
 }
-
+.main-header-right{
+  display: flex;
+  justify-content: flex-end;
+}
 /* Bölüm Başlıkları */
 .section-title {
   font-size: var(--spacing-xl);

@@ -1,12 +1,12 @@
 <template>
   <div v-if="offers" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
       <router-link to="/customers" class="btn btn-primary">
         <i class="bi bi-plus-circle-fill icons"></i>
         <span>Neue Angebot erstellen</span>
       </router-link>
-    </div>
+    </header>
 
     <div class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">

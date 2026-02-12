@@ -1,14 +1,14 @@
 <template>
   <div v-if="invoice" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
 
     <!-- Grunddaten -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-pin-angle-fill form-title"></i>Grunddaten</div>
       <div class="form-group">
         <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
@@ -47,10 +47,10 @@
           <div v-if="error.date" class="error">{{ error.date }}</div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Kundendaten -->
-    <div v-if="invoice.customer" class="sections">
+    <section v-if="invoice.customer" class="sections">
       <div class="sections-title"><i class="bi bi-person-fill icons"></i>Kundendaten</div>
       <div v-if="invoice.customer?.id" class="customer-details">
         <div class="form-group">
@@ -86,10 +86,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Steueroptionen -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-briefcase-fill icons"></i>Steueroptionen</div>
       <div class="sections">
         <div class="switch-container">
@@ -142,10 +142,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Währung -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-currency-exchange icons"></i>Währung</div>
       <div class="form-group">
         <select v-model="invoice.currency" class="inputs">
@@ -161,10 +161,10 @@
           <option value="NZD.en-NZ">NZD</option>
         </select>
       </div>
-    </div>
+    </section>
 
     <!-- Positionen -->
-    <div class="sections positions-error">
+    <section class="sections positions-error">
       <div class="sections-title">
         <i class="bi bi-box-seam icons"></i>
         Positionen <span class="stars">*</span>
@@ -309,10 +309,10 @@
         <i class="bi bi-plus-circle icons"></i>
         Position hinzufügen
       </button>
-    </div>
+    </section>
 
     <!-- Zahlungsinformationen -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-credit-card-2-front-fill icons"></i>Zahlungsinformationen
       </div>
@@ -366,13 +366,13 @@
           placeholder="z.B. 50% Anzahlung bei Auftragserteilung, Restzahlung nach Abschluss."
         ></textarea>
       </div>
-    </div>
+    </section>
 
-    <div class="sections btn-container">
+    <section class="sections btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>
-    </div>
+    </section>
   </div>
 </template>
 

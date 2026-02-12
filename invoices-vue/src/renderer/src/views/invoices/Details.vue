@@ -1,10 +1,10 @@
 <template>
   <div v-if="invoice && auth" class="main-container">
-    <div class="container-2">
+    <header class="main-header-right">
       <router-link to="/invoices" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <div>
       <div class="printable">
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -179,7 +179,7 @@
         sourcePage="details"
       />
 
-      <div v-if="payments && payments.length" class="report-table-container mt-4">
+      <div v-if="payments && payments.length" class="report-table-container">
         <h4 class="mb-3"><i class="bi bi-cash-stack icons"></i>Zahlungshistorie</h4>
         <table class="report-table">
           <thead>

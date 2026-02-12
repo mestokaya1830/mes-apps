@@ -1,14 +1,14 @@
 <template>
   <div v-if="order" class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
 
     <!-- Grunddaten -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-pin-angle-fill form-title icons"></i>Grunddaten
       </div>
@@ -74,10 +74,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Kundendaten -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title"><i class="bi bi-person-fill me-2 form-icons"></i>Kundendaten</div>
       <div v-if="order.customer?.id" class="customer-details">
         <div class="form-group">
@@ -113,7 +113,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Subject -->
     <div class="form-group">
@@ -122,7 +122,7 @@
     </div>
 
     <!-- Lieferdaten + Versand -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-box-seam form-title icons"></i>Lieferung & Versand
       </div>
@@ -188,10 +188,10 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Zahlung & Währung -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-credit-card-2-front-fill form-title icons"></i>Zahlung & Währung
       </div>
@@ -238,10 +238,10 @@
           </select>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Positions -->
-    <div class="sections positions-error">
+    <section class="sections positions-error">
       <div class="sections-title">
         <i class="bi bi-box-seam icons"></i>
         Positionen <span class="stars">*</span>
@@ -384,10 +384,10 @@
         <i class="bi bi-plus-circle icons"></i>
         Position hinzufügen
       </button>
-    </div>
+    </section>
 
     <!-- Notizen & Texte -->
-    <div class="sections">
+    <section class="sections">
       <div class="sections-title">
         <i class="bi bi-pencil-square form-title icons"></i>Notizen & Texte
       </div>
@@ -407,14 +407,14 @@
         <label class="form-label">Schlusstext</label>
         <textarea v-model="order.closing_text" rows="3" class="inputs"></textarea>
       </div>
-    </div>
+    </section>
 
     <!-- Vorschau Button -->
-    <div class="sections btn-container">
+    <section class="sections btn-container">
       <button class="btn btn-preview" @click="submitStore">
         <i class="bi bi-eye icons"></i>Vorschau anzeigen
       </button>
-    </div>
+    </section>
   </div>
 </template>
 

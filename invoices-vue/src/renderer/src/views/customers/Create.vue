@@ -1,14 +1,14 @@
 <template>
   <div class="main-container">
-    <div class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
-    </div>
+    </header>
     <form @submit.prevent="saveCustomer">
       <!-- Base -->
-      <div class="sections">
+      <section class="sections">
         <div class="sections-title">
           <i class="bi bi-person-badge me-2 form-title icons"></i>Kundeninformationen
         </div>
@@ -59,10 +59,10 @@
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Adressdaten -->
-      <div class="sections">
+      <section class="sections">
         <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i>Adressdaten</div>
         <div class="form-row">
           <div class="form-group">
@@ -90,10 +90,10 @@
             <div v-if="error.country" class="error">{{ error.country }}</div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Steuerinformationen -->
-      <div class="sections">
+      <section class="sections">
         <div class="sections-title">
           <i class="bi bi-briefcase form-title icons"></i>Steuerinformationen
         </div>
@@ -110,10 +110,10 @@
             <div v-if="error.vat_id" class="error">{{ error.vat_id }}</div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Submit -->
-      <div class="sections btn-container">
+      <section class="sections btn-container">
         <div v-if="showSuccess" class="">
           <p class="font-medium text-success">
             <i class="bi bi-check-circle icons"></i>Kunde erfolgreich gespeichert!
@@ -123,7 +123,7 @@
         <button type="submit" class="btn btn-primary">
           <i class="bi bi-save icons"></i>Speichern
         </button>
-      </div>
+      </section>
     </form>
   </div>
 </template>
