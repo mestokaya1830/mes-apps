@@ -141,6 +141,16 @@
           <i class="bi bi-clock-history info-title-icon icons"></i>
           Letzte Aktivitäten
         </h3>
+        <div class="activity-item">
+          <i class="bi bi-person-plus-fill icons"></i>
+          <div class="activity-content">
+            <div class="activity-title">Neuer Kunde registriert</div>
+            <div class="activity-subtitle">Schmidt Solutions GmbH</div>
+          </div>
+          <div class="activity-time">
+            Vor {{ daysDiff(last_activities.lastCustomer?.created_at) }} Tagen
+          </div>
+        </div>
 
         <div class="activity-item">
           <i class="bi bi-check-circle-fill icons"></i>
@@ -152,7 +162,9 @@
               Kunde-Nr: {{ last_activities.lastPaidInvoice?.customer_id }}
             </div>
           </div>
-          <div class="activity-time">Vor 2 Std.</div>
+          <div class="activity-time">
+            Vor {{ daysDiff(last_activities.lastPaidInvoice?.created_at) }} Tagen
+          </div>
         </div>
 
         <div class="activity-item">
@@ -160,10 +172,12 @@
           <div class="activity-content">
             <div class="activity-title">Rechnung fällig</div>
             <div class="activity-subtitle">
-              Rechnung-Nr: {{ last_activities.lastOverdueInvoice?.id }} – Fällig in 2 Tagen
+              Rechnung-Nr: {{ last_activities.lastOverdueInvoice?.id }}
             </div>
           </div>
-          <div class="activity-time">Gestern</div>
+          <div class="activity-time">
+            Fällig in {{ daysDiff(last_activities.lastOverdueInvoice?.due_date) }} Tagen
+          </div>
         </div>
 
         <div class="activity-item">
@@ -175,16 +189,22 @@
               {{ last_activities.lastOffer?.customer_name }}
             </div>
           </div>
-          <div class="activity-time">Vor 5 Std.</div>
-        </div>
-
-        <div class="activity-item">
-          <i class="bi bi-person-plus-fill icons"></i>
-          <div class="activity-content">
-            <div class="activity-title">Neuer Kunde registriert</div>
-            <div class="activity-subtitle">Schmidt Solutions GmbH</div>
+          <div class="activity-time">
+            Vor {{ daysDiff(last_activities.lastOffer?.created_at) }} Tagen
           </div>
-          <div class="activity-time">Vor 2 Tagen</div>
+        </div>
+        <div class="activity-item">
+          <i class="bi bi-file-earmark-text icons"></i>
+          <div class="activity-content">
+            <div class="activity-title">Neues Auftrag erstellt</div>
+            <div class="activity-subtitle">
+              Auftrag-Nr: {{ last_activities.lastOrder?.id }} –
+              {{ last_activities.lastOrder?.customer_name }}
+            </div>
+          </div>
+          <div class="activity-time">
+            Vor {{ daysDiff(last_activities.lastOrder?.created_at) }} Tagen
+          </div>
         </div>
       </div>
     </div>
@@ -249,7 +269,6 @@ export default {
       try {
         this.clearDate()
         const result = await window.api.getDashboard()
-        console.log('Dashboard verisi:', result)
         if (!result.success) return
         this.tablesCount = {
           customers: result.rows.customers || 0,
@@ -303,6 +322,17 @@ export default {
     },
     goTo(path) {
       this.$router.push(`/${path}`)
+    },
+
+    daysDiff(dateString) {
+      if (!dateString) return '0'
+      const target = new Date(dateString)
+      if (isNaN(target.getTime())) return '-'
+      target.setHours(0, 0, 0, 0)
+      const now = new Date()
+      now.setHours(0, 0, 0, 0)
+      const diffMs = target.getTime() - now.getTime()
+      return Math.round(diffMs / (1000 * 60 * 60 * 24))
     },
 
     async clearDate() {

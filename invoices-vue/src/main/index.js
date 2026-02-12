@@ -454,8 +454,8 @@ ipcMain.handle('get-latest-activities', async () => {
       .prepare(
         `
         SELECT created_at, company_name, full_name, email, phone
-        FROM customers WHERE is_active = 1 AND created_at >= date('now', '-2 day')
-        ORDER BY created_at DESC
+        FROM customers WHERE is_active = 1
+        ORDER BY id DESC
         LIMIT 1
     `
       )
@@ -464,8 +464,8 @@ ipcMain.handle('get-latest-activities', async () => {
       .prepare(
         `
         SELECT created_at, id, customer_id
-        FROM invoices WHERE is_active = 1 AND created_at >= date('now', '-2 day')
-        ORDER BY created_at DESC
+        FROM invoices WHERE is_active = 1
+        ORDER BY id DESC
         LIMIT 1
     `
       )
@@ -474,8 +474,8 @@ ipcMain.handle('get-latest-activities', async () => {
       .prepare(
         `
         SELECT created_at, id, customer_id
-            FROM invoices WHERE is_active = 1 AND payment_status IN ('paid', 'partially_paid') AND date <= date('now', '+2 day')
-            ORDER BY created_at DESC
+            FROM invoices WHERE is_active = 1 AND payment_status IN ('paid', 'partially_paid')
+            ORDER BY id DESC
         LIMIT 1 
     `
       )
@@ -483,9 +483,9 @@ ipcMain.handle('get-latest-activities', async () => {
     const lastOverdueInvoice = db
       .prepare(
         `
-        SELECT created_at, id, customer_id
-        FROM invoices WHERE is_active = 1 AND payment_status = 'unpaid' AND created_at >= date('now', '-2 day')
-        ORDER BY created_at DESC
+        SELECT created_at, id, customer_id, due_date
+        FROM invoices WHERE is_active = 1 AND payment_status = 'unpaid'
+        ORDER BY id DESC
         LIMIT 1
     `
       )
@@ -494,8 +494,8 @@ ipcMain.handle('get-latest-activities', async () => {
       .prepare(
         `
         SELECT created_at, id, customer_id
-        FROM offers WHERE is_active = 1 AND status = 'open' AND created_at >= date('now', '-2 day')
-        ORDER BY created_at DESC
+        FROM offers WHERE is_active = 1 AND status = 'open'
+        ORDER BY id DESC
         LIMIT 1
     `
       )
@@ -504,8 +504,8 @@ ipcMain.handle('get-latest-activities', async () => {
       .prepare(
         `
         SELECT created_at, id, customer_id
-        FROM orders WHERE is_active = 1 AND created_at >= date('now', '-2 day')
-        ORDER BY created_at DESC
+        FROM orders WHERE is_active = 1
+        ORDER BY id DESC
         LIMIT 1
     `
       )
