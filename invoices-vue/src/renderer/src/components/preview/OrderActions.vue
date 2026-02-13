@@ -1,7 +1,7 @@
 <template lang="">
   <div>
     <div class="sections btn-container">
-      <button class="btn btn-secondary" @click="sendEmail">
+      <button class="btn btn-email" @click="sendEmail">
         <i class="bi bi-envelope-fill icons"></i>
         <span>E-Mail</span>
       </button>
