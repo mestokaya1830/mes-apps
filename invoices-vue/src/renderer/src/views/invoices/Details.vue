@@ -162,7 +162,7 @@
 
         <div class="preview-box">
           <div class="preview-box-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
-          <div class="bank-info">
+          <div class="preview-box-content">
             <span class="preview-box-label">Bank:</span>
             <span class="preview-box-value">{{ auth.bank_name }}</span>
             <span class="preview-box-label">IBAN:</span> <span class="preview-box-value">{{ auth.iban }}</span>

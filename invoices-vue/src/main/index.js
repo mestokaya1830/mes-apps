@@ -2882,23 +2882,6 @@ ipcMain.handle('cancel-order', async (event, payload) => {
   }
 })
 
-ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
-  try {
-    // const savePath = '/media/username/USB/invoice-pdfs'
-    // const savePath = path.join(app.getPath('userData'), 'pdf-storage')// in home->username-> .config folder
-    const savePath = path.join(app.getPath('downloads'), 'invoice-pdfs')
-    if (!fs.existsSync(savePath)) fs.mkdirSync(savePath)
-
-    const filePath = path.join(savePath, `${fileName}.pdf`)
-    fs.writeFileSync(filePath, Buffer.from(buffer))
-
-    console.log('PDF Saved:', filePath)
-    // Burada audit log veya DB işlemi yapılabilir
-  } catch (err) {
-    console.error('PDF Error:', err)
-  }
-})
-
 ipcMain.handle('flter-orders-categories', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
@@ -3166,5 +3149,29 @@ ipcMain.handle('report-sales', async (event, payload) => {
   } catch (error) {
     console.error('DB error:', error.message)
     return { success: false, message: error.message }
+  }
+})
+
+ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
+  try {
+    // const savePath = '/media/username/USB/invoice-pdfs'
+    // const savePath = path.join(app.getPath('userData'), 'pdf-storage')// in home->username-> .config folder
+    const savePath = path.join(app.getPath('downloads'), 'invoice-pdfs')
+    if (!fs.existsSync(savePath)) fs.mkdirSync(savePath)
+
+    const filePath = path.join(savePath, `${fileName}.pdf`)
+    fs.writeFileSync(filePath, Buffer.from(buffer))
+
+    console.log('PDF Saved:', filePath)
+    // Burada audit log veya DB işlemi yapılabilir
+  } catch (err) {
+    console.error('PDF Error:', err)
+  }
+})
+
+ipcMain.handle('send-email', async (event, { buffer, fileName }) => {
+  console.log('Email Payload:', fileName)
+  if (!buffer || !fileName) {
+    return { success: false, message: 'No data provided' }
   }
 })

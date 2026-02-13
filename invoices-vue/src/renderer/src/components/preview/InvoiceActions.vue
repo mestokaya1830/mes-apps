@@ -57,6 +57,28 @@ export default {
     return {}
   },
   methods: {
+    async sendEmail() {
+      await this.$nextTick()
+      const element = document.querySelector('.printable')
+      if (!element) return
+
+      const options = {
+        margin: 16,
+        filename: this.fileName + '.pdf',
+        image: { type: 'png', quality: 0.95 },
+        html2canvas: { scale: 1.5, useCORS: true, logging: false, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }
+      console.log('Generating PDF for email...', options)
+
+      html2pdf()
+        .set(options)
+        .from(element)
+        .outputPdf('blob')
+        .then((blob) => {
+          window.api.sendEmail(blob, this.fileName)
+        })
+    },
     async exportPDF() {
       await this.$nextTick() // Vue render bitti mi bekle
       const element = document.querySelector('.printable')
@@ -78,6 +100,7 @@ export default {
       html2pdf().set(options).from(element).save()
       this.savePdf()
     },
+
     async saveInvoice() {
       if (this.tableData) {
         const result = await window.api.addInvoice(JSON.parse(JSON.stringify(this.tableData)))
@@ -86,13 +109,12 @@ export default {
         this.$router.push('/invoices')
       }
     },
+
     printDocument() {
       this.savePdf()
       window.print()
     },
-    sendEmail() {
-      console.log(this.email)
-    },
+
     async clearStore() {
       try {
         await store.clearStore('invoice')
@@ -100,6 +122,7 @@ export default {
         console.error(error)
       }
     },
+
     async savePdf() {
       await this.$nextTick()
       const element = document.querySelector('.printable')

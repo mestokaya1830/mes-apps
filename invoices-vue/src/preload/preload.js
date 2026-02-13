@@ -91,5 +91,13 @@ contextBridge.exposeInMainWorld('api', {
         fileName
       })
     })
-  }
+  },
+  sendEmail: (pdfBlob, fileName) => {
+    pdfBlob.arrayBuffer().then((buffer) => {
+      ipcRenderer.send('send-email', {
+        buffer,
+        fileName
+      })
+    })
+  },
 })
