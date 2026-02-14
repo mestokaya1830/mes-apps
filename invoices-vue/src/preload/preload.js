@@ -85,19 +85,21 @@ contextBridge.exposeInMainWorld('api', {
 
   //save pdf
   saveInvoicePDF: (pdfBlob, fileName) => {
-    pdfBlob.arrayBuffer().then((buffer) => {
-      ipcRenderer.send('save-invoice-pdf', {
-        buffer,
+    return pdfBlob.arrayBuffer().then((buffer) => {
+      const uint8Array = new Uint8Array(buffer)
+      return ipcRenderer.invoke('save-invoice-pdf', {
+        buffer: uint8Array,
         fileName
       })
     })
   },
   sendEmail: (pdfBlob, fileName) => {
-    pdfBlob.arrayBuffer().then((buffer) => {
-      ipcRenderer.send('send-email', {
-        buffer,
+    return pdfBlob.arrayBuffer().then((buffer) => {
+      const uint8Array = new Uint8Array(buffer)
+      return ipcRenderer.invoke('send-email', {
+        buffer: uint8Array,
         fileName
       })
     })
-  },
+  }
 })

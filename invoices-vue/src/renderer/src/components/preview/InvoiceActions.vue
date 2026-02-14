@@ -69,15 +69,25 @@ export default {
         html2canvas: { scale: 1.5, useCORS: true, logging: false, scrollY: 0 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       }
-      console.log('Generating PDF for email...', options)
 
-      html2pdf()
-        .set(options)
-        .from(element)
-        .outputPdf('blob')
-        .then((blob) => {
-          window.api.sendEmail(blob, this.fileName)
-        })
+      try {
+        const pdf = await html2pdf()
+          .set(options)
+          .from(element)
+          .toPdf() // ← önce PDF oluştur
+          .output('blob') // ← sonra blob olarak al
+
+        console.log('Blob oluştu:', pdf, typeof pdf)
+
+        if (!pdf) {
+          console.error('Blob boş geldi!')
+          return
+        }
+
+        await window.api.sendEmail(pdf, this.fileName)
+      } catch (err) {
+        console.error('PDF oluşturma hatası:', err)
+      }
     },
     async exportPDF() {
       await this.$nextTick() // Vue render bitti mi bekle

@@ -31,6 +31,7 @@ const transporter = nodemailer.createTransport({
     pass: 'ycla bewp jcax ginn' //google gmail unique password
   }
 })
+
 let win = null
 function createWindow() {
   win = new BrowserWindow({
@@ -3163,15 +3164,33 @@ ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
     fs.writeFileSync(filePath, Buffer.from(buffer))
 
     console.log('PDF Saved:', filePath)
-    // Burada audit log veya DB işlemi yapılabilir
   } catch (err) {
     console.error('PDF Error:', err)
   }
 })
 
 ipcMain.handle('send-email', async (event, { buffer, fileName }) => {
-  console.log('Email Payload:', fileName)
-  if (!buffer || !fileName) {
-    return { success: false, message: 'No data provided' }
+  try {
+    await transporter.sendMail({
+      from: 'mesto1830@gmail.com',
+      to: 'mesto1830@outlook.com',
+      subject: fileName,
+      html: `
+        <h2>PDF Rapor</h2>
+        <p>Ekte PDF dosyanız yer almaktadır.</p>
+      `,
+      attachments: [
+        {
+          filename: fileName + '.pdf',
+          content: Buffer.from(buffer),
+          contentType: 'application/pdf'
+        }
+      ]
+    })
+
+    return { success: true }
+  } catch (err) {
+    console.error('Mail hatası:', err)
+    return { success: false, message: err.message }
   }
 })
