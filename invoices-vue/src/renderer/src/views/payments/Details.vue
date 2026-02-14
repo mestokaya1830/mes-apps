@@ -155,7 +155,6 @@
       v-if="payment"
       :tableData="payment"
       :fileName="actionFileName"
-      sourcePage="details"
     />
 
     <router-link :to="`/invoices/details/${payment.invoice_id}`" class="btn back-btn">

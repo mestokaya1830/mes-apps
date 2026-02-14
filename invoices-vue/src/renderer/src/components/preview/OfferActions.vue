@@ -17,7 +17,7 @@
       </button>
 
       <button
-        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        v-if="tableData.id !== 'preview' && tableData.is_active"
         class="btn btn-edit"
       >
         <router-link :to="`/offers/edit/${tableData.id}`" class="text-white text-decoration-none">
@@ -27,7 +27,7 @@
       </button>
 
       <button
-        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        v-if="tableData.id !== 'preview' && tableData.is_active"
         class="btn btn-cancel"
       >
         <router-link :to="`/offers/edit-cancel/${tableData.id}`" class="text-white text-decoration-none">

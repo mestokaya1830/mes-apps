@@ -212,7 +212,7 @@
       </div>
     </div>
     <!-- Action Buttons -->
-    <OfferActions v-if="offer" :tableData="offer" :fileName="actionFileName" sourcePage="details" />
+    <OfferActions v-if="offer" :tableData="offer" :fileName="actionFileName" s />
 
     <router-link to="/offers" class="back-link"> ← Zurück zur Angebotsliste </router-link>
   </div>

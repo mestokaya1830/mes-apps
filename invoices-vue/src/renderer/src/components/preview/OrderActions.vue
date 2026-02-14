@@ -16,7 +16,7 @@
         <span>Drucken</span>
       </button>
 
-      <button v-if="sourcePage !== 'preview'" class="btn btn-edit">
+      <button class="btn btn-edit">
         <router-link :to="`/orders/edit/${tableData.id}`" class="text-decoration-none">
           <i class="bi bi-pencil-square icons"></i>
           <span>Bearbeiten</span>
@@ -24,7 +24,7 @@
       </button>
 
       <button
-        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        v-if="tableData.id !== 'preview' && tableData.is_active"
         class="btn btn-cancel"
       >
         <router-link :to="`/orders/edit-cancel/${tableData.id}`" class="text-decoration-none">

@@ -17,7 +17,7 @@
       </button>
 
       <button
-        v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
+        v-if="tableData.id && sourcePag !== 'preview' && tableData.is_active"
         class="btn btn-edit"
       >
         <router-link

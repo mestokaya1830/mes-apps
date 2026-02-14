@@ -255,7 +255,7 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="btn-container">
+    <div class="sections btn-container">
       <button class="btn btn-primary" @click="saveOffer">
         <i class="bi bi-floppy-fill icons"></i>
         <span>Speichern</span>

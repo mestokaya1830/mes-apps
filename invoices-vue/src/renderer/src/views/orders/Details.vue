@@ -278,7 +278,7 @@
     </div>
 
     <!-- Actions -->
-    <OrderActions v-if="order" :tableData="order" :fileName="actionFileName" sourcePage="details" />
+    <OrderActions v-if="order" :tableData="order" :fileName="actionFileName" sourc />
 
     <router-link to="/orders" class="back-link">← Zurück zur Auftragsliste</router-link>
   </div>

@@ -154,7 +154,6 @@
       v-if="reminder"
       :tableData="reminder"
       :fileName="actionFileName"
-      sourcePage="details"
     />
     <router-link v-if="reminder" :to="`/reminders/create/${reminder.invoice_id}`" class="btn back-btn">
       <i class="bi bi-arrow-left icons"></i>Zurück zur Rechnungserstellung

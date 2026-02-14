@@ -142,7 +142,7 @@
       <FooterSidePreview />
     </div>
 
-    <div class="btn-container">
+    <div class="sections btn-container">
        <button class="btn btn-primary" @click="savePayment">
         <i class="bi bi-floppy-fill icons"></i>
         <span>Speichern</span>

@@ -52,10 +52,6 @@
         <button @click="exportPDF" class="btn btn-secondary">
           <i class="bi bi-file-pdf"></i> PDF Export
         </button>
-        <button @click="createMahnungen" class="btn btn-warning" v-if="summary.overdue_count > 0">
-          <i class="bi bi-envelope-exclamation"></i> Mahnungen erstellen
-          ({{ summary.overdue_count }})
-        </button>
         <button @click="window.print()" class="btn btn-outline">
           <i class="bi bi-printer"></i> Drucken
         </button>
@@ -508,25 +504,9 @@
                 <span v-else>—</span>
               </td>
               <td>
-                <div class="action-buttons">
-                  <button class="btn-icon" title="Details anzeigen">
-                    <i class="bi bi-eye"></i>
-                  </button>
-                  <button
-                    v-if="item.payment_status !== 'paid'"
-                    class="btn-icon"
-                    title="Zahlung erfassen"
-                  >
-                    <i class="bi bi-cash"></i>
-                  </button>
-                  <button
-                    v-if="item.isOverdue"
-                    class="btn-icon text-warning"
-                    title="Mahnung versenden"
-                  >
-                    <i class="bi bi-envelope-exclamation"></i>
-                  </button>
-                </div>
+                <button class="btn-report-details">
+                  <i class="bi bi-eye"></i>
+                </button>
               </td>
             </tr>
           </tbody>

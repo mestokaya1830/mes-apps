@@ -346,7 +346,7 @@
           </div>
         </div>
         <div v-if="order.positions.length > 0" class="sections">
-          <div class="container-2">
+          <div class="btn-container">
             <div class="summary-item">
               <label class="form-label">Nettobetrag</label>
               <div class="form-result-item">

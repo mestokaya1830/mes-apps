@@ -176,7 +176,6 @@
         v-if="invoice"
         :tableData="invoice"
         :fileName="actionFileName"
-        sourcePage="details"
       />
 
       <div v-if="payments && payments.length" class="report-table-container">
