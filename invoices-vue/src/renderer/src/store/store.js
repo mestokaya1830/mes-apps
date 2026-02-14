@@ -66,7 +66,6 @@ async function setStore(store, data) {
 
 //clear store
 async function clearStore(store) {
-  console.log('Clearing store:', store)
   try {
     await localforage.removeItem(store)
     state[store] = undefined

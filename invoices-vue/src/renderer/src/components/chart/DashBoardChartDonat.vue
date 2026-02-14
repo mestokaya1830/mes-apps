@@ -32,7 +32,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => this.initChart())
-    console.log('Donut chart data on mount:', this.chartData)
   },
   beforeUnmount() {
     if (this.chartInstance) this.chartInstance.destroy()

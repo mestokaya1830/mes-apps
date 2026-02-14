@@ -281,12 +281,12 @@
     </div>
 
     <!-- Actions -->
-    <OrderActions
-      v-if="orderPreview"
-      :tableData="orderPreview"
-      :fileName="actionFileName"
-      sourcePage="preview"
-    />
+    <div class="btn-container">
+      <button class="btn btn-primary" @click="saveOrder">
+        <i class="bi bi-floppy-fill icons"></i>
+        <span>Speichern</span>
+      </button>
+    </div>
 
     <router-link to="/orders/create" class="back-link">← Zurück zur Auftragsliste</router-link>
   </div>
@@ -296,7 +296,6 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
-import OrderActions from '../../components/preview/OrderActions.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
@@ -304,7 +303,6 @@ export default {
   components: {
     HeaderSidePreview,
     FooterSidePreview,
-    OrderActions,
     ContactPersonPreview
   },
   inject: ['formatOrderId', 'formatCustomerId', 'formatCurrency', 'formatDate'],
@@ -358,6 +356,14 @@ export default {
     },
     orderStatus(status) {
       return this.STATUS_MAP[status] || { text: 'Unbekannt', class: 'status-unknown' }
+    },
+     async saveOrder() {
+      if (this.orderPreview) {
+        const result = await window.api.addOrder(JSON.parse(JSON.stringify(this.orderPreview)))
+        if (!result.success) return
+        await store.clearStore('order')
+        this.$router.push('/orders')
+      }
     }
   }
 }

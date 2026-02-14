@@ -26,11 +26,6 @@
         </router-link>
       </button>
 
-        <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveOffer">
-        <i class="bi bi-floppy-fill icons"></i>
-        <span>Speichern</span>
-      </button>
-
       <button
         v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
         class="btn btn-cancel"
@@ -53,7 +48,7 @@ export default {
       type: Object,
       required: true
     },
-    sourcePage: {
+     fileName: {
       type: String,
       required: true
     }
@@ -70,9 +65,9 @@ export default {
       const options = {
         margin: 16,
         filename: this.fileName + '.pdf',
-        image: { type: 'png', quality: 0.95 },
+        image: { type: 'jpeg', quality: 0.8 },
         html2canvas: {
-          scale: 1.5,
+          scale: 1,
           useCORS: true,
           logging: false,
           scrollY: 0
@@ -83,16 +78,7 @@ export default {
       html2pdf().set(options).from(element).save()
       this.clearStore()
     },
-    async saveOffer() {
-      if (this.tableData) {
-        const result = await window.api.addOffer(JSON.parse(JSON.stringify(this.tableData)))
-        if (!result.success) return
-        this.clearStore()
-        this.$router.push('/offers')
-      }
-    },
     async cancelOffer(id) {
-      console.log(id)
       if (confirm('Sind Sie sicher, dass Sie dieses Angebot löschen möchten?')) {
         try {
           const result = await window.api.cancelOfferById(id)
@@ -109,7 +95,6 @@ export default {
     },
     sendEmail() {
       this.clearStore()
-      console.log(this.email)
     },
     async clearStore() {
       try {

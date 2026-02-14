@@ -31,10 +31,6 @@
           <span>Bearbeiten</span>
         </router-link>
       </button>
-      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveReminder">
-        <i class="bi bi-floppy-fill icons"></i>
-        <span>Speichern</span>
-      </button>
     </div>
   </div>
 </template>
@@ -48,7 +44,7 @@ export default {
       type: Object,
       required: true
     },
-    sourcePage: {
+    fileName: {
       type: String,
       required: true
     }
@@ -65,9 +61,9 @@ export default {
       const options = {
         margin: 16,
         filename: this.fileName + '.pdf',
-        image: { type: 'png', quality: 0.95 },
+        image: { type: 'jpeg', quality: 0.8 },
         html2canvas: {
-          scale: 1.5,
+          scale: 1,
           useCORS: true,
           logging: false,
           scrollY: 0
@@ -78,21 +74,12 @@ export default {
       html2pdf().set(options).from(element).save()
       this.clearStore()
     },
-    async saveReminder() {
-      if (this.tableData) {
-        const result = await window.api.addReminder(JSON.parse(JSON.stringify(this.tableData)))
-        if (!result.success) return
-        this.clearStore()
-        this.$router.push('/invoices/details/' + this.tableData.invoice_id)
-      }
-    },
     printDocument() {
       this.clearStore()
       window.print()
     },
     sendEmail() {
       this.clearStore()
-      console.log(this.email)
     },
     async clearStore() {
       try {

@@ -197,7 +197,6 @@ export default {
       const result = await window.api.reportCustomers(data)
       if (!result.success) return
       this.reports = result.rows
-      console.log('result', result)
       const totalRevenue = result.rows.reduce((sum, c) => sum + c.invoice_count, 0)
       result.rows.forEach((c) => {
         c.percentage = ((c.invoice_count / totalRevenue) * 100).toFixed(2) // örn: "50.00"
@@ -211,7 +210,6 @@ export default {
         ),
         top_customer: result.rows.sort((a, b) => (a.invoice_total > b.invoice_total ? -1 : 1))[0]
       }
-      console.log('summary', this.summary)
       this.period = {
         start: this.date_box_start,
         end: this.date_box_end

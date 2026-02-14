@@ -37,10 +37,6 @@ export default {
       type: Object,
       required: true
     },
-    sourcePage: {
-      type: String,
-      required: true
-    },
     fileName: {
       type: String,
       required: true

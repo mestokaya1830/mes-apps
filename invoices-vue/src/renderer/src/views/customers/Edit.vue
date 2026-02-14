@@ -124,7 +124,6 @@ export default {
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
         this.customer = result.rows
-        console.log(result)
       } catch (error) {
         console.error(error)
       }

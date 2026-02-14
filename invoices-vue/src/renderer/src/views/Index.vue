@@ -291,7 +291,6 @@ export default {
       try {
         this.selectedPeriod = period
         const result = await window.api.getDashboardChart(period)
-        console.log('Chart verisi:', result)
 
         if (result.success) {
           this.chartData = {
@@ -318,7 +317,6 @@ export default {
       const result = await window.api.getLatestActivities()
       if (!result) return
       this.last_activities = result.rows || null
-      console.log('Letzte Aktivitäten:', this.last_activities)
     },
     goTo(path) {
       this.$router.push(`/${path}`)

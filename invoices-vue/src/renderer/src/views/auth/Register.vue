@@ -707,7 +707,6 @@ export default {
       this.showError = false
 
       try {
-        console.log(this.user)
         const data = {
           image_file: this.selectedImage,
           user: JSON.parse(JSON.stringify(this.user))

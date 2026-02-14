@@ -329,7 +329,6 @@ ipcMain.handle('update-user', async (event, payload) => {
   try {
     const { user, image_file } = payload
     db.prepare('DELETE FROM users WHERE id != 1').run()
-    console.log(user)
     const rows = db
       .prepare(
         `UPDATE users SET
@@ -773,7 +772,6 @@ ipcMain.handle('get-customers', async () => {
 })
 
 ipcMain.handle('get-customer-by-id', async (event, payload) => {
-  console.log('get-customer-by-id payload:', payload)
   const { id, table_name } = payload
   if (!id) {
     return { success: false, message: 'No id provided' }
@@ -910,7 +908,6 @@ ipcMain.handle('search-customers', async (event, term) => {
           .all(start, end, limit)
         return { success: true, rows }
       } else {
-        console.log(term)
         const rows = db
           .prepare(
             `SELECT id, company_name, first_name, last_name, is_active FROM customers 
@@ -1131,7 +1128,6 @@ ipcMain.handle('save-invoice-pdf', (event, { buffer, fileName }) => {
     }
     fs.writeFileSync(filePath, Buffer.from(buffer))
 
-    console.log('PDF Saved:', filePath)
     return { success: true, filePath }
   } catch (err) {
     console.error('PDF Error:', err)
@@ -2288,7 +2284,6 @@ ipcMain.handle('search-reminders', async (event, term) => {
 
 //offers
 ipcMain.handle('add-offer', async (event, data) => {
-  console.log(data)
   if (!data) return { success: false, message: 'No data provided' }
 
   try {
@@ -3126,8 +3121,6 @@ ipcMain.handle('report-invoices', async (event, payload) => {
         `SELECT * FROM invoices WHERE is_active = 1 AND date BETWEEN ? AND ? ORDER BY date DESC`
       )
       .all(start, end)
-
-    console.log(rows)
 
     return { success: true, rows }
   } catch (err) {

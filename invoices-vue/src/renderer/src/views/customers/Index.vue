@@ -143,7 +143,6 @@ export default {
         this.customers = result.rows
         this.total_count = result.total
         this.current_count = result.rows.length
-        console.log(this.customers)
       } catch (error) {
         console.error(error)
       }
@@ -176,7 +175,6 @@ export default {
         }))
         this.total_count = result.total
         this.current_count = result.rows.length
-        console.log(result)
         await store.setStore('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
       } catch (error) {
         console.error(error)

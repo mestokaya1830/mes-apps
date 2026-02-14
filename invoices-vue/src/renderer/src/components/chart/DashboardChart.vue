@@ -31,7 +31,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => this.initChart())
-    console.log('Chart data on mount:', this.chartData)
   },
   beforeUnmount() {
     if (this.chartInstance) this.chartInstance.destroy()

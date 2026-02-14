@@ -251,7 +251,6 @@ export default {
       if (!store.state.invoice || !store.state.auth) return
       this.invoicePreview = store.state.invoice
       this.auth = store.state.auth
-      console.log('invoice-preview', this.invoicePreview)
     },
     async saveInvoice() {
       if (this.invoicePreview) {
@@ -270,7 +269,7 @@ export default {
       const options = {
         margin: 16,
         filename: fileName + '.jpeg',
-        image: { type: 'jpeg', quality: 0.75 },
+        image: { type: 'jpeg', quality: 0.8 },
         html2canvas: { scale: 1, useCORS: true, logging: false, scrollY: 0 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       }
@@ -281,7 +280,6 @@ export default {
 
         const result = await window.api.saveInvoicePDF(pdf, fileName)
         if (result.success) {
-          console.log('PDF saved successfully:', fileName)
           await store.clearStore('invoice')
           return
         }

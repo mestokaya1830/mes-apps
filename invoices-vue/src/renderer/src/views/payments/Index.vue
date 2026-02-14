@@ -140,7 +140,6 @@ export default {
         const result = await window.api.getPayments()
         if (!result.success) return
         this.payments = result.rows
-        console.log(this.payments)
       } catch (error) {
         console.error(error)
       }

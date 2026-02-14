@@ -107,7 +107,6 @@ export default {
     async getOfferStatus() {
       const result = await window.api.getOfferByStatus(this.$route.params.id)
       if (!result.success) return
-      console.log(result.rows)
       this.offer.status = result.rows.status
       this.offer.status_by = result.rows.status_by
       this.offer.date = result.rows.date

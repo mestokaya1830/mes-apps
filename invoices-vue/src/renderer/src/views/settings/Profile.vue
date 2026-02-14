@@ -388,7 +388,6 @@ export default {
     },
     // Update profile
     async updateUser() {
-      console.log(this.user)
       if (this.user) {
         const data = {
           image_file: this.selectedImage,

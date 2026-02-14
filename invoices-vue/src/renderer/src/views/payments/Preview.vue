@@ -142,12 +142,12 @@
       <FooterSidePreview />
     </div>
 
-    <PaymentActions
-      v-if="paymentPreview"
-      :tableData="paymentPreview"
-      :fileName="actionFileName"
-      sourcePage="preview"
-    />
+    <div class="btn-container">
+       <button class="btn btn-primary" @click="savePayment">
+        <i class="bi bi-floppy-fill icons"></i>
+        <span>Speichern</span>
+      </button>
+    </div>
 
     <router-link
       v-if="paymentPreview"
@@ -163,7 +163,6 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import PaymentActions from '../../components/preview/PaymentActions.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
@@ -171,7 +170,6 @@ export default {
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    PaymentActions,
     FooterSidePreview
   },
   inject: [
@@ -213,7 +211,14 @@ export default {
       if (!store.state.payment && !store.state.auth) return
       this.paymentPreview = store.state.payment
       this.auth = store.state.auth
-      console.log('Payment Preview', this.paymentPreview)
+    },
+    async savePayment() {
+      if (this.paymentPreview) {
+        const result = await window.api.addPayment(JSON.parse(JSON.stringify(this.paymentPreview)))
+        if (!result.success) return
+        await store.clearStore('payment')
+        this.$router.push('/invoices')
+      }
     }
   }
 }

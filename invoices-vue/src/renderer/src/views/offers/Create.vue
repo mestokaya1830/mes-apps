@@ -450,7 +450,6 @@ export default {
           table_name: 'offers'
         }
         const result = await window.api.getCustomerById(data)
-        console.log(result)
         if (!result.success) return
         this.offer.id = result.last_id == 0 ? 1 : result.last_id
         this.offer.customer = result.rows
@@ -594,7 +593,6 @@ export default {
       }
 
       this.summary()
-      console.log(this.offer)
       await store.setStore('offer', JSON.parse(JSON.stringify(this.offer)))
       this.$router.push('/offers/preview')
     }

@@ -255,12 +255,13 @@
     </div>
 
     <!-- Action Buttons -->
-    <OfferActions
-      v-if="offerPreview"
-      :tableData="offerPreview"
-      :fileName="actionFileName"
-      sourcePage="preview"
-    />
+    <div class="btn-container">
+      <button class="btn btn-primary" @click="saveOffer">
+        <i class="bi bi-floppy-fill icons"></i>
+        <span>Speichern</span>
+      </button>
+    </div>
+
     <router-link to="/offers/create" class="back-link"> ← Zurück zur Bearbeitung </router-link>
   </div>
 </template>
@@ -268,14 +269,13 @@
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import OfferActions from '../../components/preview/OfferActions.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
+
 export default {
   name: 'OfferPreview',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    OfferActions
   },
   inject: ['formatCustomerId', 'formatOfferId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {
@@ -299,7 +299,6 @@ export default {
       if (!store.state.offer && !store.state.auth) return
       this.offerPreview = store.state.offer
       this.auth = store.state.auth
-      console.log('preview', this.offerPreview)
     },
     getStatusText(status) {
       const statusMap = {
@@ -310,6 +309,14 @@ export default {
         expired: 'Abgelaufen'
       }
       return statusMap[status] || status
+    },
+    async saveOffer() {
+      if (this.offerPreview) {
+        const result = await window.api.addOffer(JSON.parse(JSON.stringify(this.offerPreview)))
+        if (!result.success) return
+        await store.clearStore()
+        this.$router.push('/offers')
+      }
     }
   }
 }

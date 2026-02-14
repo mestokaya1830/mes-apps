@@ -215,7 +215,6 @@ export default {
       try {
         const result = await window.api.getPaymentById(this.$route.params.id)
         if (!result.success) return
-        console.log('patment- details', result)
         this.payment = {
           ...result.rows,
           invoice: JSON.parse(result.rows.invoice)

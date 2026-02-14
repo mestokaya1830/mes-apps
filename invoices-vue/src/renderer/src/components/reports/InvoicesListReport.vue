@@ -330,7 +330,6 @@ export default {
         end: this.date_box_end
       }
       this.is_ready = true
-      // console.log(result)
     },
     sorting(key) {
       if (!key) return

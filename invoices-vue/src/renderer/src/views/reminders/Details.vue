@@ -215,7 +215,6 @@ export default {
         invoice: JSON.parse(result.rows.invoice),
         customer: JSON.parse(result.rows.customer)
       }
-      console.log('reminder Data:', this.reminder)
     },
     getAuth() {
       if (!store.state.auth) return

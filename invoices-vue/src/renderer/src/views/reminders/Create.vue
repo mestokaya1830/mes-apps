@@ -198,7 +198,6 @@ export default {
       this.reminder.customer_id = this.reminder.customer.id
 
       this.updateTexts()
-      console.log('create-reminder', result)
     },
     validate() {
       let isValid = true

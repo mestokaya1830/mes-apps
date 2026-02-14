@@ -257,7 +257,6 @@ export default {
           customer: JSON.parse(result.rows.customer),
           positions: JSON.parse(result.rows.positions)
         }
-        console.log(this.offer)
       } catch (error) {
         console.error(error)
       }

@@ -458,7 +458,6 @@ export default {
           id: this.$route.query.id,
           table_name: 'invoices'
         }
-        console.log('Fetching customer data with payload:', data)
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
         this.invoice.id = result.last_id + 1

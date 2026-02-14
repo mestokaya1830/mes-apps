@@ -144,12 +144,12 @@
       <!-- Footer -->
       <FooterSidePreview />
     </div>
-    <RemiderActions
-      v-if="reminderPreview"
-      :tableData="reminderPreview"
-      :fileName="actionFileName"
-      sourcePage="preview"
-    />
+    <div class="btn-container">
+      <button class="btn btn-primary" @click="saveReminder">
+        <i class="bi bi-floppy-fill icons"></i>
+        <span>Speichern</span>
+      </button>
+    </div>
     <router-link
       v-if="reminderPreview"
       :to="`/reminders/create/${reminderPreview.invoice_id}`"
@@ -211,8 +211,15 @@ export default {
       if (!store.state.reminder && !store.state.auth) return
       this.reminderPreview = store.state.reminder
       this.auth = store.state.auth
-      console.log('preview', this.reminderPreview)
-    }
+    },
+     async saveReminder() {
+      if (this.reminderPreview) {
+        const result = await window.api.addReminder(JSON.parse(JSON.stringify(this.reminderPreview)))
+        if (!result.success) return
+        await store.clearStore('reminder')
+        this.$router.push('/invoices/details/' + this.reminderPreview.invoice_id)
+      }
+    },
   }
 }
 </script>

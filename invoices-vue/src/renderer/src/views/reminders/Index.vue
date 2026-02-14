@@ -140,7 +140,6 @@ export default {
         const result = await window.api.getReminders()
         if (!result.success) return
         this.reminders = result.rows
-        console.log(this.reminders)
       } catch (error) {
         console.error(error)
       }
