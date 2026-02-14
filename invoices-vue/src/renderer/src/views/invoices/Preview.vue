@@ -187,25 +187,27 @@
       <!-- Kontaktperson -->
       <ContactPersonPreview :contactData="auth.contact_person" />
 
-       <!-- Bankinformationen -->
+      <!-- Bankinformationen -->
       <div class="preview-box">
         <div class="preview-box-title"><i class="bi bi-bank icons"></i>Bankverbindung</div>
         <div class="preview-box-content">
           <span class="preview-box-label">Bank:</span>
           <span class="preview-box-value">{{ auth.bank_name }}</span>
-          <span class="preview-box-label">IBAN:</span> <span class="preview-box-value">{{ auth.iban }}</span>
-          <span class="preview-box-label">BIC:</span> <span class="preview-box-value">{{ auth.bic }}</span>
+          <span class="preview-box-label">IBAN:</span>
+          <span class="preview-box-value">{{ auth.iban }}</span>
+          <span class="preview-box-label">BIC:</span>
+          <span class="preview-box-value">{{ auth.bic }}</span>
         </div>
       </div>
       <FooterSidePreview />
     </div>
 
-    <InvoiceActions
-      v-if="invoicePreview"
-      :tableData="invoicePreview"
-      :fileName="actionFileName"
-      sourcePage="preview"
-    />
+    <section class="sections btn-container">
+      <button class="btn btn-primary" @click="saveInvoice">
+        <i class="bi bi-save form-title icons"></i>
+        <span>Speichern</span>
+      </button>
+    </section>
 
     <router-link to="/invoices/create" class="back-link">
       <i class="bi bi-arrow-left icons"></i> Zurück zur Rechnungserstellung
@@ -215,18 +217,17 @@
 
 <script>
 import store from '../../store/store.js'
+import html2pdf from 'html2pdf.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
-import InvoiceActions from '../../components/preview/InvoiceActions.vue'
 
 export default {
   name: 'InvoicePreview',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    FooterSidePreview,
-    InvoiceActions
+    FooterSidePreview
   },
   inject: ['formatCustomerId', 'formatDate', 'formatCurrency', 'formatInvoiceId'],
   data() {
@@ -251,6 +252,43 @@ export default {
       this.invoicePreview = store.state.invoice
       this.auth = store.state.auth
       console.log('invoice-preview', this.invoicePreview)
+    },
+    async saveInvoice() {
+      if (this.invoicePreview) {
+        const result = await window.api.addInvoice(JSON.parse(JSON.stringify(this.invoicePreview)))
+        if (!result.success) return
+        this.savePdf()
+        this.$router.push('/invoices')
+      }
+    },
+    async savePdf() {
+      await this.$nextTick()
+      const element = document.querySelector('.printable')
+      if (!element) return
+
+      const fileName = this.formatInvoiceId(this.invoicePreview.id)
+      const options = {
+        margin: 16,
+        filename: fileName + '.jpeg',
+        image: { type: 'jpeg', quality: 0.75 },
+        html2canvas: { scale: 1, useCORS: true, logging: false, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }
+
+      try {
+        const pdf = await html2pdf().set(options).from(element).toPdf().output('blob')
+        if (!pdf) return
+
+        const result = await window.api.saveInvoicePDF(pdf, fileName)
+        if (result.success) {
+          console.log('PDF saved successfully:', fileName)
+          await store.clearStore('invoice')
+          return
+        }
+
+      } catch (err) {
+        console.error('PDF save error:', err)
+      }
     }
   }
 }

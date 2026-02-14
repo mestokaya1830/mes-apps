@@ -16,11 +16,6 @@
         <span>Drucken</span>
       </button>
 
-      <button v-if="sourcePage === 'preview'" class="btn btn-primary" @click="saveInvoice">
-        <i class="bi bi-save form-title icons"></i>
-        <span>Speichern</span>
-      </button>
-
       <router-link :to="`/invoices/edit/${tableData.id}`">
         <button
           v-if="tableData.id && sourcePage !== 'preview' && tableData.is_active"
@@ -35,8 +30,6 @@
 </template>
 
 <script>
-import html2pdf from 'html2pdf.js'
-import store from '../../store/store.js'
 export default {
   name: 'ActionsButton',
   props: {
@@ -57,103 +50,44 @@ export default {
     return {}
   },
   methods: {
-    async sendEmail() {
-      await this.$nextTick()
-      const element = document.querySelector('.printable')
-      if (!element) return
-
-      const options = {
-        margin: 16,
-        filename: this.fileName + '.pdf',
-        image: { type: 'png', quality: 0.95 },
-        html2canvas: { scale: 1.5, useCORS: true, logging: false, scrollY: 0 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    async getPdfBlob() {
+      const result = await window.api.readInvoicePDF(this.fileName)
+      if (!result.success) {
+        console.error('PDF is not found:', result.message)
+        return null
       }
-
-      try {
-        const pdf = await html2pdf()
-          .set(options)
-          .from(element)
-          .toPdf() // ← önce PDF oluştur
-          .output('blob') // ← sonra blob olarak al
-
-        console.log('Blob oluştu:', pdf, typeof pdf)
-
-        if (!pdf) {
-          console.error('Blob boş geldi!')
-          return
-        }
-
-        await window.api.sendEmail(pdf, this.fileName)
-      } catch (err) {
-        console.error('PDF oluşturma hatası:', err)
-      }
+      return new Blob([result.buffer], { type: 'application/pdf' })
     },
+
     async exportPDF() {
-      await this.$nextTick() // Vue render bitti mi bekle
-      const element = document.querySelector('.printable')
-      if (!element) return
-
-      const options = {
-        margin: 16,
-        filename: this.fileName + '.pdf',
-        image: { type: 'png', quality: 0.95 },
-        html2canvas: {
-          scale: 1.5,
-          useCORS: true,
-          logging: false,
-          scrollY: 0
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }
-
-      html2pdf().set(options).from(element).save()
-      this.savePdf()
+      const blob = await this.getPdfBlob()
+      if (!blob) return
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = this.fileName + '.pdf'
+      a.click()
+      URL.revokeObjectURL(url)
     },
 
-    async saveInvoice() {
-      if (this.tableData) {
-        const result = await window.api.addInvoice(JSON.parse(JSON.stringify(this.tableData)))
-        if (!result.success) return
-        this.savePdf()
-        this.$router.push('/invoices')
+    async printDocument() {
+      const blob = await this.getPdfBlob()
+      if (!blob) return
+      const url = URL.createObjectURL(blob)
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      iframe.src = url
+      document.body.appendChild(iframe)
+      iframe.onload = () => {
+        iframe.contentWindow.print()
+        URL.revokeObjectURL(url)
       }
     },
 
-    printDocument() {
-      this.savePdf()
-      window.print()
-    },
-
-    async clearStore() {
-      try {
-        await store.clearStore('invoice')
-      } catch (error) {
-        console.error(error)
-      }
-    },
-
-    async savePdf() {
-      await this.$nextTick()
-      const element = document.querySelector('.printable')
-      if (!element) return
-
-      const options = {
-        margin: 16,
-        filename: this.fileName + '.pdf',
-        image: { type: 'png', quality: 0.95 },
-        html2canvas: { scale: 1.5, useCORS: true, logging: false, scrollY: 0 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      }
-
-      html2pdf()
-        .set(options)
-        .from(element)
-        .outputPdf('blob')
-        .then((blob) => {
-          window.api.saveInvoicePDF(blob, this.fileName)
-          this.clearStore()
-        })
+    async sendEmail() {
+      const blob = await this.getPdfBlob()
+      if (!blob) return
+      await window.api.sendEmail(blob, this.fileName)
     }
   }
 }

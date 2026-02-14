@@ -17,19 +17,19 @@ process.on('exit', () => db.close())
 
 export default db
 
-try {
-  const rows = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
-  console.log(rows)
-} catch (err) {
-  console.error(err.message)
-}
+// try {
+//   const rows = db.prepare(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;`).all()
+//   console.log(rows)
+// } catch (err) {
+//   console.error(err.message)
+// }
 
-try {
-  const result = db.prepare(`SELECT * FROM users LIMIT 1;`).all()
-  console.log(result)
-} catch (err) {
-  console.error(err.message)
-}
+// try {
+//   const result = db.prepare(`SELECT * FROM users LIMIT 1;`).all()
+//   console.log(result)
+// } catch (err) {
+//   console.error(err.message)
+// }
 
 // try {
 //   db.prepare(`DELETE FROM users;`).run()

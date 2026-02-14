@@ -271,7 +271,7 @@
           </div>
         </div>
         <div v-if="invoice.positions.length > 0" class="sections">
-          <div class="container-2">
+          <div class="btn-container">
             <div class="summary-item">
               <label class="form-label">Nettobetrag</label>
               <div class="form-result-item">
@@ -458,6 +458,7 @@ export default {
           id: this.$route.query.id,
           table_name: 'invoices'
         }
+        console.log('Fetching customer data with payload:', data)
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
         this.invoice.id = result.last_id + 1

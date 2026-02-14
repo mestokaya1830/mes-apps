@@ -46,7 +46,7 @@ async function init() {
 
     const category_filter = await localforage.getItem('category_filter')
     if (category_filter) state.category_filter = category_filter
-    
+
     const date_filter = await localforage.getItem('date_filter')
     if (date_filter) state.date_filter = date_filter
   } catch (err) {
@@ -66,6 +66,7 @@ async function setStore(store, data) {
 
 //clear store
 async function clearStore(store) {
+  console.log('Clearing store:', store)
   try {
     await localforage.removeItem(store)
     state[store] = undefined

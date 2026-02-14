@@ -773,13 +773,16 @@ ipcMain.handle('get-customers', async () => {
 })
 
 ipcMain.handle('get-customer-by-id', async (event, payload) => {
+  console.log('get-customer-by-id payload:', payload)
   const { id, table_name } = payload
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
   try {
     const rows = db.prepare(`SELECT * FROM customers WHERE id = ?`).get(id)
-    const last_id = db.prepare(`SELECT MAX(id) AS last_id FROM ${table_name}`).get().last_id || 0
+    const last_id =
+      db.prepare(`SELECT id AS last_id FROM ${table_name} ORDER BY id DESC LIMIT 1`).get()
+        .last_id || 0
     return { success: true, rows, last_id }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -1112,6 +1115,26 @@ ipcMain.handle('add-invoice', async (event, payload) => {
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
+  }
+})
+
+ipcMain.handle('save-invoice-pdf', (event, { buffer, fileName }) => {
+  try {
+    // const savePath = '/media/username/USB/invoice-pdfs'
+    // const savePath = path.join(app.getPath('userData'), 'pdf-storage')// in home->username-> .config folder
+    const savePath = path.join(app.getPath('downloads'), `invoice-pdfs`)
+    if (!fs.existsSync(savePath)) fs.mkdirSync(savePath, { recursive: true })
+
+    const filePath = path.join(savePath, `${fileName}.pdf`)
+    if (fs.existsSync(filePath)) {
+      return { success: false, message: 'file already exists' }
+    }
+    fs.writeFileSync(filePath, Buffer.from(buffer))
+
+    console.log('PDF Saved:', filePath)
+    return { success: true, filePath }
+  } catch (err) {
+    console.error('PDF Error:', err)
   }
 })
 
@@ -3153,20 +3176,13 @@ ipcMain.handle('report-sales', async (event, payload) => {
   }
 })
 
-ipcMain.on('save-invoice-pdf', (event, { buffer, fileName }) => {
-  try {
-    // const savePath = '/media/username/USB/invoice-pdfs'
-    // const savePath = path.join(app.getPath('userData'), 'pdf-storage')// in home->username-> .config folder
-    const savePath = path.join(app.getPath('downloads'), 'invoice-pdfs')
-    if (!fs.existsSync(savePath)) fs.mkdirSync(savePath)
-
-    const filePath = path.join(savePath, `${fileName}.pdf`)
-    fs.writeFileSync(filePath, Buffer.from(buffer))
-
-    console.log('PDF Saved:', filePath)
-  } catch (err) {
-    console.error('PDF Error:', err)
+ipcMain.handle('read-invoice-pdf', (event, { fileName }) => {
+  const filePath = path.join(app.getPath('downloads'), 'invoice-pdfs', `${fileName}.pdf`)
+  if (!fs.existsSync(filePath)) {
+    return { success: false, message: 'PDF file not found' }
   }
+  const buffer = fs.readFileSync(filePath)
+  return { success: true, buffer: new Uint8Array(buffer) }
 })
 
 ipcMain.handle('send-email', async (event, { buffer, fileName }) => {
@@ -3194,3 +3210,4 @@ ipcMain.handle('send-email', async (event, { buffer, fileName }) => {
     return { success: false, message: err.message }
   }
 })
+
