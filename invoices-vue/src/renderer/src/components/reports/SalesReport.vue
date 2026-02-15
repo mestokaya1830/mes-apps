@@ -92,13 +92,12 @@
         </div>
       </div>
 
-      <InvoiceChart :chartData="summary" />
+      <SalesChart :chartData="reports" />
 
       <!-- UStVA Zusammenfassung -->
       <div class="ustva-section mt-4">
         <h3>
-          <i class="bi bi-clipboard-data icons"></i>Umsatzsteuervoranmeldung (UStVA)
-          Zusammenfassung
+          <i class="bi bi-clipboard-data icons"></i>Umsatzsteuervoranmeldung (UStVA) Zusammenfassung
         </h3>
 
         <div class="ustva-alert alert alert-info d-flex align-items-center">
@@ -142,7 +141,10 @@
             </tr>
             <tr>
               <td><strong>43</strong></td>
-              <td>Steuerfreie Umsätze mit Vorsteuerabzug (z.B. Ausfuhrlieferungen, § 4 Nr. 1a, § 6 UStG)</td>
+              <td>
+                Steuerfreie Umsätze mit Vorsteuerabzug (z.B. Ausfuhrlieferungen, § 4 Nr. 1a, § 6
+                UStG)
+              </td>
               <td class="text-right">{{ formatCurrency(ustva.line43.base) }}</td>
               <td class="text-right">-</td>
             </tr>
@@ -255,10 +257,18 @@
           <tfoot>
             <tr class="total-row">
               <td><strong>GESAMT</strong></td>
-              <td class="text-right"><strong>{{ summary.total.count }}</strong></td>
-              <td class="text-right"><strong>{{ formatCurrency(taxTotals.net) }}</strong></td>
-              <td class="text-right"><strong>{{ formatCurrency(taxTotals.tax) }}</strong></td>
-              <td class="text-right"><strong>{{ formatCurrency(taxTotals.gross) }}</strong></td>
+              <td class="text-right">
+                <strong>{{ summary.total.count }}</strong>
+              </td>
+              <td class="text-right">
+                <strong>{{ formatCurrency(taxTotals.net) }}</strong>
+              </td>
+              <td class="text-right">
+                <strong>{{ formatCurrency(taxTotals.tax) }}</strong>
+              </td>
+              <td class="text-right">
+                <strong>{{ formatCurrency(taxTotals.gross) }}</strong>
+              </td>
               <td class="text-right"><strong>100%</strong></td>
             </tr>
           </tfoot>
@@ -280,7 +290,9 @@
           </thead>
           <tbody>
             <tr v-for="item in taxBreakdown" :key="item.rate">
-              <td><strong>{{ item.rate }}%</strong></td>
+              <td>
+                <strong>{{ item.rate }}%</strong>
+              </td>
               <td>{{ item.description }}</td>
               <td class="amount text-right">{{ formatCurrency(item.net) }}</td>
               <td class="amount text-right">{{ formatCurrency(item.tax) }}</td>
@@ -307,12 +319,11 @@
       <!-- Kleinunternehmer Hinweis -->
       <div v-if="isKleinunternehmer" class="alert alert-warning mt-4">
         <i class="bi bi-exclamation-triangle-fill icons"></i>
-        <strong>Kleinunternehmerregelung (§ 19 UStG):</strong> Wenn Sie die
-        Kleinunternehmerregelung anwenden, müssen Sie keine Umsatzsteuer abführen. Dieser Bericht
-        dient nur zur Information.
+        <strong>Kleinunternehmerregelung (§ 19 UStG):</strong> Wenn Sie die Kleinunternehmerregelung
+        anwenden, müssen Sie keine Umsatzsteuer abführen. Dieser Bericht dient nur zur Information.
       </div>
     </div>
-      <div class="sections btn-container">
+    <div class="sections btn-container">
       <button class="btn btn-pdf" @click="savePdf()">
         <i class="bi bi-file-earmark-pdf icons"></i>PDF Exportieren
       </button>
@@ -325,12 +336,12 @@
 
 <script>
 import html2pdf from 'html2pdf.js'
-import InvoiceChart from '../chart/InvoiceChart.vue'
+import SalesChart from '../chart/SalesChart.vue'
 
 export default {
   name: 'SalesReport',
   components: {
-    InvoiceChart
+    SalesChart
   },
   inject: ['formatDate', 'formatCurrency'],
   data() {
@@ -403,12 +414,12 @@ export default {
         return { line81, line86, line43, line48, line41, line60, totalBase: 0, totalTax: 0 }
       }
 
-      this.reports.forEach((invoice) => {
-        if (!Array.isArray(invoice.positions)) return
+      this.reports.forEach((item) => {
+        if (!Array.isArray(item.positions)) return
 
-        const customerType = this.getCustomerType(invoice)
+        const customerType = this.getCustomerType(item)
 
-        invoice.positions.forEach((pos) => {
+        item.positions.forEach((pos) => {
           const rate = Number(pos.vat) || 0
           const quantity = Number(pos.quantity) || 0
           const price = Number(pos.price) || 0
@@ -450,7 +461,8 @@ export default {
         line48,
         line41,
         line60,
-        totalBase: line81.base + line86.base + line43.base + line48.base + line41.base + line60.base,
+        totalBase:
+          line81.base + line86.base + line43.base + line48.base + line41.base + line60.base,
         totalTax: line81.tax + line86.tax
       }
     },
@@ -466,11 +478,11 @@ export default {
 
       if (!Array.isArray(this.reports)) return analysis
 
-      this.reports.forEach((invoice) => {
-        const customerType = this.getCustomerType(invoice)
-        const net = Number(invoice.net_total) || 0
-        const tax = Number(invoice.vat_total) || 0
-        const gross = Number(invoice.gross_total) || 0
+      this.reports.forEach((item) => {
+        const customerType = this.getCustomerType(item)
+        const net = Number(item.net_total) || 0
+        const tax = Number(item.vat_total) || 0
+        const gross = Number(item.gross_total) || 0
 
         if (analysis[customerType]) {
           analysis[customerType].count++
@@ -496,10 +508,10 @@ export default {
 
       const taxMap = {}
 
-      this.reports.forEach((invoice) => {
-        if (!Array.isArray(invoice.positions)) return
+      this.reports.forEach((item) => {
+        if (!Array.isArray(item.positions)) return
 
-        invoice.positions.forEach((pos) => {
+        item.positions.forEach((pos) => {
           const rate = Number(pos.vat) || 0
           const quantity = Number(pos.quantity) || 0
           const price = Number(pos.price) || 0
@@ -598,25 +610,49 @@ export default {
       this.is_ready = true
     },
 
-    getCustomerType(invoice) {
+    getCustomerType(param) {
       // Bu fonksiyon müşteri bilgisine göre türü belirler
       // Gerçek implementasyon customer verisine bağlı
-      
-      if (!invoice.customer) return 'b2c'
 
-      const customer = invoice.customer
+      if (!param.customer) return 'b2c'
+
+      const customer = param.customer
       const countryCode = customer.country_code || 'DE'
       const hasVatId = customer.vat_id && customer.vat_id.trim() !== ''
-      const isReverseCharge = invoice.reverse_charge || false
+      const isReverseCharge = param.reverse_charge || false
 
       // Reverse Charge kontrolü
       if (isReverseCharge) return 'reverse_charge'
 
       // EU ülkeleri listesi (basitleştirilmiş)
       const euCountries = [
-        'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',
-        'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL',
-        'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE'
+        'AT',
+        'BE',
+        'BG',
+        'HR',
+        'CY',
+        'CZ',
+        'DK',
+        'EE',
+        'FI',
+        'FR',
+        'DE',
+        'GR',
+        'HU',
+        'IE',
+        'IT',
+        'LV',
+        'LT',
+        'LU',
+        'MT',
+        'NL',
+        'PL',
+        'PT',
+        'RO',
+        'SK',
+        'SI',
+        'ES',
+        'SE'
       ]
 
       // B2B mi B2C mi?
@@ -670,7 +706,7 @@ export default {
         console.error('PDF save error:', err)
       }
     },
-     printDocument() {
+    printDocument() {
       window.print()
     }
   }

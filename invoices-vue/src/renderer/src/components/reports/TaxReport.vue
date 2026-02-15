@@ -169,7 +169,7 @@
         </div>
       </div>
 
-      <VatChart :chartData="chartData" />
+      <VatChart :chartData="reports" />
 
       <!-- Mahnstufen Übersicht -->
       <div class="dunning-overview mt-4" v-if="summary.overdue_count > 0">
