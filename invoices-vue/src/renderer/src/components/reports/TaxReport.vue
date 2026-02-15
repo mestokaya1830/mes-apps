@@ -93,9 +93,7 @@
           <div class="card-content">
             <p class="card-label">Offen (noch nicht fällig)</p>
             <h3 class="card-value">{{ formatCurrency(summary.unpaid_not_due_total) }}</h3>
-            <p class="card-detail">
-              {{ summary.unpaid_not_due_count }} Rechnungen
-            </p>
+            <p class="card-detail">{{ summary.unpaid_not_due_count }} Rechnungen</p>
           </div>
         </div>
 
@@ -171,7 +169,7 @@
         </div>
       </div>
 
-      <InvoiceChart :chartData="chartData" />
+      <VatChart :chartData="chartData" />
 
       <!-- Mahnstufen Übersicht -->
       <div class="dunning-overview mt-4" v-if="summary.overdue_count > 0">
@@ -245,8 +243,12 @@
           <tfoot>
             <tr class="total-row">
               <td colspan="2"><strong>GESAMT</strong></td>
-              <td class="text-right"><strong>{{ summary.overdue_count }}</strong></td>
-              <td class="text-right"><strong>{{ formatCurrency(summary.overdue_total) }}</strong></td>
+              <td class="text-right">
+                <strong>{{ summary.overdue_count }}</strong>
+              </td>
+              <td class="text-right">
+                <strong>{{ formatCurrency(summary.overdue_total) }}</strong>
+              </td>
               <td class="text-right">
                 <strong>{{ formatCurrency(dunningLevels.totalFees) }}</strong>
               </td>
@@ -293,7 +295,9 @@
           </thead>
           <tbody>
             <tr v-for="(customer, index) in topCustomers" :key="customer.id">
-              <td><strong>{{ index + 1 }}</strong></td>
+              <td>
+                <strong>{{ index + 1 }}</strong>
+              </td>
               <td>{{ customer.name }}</td>
               <td class="text-right">{{ customer.invoiceCount }}</td>
               <td class="text-right">{{ formatCurrency(customer.totalAmount) }}</td>
@@ -455,9 +459,13 @@
           </thead>
           <tbody>
             <tr v-for="item in filteredReports" :key="item.id">
-              <td><span class="invoice-number">{{ formatInvoiceId(item.id) }}</span></td>
+              <td>
+                <span class="invoice-number">{{ formatInvoiceId(item.id) }}</span>
+              </td>
               <td>{{ formatDate(item.date) }}</td>
-              <td><span class="customer-name">{{ item.customer_name }}</span></td>
+              <td>
+                <span class="customer-name">{{ item.customer_name }}</span>
+              </td>
               <td>{{ formatDate(item.due_date) }}</td>
               <td class="text-right">{{ formatCurrency(item.gross_total) }}</td>
               <td class="text-right">{{ formatCurrency(item.outstanding_amount) }}</td>
@@ -479,7 +487,10 @@
                 {{ item.lateFee > 0 ? formatCurrency(item.lateFee) : '—' }}
               </td>
               <td>
-                <span v-if="item.dunning_level" :class="['dunning-badge', `level-${item.dunning_level}`]">
+                <span
+                  v-if="item.dunning_level"
+                  :class="['dunning-badge', `level-${item.dunning_level}`]"
+                >
                   {{ getDunningLabel(item.dunning_level) }}
                 </span>
                 <span v-else>—</span>
@@ -493,7 +504,9 @@
           </tbody>
           <tfoot>
             <tr class="total-row">
-              <td colspan="4"><strong>SUMME ({{ filteredReports.length }} Rechnungen)</strong></td>
+              <td colspan="4">
+                <strong>SUMME ({{ filteredReports.length }} Rechnungen)</strong>
+              </td>
               <td class="text-right">
                 <strong>{{
                   formatCurrency(
@@ -519,16 +532,15 @@
         <p class="mb-0">
           <i class="bi bi-info-circle"></i>
           <strong>Rechtlicher Hinweis:</strong> Die Berechnung der Verzugszinsen basiert auf dem
-          aktuellen Basiszinssatz der Deutschen Bundesbank zuzüglich 9 Prozentpunkte für
-          Geschäfte mit Unternehmern (§ 288 Abs. 2 BGB) bzw. 5 Prozentpunkte für Geschäfte mit
-          Verbrauchern (§ 288 Abs. 1 BGB). Mahngebühren können nur erhoben werden, wenn diese
-          vorab vereinbart wurden oder marktüblich sind. Für rechtlich bindende Mahnverfahren
-          konsultieren Sie bitte einen Rechtsanwalt oder nutzen Sie das gerichtliche
-          Mahnverfahren.
+          aktuellen Basiszinssatz der Deutschen Bundesbank zuzüglich 9 Prozentpunkte für Geschäfte
+          mit Unternehmern (§ 288 Abs. 2 BGB) bzw. 5 Prozentpunkte für Geschäfte mit Verbrauchern (§
+          288 Abs. 1 BGB). Mahngebühren können nur erhoben werden, wenn diese vorab vereinbart
+          wurden oder marktüblich sind. Für rechtlich bindende Mahnverfahren konsultieren Sie bitte
+          einen Rechtsanwalt oder nutzen Sie das gerichtliche Mahnverfahren.
         </p>
       </div>
     </div>
-      <div class="sections btn-container">
+    <div class="sections btn-container">
       <button class="btn btn-pdf" @click="savePdf()">
         <i class="bi bi-file-earmark-pdf icons"></i>PDF Exportieren
       </button>
@@ -540,12 +552,12 @@
 </template>
 
 <script>
-import html2pdf from 'html2pdf.js';
-import InvoiceChart from '../chart/InvoiceChart.vue'
+import html2pdf from 'html2pdf.js'
+import VatChart from '../chart/VatChart.vue'
 
 export default {
-  name: 'InvoiceReport',
-  components: { InvoiceChart },
+  name: 'VatReport',
+  components: { VatChart },
   inject: ['formatDate', 'formatCurrency', 'formatInvoiceId', 'formatPercentage'],
   data() {
     return {
@@ -654,23 +666,6 @@ export default {
         partially_paid_percentage: this.formatPercentage(sum.partially_paid_total, sum.all_total),
         unpaid_percentage: this.formatPercentage(sum.unpaid_total, sum.all_total),
         overdue_percentage: this.formatPercentage(sum.overdue_total, sum.all_total)
-      }
-    },
-
-    chartData() {
-      return {
-        labels: ['Bezahlt', 'Teilweise', 'Offen', 'Überfällig'],
-        datasets: [
-          {
-            data: [
-              this.summary.paid_total,
-              this.summary.partially_paid_total,
-              this.summary.unpaid_not_due_total,
-              this.summary.overdue_total
-            ],
-            backgroundColor: ['#28a745', '#17a2b8', '#6c757d', '#dc3545']
-          }
-        ]
       }
     },
 
@@ -1020,7 +1015,8 @@ export default {
       const isB2B = invoice.is_b2b !== false // Default B2B
 
       // Verzugszinssatz: Basiszins + 9% (B2B) oder + 5% (B2C)
-      const interestRate = this.baseInterestRate + (isB2B ? this.b2bInterestRate : this.b2cInterestRate)
+      const interestRate =
+        this.baseInterestRate + (isB2B ? this.b2bInterestRate : this.b2cInterestRate)
 
       // Zinsberechnung: (Betrag * Zinssatz * Tage) / (100 * 365)
       const lateFee = (principal * interestRate * daysOverdue) / (100 * 365)
