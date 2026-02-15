@@ -40,22 +40,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Export & Aktionen Buttons -->
-      <div class="export-buttons mt-20" v-if="is_ready">
-        <button @click="exportExcel" class="btn btn-success">
-          <i class="bi bi-file-excel"></i> Excel Export
-        </button>
-        <button @click="exportCSV" class="btn btn-primary">
-          <i class="bi bi-filetype-csv"></i> CSV Export
-        </button>
-        <button @click="exportPDF" class="btn btn-secondary">
-          <i class="bi bi-file-pdf"></i> PDF Export
-        </button>
-        <button @click="window.print()" class="btn btn-outline">
-          <i class="bi bi-printer"></i> Drucken
-        </button>
-      </div>
     </div>
 
     <div v-if="is_ready" class="printable">
@@ -65,9 +49,6 @@
           <h2><i class="bi bi-file-earmark-bar-graph me-2"></i>{{ title }}</h2>
           <p class="report-period">
             <i class="bi bi-clock me-1 icons"></i> Zeitraum: {{ selectedPeriod }}
-          </p>
-          <p class="report-generated">
-            Erstellt am: {{ formatDate(new Date().toISOString()) }} um {{ currentTime }}
           </p>
         </div>
       </div>
@@ -547,10 +528,19 @@
         </p>
       </div>
     </div>
+      <div class="sections btn-container">
+      <button class="btn btn-pdf" @click="savePdf()">
+        <i class="bi bi-file-earmark-pdf icons"></i>PDF Exportieren
+      </button>
+      <button class="btn btn-print" @click="printDocument()">
+        <i class="bi bi-printer icons"></i>Drucken
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
+import html2pdf from 'html2pdf.js';
 import InvoiceChart from '../chart/InvoiceChart.vue'
 
 export default {
@@ -559,7 +549,7 @@ export default {
   inject: ['formatDate', 'formatCurrency', 'formatInvoiceId', 'formatPercentage'],
   data() {
     return {
-      title: 'Vollständiger Rechnungsbericht (Deutscher Standard)',
+      title: 'Vollständiger Rechnungsbericht',
       reports: [],
       date_range: '',
       date_box_start: '',
@@ -568,7 +558,6 @@ export default {
       is_ready: false,
       activeTab: 'all',
       is_sort: true,
-      // Verzugszinsen Konfiguration
       baseInterestRate: -0.88, // Basiszinssatz (Deutsche Bundesbank)
       b2bInterestRate: 9, // Verzugszinsen B2B
       b2cInterestRate: 5, // Verzugszinsen B2C
@@ -1128,18 +1117,36 @@ export default {
       return csv
     },
 
-    exportPDF() {
-      window.print()
-    },
+    async savePdf() {
+      await this.$nextTick()
+      const element = document.querySelector('.printable')
+      if (!element) return
 
-    downloadFile(content, filename, mimeType) {
-      const blob = new Blob([content], { type: mimeType })
-      const url = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename
-      link.click()
-      URL.revokeObjectURL(url)
+      const fileName = `Steuerberichte-${this.formatDate(this.period.start)} - ${this.formatDate(this.period.end)}`
+      const options = {
+        margin: 16,
+        filename: fileName + '.jpeg',
+        image: { type: 'jpeg', quality: 0.8 },
+        html2canvas: { scale: 1, useCORS: true, logging: false, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }
+
+      try {
+        const pdf = await html2pdf().set(options).from(element).toPdf().output('blob')
+        if (!pdf) return
+
+        const url = URL.createObjectURL(pdf)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = fileName + '.pdf'
+        a.click()
+        URL.revokeObjectURL(url)
+      } catch (err) {
+        console.error('PDF save error:', err)
+      }
+    },
+    printDocument() {
+      window.print()
     }
   }
 }

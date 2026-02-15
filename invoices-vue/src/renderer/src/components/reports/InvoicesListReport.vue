@@ -43,7 +43,9 @@
       <div class="report-header-2">
         <div>
           <h2><i class="bi bi-file-earmark-bar-graph me-2"></i>{{ title }}</h2>
-          <p class="report-period"><i class="bi bi-clock me-1 icons"></i> Zeitraum: {{ selectedPeriod }}</p>
+          <p class="report-period">
+            <i class="bi bi-clock me-1 icons"></i> Zeitraum: {{ selectedPeriod }}
+          </p>
         </div>
       </div>
 
@@ -124,13 +126,13 @@
             :class="['report-filter-tab', { active: activeTab === 'partially_paid' }]"
             @click="activeTab = 'partially_paid'"
           >
-             Teilweizeltig ({{ summary.partially_paid_count }})
+            Teilweizeltig ({{ summary.partially_paid_count }})
           </button>
           <button
             :class="['report-filter-tab', { active: activeTab === 'unpaid' }]"
             @click="activeTab = 'unpaid'"
           >
-             Unbezahlt ({{ summary.unpaid_count }})
+            Unbezahlt ({{ summary.unpaid_count }})
           </button>
           <button
             :class="['report-filter-tab', { active: activeTab === 'overdue' }]"
@@ -150,7 +152,9 @@
               <th>Kunde</th>
               <th class="sortable">Fälligkeitsdatum <i class="bi bi-caret-down-fill ms-1"></i></th>
               <th class="sortable amount">Netto <i class="bi bi-caret-down-fill ms-1"></i></th>
-              <th class="sortable amount">MwSt-Betrag <i class="bi bi-caret-down-fill ms-1"></i></th>
+              <th class="sortable amount">
+                MwSt-Betrag <i class="bi bi-caret-down-fill ms-1"></i>
+              </th>
               <th class="sortable amount">Brutto <i class="bi bi-caret-down-fill ms-1"></i></th>
               <th>Status</th>
               <th>Zahlungsdatum</th>
@@ -159,15 +163,24 @@
           </thead>
           <tbody>
             <tr v-for="item in filteredReports" :key="item.id">
-              <td><span class="invoice-number">{{ formatInvoiceId(item.id) }}</span></td>
+              <td>
+                <span class="invoice-number">{{ formatInvoiceId(item.id) }}</span>
+              </td>
               <td>{{ formatDate(item.date) }}</td>
-              <td><span class="customer-name">{{ item.customer_id }}</span></td>
+              <td>
+                <span class="customer-name">{{ item.customer_id }}</span>
+              </td>
               <td>{{ formatDate(item.due_date) }}</td>
               <td class="amount">{{ formatCurrency(item.net_total) }}</td>
               <td class="amount">{{ formatCurrency(item.vat_total) }}</td>
               <td class="amount">{{ formatCurrency(item.gross_total) }}</td>
               <td>
-                <span :class="['report-table-status-badge', item.isOverdue ? 'overdue' : item.payment_status]">
+                <span
+                  :class="[
+                    'report-table-status-badge',
+                    item.isOverdue ? 'overdue' : item.payment_status
+                  ]"
+                >
                   {{ item.isOverdue ? 'overdue' : item.payment_status }}
                 </span>
               </td>
@@ -182,10 +195,19 @@
         </table>
       </div>
     </div>
+    <div class="sections btn-container">
+      <button class="btn btn-pdf" @click="savePdf()">
+        <i class="bi bi-file-earmark-pdf icons"></i>PDF Exportieren
+      </button>
+      <button class="btn btn-print" @click="printDocument()">
+        <i class="bi bi-printer icons"></i>Drucken
+      </button>
+    </div>
   </div>
 </template>
 
 <script>
+import html2pdf from 'html2pdf.js'
 import InvoiceChart from '../chart/InvoiceChart.vue'
 export default {
   name: 'InvoiceReport',
@@ -331,6 +353,37 @@ export default {
       }
       this.is_ready = true
     },
+    async savePdf() {
+      await this.$nextTick()
+      const element = document.querySelector('.printable')
+      if (!element) return
+
+      const fileName = `Rechnungsberichte-${this.formatDate(this.period.start)} - ${this.formatDate(this.period.end)}`
+      const options = {
+        margin: 16,
+        filename: fileName + '.jpeg',
+        image: { type: 'jpeg', quality: 0.8 },
+        html2canvas: { scale: 1, useCORS: true, logging: false, scrollY: 0 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }
+
+      try {
+        const pdf = await html2pdf().set(options).from(element).toPdf().output('blob')
+        if (!pdf) return
+
+        const url = URL.createObjectURL(pdf)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = fileName + '.pdf'
+        a.click()
+        URL.revokeObjectURL(url)
+      } catch (err) {
+        console.error('PDF save error:', err)
+      }
+    },
+    printDocument() {
+      window.print()
+    },
     sorting(key) {
       if (!key) return
       this.reports.sort((a, b) => {
@@ -342,4 +395,3 @@ export default {
   }
 }
 </script>
-
