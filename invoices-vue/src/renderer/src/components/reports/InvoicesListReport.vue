@@ -106,7 +106,10 @@
         </div>
       </div>
 
-      <InvoiceChart :chartData="summary" />
+      <div class="chart-container">
+        <InvoiceChart :chartData="summary" />
+        <InvoicePieChart :percentData="setPercentage" />
+      </div>
 
       <div class="report-table-container">
         <div class="report-filter-tabs">
@@ -209,9 +212,10 @@
 <script>
 import html2pdf from 'html2pdf.js'
 import InvoiceChart from '../chart/InvoiceChart.vue'
+import InvoicePieChart from '../chart/InvoicePieChart.vue'
 export default {
   name: 'InvoiceReport',
-  components: { InvoiceChart },
+  components: { InvoiceChart, InvoicePieChart },
   inject: [
     'formatDate',
     'formatCurrency',

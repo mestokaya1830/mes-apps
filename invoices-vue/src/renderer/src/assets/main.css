@@ -1872,7 +1872,13 @@ textarea.error {
 .right {
   margin-left: auto;
 }
-
+.chart-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-2xl);
+  width: 100%;
+}
 @media screen and (max-width: 1600px) {
   .main-container,
   .main-container {
