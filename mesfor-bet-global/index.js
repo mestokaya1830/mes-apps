@@ -247,6 +247,7 @@ io.on('connection', (socket) => {
 })
 
 if(process.env.NODE_ENV == 'production'){
+  app.set('trust proxy', 1)
   app.use(express.static('dist'))
   app.get('*', (req, res) => res.sendFile(path.resolve('dist/index.html')))
 }

@@ -8,11 +8,12 @@ import Loginlogs from "../schemas/login-logs-schema.js"
 
 router.get('/', tryCatch(async (req, res) => {
   if(req.session.auth){
-    return false
+    return
   } else {
     res.json('no auth')
   }
 }))
+
 router.post("/login", tryCatch(async (req, res) => {
   if (req.body.user) {
     const result = await Users.findOne({ user: req.body.user });
@@ -59,6 +60,7 @@ router.post("/login", tryCatch(async (req, res) => {
     }
   }
 }))
+
 router.post("/logout", tryCatch(async (req, res) => {
   const ip =
     req.headers["x-forwarded-for"] ||
@@ -78,7 +80,8 @@ router.post("/logout", tryCatch(async (req, res) => {
   await Users.updateOne({ user: req.session.auth.user },{ logincheck: "passive" })
   delete req.session.auth
   res.status(204).send()
-}));
+}))
+
 router.post("/reset-password", tryCatch(async (req, res) => {
   const result = await Users.findOne({ user: req.body.user }, "user nick");
   if (result) {
@@ -94,4 +97,4 @@ router.post("/reset-password", tryCatch(async (req, res) => {
   }
 }))
 
-export default router;
+export default router
