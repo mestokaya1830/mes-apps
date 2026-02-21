@@ -163,7 +163,7 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Beleg / Zahlungsnachweis (optional)</label>
-            <input type="file" accept=".pdf,image/*" @change="loadImage" />
+            <input type="file" accept=".pdf,image/*" @change="setImage" />
           </div>
 
           <div class="form-group">
@@ -208,7 +208,8 @@ export default {
     return {
       title: 'Zahlung erfassen',
       payment: null,
-      selectedImage: '',
+      selectedImage: null,
+      blobImage: null,
       ibanError: '',
       handleIban: false,
       ibanCountryFlag: '',
@@ -276,17 +277,15 @@ export default {
       this.checkEarlyPayment()
     },
 
-    loadImage(event) {
+    setImage(event) {
       const file = event.target.files[0]
       if (!file) return
-      const reader = new FileReader()
-      reader.onload = () => {
-        this.selectedImage = reader.result
-        const timestamp = new Date().getTime()
-        this.payment.file_name = `${this.payment.id}-${timestamp}.${file.name.split('.').pop()}`
-      }
-      reader.readAsDataURL(file)
+      this.blobImage = file
+      const timestamp = new Date().getTime()
+      this.payment.file_name = `${this.payment.id}-${timestamp}.${file.name.split('.').pop()}`
+      this.selectedImage = URL.createObjectURL(file)
     },
+
     onAmountInput() {
       if (!this.isCalculating) {
         this.calculateOutstanding()
@@ -345,6 +344,7 @@ export default {
     setBank(bankName) {
       this.payment.counterparty_bank = bankName
     },
+
     setPaymentStatus() {
       let result = this.calculateOutstanding()
       if (result === 0) {
@@ -353,6 +353,7 @@ export default {
       }
       this.payment.invoice.payment_status = 'partially_paid'
     },
+
     checkPaymentDate() {
       if (!this.payment.date) {
         this.$refs.date.focus()
@@ -360,6 +361,7 @@ export default {
       }
       return true
     },
+
     validate() {
       let isValid = true
       if (!this.payment.date) {
@@ -385,6 +387,7 @@ export default {
 
       return isValid
     },
+
     scrollToIban() {
       this.$nextTick(() => {
         const el = document.querySelector('.iban-section')
@@ -396,6 +399,7 @@ export default {
         })
       })
     },
+    
     async submitStore() {
       // if (!this.formValid) {
       //   this.scrollToIban()

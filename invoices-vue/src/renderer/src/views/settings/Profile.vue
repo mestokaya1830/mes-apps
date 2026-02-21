@@ -307,6 +307,7 @@ export default {
       errorMessage: '',
       user: null,
       selectedImage: null,
+      blobImage: null,
 
       //data
       german_states: [
@@ -379,12 +380,8 @@ export default {
     setLogo(event) {
       const file = event.target.files[0]
       if (!file) return
-      const reader = new FileReader()
-      reader.onload = () => {
-        this.selectedImage = reader.result
-        this.user.logo = file.name
-      }
-      reader.readAsDataURL(file)
+      this.blobImage = file
+      this.selectedImage = URL.createObjectURL(file)
     },
     // Update profile
     async updateUser() {

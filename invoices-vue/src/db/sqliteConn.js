@@ -37,6 +37,7 @@ export default db
 // } catch (error) {
 //   console.error(error)
 // }
+
 // try {
 //   const result = db.prepare(`PRAGMA table_info(tokens);`).all()
 //   const fields = result.map((r) => r.name)

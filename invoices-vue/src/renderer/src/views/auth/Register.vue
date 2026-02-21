@@ -469,10 +469,10 @@ export default {
         bic: '',
         iban: '',
         bank_account_holder: '',
-        logo: ''
+        logo: 'user.png'
       },
-      binaryImage: null,
       selectedImage: null,
+      blobImage: null,
       companies: [
         { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
         { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },
@@ -509,7 +509,6 @@ export default {
     }
   },
   methods: {
-    // ✅ Örnek veriyi doldur
     fillExampleData() {
       this.user = {
         gender: 'Herr',
@@ -548,7 +547,6 @@ export default {
       }
     },
 
-    // USt-IdNr auto-format
     formatVatId() {
       let val = this.user.vat_id.toUpperCase().replace(/[^A-Z0-9]/g, '')
       if (val && !val.startsWith('DE')) {
@@ -559,10 +557,8 @@ export default {
       this.user.vat_id = val.substring(0, 11)
     },
 
-    // IBAN auto-format (with spaces every 4 chars)
     formatIban() {
       let val = this.user.iban.toUpperCase().replace(/[^A-Z0-9]/g, '')
-      // Add space every 4 characters
       val = val.match(/.{1,4}/g)?.join(' ') || val
       this.user.iban = val.substring(0, 27)
     },
@@ -570,12 +566,8 @@ export default {
     async setLogo(event) {
       const file = event.target.files[0]
       if (!file) return
-      const reader = new FileReader()
-      reader.onload = () => {
-        this.selectedImage = reader.result
-        this.user.logo = file.name
-      }
-      reader.readAsDataURL(file)
+      this.blobImage = file //to send to backend
+      this.selectedImage = URL.createObjectURL(file)
     },
 
     validateForm() {
