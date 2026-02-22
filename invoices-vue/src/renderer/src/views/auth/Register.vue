@@ -566,8 +566,9 @@ export default {
     async setLogo(event) {
       const file = event.target.files[0]
       if (!file) return
-      this.blobImage = file //to send to backend
+      this.blobImage = await file.arrayBuffer() //to send to backend
       this.selectedImage = URL.createObjectURL(file)
+      this.user.logo = 'user.png'
     },
 
     validateForm() {
@@ -700,7 +701,7 @@ export default {
 
       try {
         const data = {
-          image_file: this.selectedImage,
+          image_file: this.blobImage,
           user: JSON.parse(JSON.stringify(this.user))
         }
         const result = await window.api.register(data)

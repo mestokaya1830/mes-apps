@@ -280,7 +280,8 @@ export default {
     setImage(event) {
       const file = event.target.files[0]
       if (!file) return
-      this.blobImage = file
+      const arrayBuffer = file.arrayBuffer()
+      this.blobImage = Array.from(new Uint8Array(arrayBuffer)) //to send to backend
       const timestamp = new Date().getTime()
       this.payment.file_name = `${this.payment.id}-${timestamp}.${file.name.split('.').pop()}`
       this.selectedImage = URL.createObjectURL(file)

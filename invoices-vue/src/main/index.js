@@ -195,17 +195,20 @@ ipcMain.handle('register', async (event, payload) => {
       user.bank_account_holder
     )
 
-    const buffer = Buffer.from(image_file.split(',')[1], 'base64')
-    const savePath = path.join(
-      app.getAppPath(),
-      'src',
-      'renderer',
-      'public',
-      'uploads',
-      'user',
-      user.logo
-    ) // inner app uploads folder
-    await fs.promises.writeFile(savePath, buffer)
+    if (image_file !== null) {
+      const buffer = Buffer.from(image_file)
+      console.log(buffer)
+      const savePath = path.join(
+        app.getAppPath(),
+        'src',
+        'renderer',
+        'public',
+        'uploads',
+        'user',
+        user.logo
+      ) // inner app uploads folder
+      await fs.promises.writeFile(savePath, buffer)
+    }
     return { success: true }
   } catch (error) {
     console.log(error)
@@ -312,7 +315,6 @@ ipcMain.handle('get-user', async () => {
   try {
     const rows = db.prepare('SELECT * FROM users').get()
     if (rows && rows.logo) {
-      // Buffer → Base64 string
       rows.logo = rows.logo.toString('base64')
     }
     return { success: true, rows }
@@ -390,7 +392,8 @@ ipcMain.handle('update-user', async (event, payload) => {
 
     if (rows.changes > 0) {
       if (image_file !== null) {
-        const buffer = Buffer.from(image_file.split(',')[1], 'base64')
+        const buffer = Buffer.from(image_file)
+        console.log(buffer)
         const savePath = path.join(
           app.getAppPath(),
           'src',
@@ -1638,7 +1641,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
           cancellation_reason,
 
           notes,
-          logo,
+          images,
 
           invoice
         ) VALUES (
@@ -1667,7 +1670,7 @@ ipcMain.handle('add-payment', async (event, payload) => {
         payment.cancellation_reason ?? '',
 
         payment.notes ?? '',
-        payment.logo ?? '',
+        payment.images ?? '',
 
         JSON.stringify(payment.invoice)
       )
@@ -3203,4 +3206,3 @@ ipcMain.handle('send-email', async (event, { buffer, fileName }) => {
     return { success: false, message: err.message }
   }
 })
-

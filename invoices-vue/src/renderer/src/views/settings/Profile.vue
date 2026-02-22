@@ -377,17 +377,18 @@ export default {
       }
     },
 
-    setLogo(event) {
+    async setLogo(event) {
       const file = event.target.files[0]
       if (!file) return
-      this.blobImage = file
+      this.blobImage = await file.arrayBuffer() //to send to backend
       this.selectedImage = URL.createObjectURL(file)
+      this.user.logo = 'user.png'
     },
     // Update profile
     async updateUser() {
       if (this.user) {
         const data = {
-          image_file: this.selectedImage,
+          image_file: this.blobImage,
           user: JSON.parse(JSON.stringify(this.user))
         }
         const result = await window.api.updateUser(data)
