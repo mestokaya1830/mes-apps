@@ -1,39 +1,31 @@
-<template lang="">
+<template>
   <div>
     <div class="sections btn-container">
       <button class="btn btn-email" @click="sendEmail">
-        <i class="bi bi-envelope-at-fill icons"></i>
+        <i class="bi bi-envelope form-title icons"></i>
         <span>E-Mail</span>
       </button>
 
       <button class="btn btn-pdf" @click="exportPDF">
-        <i class="bi bi-file-earmark-pdf-fill icons"></i>
+        <i class="bi bi-file-earmark-pdf form-title icons"></i>
         <span>PDF</span>
       </button>
 
       <button class="btn btn-print" @click="printDocument">
-        <i class="bi bi-printer-fill icons"></i>
+        <i class="bi bi-printer form-title icons"></i>
         <span>Drucken</span>
       </button>
 
-      <button
-        v-if="tableData.id && sourcePag !== 'preview' && tableData.is_active"
-        class="btn btn-edit"
-      >
-        <router-link
-          :to="{
-            path: '/reminders/edit/' + tableData.id,
-            query: { id: tableData.id, invoice_id: tableData.invoice.id }
-          }"
-          class="text-decoration-none"
-        >
+      <router-link :to="`/invoices/edit/${tableData.id}`">
+        <button v-if="tableData.id !== 'preview' && tableData.is_active" class="btn btn-cancel">
           <i class="bi bi-pencil-square icons"></i>
-          <span>Bearbeiten</span>
-        </router-link>
-      </button>
+          <span>Stornieren</span>
+        </button>
+      </router-link>
     </div>
   </div>
 </template>
+
 <script>
 import html2pdf from 'html2pdf.js'
 import store from '../../store/store.js'

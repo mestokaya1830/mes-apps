@@ -19,12 +19,15 @@
 
           <div class="form-group">
             <label for="">Storniert am</label>
-            <input
-              v-model="cancelled_at"
-              type="date"
-              class="inputs date"
-              placeholder="Datum der Stornierung auswählen"
-            />
+            <div class="date-wrapper">
+              <i class="bi bi-calendar calendar-icon"></i>
+              <input
+                v-model="cancelled_at"
+                type="date"
+                class="inputs date"
+                placeholder="Datum der Stornierung auswählen"
+              />
+            </div>
             <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
           </div>
 

@@ -351,6 +351,7 @@ select {
 
 .btn-edit {
   background: var(--btn-edit);
+  color: #000;
 }
 
 .btn-update {

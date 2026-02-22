@@ -2,7 +2,7 @@
   <div v-if="$route.params.id" class="main-container">
     <header class="main-header">
       <label>{{ title }}</label>
-       <router-link :to="`/invoices/details/${$route.params.id}`" class="btn btn-secondary">
+      <router-link :to="`/invoices/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </header>
@@ -17,13 +17,16 @@
 
             <div class="form-group">
               <label for="">Storniert am<span class="stars">*</span></label>
-              <input
-                v-model="cancelled_at"
-                type="date"
-                class="inputs date"
-                placeholder="Datum der Stornierung auswählen"
-                required
-              />
+                <div class="date-wrapper">
+                  <i class="bi bi-calendar calendar-icon"></i>
+                <input
+                  v-model="cancelled_at"
+                  type="date"
+                  class="inputs date"
+                  placeholder="Datum der Stornierung auswählen"
+                  required
+                />
+              </div>
               <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
             </div>
 
@@ -51,7 +54,6 @@
                 {{ error.cancellation_reason }}
               </div>
             </div>
-
           </div>
         </section>
       </div>

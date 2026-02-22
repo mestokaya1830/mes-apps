@@ -32,7 +32,7 @@
     <!-- Actions -->
     <section class="sections btn-container">
       <router-link :to="`/customers/edit/${customer.id}`">
-        <button class="btn btn-edit">Edit</button>
+        <button class="btn btn-edit">Bearbeiten</button>
       </router-link>
       <button class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
     </section>

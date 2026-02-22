@@ -58,7 +58,11 @@
 
         <div class="form-group">
           <label class="form-label">Bearbeitet am:<span class="stars">*</span></label>
-          <input v-model="offer.date" type="date" class="inputs date" required />
+          <div class="date-wrapper">
+            <i class="bi bi-calendar calendar-icon"></i>
+            <input v-model="offer.date" type="date" class="inputs date" required />
+          </div>
+          <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
         </div>
 
         <div class="form-group">
