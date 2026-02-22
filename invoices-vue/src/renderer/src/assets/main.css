@@ -1879,6 +1879,11 @@ textarea.error {
   gap: var(--spacing-2xl);
   width: 100%;
 }
+.compliance-notice {
+  padding: 10px;
+  background-color: var(--bg-input);
+  border-radius: 10px;
+}
 @media screen and (max-width: 1600px) {
   .main-container,
   .main-container {

@@ -199,7 +199,6 @@
           <span class="preview-box-value">{{ auth.bic }}</span>
         </div>
       </div>
-      <FooterSidePreview />
     </div>
 
     <section class="sections btn-container">
@@ -220,14 +219,12 @@ import store from '../../store/store.js'
 import html2pdf from 'html2pdf.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'InvoicePreview',
   components: {
     HeaderSidePreview,
-    ContactPersonPreview,
-    FooterSidePreview
+    ContactPersonPreview
   },
   inject: ['formatCustomerId', 'formatDate', 'formatCurrency', 'formatInvoiceId'],
   data() {

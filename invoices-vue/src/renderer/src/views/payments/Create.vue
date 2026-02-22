@@ -180,11 +180,13 @@
       </section>
 
       <!-- GoBD Compliance Hinweis -->
-      <div class="compliance-notice">
-        <i class="bi bi-info-circle-fill icons"></i> <strong>GoBD-Hinweis:</strong> Alle mit *
-        markierten Felder sind für die ordnungsgemäße Buchführung nach deutschen Steuergesetzen
-        erforderlich. Die Daten werden revisionssicher gespeichert.
-      </div>
+       <section class="sections">
+         <div class="compliance-notice">
+           <i class="bi bi-info-circle-fill icons"></i> <strong>GoBD-Hinweis:</strong> Alle mit *
+           markierten Felder sind für die ordnungsgemäße Buchführung nach deutschen Steuergesetzen
+           erforderlich. Die Daten werden revisionssicher gespeichert.
+         </div>
+       </section>
 
       <section class="sections btn-container">
         <button class="btn btn-preview" @click="submitStore">

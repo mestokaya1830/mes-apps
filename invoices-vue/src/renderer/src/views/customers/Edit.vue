@@ -1,103 +1,130 @@
 <template>
-  <div v-if="customer" class="main-container">
+  <div class="main-container">
     <header class="main-header">
-      <label>
-        {{ title }}
-      </label>
-      <router-link :to="`/customers/details/${customer.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons"></i>Zurück
+      <label>{{ title }}</label>
+      <router-link to="/customers" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
       </router-link>
     </header>
+    <form v-if="customer" @submit.prevent="updateCustomer">
+      <!-- Base -->
+      <section class="sections">
+        <div class="sections-title">
+          <i class="bi bi-person-badge me-2 form-title icons"></i>Kundeninformationen
+        </div>
 
-    <section class="sections">
-      <div class="sections-title">
-        <i class="bi bi-building form-title icons"></i> Unternehmensinformationen
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Unternehmenstyp<span class="stars">*</span></label>
-          <input v-model="customer.company_type" type="text" class="inputs" required />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Firmenname<span class="stars">*</span></label>
-          <input v-model="customer.company_name" type="text" class="inputs" required />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Vorname<span class="stars">*</span></label>
-          <input v-model="customer.first_name" type="text" class="inputs" required />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Nachname<span class="stars">*</span></label>
-          <input v-model="customer.last_name" type="text" class="inputs" required />
-        </div>
-      </div>
-    </section>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Unternehmenstyp <span class="stars">*</span></label>
+            <select v-model="customer.company_type" class="inputs">
+              <option disabled value="">Wähle Unternehmenstyp</option>
+              <option v-for="item in companies" :key="item.value" :value="item.value">
+                {{ item.label }}
+              </option>
+            </select>
+            <div v-if="error.company_type" class="error">{{ error.company_type }}</div>
+          </div>
 
-    <section class="sections">
-      <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i> Adressdaten</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Adresse <span class="stars">*</span></label>
-          <input v-model="customer.address" type="text" class="inputs" required />
+          <div class="form-group">
+            <label class="form-label">Firmenname <span class="stars">*</span></label>
+            <input v-model="customer.company_name" type="text" class="inputs" />
+            <div v-if="error.company_name" class="error">{{ error.company_name }}</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Postleitzahl <span class="stars">*</span></label>
-          <input v-model="customer.postal_code" type="text" class="inputs" required />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Stadt <span class="stars">*</span></label>
-          <input v-model="customer.city" type="text" class="inputs" required />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Land <span class="stars">*</span></label>
-          <input v-model="customer.country" type="text" class="inputs" required />
-        </div>
-      </div>
-    </section>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Vorname <span class="stars">*</span></label>
+            <input v-model="customer.first_name" type="text" class="inputs" />
+            <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
+          </div>
 
-    <section class="sections">
-      <div class="sections-title"><i class="bi bi-telephone form-title icons"></i> Kontaktdaten</div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">E-Mail<span class="stars">*</span></label>
-          <input v-model="customer.email" type="text" class="inputs" required />
+          <div class="form-group">
+            <label class="form-label">Nachname <span class="stars">*</span></label>
+            <input v-model="customer.last_name" type="text" class="inputs" />
+            <div v-if="error.last_name" class="error">{{ error.last_name }}</div>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Telefonnummer<span class="stars">*</span></label>
-          <input v-model="customer.phone" type="text" class="inputs" required />
-        </div>
-      </div>
-    </section>
+        <div class="form-row">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">E-Mail <span class="stars">*</span></label>
+              <input v-model="customer.email" type="email" class="inputs" />
+              <div v-if="error.email" class="error">{{ error.email }}</div>
+            </div>
 
-    <section class="sections">
-      <div class="sections-title">
-        <i class="bi bi-file-earmark-text form-title icons"></i> Steuerinformationen
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Steuernummer</label>
-          <input v-model="customer.tax_number" type="text" class="inputs" />
+            <div class="form-group">
+              <label class="form-label">Telefonnummer <span class="stars">*</span></label>
+              <input v-model="customer.phone" type="text" class="inputs" />
+              <div v-if="error.phone" class="error">{{ error.phone }}</div>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">USt-IdNr.</label>
-          <input v-model="customer.vat_id" type="text" class="inputs" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Erstellungsdatum</label>
-        <input v-model="customer.created_at" type="text" class="inputs" />
-      </div>
-    </section>
+      </section>
 
-    <section class="sections btn-container">
-      <button type="button" class="btn btn-update" @click="updateCustomer">
-        <i class="bi bi-save icons"></i> Aktualisierung
-      </button>
-    </section>
+      <!-- Adressdaten -->
+      <section class="sections">
+        <div class="sections-title"><i class="bi bi-geo-alt form-title icons"></i>Adressdaten</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Adresse <span class="stars">*</span></label>
+            <input v-model="customer.address" type="text" class="inputs" />
+            <div v-if="error.address" class="error">{{ error.address }}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Postleitzahl <span class="stars">*</span></label>
+            <input v-model="customer.postal_code" type="text" class="inputs" />
+            <div v-if="error.postal_code" class="error">{{ error.postal_code }}</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Stadt <span class="stars">*</span></label>
+            <input v-model="customer.city" type="text" class="inputs" />
+            <div v-if="error.city" class="error">{{ error.city }}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Land <span class="stars">*</span></label>
+            <input v-model="customer.country" type="text" class="inputs" />
+            <div v-if="error.country" class="error">{{ error.country }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Steuerinformationen -->
+      <section class="sections">
+        <div class="sections-title">
+          <i class="bi bi-briefcase form-title icons"></i>Steuerinformationen
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Steuernummer <span class="stars">*</span></label>
+            <input v-model="customer.tax_number" type="text" class="inputs" />
+            <div v-if="error.tax_number" class="error">{{ error.tax_number }}</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">USt-IdNr. <span class="stars">*</span></label>
+            <input v-model="customer.vat_id" type="text" class="inputs" />
+            <div v-if="error.vat_id" class="error">{{ error.vat_id }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Submit -->
+      <section class="sections btn-container">
+        <div v-if="showSuccess" class="">
+          <p class="font-medium text-success">
+            <i class="bi bi-check-circle icons"></i>Kunde erfolgreich gespeichert!
+          </p>
+        </div>
+
+        <button type="submit" class="btn btn-update">
+          <i class="bi bi-save icons"></i> Aktualisierung
+        </button>
+      </section>
+    </form>
   </div>
 </template>
 
@@ -108,7 +135,34 @@ export default {
     return {
       title: 'Kunden bearbeiten',
       customer: null,
-      errorMessage: ''
+      errorMessage: '',
+      error: {},
+      companies: [
+        { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
+        { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },
+        { value: 'Gbr', label: 'GbR (Gesellschaft bürgerlichen Rechts)', is_small_company: true },
+        { value: 'Ug', label: 'UG (haftungsbeschränkt)', is_small_company: true },
+        {
+          value: 'GmbH',
+          label: 'GmbH (Gesellschaft mit beschränkter Haftung)',
+          is_small_company: false
+        },
+        { value: 'Ohg', label: 'OHG (Offene Handelsgesellschaft)', is_small_company: false },
+        { value: 'Kg', label: 'KG (Kommanditgesellschaft)', is_small_company: false },
+        { value: 'GmbH_co_KG', label: 'GmbH & Co. KG', is_small_company: false },
+        { value: 'Partg', label: 'PartG (Partnerschaftsgesellschaft)', is_small_company: false },
+        {
+          value: 'Partgmbb',
+          label: 'PartGmbB (Partnerschaftsgesellschaft mit beschränkter Berufshaftung)',
+          is_small_company: false
+        },
+        { value: 'Ek', label: 'e.K. (eingetragener Kaufmann)', is_small_company: true },
+        { value: 'Ev', label: 'e.V. (eingetragener Verein)', is_small_company: false },
+        { value: 'GgmbH', label: 'gGmbH (gemeinnützige GmbH)', is_small_company: false },
+        { value: 'Stiftung', label: 'Stiftung', is_small_company: false },
+        { value: 'Ag', label: 'AG (Aktiengesellschaft)', is_small_company: false },
+        { value: 'Se', label: 'SE (Societas Europaea)', is_small_company: false }
+      ]
     }
   },
   mounted() {
@@ -124,6 +178,7 @@ export default {
         const result = await window.api.getCustomerById(data)
         if (!result.success) return
         this.customer = result.rows
+        console.log(this.customer)
       } catch (error) {
         console.error(error)
       }
@@ -131,56 +186,96 @@ export default {
 
     validateForm() {
       const c = this.customer
+      this.error = {}
+      let valid = true
 
-      if (!c.company_type || c.company_type.length < 2)
-        return 'Unternehmenstyp muss mindestens 2 Zeichen enthalten.'
+      // helper
+      const trim = (v) => v?.toString().trim() || ''
 
-      if (!c.company_name || c.company_name.length < 3)
-        return 'Firmenname muss mindestens 3 Zeichen enthalten.'
+      // normalize helpers
+      const phoneDigits = trim(c.phone).replace(/\D/g, '')
+      const taxDigits = trim(c.tax_number).replace(/\D/g, '')
+      const vatUpper = trim(c.vat_id).toUpperCase()
 
-      if (!c.first_name || c.first_name.length < 2)
-        return 'Vorname muss mindestens 2 Zeichen enthalten.'
+      if (!c.company_type) {
+        this.error.company_type = 'Bitte Unternehmenstyp auswählen.'
+        valid = false
+      }
 
-      if (!c.last_name || c.last_name.length < 2)
-        return 'Nachname muss mindestens 2 Zeichen enthalten.'
+      if (!trim(c.company_name) || trim(c.company_name).length < 2) {
+        this.error.company_name = 'Firmenname muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      if (!c.address || c.address.length < 3) return 'Adresse muss mindestens 3 Zeichen enthalten.'
+      if (!trim(c.first_name) || trim(c.first_name).length < 2) {
+        this.error.first_name = 'Vorname muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      if (!/^\d{5}$/.test(c.postal_code)) return 'Postleitzahl muss aus 5 Ziffern bestehen.'
+      if (!trim(c.last_name) || trim(c.last_name).length < 2) {
+        this.error.last_name = 'Nachname muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      if (!c.city || c.city.length < 2) return 'Stadt muss mindestens 2 Zeichen enthalten.'
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/
+      if (!emailRegex.test(trim(c.email))) {
+        this.error.email = 'Ungültige E-Mail-Adresse.'
+        valid = false
+      }
 
-      if (!c.country || c.country.length < 2) return 'Land muss mindestens 2 Zeichen enthalten.'
+      // ✅ Telefon (nur Ziffern zählen, DB format egal)
+      if (phoneDigits.length < 7 || phoneDigits.length > 15) {
+        this.error.phone = 'Telefonnummer muss zwischen 7 und 15 Ziffern enthalten.'
+        valid = false
+      }
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(c.email)) return 'Ungültige E-Mail-Adresse.'
+      // Adresse
+      if (!trim(c.address) || trim(c.address).length < 3) {
+        this.error.address = 'Adresse muss mindestens 3 Zeichen enthalten.'
+        valid = false
+      } else if (!/^[A-Za-zÄÖÜäöüß\s\-.]+\s+\d+[A-Za-z]?$/.test(trim(c.address))) {
+        this.error.address = 'Adresse muss Straße und Hausnummer enthalten (z. B. Musterstraße 12).'
+        valid = false
+      }
 
-      if (!/^\+?\d{3,}$/.test(c.phone)) return 'Telefonnummer muss mindestens 3 Zahlen enthalten.'
+      // PLZ
+      if (!/^\d{5}$/.test(trim(c.postal_code))) {
+        this.error.postal_code = 'Postleitzahl muss aus 5 Zahlen bestehen.'
+        valid = false
+      }
 
-      if (!c.tax_number || c.tax_number.length < 3)
-        return 'Steuernummer muss mindestens 3 Zeichen enthalten.'
+      if (!trim(c.city) || trim(c.city).length < 2) {
+        this.error.city = 'Stadt muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      if (!c.vat_id || c.vat_id.length < 3) return 'USt-ID muss mindestens 3 Zeichen enthalten.'
+      if (!trim(c.country) || trim(c.country).length < 2) {
+        this.error.country = 'Land muss mindestens 2 Zeichen enthalten.'
+        valid = false
+      }
 
-      return null
+      // ✅ Steuernummer (Slash olsa bile sorun yok)
+      if (taxDigits.length < 10 || taxDigits.length > 11) {
+        this.error.tax_number = 'Steuernummer muss 10–11 Ziffern enthalten.'
+        valid = false
+      }
+
+      // ✅ USt-ID (küçük harf de kabul)
+      if (!/^DE\d{9}$/.test(vatUpper)) {
+        this.error.vat_id = 'Die deutsche USt-ID muss mit "DE" beginnen und 9 Ziffern enthalten.'
+        valid = false
+      }
+
+      return valid
     },
 
     async updateCustomer() {
       this.errorMessage = ''
-
-      const error = this.validateForm()
-      if (error) {
-        this.errorMessage = error
-        return
-      }
-
+      if (!this.validateForm()) return
       try {
-        const data = {
-          id: this.$route.params.id,
-          customer: JSON.parse(JSON.stringify(this.customer))
-        }
-
-        const result = await window.api.updateCustomerById(data)
+        const result = await window.api.updateCustomerById(
+          JSON.parse(JSON.stringify(this.customer))
+        )
         if (!result.success) return
 
         this.$router.push('/customers')

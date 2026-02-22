@@ -1,6 +1,6 @@
 <template>
   <div v-if="payment && auth" class="main-container">
-     <header class="main-header">
+    <header class="main-header">
       <label>{{ title }}</label>
       <router-link to="/payments" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
@@ -146,16 +146,10 @@
           <span class="preview-box-value">{{ auth.bic }}</span>
         </div>
       </div>
-
-      <FooterSidePreview />
     </div>
 
     <!-- Actions Button -->
-    <PaymentActions
-      v-if="payment"
-      :tableData="payment"
-      :fileName="actionFileName"
-    />
+    <PaymentActions v-if="payment" :tableData="payment" :fileName="actionFileName" />
 
     <router-link :to="`/invoices/details/${payment.invoice_id}`" class="btn back-btn">
       ← Zurück zur Rechnungsdetails
@@ -168,15 +162,13 @@ import store from '../../store/store'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import PaymentActions from '../../components/preview/PaymentActions.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'PaymentDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    PaymentActions,
-    FooterSidePreview
+    PaymentActions
   },
   inject: [
     'formatPaymentId',

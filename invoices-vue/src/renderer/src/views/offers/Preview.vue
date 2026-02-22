@@ -275,7 +275,7 @@ export default {
   name: 'OfferPreview',
   components: {
     HeaderSidePreview,
-    ContactPersonPreview,
+    ContactPersonPreview
   },
   inject: ['formatCustomerId', 'formatOfferId', 'formatDate', 'formatValidDays', 'formatCurrency'],
   data() {

@@ -275,9 +275,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Footer -->
-      <FooterSidePreview />
     </div>
 
     <!-- Actions -->
@@ -295,14 +292,12 @@
 <script>
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 
 export default {
   name: 'OrderPreviewPage',
   components: {
     HeaderSidePreview,
-    FooterSidePreview,
     ContactPersonPreview
   },
   inject: ['formatOrderId', 'formatCustomerId', 'formatCurrency', 'formatDate'],

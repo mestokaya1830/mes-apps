@@ -165,18 +165,15 @@
           <div class="preview-box-content">
             <span class="preview-box-label">Bank:</span>
             <span class="preview-box-value">{{ auth.bank_name }}</span>
-            <span class="preview-box-label">IBAN:</span> <span class="preview-box-value">{{ auth.iban }}</span>
-            <span class="preview-box-label">BIC:</span> <span class="preview-box-value">{{ auth.bic }}</span>
+            <span class="preview-box-label">IBAN:</span>
+            <span class="preview-box-value">{{ auth.iban }}</span>
+            <span class="preview-box-label">BIC:</span>
+            <span class="preview-box-value">{{ auth.bic }}</span>
           </div>
         </div>
-        <FooterSidePreview />
       </div>
 
-      <InvoiceActions
-        v-if="invoice"
-        :tableData="invoice"
-        :fileName="actionFileName"
-      />
+      <InvoiceActions v-if="invoice" :tableData="invoice" :fileName="actionFileName" />
 
       <div v-if="payments && payments.length" class="report-table-container">
         <h4 class="mb-3"><i class="bi bi-cash-stack icons"></i>Zahlungshistorie</h4>
@@ -250,15 +247,13 @@ import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import InvoiceActions from '../../components/preview/InvoiceActions.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'InvoicesDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    InvoiceActions,
-    FooterSidePreview
+    InvoiceActions
   },
   inject: [
     'formatPaymentId',

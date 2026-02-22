@@ -130,7 +130,7 @@
       <!-- Bank Info -->
       <div class="preview-box">
        <div class="preview-box-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
-        <div class="bank-info">
+        <div class="preview-box-content">
           <span class="preview-box-label">Bank:</span>
           <span class="preview-box-value">{{ auth.bank_name }}</span>
           <span class="preview-box-label">IBAN:</span>
@@ -139,7 +139,6 @@
           <span class="preview-box-value">{{ auth.bic }}</span>
         </div>
       </div>
-      <FooterSidePreview />
     </div>
 
     <div class="sections btn-container">
@@ -163,14 +162,12 @@
 import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'PaymentPreview',
   components: {
     HeaderSidePreview,
-    ContactPersonPreview,
-    FooterSidePreview
+    ContactPersonPreview
   },
   inject: [
     'formatPaymentId',

@@ -166,15 +166,13 @@ import store from '../../store/store.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import RemiderActions from '../../components/preview/RemiderActions.vue'
-import FooterSidePreview from '../../components/preview/FooterSidePreview.vue'
 
 export default {
   name: 'ReminderDetails',
   components: {
     HeaderSidePreview,
     ContactPersonPreview,
-    RemiderActions,
-    FooterSidePreview
+    RemiderActions
   },
   inject: [
     'formatCustomerId',

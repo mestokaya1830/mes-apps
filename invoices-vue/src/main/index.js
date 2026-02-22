@@ -792,11 +792,12 @@ ipcMain.handle('get-customer-by-id', async (event, payload) => {
 })
 
 ipcMain.handle('update-customer-by-id', async (event, payload) => {
+  console.log(payload)
   if (!payload) {
     return { success: false, message: 'No data provided' }
   }
   try {
-    const { id, customer } = payload
+    const customer = payload
     const info = db
       .prepare(
         'UPDATE customers SET company_type = ?, company_name = ?, first_name = ?, last_name = ?, address = ?, postal_code = ?, city = ?, country = ?, email = ?, phone = ?, tax_number = ?, vat_id = ?, is_active = ?  WHERE id = ?'
@@ -815,7 +816,7 @@ ipcMain.handle('update-customer-by-id', async (event, payload) => {
         customer.tax_number,
         customer.vat_id,
         customer.is_active,
-        id
+        customer.id
       )
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {

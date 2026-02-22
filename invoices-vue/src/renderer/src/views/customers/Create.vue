@@ -125,6 +125,8 @@
         </button>
       </section>
     </form>
+
+    <button @click="fillExampleData">Fill Example</button>
   </div>
 </template>
 
@@ -283,6 +285,30 @@ export default {
         console.error(error)
       } finally {
         this.isSubmitting = false
+      }
+    },
+    fillExampleData() {
+      this.customer = {
+        is_active: 1,
+        date: new Date().toISOString().split('T')[0],
+
+        company_type: 'GmbH',
+        company_name: 'Beispiel Consulting GmbH',
+
+        first_name: 'Maximilian',
+        last_name: 'Schmidt',
+
+        email: 'admin@admin.de',
+        phone: '+49 30 12345678',
+        website: 'https://www.beispiel-gmbh.de',
+
+        address: 'Friedrichstraße 123',
+        postal_code: '10117',
+        city: 'Berlin',
+        country: 'Deutschland',
+
+        tax_number: '12345678901',
+        vat_id: 'DE123456789'
       }
     }
   }

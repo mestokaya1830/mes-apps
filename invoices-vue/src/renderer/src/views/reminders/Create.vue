@@ -94,7 +94,7 @@
     <section class="sections">
       <div class="compliance-notice legal">
         <i class="bi bi-shield-check icons"></i><strong>Rechtliche Hinweise (Deutschland):</strong>
-        <ul>
+        <ul class="reminder-container">
           <li>Mahngebühren müssen angemessen sein (üblicherweise 5-10€ für 1. Mahnung)</li>
           <li>Verzugszinsen: Basiszinssatz + 5% (B2C) oder + 9% (B2B) gem. §§ 288, 247 BGB</li>
           <li>Bei Einschreiben mit Rückschein wird Zustellung rechtssicher dokumentiert</li>
