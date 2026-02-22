@@ -113,14 +113,16 @@
         </table>
       </div>
     </div>
+    <ReportActions reportName="Umsatzsteuer-Bericht" :period="period"/>
   </div>
 </template>
 
 <script>
+import ReportActions from '../preview/ReportActions.vue';
 import TaxChart from '../chart/TaxChart.vue';
 export default {
   name: 'VatReport',
-  components: { TaxChart },
+  components: { TaxChart, ReportActions },
   inject: ['formatDate', 'formatCurrency'],
   data() {
     return {
