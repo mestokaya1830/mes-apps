@@ -54,12 +54,13 @@
       </div>
 
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
+      <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
     </div>
 
     <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
 
     <!-- Order card -->
-    <div class="list-grid">
+    <div class="list-grid printable">
       <div v-for="item in orders" :key="item.id" class="list-card">
         <!-- Card Header -->
         <div class="card-header">
@@ -244,6 +245,9 @@ export default {
         return this.isSort ? res : -res
       })
       this.isSort = !this.isSort
+    },
+    printDocument(){
+      window.print()
     }
   }
 }

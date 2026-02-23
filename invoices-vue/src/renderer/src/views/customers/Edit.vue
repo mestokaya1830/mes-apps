@@ -137,6 +137,7 @@ export default {
       customer: null,
       errorMessage: '',
       error: {},
+      showSuccess: false,
       companies: [
         { value: 'Einzelunternehmen', label: 'Einzelunternehmen', is_small_company: true },
         { value: 'Freiberufler', label: 'Freiberufler', is_small_company: true },

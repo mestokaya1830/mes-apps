@@ -671,17 +671,18 @@ textarea.error {
   width: 100%;
 }
 
-.sort-btn {
+.sort-btn, .list-print-icon {
   height: 36px;
   padding: 6px var(--spacing-lg);
   background: var(--bg-gray-lighter);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-sm);
   cursor: pointer;
   font-size: var(--font-size-lg);
   transition: all var(--transition-fast);
 }
 
-.sort-btn:hover {
+.sort-btn:hover, .list-print-icon:hover {
+  transform: scale(1.1);
   background: var(--bg-gray-medium);
 }
 
@@ -1917,6 +1918,9 @@ textarea.error {
     left: 0;
     top: 0;
     background-color: var(--bg-white);
+  }
+  .card-actions{
+    display: none !important;
   }
   @page {
     margin: 1.5cm;

@@ -54,8 +54,9 @@
       </div>
 
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
+      <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
     </div>
-    <div class="list-grid">
+    <div class="list-grid printable">
       <div v-for="item in payments" :key="item.id" class="list-card">
         <div class="card-header">
           <div class="card-header-left">
@@ -184,6 +185,9 @@ export default {
         return this.isSort ? res : -res
       })
       this.isSort = !this.isSort
+    },
+    printDocument(){
+      window.print()
     }
   }
 }

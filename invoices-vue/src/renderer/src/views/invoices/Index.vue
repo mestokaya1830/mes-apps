@@ -7,7 +7,6 @@
         <span>Neue Rechnung erstellen</span>
       </router-link>
     </header>
-
     <div class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Kategorie</option>
@@ -54,12 +53,13 @@
       </div>
 
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
+       <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
     </div>
 
     <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
 
     <!-- Invoice card -->
-    <div class="list-grid">
+    <div class="list-grid printable">
       <div v-for="item in invoices" :key="item.id" class="list-card">
         <!-- Card Header -->
         <div class="card-header">
@@ -120,7 +120,7 @@
 
     <!-- Empty State -->
     <div v-if="!invoices || invoices.length === 0" class="empty-state">
-    <i class="bi bi-receipt-cutoff empty-icon"></i>
+      <i class="bi bi-receipt-cutoff empty-icon"></i>
       <h3>Keine Rechnungen</h3>
       <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </div>
@@ -247,6 +247,9 @@ export default {
         return this.isSort ? res : -res
       })
       this.isSort = !this.isSort
+    },
+    printDocument() {
+      window.print()
     }
   }
 }

@@ -251,7 +251,7 @@
 
               <div class="form-group">
                 <label class="form-label">Einzelpreis</label>
-                <input v-model.number="item.price" type="number" class="inputs" step="0.01" />
+                <input v-model.number="item.price" @input="checkVatOptions" type="number" class="inputs" step="0.01" />
               </div>
 
               <div class="form-group">

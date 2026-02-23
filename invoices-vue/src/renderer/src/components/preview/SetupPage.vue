@@ -46,7 +46,7 @@
 </template>
 
 <style>
-.setup-page{
+.setup-page {
   width: 50%;
 }
 .setup-container {

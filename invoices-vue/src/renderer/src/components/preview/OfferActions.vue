@@ -78,7 +78,6 @@ export default {
       }
     },
     printDocument() {
-      this.clearStore()
       window.print()
     },
     sendEmail() {
