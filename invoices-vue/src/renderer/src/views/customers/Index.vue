@@ -1,15 +1,20 @@
 <template>
-  <div v-if="customers" class="main-container">
+  <main v-if="customers" class="main-container">
     <header class="main-header">
-      <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
+      <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers/create" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons"></i>
-        <span>Neue Kunden erstellen</span>
+        <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
+        Neue Kunden erstellen
       </router-link>
     </header>
 
-    <div class="main-filter">
-      <select v-model="categories_filter" class="inputs select" @change="filterCategories">
+    <section class="main-filter" aria-label="customer filter">
+      <select
+        v-model="categories_filter"
+        class="inputs select"
+        aria-label="Kategorien"
+        @change="filterCategories"
+      >
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
         <option value="active">Aktiv</option>
@@ -28,16 +33,18 @@
         v-model="search_box"
         class="inputs"
         placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
+        aria-label="Kunden, Firma oder Rechnungs-ID suchen"
         @input="searchInvoice"
       />
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
         <input
           ref="date_box_start"
           v-model="date_box_start"
           type="date"
           class="inputs date"
+          aria-label="Startdatum"
           @input="formDate()"
         />
       </div>
@@ -49,70 +56,87 @@
           v-model="date_box_end"
           type="date"
           class="inputs date"
+          aria-label="Enddatum"
           @input="formDate()"
         />
       </div>
 
-      <div class="sort-btn" @click="sorting('id')">&#8645;</div>
-      <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
-    </div>
-    <div class="list-grid printable">
-      <div v-for="item in customers" :key="item.id" class="list-card">
-        <div class="card-header">
-          <div class="card-header-left">
-            <div class="list-avatar">
-              {{ avatarStyle(item.first_name, item.last_name) }}
-            </div>
-            <div class="list-info">
-              <h3 class="list-id">{{ formatCustomerId(item.id) }}</h3>
-              <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span>
-              <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
-            </div>
-          </div>
-          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
-            {{ item.is_active ? 'Active' : 'Inactive' }}
-          </div>
-        </div>
+      <button class="sort-btn" aria-label="Sortieren" @click="sorting('id')">&#8645;</button>
+      <button type="button" class="sort-btn" @click="printDocument" aria-label="Drucken">
+        <i class="bi bi-printer" aria-hidden="true"></i>
+      </button>
+    </section>
 
-        <div class="card-actions">
-          <router-link
-            :to="{ path: '/invoices/create', query: { id: item.id } }"
-            class="action-btn btn-rechnung"
-          >
-            <i class="bi bi-receipt"></i>
-            Rechnung erstellen
-          </router-link>
+    <section class="list-grid printable" aria-label="Kundenlist">
+      <ul>
+        <li v-for="item in customers" :key="item.id">
+          <article class="list-card">
+            <header class="card-header">
+              <div class="card-header-left">
+                <div class="list-avatar">
+                  {{ avatarStyle(item.first_name, item.last_name) }}
+                </div>
+                <div class="list-info">
+                  <h3 class="list-id">{{ formatCustomerId(item.id) }}</h3>
+                  <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span>
+                  <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
+                </div>
+              </div>
+              <p class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+                {{ item.is_active ? 'Active' : 'Inactive' }}
+              </p>
+            </header>
 
-          <router-link
-            :to="{ path: '/offers/create', query: { id: item.id } }"
-            class="action-btn btn-angebot"
-          >
-            <i class="bi bi-file-earmark-text"></i>
-            Neues Angebot erstellen
-          </router-link>
+            <footer>
+              <nav class="card-actions" aria-label="Kundenaktionen">
+                <router-link
+                  :to="{ path: '/invoices/create', query: { id: item.id } }"
+                  class="action-btn btn-rechnung"
+                  aria-label="Rechnung erstellen für {{ item.first_name }} {{ item.last_name }}"
+                >
+                  <i class="bi bi-receipt" aria-hidden="true"></i>
+                  Rechnung erstellen
+                </router-link>
 
-          <router-link
-            :to="{ path: '/orders/create', query: { id: item.id } }"
-            class="action-btn btn-auftrag"
-          >
-            <i class="bi bi-box-seam"></i>
-            Neues Auftrag erstellen
-          </router-link>
+                <router-link
+                  :to="{ path: '/offers/create', query: { id: item.id } }"
+                  class="action-btn btn-angebot"
+                  aria-label="Neues Angebot erstellen für {{ item.first_name }} {{ item.last_name }}"
+                >
+                  <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
+                  Neues Angebot erstellen
+                </router-link>
 
-          <router-link :to="'/customers/details/' + item.id" class="details-btn btn-details">
-            <i class="bi bi-eye"></i>
-            Details
-          </router-link>
-        </div>
-      </div>
-    </div>
+                <router-link
+                  :to="{ path: '/orders/create', query: { id: item.id } }"
+                  class="action-btn btn-auftrag"
+                  aria-label="Neuen Auftrag erstellen für {{ item.first_name }} {{ item.last_name }}"
+                >
+                  <i class="bi bi-box-seam" aria-hidden="true"></i>
+                  Neues Auftrag erstellen
+                </router-link>
+
+                <router-link
+                  :to="`/customers/details/${item.id}`"
+                  class="details-btn btn-details"
+                  aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
+                >
+                  <i class="bi bi-eye" aria-hidden="true"></i>
+                  Details
+                </router-link>
+              </nav>
+            </footer>
+          </article>
+        </li>
+      </ul>
+    </section>
 
     <div v-if="customers.length === 0" class="empty-state">
       <i class="bi bi-people"></i>
       <h3>Keine Kunden</h3>
       <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -189,7 +213,7 @@ export default {
       })
       this.isSort = !this.isSort
     },
-    printDocument(){
+    printDocument() {
       window.print()
     }
   }

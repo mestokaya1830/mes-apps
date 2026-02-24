@@ -225,7 +225,7 @@ select {
 .main-header {
   display: flex;
   justify-content: space-between;
-  font-size: var(--font-size-2xl);
+  font-size: var(--font-size-1xl);
   font-weight: 700;
   color: var(--text-medium);
   margin-bottom: var(--spacing-3xl);
