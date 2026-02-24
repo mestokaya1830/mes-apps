@@ -47,7 +47,6 @@
           {{ error.credential }}
         </div>
 
-        <button type="submit" class="btn">Anmelden</button>
       </form>
 
       <button class="btn btn-primary btn-setup right mt-20" @click="loginUser">

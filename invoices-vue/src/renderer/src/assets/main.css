@@ -139,7 +139,6 @@
   padding: 0;
   box-sizing: border-box;
   border: 0;
-  outline: 0;
 }
 
 body {
@@ -293,7 +292,11 @@ select {
 .btn:hover {
   transform: scale(1.1);
 }
-
+.btn:focus {
+ outline: 2px solid var(--primary-dark);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
 .icons {
   font-size: var(--font-size-lg);
   margin-right: 6px;
@@ -632,12 +635,18 @@ textarea.error {
   font-size: var(--font-size-sm);
   font-weight: 600;
   margin-right: auto;
+  padding: 5px 10px;
 }
+
 
 .forgot-password:hover {
   text-decoration: underline;
 }
-
+.forgot-password:focus{
+  outline: 2px solid var(--primary-dark);
+  outline-offset: 1px;
+  border-radius: 1px;
+}
 .inputs.error {
   border-color: var(--text-label);
 }

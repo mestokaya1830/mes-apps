@@ -1,5 +1,5 @@
 <template>
-  <div class="sidebar">
+  <main class="sidebar">
     <div class="sidebar-header">
       <div class="app-logo">
         <h2>Mes App</h2>
@@ -76,7 +76,7 @@
         <span class="logout-text">Abmelden</span>
       </a>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>

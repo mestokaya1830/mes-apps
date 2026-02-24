@@ -308,7 +308,11 @@ export default {
   color: white;
   font-weight: 600;
 }
-
+.nav-link:focus {
+  outline: 2px solid var(--primary-dark);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
 .nav-link.active::before {
   content: '';
   position: absolute;
