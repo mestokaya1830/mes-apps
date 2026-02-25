@@ -1,17 +1,19 @@
 <template lang="">
-  <div>
-    <div v-if="contact" class="preview-box">
-      <div class="preview-box-title"><i class="bi bi-person-lines-fill icons"></i>Kontaktdaten</div>
-      <div class="preview-box-content">
-        <span class="preview-box-label">SM:</span>
-        <span class="preview-box-value">{{ contact.first_name }} {{ contact.last_name }}</span>
-        <span class="preview-box-label">Tel: </span>
-        <span class="preview-box-value">+{{ contact.phone }}</span>
-        <span class="preview-box-label">Email: </span>
-        <span class="preview-box-value">{{ contact.email }}</span>
-      </div>
-    </div>
-  </div>
+  <main>
+    <section v-if="contact" class="preview-box" aria-label="Kontaktdaten">
+      <h2 class="preview-box-title">
+        <i class="bi bi-person-lines-fill icons" aria-hidden="true"></i>Kontaktdaten
+      </h2>
+      <dl class="preview-box-content">
+        <dt class="preview-box-label">SM:</dt>
+        <dm class="preview-box-value">{{ contact.first_name }} {{ contact.last_name }}</dm>
+        <dt class="preview-box-label">Tel:</dt>
+        <dm class="preview-box-value">+{{ contact.phone }}</dm>
+        <dt class="preview-box-label">Email:</dt>
+        <dm class="preview-box-value">{{ contact.email }}</dm>
+      </dl>
+    </section>
+  </main>
 </template>
 <script>
 export default {

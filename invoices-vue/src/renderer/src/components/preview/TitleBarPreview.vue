@@ -1,12 +1,14 @@
 <template lang="">
-  <div class="titlebar">
-    <span class="title">My App</span>
-    <div class="window-controls">
-      <button @click="minimize()">–</button>
-      <!-- <button @click="maximize()">☐</button> -->
-      <button @click="close()">×</button>
+  <main class="titlebar">
+    <header class="titlebar-title">
+      <h1>My App</h1>
+    </header>
+
+    <div class="window-controls" role="toolbar" aria-label="Fenstersteuerung">
+      <button aria-label="Minimieren" @click="minimize()">–</button>
+      <button aria-label="Schließen" @click="close()">×</button>
     </div>
-  </div>
+  </main>
 </template>
 <script>
 export default {

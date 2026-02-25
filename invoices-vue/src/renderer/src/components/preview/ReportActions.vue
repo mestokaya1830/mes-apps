@@ -1,14 +1,14 @@
 <template>
-  <div v-if="period.start">
+  <main v-if="period.start">
     <div class="sections btn-container">
       <button class="btn btn-pdf" @click="savePdf()">
-        <i class="bi bi-file-earmark-pdf icons"></i>PDF Exportieren
+        <i class="bi bi-file-earmark-pdf icons" aria-hidden="true"></i>PDF Exportieren
       </button>
       <button class="btn btn-print" @click="printDocument()">
-        <i class="bi bi-printer icons"></i>Drucken
+        <i class="bi bi-printer icons" aria-hidden="true"></i>Drucken
       </button>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>

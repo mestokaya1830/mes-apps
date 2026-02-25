@@ -1,15 +1,24 @@
 <template>
-  <div>
-    <TitleBar />
-    <div class="app-container">
+  <div class="app-layout">
+    <header>
+      <TitleBar />
+    </header>
+    <aside class="sidebar">
       <SideBar />
-      <div ref="container" class="layouts">
-        <router-view />
-      </div>
-    </div>
-    <div v-if="showGoTop" class="go-top-button" @click="scrollToTop">
-      <i class="bi bi-arrow-up go-top-icon"></i>
-    </div>
+    </aside>
+    <main ref="layouts" class="layouts">
+      <router-view />
+    </main>
+    <footer aria-labbel="Nach oben">
+      <button
+        v-if="showGoTop"
+        class="go-top-button"
+        aria-label="Nach oben scrollen"
+        @click="scrollToTop"
+      >
+        <i class="bi bi-arrow-up" aria-hidden="true"></i>
+      </button>
+    </footer>
   </div>
 </template>
 
@@ -157,9 +166,9 @@ export default {
     }
   },
   mounted() {
-    const container = this.$refs.container
-    if (container) {
-      container.addEventListener('scroll', this.handleScroll)
+    const layouts = this.$refs.layouts
+    if (layouts) {
+      layouts.addEventListener('scroll', this.handleScroll)
     }
   },
   methods: {
@@ -167,9 +176,9 @@ export default {
       this.showGoTop = event.target.scrollTop > 300
     },
     scrollToTop() {
-      const container = this.$refs.container
-      if (container) {
-        container.scrollTo({
+      const layouts = this.$refs.layouts
+      if (layouts) {
+        layouts.scrollTo({
           top: 0,
           behavior: 'smooth'
         })
@@ -180,6 +189,7 @@ export default {
 </script>
 
 <style>
+
 .titlebar {
   height: 60px;
   background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
@@ -196,68 +206,27 @@ export default {
   right: 0;
   z-index: 9999;
 }
-
-.window-controls button {
-  -webkit-app-region: no-drag;
+.titlebar-title {
+  font-size: 0.5rem;
+  font-weight: normal;
+  margin-left: 20px;
 }
-.window-controls button {
-  background-color: rgba(255, 255, 255, 0.1);
-  border: none;
-  border-radius: 3px;
-  color: white;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 5px;
-  margin: 0 5px;
-  width: 30px;
-  transition: background-color 0.3s ease;
+.app-layout {
+  display: flex;
 }
-.window-controls button:hover {
-  background-color: rgba(255, 255, 255, 0);
+.layouts {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
 }
-.app-container {
+/* ===== SIDEBAR ===== */
+.sidebar {
   display: grid;
   grid-template-columns: 300px 1fr;
   grid-template-rows: calc(100vh - 60px);
   margin-top: 60px;
-}
-
-.layouts {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: auto;
-}
-.go-top-button {
-  display: flex;
-  align-items: center;
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 1000;
-  color: white;
-  border-radius: 50%;
-  padding: 10px 18px;
-  cursor: pointer;
-  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
-}
-
-.go-top-button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.go-top-icon {
-  font-size: 24px;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar {
-  display: flex;
-  flex-direction: column;
   color: white;
   background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
@@ -265,20 +234,22 @@ export default {
 }
 
 .sidebar-header {
-  padding: 24px 20px;
+  padding: 20px;
+  margin-bottom: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.app-logo {
+.sidebar-logo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  max-width: 150px;
+  width: 100%;
   padding: 2rem 1.5rem;
   font-size: 1.5rem;
   font-weight: 700;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  background-color: var(--bg-white);
 }
 
 .nav-menu {
@@ -298,20 +269,17 @@ export default {
   position: relative;
 }
 
-.nav-link:hover {
+.nav-link:hover, .nav-link:focus {
   background: rgba(255, 255, 255, 0.08);
   color: white;
+  outline-offset: 1px;
+  border-bottom: 1px solid var(--primary-dark);
 }
 
 .nav-link.active {
   background: linear-gradient(90deg, rgba(59, 165, 92, 0.2) 0%, rgba(59, 165, 92, 0.05) 100%);
   color: white;
   font-weight: 600;
-}
-.nav-link:focus {
-  outline: 2px solid var(--primary-dark);
-  outline-offset: 1px;
-  border-radius: 4px;
 }
 .nav-link.active::before {
   content: '';
@@ -383,6 +351,50 @@ export default {
 .logout-text {
   color: #e53e3e;
   font-size: 18px;
+}
+.window-controls button {
+  -webkit-app-region: no-drag;
+}
+.window-controls button {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px;
+  margin: 0 5px;
+  width: 30px;
+  transition: background-color 0.3s ease;
+}
+.window-controls button:hover {
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.go-top-button {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  color: white;
+  border-radius: 50%;
+  padding: 10px 18px;
+  cursor: pointer;
+  background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.go-top-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.go-top-icon {
+  font-size: 24px;
 }
 
 @media (max-width: 768px) {
