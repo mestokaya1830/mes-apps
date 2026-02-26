@@ -1,17 +1,17 @@
 <template>
-  <div class="setup-page">
+  <main class="setup-page">
     <div v-if="!register">
       <setup-page />
     </div>
     <div v-else class="login-container">
       <header class="logo-header">
-        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
+        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
       </header>
 
-      <form class="login-form" @submit.prevent="loginUser">
+      <form class="login-form" aria-label="Abmeldeformular" @submit.prevent="loginUser">
         <h1 class="setup-title">Willkommen bei Mes App</h1>
 
-        <div class="form-row">
+        <section class="form-row">
           <div class="form-group">
             <label for="email" class="form-label">E-Mail-Adresse</label>
             <input
@@ -21,13 +21,13 @@
               :class="['inputs', { error: error.email }]"
               placeholder="Geben Sie Ihre E-Mail-Adresse ein"
             />
-            <div v-if="error.email" class="error-message">{{ error.email }}</div>
+            <div v-if="error.email" class="error-message" role="alert">{{ error.email }}</div>
           </div>
-        </div>
+        </section>
 
-        <div class="form-row">
+        <section class="form-row">
           <div class="form-group">
-            <label for="inputPassword" class="form-label">Passwort</label>
+            <label for="Kenntwort" class="form-label">Passwort</label>
             <input
               id="inputPassword"
               v-model="user.password"
@@ -35,26 +35,27 @@
               :class="['inputs', { error: error.password }]"
               placeholder="Geben Sie Ihr Passwort ein"
             />
-            <div v-if="error.password" class="error-message">{{ error.password }}</div>
+            <div v-if="error.password" class="error-message" role="alert">{{ error.password }}</div>
           </div>
-        </div>
+        </section>
 
-        <router-link to="email-verfication" class="forgot-password">
+        <div v-if="error.credential" class="text error-message" role="alert">
+          {{ error.credential }}
+        </div>
+       <footer class="footer-login">
+         <router-link to="email-verfication" class="forgot-password">
           Passwort vergessen?
         </router-link>
 
-        <div v-if="error.credential" class="text error-message">
-          {{ error.credential }}
-        </div>
 
+        <button class="btn btn-primary btn-setup right mt-20" @click="loginUser">
+          <i class="bi bi-arrow-right ioncs" aria-hidden="true"></i>
+          <span>Anmelden</span>
+        </button>
+       </footer>
       </form>
-
-      <button class="btn btn-primary btn-setup right mt-20" @click="loginUser">
-        <i class="bi bi-arrow-right ioncs"></i>
-        <span>Anmelden</span>
-      </button>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>

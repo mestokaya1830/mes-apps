@@ -1,42 +1,87 @@
 <template>
-  <div v-if="customer" class="main-container">
+  <main v-if="customer" class="main-container">
     <!-- Header -->
     <header class="main-header">
-      <label>{{ title }}</label>
+      <h1 for="">{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
     <!-- Customer Info Card -->
-    <div class="customer-info card">
-      <div class="info-grid">
-        <div class="info-item"><strong>Kunden-Nr.:</strong> {{ formatCustomerId(customer.id) }}</div>
-        <div class="info-item"><strong>Datum:</strong> {{ formatDate(customer.date) }}</div>
-        <div class="info-item"><strong>Firma:</strong> {{ customer.company_name }}</div>
-        <div class="info-item"><strong>Firmentyp:</strong> {{ customer.company_type }}</div>
-        <div class="info-item"><strong>Vorname:</strong> {{ customer.first_name }}</div>
-        <div class="info-item"><strong>Nachname:</strong> {{ customer.last_name }}</div>
-        <div class="info-item"><strong>Email:</strong> {{ customer.email }}</div>
-        <div class="info-item"><strong>Adresse:</strong> {{ customer.address }}</div>
-        <div class="info-item"><strong>PLZ:</strong> {{ customer.postal_code }}</div>
-        <div class="info-item"><strong>Stadt:</strong> {{ customer.city }}</div>
-        <div class="info-item"><strong>Telefon:</strong> {{ customer.phone }}</div>
-        <div class="info-item"><strong>Website:</strong> {{ customer.website }}</div>
-        <div class="info-item"><strong>USt-IdNr.:</strong> {{ customer.vat_id }}</div>
-        <div class="info-item"><strong>Steuernummer:</strong> {{ customer.tax_number }}</div>
-        <div class="info-item"><strong>Aktiv:</strong> {{ customer.is_active ? 'Ja' : 'Nein' }}</div>
-      </div>
-    </div>
+    <section class="customer-info card" aria-label="Kundendaten">
+      <dl class="info-grid">
+        <div class="info-item">
+          <dt>Kunden-Nr.:</dt>
+          <dd>{{ formatCustomerId(customer.id) }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Datum:</dt>
+          <dd>{{ formatDate(customer.date) }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Firma:</dt>
+          <dd>{{ customer.company_name }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Firmentyp:</dt>
+          <dd>{{ customer.company_type }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Vorname:</dt>
+          <dd>{{ customer.first_name }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Nachname:</dt>
+          <dd>{{ customer.last_name }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Email:</dt>
+          <dd>{{ customer.email }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Adresse:</dt>
+          <dd>{{ customer.address }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>PLZ:</dt>
+          <dd>{{ customer.postal_code }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Stadt:</dt>
+          <dd>{{ customer.city }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Telefon:</dt>
+          <dd>{{ customer.phone }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Website:</dt>
+          <dd>{{ customer.website }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>USt-IdNr.:</dt>
+          <dd>{{ customer.vat_id }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Steuernummer:</dt>
+          <dd>{{ customer.tax_number }}</dd>
+        </div>
+        <div class="info-item">
+          <dt>Aktiv:</dt>
+          <dd>{{ customer.is_active ? 'Ja' : 'Nein' }}</dd>
+        </div>
+      </dl>
+    </section>
 
     <!-- Actions -->
-    <section class="sections btn-container">
+    <footer class="sections btn-container">
       <router-link :to="`/customers/edit/${customer.id}`">
         <button class="btn btn-edit">Bearbeiten</button>
       </router-link>
       <button class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
-    </section>
-  </div>
+    </footer>
+  </main>
 </template>
 
 <script>
@@ -85,7 +130,7 @@ export default {
   padding: 30px;
   border-radius: 12px;
   background-color: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   margin-bottom: 20px;
 }
 

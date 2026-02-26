@@ -1,9 +1,9 @@
 <template>
   <div v-if="$route.params.id" class="main-container">
     <header class="main-header">
-      <label>{{ title }}</label>
+      <h1>{{ title }}</h1>
       <router-link :to="`/invoices/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <div>
@@ -16,9 +16,9 @@
             </div>
 
             <div class="form-group">
-              <label for="">Storniert am<span class="stars">*</span></label>
+              <label for="Storniert am">Storniert am<span class="stars">*</span></label>
                 <div class="date-wrapper">
-                  <i class="bi bi-calendar calendar-icon"></i>
+                  <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
                 <input
                   v-model="cancelled_at"
                   type="date"
@@ -27,11 +27,11 @@
                   required
                 />
               </div>
-              <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
+              <div v-if="error.cancelled_at" class="error" role="alert">{{ error.cancelled_at }}</div>
             </div>
 
             <div class="form-group">
-              <label for="">Storniert von<span class="stars">*</span></label>
+              <label for="Storniert von">Storniert von<span class="stars">*</span></label>
               <input
                 v-model="cancelled_by"
                 type="text"
@@ -39,7 +39,7 @@
                 placeholder="Name der Person, die storniert"
                 required
               />
-              <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
+              <div v-if="error.cancelled_by" class="error" role="alert">{{ error.cancelled_by }}</div>
             </div>
 
             <div class="form-group">
@@ -50,7 +50,7 @@
                 placeholder="Grund der Stornierung hier eingeben"
                 required
               ></textarea>
-              <div v-if="error.cancellation_reason" class="error">
+              <div v-if="error.cancellation_reason" class="error" role="alert">
                 {{ error.cancellation_reason }}
               </div>
             </div>
@@ -58,9 +58,9 @@
         </section>
       </div>
     </div>
-    <section class="sections btn-container">
+    <footer class="sections btn-container">
       <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
-    </section>
+    </footer>
   </div>
 </template>
 

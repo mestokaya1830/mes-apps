@@ -1,11 +1,11 @@
 <template>
-  <div v-if="offerPreview && auth" class="main-container">
+  <main v-if="offerPreview && auth" class="main-container">
     <div class="printable">
       <!-- Header -->
       <HeaderSidePreview :title="title" :auth="auth" />
 
       <!-- customers -->
-      <div class="recipient">
+      <section class="recipient">
         <div class="recipient-section">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
@@ -20,70 +20,70 @@
             </div>
           </div>
         </div>
-        <div class="recipient-details">
+        <dl class="recipient-details">
           <div class="section-title">Angebotsdetails</div>
 
           <div class="recipient-row">
-            <span class="meta-label">Angebots-Nr.:</span>
-            <span class="meta-value">{{ formatOfferId(offerPreview.id) }}</span>
+            <dt class="meta-label">Angebots-Nr.:</dt>
+            <dd class="meta-value">{{ formatOfferId(offerPreview.id) }}</dd>
           </div>
 
           <div class="recipient-row">
-            <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(offerPreview.date) }}</span>
+            <dt class="meta-label">Datum:</dt>
+            <dd class="meta-value">{{ formatDate(offerPreview.date) }}</dd>
           </div>
 
           <div class="recipient-row">
-            <span class="meta-label">Kunden-Nr.:</span>
-            <span class="meta-value">{{ formatCustomerId(offerPreview.customer.id) }}</span>
+            <dt class="meta-label">Kunden-Nr.:</dt>
+            <dd class="meta-value">{{ formatCustomerId(offerPreview.customer.id) }}</dd>
           </div>
 
           <div
             v-if="offerPreview.customer.country === 'Germany' && offerPreview.customer.tax_number"
             class="recipient-row"
           >
-            <span class="meta-label">Steuer-Nr.:</span>
-            <span class="meta-value">{{ offerPreview.customer.tax_number }}</span>
+            <dt class="meta-label">Steuer-Nr.:</dt>
+            <dd class="meta-value">{{ offerPreview.customer.tax_number }}</dd>
           </div>
 
           <div
             v-else-if="offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
             class="recipient-row"
           >
-            <span class="meta-label">USt-IdNr.:</span>
-            <span class="meta-value">{{ offerPreview.customer.vat_id }}</span>
+            <dt class="meta-label">USt-IdNr.:</dt>
+            <dd class="meta-value">{{ offerPreview.customer.vat_id }}</dd>
           </div>
 
           <div
             v-else-if="!offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
             class="recipient-row"
           >
-            <span class="meta-label">VAT ID:</span>
-            <span class="meta-value">{{ offerPreview.customer.vat_id }}</span>
+            <dt class="meta-label">VAT ID:</dt>
+            <dd class="meta-value">{{ offerPreview.customer.vat_id }}</dd>
           </div>
 
           <div v-if="offerPreview.valid_until" class="recipient-row">
-            <span class="meta-label">Gültig bis:</span>
-            <span class="meta-value">{{ formatDate(offerPreview.valid_until) }}</span>
+            <dt class="meta-label">Gültig bis:</dt>
+            <dd class="meta-value">{{ formatDate(offerPreview.valid_until) }}</dd>
           </div>
 
           <div v-if="offerPreview.status" class="recipient-row">
-            <span class="meta-label">Status:</span>
-            <span class="meta-value">{{ getStatusText(offerPreview.status) }}</span>
+            <dt class="meta-label">Status:</dt>
+            <dd class="meta-value">{{ getStatusText(offerPreview.status) }}</dd>
           </div>
-        </div>
-      </div>
+        </dl>
+      </section>
 
       <!-- Subject / Description -->
-      <div v-if="offerPreview.subject" class="form-group">
+      <section v-if="offerPreview.subject" class="form-group">
         <label class="form-label">Betreff / Beschreibung</label>
         <div class="intro-text">
           {{ offerPreview.subject }}
         </div>
-      </div>
+      </section>
 
       <!-- Introduction Text -->
-      <div class="intro-text">
+      <section class="intro-text">
         <span v-if="offerPreview.introduction_text">
           {{ offerPreview.introduction_text }}
         </span>
@@ -91,12 +91,12 @@
           Sehr geehrte Damen und Herren,<br /><br />
           vielen Dank für Ihre Anfrage. Gerne unterbreiten wir Ihnen folgendes Angebot:
         </span>
-      </div>
+      </section>
 
       <!-- Contact Person -->
-      <div v-if="offerPreview.contact_person" class="contact-person-section">
+      <section v-if="offerPreview.contact_person" class="contact-person-section">
         <strong>Ihr Ansprechpartner:</strong> {{ offerPreview.contact_person }}
-      </div>
+      </section>
 
       <!-- Positions Table -->
       <table class="positions-table">
@@ -133,7 +133,7 @@
       </table>
 
       <!-- Summary Section -->
-      <div class="summary-section">
+      <section class="summary-section">
         <div class="total-row">
           <span class="total-label">Zwischensumme (netto):</span>
           <span class="total-value">{{
@@ -154,42 +154,42 @@
             formatCurrency(offerPreview.gross_total || 0, offerPreview.currency)
           }}</span>
         </div>
-      </div>
+      </section>
 
       <!-- Payment Terms -->
-      <div v-if="offerPreview.payment_terms" class="payment-section">
+      <section v-if="offerPreview.payment_terms" class="payment-section">
         <div class="section-heading">Zahlungsbedingungen</div>
         <div class="payment-content">
           <p>{{ offerPreview.payment_terms }}</p>
         </div>
-      </div>
+      </section>
 
       <!-- Delivery Terms -->
-      <div v-if="offerPreview.delivery_terms" class="delivery-section">
+      <section v-if="offerPreview.delivery_terms" class="delivery-section">
         <div class="section-heading">Lieferbedingungen</div>
         <div class="delivery-content">
           <p>{{ offerPreview.delivery_terms }}</p>
         </div>
-      </div>
+      </section>
 
       <!-- Delivery Time -->
-      <div v-if="offerPreview.delivery_time" class="delivery-time-section">
+      <section v-if="offerPreview.delivery_time" class="delivery-time-section">
         <div class="section-heading">Lieferzeit</div>
         <div class="delivery-time-content">
           <p>{{ offerPreview.delivery_time }}</p>
         </div>
-      </div>
+      </section>
 
       <!-- Notes (Customer visible) -->
-      <div v-if="offerPreview.notes" class="notes-section">
+      <section v-if="offerPreview.notes" class="notes-section">
         <div class="section-heading">Hinweise</div>
         <div class="notes-content">
           <p>{{ offerPreview.notes }}</p>
         </div>
-      </div>
+      </section>
 
       <!-- Bank Details -->
-      <div v-if="auth.bank || offerPreview.bank" class="bank-section">
+      <section v-if="auth.bank || offerPreview.bank" class="bank-section">
         <div class="section-heading">Bankverbindung</div>
         <div class="bank-details">
           <div v-if="auth.bank?.bank_name || offerPreview.bank?.bank_name">
@@ -202,10 +202,10 @@
             BIC: {{ auth.bank?.bic || offerPreview.bank?.bic }}
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Closing Text -->
-      <div class="closing">
+      <section class="closing">
         <span v-if="offerPreview.closing_text">
           {{ offerPreview.closing_text }}
         </span>
@@ -213,13 +213,13 @@
           Wir freuen uns auf Ihre Rückmeldung und stehen für Rückfragen gerne zur Verfügung.<br /><br />
           Mit freundlichen Grüßen
         </span>
-      </div>
+      </section>
 
       <!-- Contact Person -->
       <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
 
       <!-- Legal Validity Signature -->
-      <div v-if="offerPreview.is_legal" class="pdf-footer">
+      <section v-if="offerPreview.is_legal" class="pdf-footer">
         <label style="display: flex; align-items: center; gap: 8px">
           <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
           Rechtsgültige Unterschrift erforderlich
@@ -238,10 +238,10 @@
             <div class="signature-label">Unterschrift</div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- Internal Notes (only visible in preview, not in PDF) -->
-      <div v-if="offerPreview.internal_notes" class="internal-notes-section no-print">
+      <section v-if="offerPreview.internal_notes" class="internal-notes-section no-print">
         <div class="section-heading" style="color: #e74c3c">
           Interne Notizen (nicht für Kunden sichtbar)
         </div>
@@ -251,19 +251,19 @@
         >
           <p>{{ offerPreview.internal_notes }}</p>
         </div>
-      </div>
+      </section>
     </div>
 
     <!-- Action Buttons -->
-    <div class="sections btn-container">
-      <button class="btn btn-primary" @click="saveOffer">
-        <i class="bi bi-floppy-fill icons"></i>
+    <footer class="sections btn-container">
+      <button type="submit" class="btn btn-primary" @click="saveOffer">
+        <i class="bi bi-floppy-fill icons" aria-hidden="true"></i>
         <span>Speichern</span>
       </button>
-    </div>
+    </footer>
 
     <router-link to="/offers/create" class="back-link"> ← Zurück zur Bearbeitung </router-link>
-  </div>
+  </main>
 </template>
 
 <script>

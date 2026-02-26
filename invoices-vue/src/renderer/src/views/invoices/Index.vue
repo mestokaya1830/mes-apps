@@ -1,13 +1,13 @@
 <template>
-  <div v-if="invoices" class="main-container">
+  <main v-if="invoices" class="main-container">
     <header class="main-header">
-      <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
+      <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons"></i>
+        <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>
     </header>
-    <div class="main-filter">
+    <section class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
@@ -53,13 +53,13 @@
       </div>
 
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
-       <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
-    </div>
+       <i class="bi bi-printer form-title icons list-print-icon" aria-hidden="true" @click="printDocument"></i>
+    </section>
 
     <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
 
     <!-- Invoice card -->
-    <div class="list-grid printable">
+    <section class="list-grid printable">
       <div v-for="item in invoices" :key="item.id" class="list-card">
         <!-- Card Header -->
         <div class="card-header">
@@ -99,7 +99,7 @@
                 class="bi bi-clock-history"
               ></i>
               Bezahlt
-              <i v-if="item.early_paid_discount_applied" class="bi bi-currency-euro"></i>
+              <i v-if="item.early_paid_discount_applied" class="bi bi-currency-euro" aria-hidden="true"></i>
             </div>
 
             <div v-if="item.is_active === 0" class="status-badge canceled">
@@ -111,20 +111,20 @@
         <!-- Card Actions -->
         <div class="card-actions">
           <router-link :to="'/invoices/details/' + item.id" class="details-btn btn-details">
-            <i class="bi bi-eye"></i>
+            <i class="bi bi-eye" aria-hidden="true"></i>
             Details
           </router-link>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Empty State -->
-    <div v-if="!invoices || invoices.length === 0" class="empty-state">
-      <i class="bi bi-receipt-cutoff empty-icon"></i>
+    <section v-if="!invoices || invoices.length === 0" class="empty-state">
+      <i class="bi bi-receipt-cutoff empty-icon" aria-hidden="true"></i>
       <h3>Keine Rechnungen</h3>
       <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script>

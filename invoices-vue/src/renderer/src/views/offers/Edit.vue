@@ -1,91 +1,96 @@
 <template>
-  <div class="main-container">
-     <header class="main-header">
-      <label>{{ title }}</label>
-       <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+  <main class="main-container">
+    <header class="main-header">
+      <h1>{{ title }}</h1>
+      <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
-    <div class="printable">
-      <!-- Header -->
-      <h2>{{ title }}</h2>
-      <!-- 
-        Status and disable logic
-        draft → only sent can be selected.
-        sent → only accepted and rejected can be selected; draft and sent are disabled.
-        accepted/rejected → all options are disabled; only the current status is shown. 
-      -->
-      <section class="sections">
-        <div class="form-group">
-          <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
-            <h4>Status:</h4>
-            <div class="inputs disabled">
-              {{
-                offer.status === 'accepted'
-                  ? 'Angenommen'
-                  : offer.status === 'rejected'
-                    ? 'Abgelehnt'
-                    : offer.status
-              }}
+    <form @submit.prevent="updateOffer">
+      <div class="printable">
+        <!-- Header -->
+        <h2>{{ title }}</h2>
+        <!-- 
+          Status and disable logic
+          draft → only sent can be selected.
+          sent → only accepted and rejected can be selected; draft and sent are disabled.
+          accepted/rejected → all options are disabled; only the current status is shown. 
+        -->
+        <section class="sections">
+          <div class="form-group">
+            <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
+              <h4>Status:</h4>
+              <div class="inputs disabled">
+                {{
+                  offer.status === 'accepted'
+                    ? 'Angenommen'
+                    : offer.status === 'rejected'
+                      ? 'Abgelehnt'
+                      : offer.status
+                }}
 
-              <small class="text-muted d-block">Status kann nicht mehr geändert werden.</small>
+                <small class="text-muted d-block">Status kann nicht mehr geändert werden.</small>
+              </div>
+            </div>
+            <div v-else>
+              <label for="Status" class="form-label">Status<span class="stars">*</span></label>
+              <select v-model="offer.status" class="inputs" required>
+                <option value="" disabled>Status auswählen</option>
+                <option value="draft" :disabled="offer.status !== 'sent' ? true : true">
+                  Entwurf
+                </option>
+                <option value="sent" :disabled="offer.status !== 'draft'">Gesendet</option>
+                <option value="accepted" :disabled="offer.status !== 'sent'">Angenommen</option>
+                <option value="rejected" :disabled="offer.status !== 'sent'">Abgelehnt</option>
+              </select>
             </div>
           </div>
-          <div v-else>
-            <label class="form-label">Status<span class="stars">*</span></label>
-            <select v-model="offer.status" class="inputs" required>
-              <option value="" disabled>Status auswählen</option>
-              <option value="draft" :disabled="offer.status !== 'sent' ? true : true">
-                Entwurf
-              </option>
-              <option value="sent" :disabled="offer.status !== 'draft'">Gesendet</option>
-              <option value="accepted" :disabled="offer.status !== 'sent'">Angenommen</option>
-              <option value="rejected" :disabled="offer.status !== 'sent'">Abgelehnt</option>
-            </select>
+
+          <div class="form-group">
+            <label class="form-label">Bearbeitet von:<span class="stars">*</span></label>
+            <input
+              v-model="offer.status_by"
+              type="text"
+              class="inputs"
+              placeholder="Name der bearbeitenden Person eingeben"
+              required
+            />
           </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-label">Bearbeitet von:<span class="stars">*</span></label>
-          <input
-            v-model="offer.status_by"
-            type="text"
-            class="inputs"
-            placeholder="Name der bearbeitenden Person eingeben"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Bearbeitet am:<span class="stars">*</span></label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar calendar-icon"></i>
-            <input v-model="offer.date" type="date" class="inputs date" required />
+          <div class="form-group">
+            <label for="Bearbeitet am" class="form-label"
+              >Bearbeitet am:<span class="stars">*</span></label
+            >
+            <div class="date-wrapper">
+              <i class="bi bi-calendar calendar-icon"></i>
+              <input v-model="offer.date" type="date" class="inputs date" required />
+            </div>
+            <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
           </div>
-          <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-label">Kommentare:</label>
-          <textarea
-            v-model="offer.status_comments"
-            class="inputs"
-            placeholder="Kommentare oder Notizen hier eingeben"
-          ></textarea>
-        </div>
-      </section>
-    </div>
-    <button
-      :disabled="original_status == 'accepted' || original_status == 'rejected'"
-      class="btn btn-update"
-      @click="updateOffer"
-    >
-      Speichern Status
-    </button>
+          <div class="form-group">
+            <label for="Kommentare" class="form-label">Kommentare:</label>
+            <textarea
+              v-model="offer.status_comments"
+              class="inputs"
+              placeholder="Kommentare oder Notizen hier eingeben"
+            ></textarea>
+          </div>
+        </section>
+      </div>
+      <button
+        type="submit"
+        :disabled="original_status == 'accepted' || original_status == 'rejected'"
+        class="btn btn-update"
+        @click="updateOffer"
+      >
+        Speichern Status
+      </button>
+    </form>
     <router-link :to="`/offers/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Angebotsdetails
     </router-link>
-  </div>
+  </main>
 </template>
 
 <script>

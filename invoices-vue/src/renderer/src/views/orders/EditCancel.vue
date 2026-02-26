@@ -1,67 +1,67 @@
 <template>
-  <div v-if="$route.params.id" class="main-container">
-     <section class="main-header">
-      <label>{{ title }}</label>
-       <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+  <main v-if="$route.params.id" class="main-container">
+    <header class="main-header">
+      <h1>{{ title }}</h1>
+      <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
-    </section>
-    <div class="printable">
-      <!-- Header -->
-      <h2>{{ title }}</h2>
+    </header>
+    <form @suubmit.prevent="updateOrder">
+      <section class="printable">
+        <h2>{{ title }}</h2>
 
-      <section class="sections">
-        <div class="custom-row">
-          <div class="form-group">
-            <label for="">Auftrags-Nr.:</label>
-            <label class="inputs">{{ formatOrderId($route.params.id) }}</label>
-          </div>
+        <div class="sections">
+          <div class="custom-row">
+            <div class="form-group">
+              <label for="">Auftrags-Nr.:</label>
+              <label class="inputs">{{ formatOrderId($route.params.id) }}</label>
+            </div>
 
-          <div class="form-group">
-            <label for="">Storniert am</label>
-            <div class="date-wrapper">
-              <i class="bi bi-calendar calendar-icon"></i>
+            <div class="form-group">
+              <label for="Storniert am">Storniert am</label>
+              <div class="date-wrapper">
+                <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
+                <input
+                  v-model="cancelled_at"
+                  type="date"
+                  class="inputs date"
+                  placeholder="Datum der Stornierung auswählen"
+                />
+              </div>
+              <div v-if="error.cancelled_at" class="error" role="alert">{{ error.cancelled_at }}</div>
+            </div>
+
+            <div class="form-group">
+              <label for="Storniert von">Storniert von</label>
               <input
-                v-model="cancelled_at"
-                type="date"
-                class="inputs date"
-                placeholder="Datum der Stornierung auswählen"
+                v-model="cancelled_by"
+                type="text"
+                class="inputs"
+                placeholder="Name der Person, die storniert"
               />
+              <div v-if="error.cancelled_by" class="error" role="alert">{{ error.cancelled_by }}</div>
             </div>
-            <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
-          </div>
 
-          <div class="form-group">
-            <label for="">Storniert von</label>
-            <input
-              v-model="cancelled_by"
-              type="text"
-              class="inputs"
-              placeholder="Name der Person, die storniert"
-            />
-            <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
-          </div>
-
-          <div class="form-group">
-            <label for="">Stornierungsgrund</label>
-            <textarea
-              v-model="cancellation_reason"
-              class="inputs"
-              placeholder="Grund der Stornierung hier eingeben"
-            ></textarea>
-            <div v-if="error.cancellation_reason" class="error">
-              {{ error.cancellation_reason }}
+            <div class="form-group">
+              <label for="Stornierungsgrund">Stornierungsgrund</label>
+              <textarea
+                v-model="cancellation_reason"
+                class="inputs"
+                placeholder="Grund der Stornierung hier eingeben"
+              ></textarea>
+              <div v-if="error.cancellation_reason" class="error" role="alert">
+                {{ error.cancellation_reason }}
+              </div>
             </div>
           </div>
-
-          <button @click="updateOrder" class="btn btn-cancel">Aktualisieren</button>
         </div>
       </section>
-    </div>
+      <button type="submit" class="btn btn-cancel" @click="updateOrder">Aktualisieren</button>
+    </form>
     <router-link :to="`/orders/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Auftragsdetails
     </router-link>
-  </div>
+  </main>
 </template>
 
 <script>

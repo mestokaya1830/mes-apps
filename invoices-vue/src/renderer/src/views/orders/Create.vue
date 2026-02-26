@@ -1,421 +1,423 @@
 <template>
-  <div v-if="order" class="main-container">
+  <main v-if="order" class="main-container">
     <header class="main-header">
-      <label>{{ title }}</label>
+      <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
-    <!-- Grunddaten -->
-    <section class="sections">
-      <div class="sections-title">
-        <i class="bi bi-pin-angle-fill form-title icons"></i>Grunddaten
+    <form @sunmit.prevent="submitStore">
+      <!-- Grunddaten -->
+      <section class="sections">
+        <h2 class="sections-title">
+          <i class="bi bi-pin-angle-fill form-title icons" aria-hidden="true"></i>Grunddaten
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Auftragsnummer <span class="stars">*</span></label>
+            <input
+              v-model="order.id"
+              type="text"
+              class="inputs"
+              readonly
+              placeholder="AU-20251205-001"
+            />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Auftragsdatum <span class="stars">*</span></label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon"></i>
+              <input
+                v-model="order.date"
+                type="date"
+                class="inputs date"
+                ref="date"
+                @input="error.date = ''"
+              />
+            </div>
+            <div v-if="error.date" class="error">
+              {{ error.date }}
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Leistungszeitraum Von <span class="stars">*</span></label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon"></i>
+              <input
+                v-model="order.service_period_start"
+                ref="service_period_start"
+                type="date"
+                class="inputs date"
+                @input="error.service_period_start = ''"
+              />
+            </div>
+            <div v-if="error.service_period_start" class="error">
+              {{ error.service_period_start }}
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Leistungszeitraum Bis <span class="stars">*</span></label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon"></i>
+              <input
+                v-model="order.service_period_end"
+                type="date"
+                ref="service_period_end"
+                class="inputs date"
+                @input="error.service_period_end = ''"
+              />
+            </div>
+            <div v-if="error.service_period_end" class="error">
+              {{ error.service_period_end }}
+            </div>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Kundendaten -->
+      <section class="sections">
+        <h2 class="sections-title"><i class="bi bi-person-fill me-2 form-icons" aria-hidden="true"></i>Kundendaten</h2>
+        <div v-if="order.customer?.id" class="customer-details">
+          <div class="form-group">
+            <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
+            <input v-model="order.customer.id" type="text" class="inputs" readonly />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Firmenname <span class="stars">*</span></label>
+            <input v-model="order.customer.company_name" type="text" class="inputs" readonly />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Vorname <span class="stars">*</span></label>
+              <input v-model="order.customer.first_name" type="text" class="inputs" readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nachname <span class="stars">*</span></label>
+              <input v-model="order.customer.last_name" type="text" class="inputs" readonly />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Adresse <span class="stars">*</span></label>
+            <input v-model="order.customer.address" type="text" class="inputs" readonly />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">PLZ <span class="stars">*</span></label>
+              <input v-model="order.customer.postal_code" type="text" class="inputs" readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Stadt <span class="stars">*</span></label>
+              <input v-model="order.customer.city" type="text" class="inputs" readonly />
+            </div>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Subject -->
+      <div class="form-group">
+        <label class="form-label">Betreff <span class="stars">*</span></label>
+        <input v-model="order.subject" type="text" class="inputs" />
       </div>
-      <div class="form-row">
+  
+      <!-- Lieferdaten + Versand -->
+      <section class="sections">
+        <h2 class="sections-title">
+          <i class="bi bi-box-seam form-title icons" aria-hidden="true"></i>Lieferung & Versand
+        </h2>
         <div class="form-group">
-          <label class="form-label">Auftragsnummer <span class="stars">*</span></label>
+          <label class="form-label">Lieferbedingungen</label>
           <input
-            v-model="order.id"
+            v-model="order.delivery_terms"
             type="text"
             class="inputs"
-            readonly
-            placeholder="AU-20251205-001"
+            placeholder="Lieferbedingungen eingeben"
           />
         </div>
-        <div class="form-group">
-          <label class="form-label">Auftragsdatum <span class="stars">*</span></label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input
-              v-model="order.date"
-              type="date"
-              class="inputs date"
-              ref="date"
-              @input="error.date = ''"
-            />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Versandart</label>
+            <select v-model="order.shipping_method" class="inputs">
+              <option value="" disabled>Bitte auswählen</option>
+              <option value="dhl">DHL</option>
+              <option value="hermes">Hermes</option>
+              <option value="ups">UPS</option>
+              <option value="dpd">DPD</option>
+              <option value="gls">GLS</option>
+              <option value="email">E-Mail</option>
+              <option value="pickup">Selbstabholung</option>
+            </select>
           </div>
-          <div v-if="error.date" class="error">
-            {{ error.date }}
-          </div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Leistungszeitraum Von <span class="stars">*</span></label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input
-              v-model="order.service_period_start"
-              ref="service_period_start"
-              type="date"
-              class="inputs date"
-              @input="error.service_period_start = ''"
-            />
-          </div>
-          <div v-if="error.service_period_start" class="error">
-            {{ error.service_period_start }}
+          <div class="form-group">
+            <label class="form-label">Liefertermin</label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon"></i>
+              <input v-model="order.delivery_date" type="date" class="inputs date" />
+            </div>
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Leistungszeitraum Bis <span class="stars">*</span></label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input
-              v-model="order.service_period_end"
-              type="date"
-              ref="service_period_end"
-              class="inputs date"
-              @input="error.service_period_end = ''"
-            />
-          </div>
-          <div v-if="error.service_period_end" class="error">
-            {{ error.service_period_end }}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Kundendaten -->
-    <section class="sections">
-      <div class="sections-title"><i class="bi bi-person-fill me-2 form-icons"></i>Kundendaten</div>
-      <div v-if="order.customer?.id" class="customer-details">
-        <div class="form-group">
-          <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-          <input v-model="order.customer.id" type="text" class="inputs" readonly />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Firmenname <span class="stars">*</span></label>
-          <input v-model="order.customer.company_name" type="text" class="inputs" readonly />
+          <label class="form-label">Lieferadresse</label>
+          <textarea v-model="order.delivery_address" rows="2" class="inputs"></textarea>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Vorname <span class="stars">*</span></label>
-            <input v-model="order.customer.first_name" type="text" class="inputs" readonly />
+            <label class="form-label">PLZ</label>
+            <input v-model="order.delivery_postal_code" type="text" class="inputs" />
           </div>
           <div class="form-group">
-            <label class="form-label">Nachname <span class="stars">*</span></label>
-            <input v-model="order.customer.last_name" type="text" class="inputs" readonly />
+            <label class="form-label">Stadt</label>
+            <input v-model="order.delivery_city" type="text" class="inputs" />
           </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Adresse <span class="stars">*</span></label>
-          <input v-model="order.customer.address" type="text" class="inputs" readonly />
+          <div class="form-group">
+            <label class="form-label">Land</label>
+            <input v-model="order.delivery_country" type="text" class="inputs" />
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">PLZ <span class="stars">*</span></label>
-            <input v-model="order.customer.postal_code" type="text" class="inputs" readonly />
+            <label class="form-label">Sendemethode</label>
+            <input v-model="order.sent_method" type="text" class="inputs" />
           </div>
           <div class="form-group">
-            <label class="form-label">Stadt <span class="stars">*</span></label>
-            <input v-model="order.customer.city" type="text" class="inputs" readonly />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Subject -->
-    <div class="form-group">
-      <label class="form-label">Betreff <span class="stars">*</span></label>
-      <input v-model="order.subject" type="text" class="inputs" />
-    </div>
-
-    <!-- Lieferdaten + Versand -->
-    <section class="sections">
-      <div class="sections-title">
-        <i class="bi bi-box-seam form-title icons"></i>Lieferung & Versand
-      </div>
-      <div class="form-group">
-        <label class="form-label">Lieferbedingungen</label>
-        <input
-          v-model="order.delivery_terms"
-          type="text"
-          class="inputs"
-          placeholder="Lieferbedingungen eingeben"
-        />
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Versandart</label>
-          <select v-model="order.shipping_method" class="inputs">
-            <option value="" disabled>Bitte auswählen</option>
-            <option value="dhl">DHL</option>
-            <option value="hermes">Hermes</option>
-            <option value="ups">UPS</option>
-            <option value="dpd">DPD</option>
-            <option value="gls">GLS</option>
-            <option value="email">E-Mail</option>
-            <option value="pickup">Selbstabholung</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Liefertermin</label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input v-model="order.delivery_date" type="date" class="inputs date" />
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Lieferadresse</label>
-        <textarea v-model="order.delivery_address" rows="2" class="inputs"></textarea>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">PLZ</label>
-          <input v-model="order.delivery_postal_code" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Stadt</label>
-          <input v-model="order.delivery_city" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Land</label>
-          <input v-model="order.delivery_country" type="text" class="inputs" />
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Sendemethode</label>
-          <input v-model="order.sent_method" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Gesendet am</label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input v-model="order.sent_at" type="date" class="inputs date" />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Zahlung & Währung -->
-    <section class="sections">
-      <div class="sections-title">
-        <i class="bi bi-credit-card-2-front-fill form-title icons"></i>Zahlung & Währung
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Zahlungsbedingungen</label>
-          <input v-model="order.payment_terms" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Zahlungsart</label>
-          <select v-model="order.payment_method" class="inputs">
-            <option value="" disabled>Bitte auswählen</option>
-            <option>Überweisung</option>
-            <option>Bar</option>
-            <option>PayPal</option>
-            <option>Kreditkarte</option>
-            <option>Lastschrift</option>
-            <option>Scheck</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Zahlungshinweise</label>
-        <textarea v-model="order.payment_conditions" class="inputs"></textarea>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Zahlungsreferenz</label>
-          <input v-model="order.payment_reference" type="text" class="inputs" />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Währung <span class="stars">*</span></label>
-          <select v-model="order.currency" class="inputs">
-            <option value="EUR.de-DE">EUR</option>
-            <option value="USD.en-US">USD</option>
-            <option value="GBP.en-GB">GBP</option>
-            <option value="CHF.ch-CH">CHF</option>
-            <option value="JPY.ja-JP">JPY</option>
-            <option value="AUD.en-AU">AUD</option>
-            <option value="CAD.en-CA">CAD</option>
-            <option value="CNY.zh-CN">CNY</option>
-            <option value="SEK.sv-SE">SEK</option>
-            <option value="NZD.en-NZ">NZD</option>
-          </select>
-        </div>
-      </div>
-    </section>
-
-    <!-- Positions -->
-    <section class="sections positions-error">
-      <div class="sections-title">
-        <i class="bi bi-box-seam icons"></i>
-        Positionen <span class="stars">*</span>
-      </div>
-
-      <div v-if="order.positions && order.positions.length === 0">Keine Positionen vorhanden</div>
-      <div v-if="error.positions" class="error">
-        {{ error.positions }}
-      </div>
-      <div v-else class="positions-editor">
-        <div v-for="(item, index) in order.positions" :key="index" class="position-item">
-          <div class="sections">
-            <div class="positions-header">
-              <span class="position-number"> Position {{ index + 1 }} </span>
-              <button type="button" class="delete-position-btn" @click="deletePosition(index)">
-                <i class="bi bi-trash3 me-1"></i>Löschen
-              </button>
+            <label class="form-label">Gesendet am</label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
+              <input v-model="order.sent_at" type="date" class="inputs date" />
             </div>
-            <!-- FORM FIELDS -->
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Leistungsdatum Von <span class="stars">*</span></label>
-                <div class="date-wrapper">
-                  <i class="bi bi-calendar3 calendar-icon"></i>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Zahlung & Währung -->
+      <section class="sections">
+        <h2 class="sections-title">
+          <i class="bi bi-credit-card-2-front-fill form-title icons" aria-hidden="true"></i>Zahlung & Währung
+        </h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Zahlungsbedingungen</label>
+            <input v-model="order.payment_terms" type="text" class="inputs" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zahlungsart</label>
+            <select v-model="order.payment_method" class="inputs">
+              <option value="" disabled>Bitte auswählen</option>
+              <option>Überweisung</option>
+              <option>Bar</option>
+              <option>PayPal</option>
+              <option>Kreditkarte</option>
+              <option>Lastschrift</option>
+              <option>Scheck</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Zahlungshinweise</label>
+          <textarea v-model="order.payment_conditions" class="inputs"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Zahlungsreferenz</label>
+            <input v-model="order.payment_reference" type="text" class="inputs" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Währung <span class="stars">*</span></label>
+            <select v-model="order.currency" class="inputs">
+              <option value="EUR.de-DE">EUR</option>
+              <option value="USD.en-US">USD</option>
+              <option value="GBP.en-GB">GBP</option>
+              <option value="CHF.ch-CH">CHF</option>
+              <option value="JPY.ja-JP">JPY</option>
+              <option value="AUD.en-AU">AUD</option>
+              <option value="CAD.en-CA">CAD</option>
+              <option value="CNY.zh-CN">CNY</option>
+              <option value="SEK.sv-SE">SEK</option>
+              <option value="NZD.en-NZ">NZD</option>
+            </select>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Positions -->
+      <section class="sections positions-error">
+        <h2 class="sections-title">
+          <i class="bi bi-box-seam icons"></i>
+          Positionen <span class="stars">*</span>
+        </h2>
+  
+        <div v-if="order.positions && order.positions.length === 0">Keine Positionen vorhanden</div>
+        <div v-if="error.positions" class="error" role="alert">
+          {{ error.positions }}
+        </div>
+        <div v-else class="positions-editor">
+          <div v-for="(item, index) in order.positions" :key="index" class="position-item">
+            <div class="sections">
+              <div class="positions-header">
+                <span class="position-number"> Position {{ index + 1 }} </span>
+                <button type="button" class="delete-position-btn" @click="deletePosition(index)">
+                  <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Löschen
+                </button>
+              </div>
+              <!-- FORM FIELDS -->
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Leistungsdatum Von <span class="stars">*</span></label>
+                  <div class="date-wrapper">
+                    <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
+                    <input
+                      :ref="`service_period_start_${index}`"
+                      v-model="item.service_period_start"
+                      type="date"
+                      class="inputs date"
+                      required
+                      @input="delete error[`service_period_start_${index}`]"
+                    />
+                  </div>
+                  <div v-if="error[`service_period_start_${index}`]" class="error" role="alert">
+                    {{ error[`service_period_start_${index}`] }}
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Leistungsdatum Bis <span class="stars">*</span></label>
+                  <div class="date-wrapper">
+                    <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
+                    <input
+                      :ref="`service_period_end_${index}`"
+                      v-model="item.service_period_end"
+                      type="date"
+                      class="inputs date"
+                      required
+                      @input="delete error[`service_period_end_${index}`]"
+                    />
+                  </div>
+                  <div v-if="error[`service_period_end_${index}`]" class="error" role="alert">
+                    {{ error[`service_period_end_${index}`] }}
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Bezeichnung</label>
                   <input
-                    :ref="`service_period_start_${index}`"
-                    v-model="item.service_period_start"
-                    type="date"
-                    class="inputs date"
-                    required
-                    @input="delete error[`service_period_start_${index}`]"
+                    v-model="item.title"
+                    type="text"
+                    class="inputs"
+                    placeholder="Produkt / Leistung"
                   />
                 </div>
-                <div v-if="error[`service_period_start_${index}`]" class="error">
-                  {{ error[`service_period_start_${index}`] }}
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Leistungsdatum Bis <span class="stars">*</span></label>
-                <div class="date-wrapper">
-                  <i class="bi bi-calendar3 calendar-icon"></i>
+                <div class="form-group">
+                  <label class="form-label">Beschreibung</label>
                   <input
-                    :ref="`service_period_end_${index}`"
-                    v-model="item.service_period_end"
-                    type="date"
-                    class="inputs date"
-                    required
-                    @input="delete error[`service_period_end_${index}`]"
+                    v-model="item.description"
+                    type="text"
+                    class="inputs"
+                    placeholder="Optional"
                   />
                 </div>
-                <div v-if="error[`service_period_end_${index}`]" class="error">
-                  {{ error[`service_period_end_${index}`] }}
+              </div>
+  
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Menge</label>
+                  <input v-model.number="item.quantity" type="number" class="inputs" min="1" />
+                </div>
+  
+                <div class="form-group">
+                  <label class="form-label">Einzelpreis</label>
+                  <input v-model.number="item.price" type="number" class="inputs" step="0.01" />
+                </div>
+  
+                <div class="form-group">
+                  <label class="form-label">MwSt %</label>
+                  <select v-model.number="item.vat" class="inputs">
+                    <option :value="0">0 %</option>
+                    <option :value="7">7 %</option>
+                    <option :value="19">19 %</option>
+                  </select>
+                </div>
+  
+                <div class="form-group">
+                  <label class="form-label">Gesamt</label>
+                  <input type="text" class="inputs" :value="positionTotal(item)" disabled />
                 </div>
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Bezeichnung</label>
-                <input
-                  v-model="item.title"
-                  type="text"
-                  class="inputs"
-                  placeholder="Produkt / Leistung"
-                />
+          </div>
+          <div v-if="order.positions.length > 0" class="sections">
+            <div class="btn-container">
+              <div class="summary-item">
+                <label class="form-label">Nettobetrag</label>
+                <div class="form-result-item">
+                  {{ formatCurrency(summary.net_total, order.currency) }}
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Beschreibung</label>
-                <input
-                  v-model="item.description"
-                  type="text"
-                  class="inputs"
-                  placeholder="Optional"
-                />
+              <div class="summary-item">
+                <label class="form-label">MwSt Gesamt</label>
+                <div class="form-result-item">
+                  {{ formatCurrency(summary.vat_total, order.currency) }}
+                </div>
               </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Menge</label>
-                <input v-model.number="item.quantity" type="number" class="inputs" min="1" />
+              <div class="summary-item">
+                <label class="form-label">Bruttobetrag</label>
+                <div class="form-result-item">
+                  {{ formatCurrency(summary.gross_total, order.currency) }}
+                </div>
               </div>
-
-              <div class="form-group">
-                <label class="form-label">Einzelpreis</label>
-                <input v-model.number="item.price" type="number" class="inputs" step="0.01" />
+              <div class="summary-item">
+                <label class="form-label">Rabatt</label>
+                <div class="form-result-item">
+                  {{ formatCurrency(summary.early_payment_discount, order.currency) }}
+                </div>
               </div>
-
-              <div class="form-group">
-                <label class="form-label">MwSt %</label>
-                <select v-model.number="item.vat" class="inputs">
-                  <option :value="0">0 %</option>
-                  <option :value="7">7 %</option>
-                  <option :value="19">19 %</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">Gesamt</label>
-                <input type="text" class="inputs" :value="positionTotal(item)" disabled />
+              <div class="summary-item">
+                <label class="form-label">Endbetrag</label>
+                <div class="form-result-item">
+                  {{ formatCurrency(summary.gross_total_after_discount, order.currency) }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div v-if="order.positions.length > 0" class="sections">
-          <div class="btn-container">
-            <div class="summary-item">
-              <label class="form-label">Nettobetrag</label>
-              <div class="form-result-item">
-                {{ formatCurrency(summary.net_total, order.currency) }}
-              </div>
-            </div>
-            <div class="summary-item">
-              <label class="form-label">MwSt Gesamt</label>
-              <div class="form-result-item">
-                {{ formatCurrency(summary.vat_total, order.currency) }}
-              </div>
-            </div>
-            <div class="summary-item">
-              <label class="form-label">Bruttobetrag</label>
-              <div class="form-result-item">
-                {{ formatCurrency(summary.gross_total, order.currency) }}
-              </div>
-            </div>
-            <div class="summary-item">
-              <label class="form-label">Rabatt</label>
-              <div class="form-result-item">
-                {{ formatCurrency(summary.early_payment_discount, order.currency) }}
-              </div>
-            </div>
-            <div class="summary-item">
-              <label class="form-label">Endbetrag</label>
-              <div class="form-result-item">
-                {{ formatCurrency(summary.gross_total_after_discount, order.currency) }}
-              </div>
-            </div>
-          </div>
+        <button type="button" class="add-position-btn" @click="addPosition">
+          <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
+          Position hinzufügen
+        </button>
+      </section>
+  
+      <!-- Notizen & Texte -->
+      <section class="sections">
+        <h2 class="sections-title">
+          <i class="bi bi-pencil-square form-title icons" aria-hidden="true"></i>Notizen & Texte
+        </h2>
+        <div class="form-group">
+          <label class="form-label">Einleitungstext</label>
+          <textarea v-model="order.intro_text" rows="2" class="inputs"></textarea>
         </div>
-      </div>
-      <button type="button" class="add-position-btn" @click="addPosition">
-        <i class="bi bi-plus-circle icons"></i>
-        Position hinzufügen
-      </button>
-    </section>
-
-    <!-- Notizen & Texte -->
-    <section class="sections">
-      <div class="sections-title">
-        <i class="bi bi-pencil-square form-title icons"></i>Notizen & Texte
-      </div>
-      <div class="form-group">
-        <label class="form-label">Einleitungstext</label>
-        <textarea v-model="order.intro_text" rows="2" class="inputs"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Kundennotiz</label>
-        <textarea v-model="order.customer_notes" rows="3" class="inputs"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Interne Notiz</label>
-        <textarea v-model="order.internal_notes" rows="2" class="inputs"></textarea>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Schlusstext</label>
-        <textarea v-model="order.closing_text" rows="3" class="inputs"></textarea>
-      </div>
-    </section>
-
-    <!-- Vorschau Button -->
-    <section class="sections btn-container">
-      <button class="btn btn-preview" @click="submitStore">
-        <i class="bi bi-eye icons"></i>Vorschau anzeigen
-      </button>
-    </section>
-  </div>
+        <div class="form-group">
+          <label class="form-label">Kundennotiz</label>
+          <textarea v-model="order.customer_notes" rows="3" class="inputs"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Interne Notiz</label>
+          <textarea v-model="order.internal_notes" rows="2" class="inputs"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Schlusstext</label>
+          <textarea v-model="order.closing_text" rows="3" class="inputs"></textarea>
+        </div>
+      </section>
+  
+      <!-- Vorschau Button -->
+      <footer class="sections btn-container">
+        <button type="submit" class="btn btn-preview" @click="submitStore">
+          <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
+        </button>
+      </footer>
+    </form>
+  </main>
 </template>
 
 <script>

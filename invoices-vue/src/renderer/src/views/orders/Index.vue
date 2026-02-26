@@ -1,14 +1,14 @@
 <template>
-  <div v-if="orders" class="main-container">
+  <main v-if="orders" class="main-container">
     <header class="main-header">
-      <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
+      <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons"></i>
+        <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>
     </header>
 
-    <div class="main-filter">
+    <section class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
@@ -32,7 +32,7 @@
       />
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
         <input
           ref="date_box_start"
           v-model="date_box_start"
@@ -43,7 +43,7 @@
       </div>
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
         <input
           ref="date_box_end"
           v-model="date_box_end"
@@ -54,13 +54,17 @@
       </div>
 
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
-      <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
-    </div>
+      <i
+        class="bi bi-printer form-title icons list-print-icon"
+        aria-hidden="true"
+        @click="printDocument"
+      ></i>
+    </section>
 
     <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
 
     <!-- Order card -->
-    <div class="list-grid printable">
+    <section class="list-grid printable">
       <div v-for="item in orders" :key="item.id" class="list-card">
         <!-- Card Header -->
         <div class="card-header">
@@ -95,9 +99,13 @@
               v-if="item.payment_status === 'paid' && item.is_active === 1"
               class="status-badge paid"
             >
-              <span v-if="item.paid_at && item.paid_at < item.due_date">⏰</span>
+              <span v-if="item.paid_at && item.paid_at < item.due_date">
+                <i class="bi bi-clock" aria-hidden="true"></i>
+              </span>
               Bezahlt
-              <span v-if="item.early_paid_discount_applied">💰</span>
+              <span v-if="item.early_paid_discount_applied">
+                <i class="bi bi-currency-euro" aria-hidden="true"></i>
+              </span>
             </div>
 
             <div v-if="item.is_active === 0" class="status-badge canceled">
@@ -109,20 +117,24 @@
         <!-- Card Actions -->
         <div class="card-actions">
           <router-link :to="'/orders/details/' + item.id" class="btn btn-details">
-            <i class="bi bi-eye"></i>
+            <i class="bi bi-eye" aria-hidden="true"></i>
             Details
           </router-link>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div v-if="!orders || orders.length === 0" class="empty-state text-center py-5">
-      <i class="bi bi-file-earmark-x text-muted icons" style="font-size: 4rem"></i>
+    <section v-if="!orders || orders.length === 0" class="empty-state text-center py-5">
+      <i
+        class="bi bi-file-earmark-x text-muted icons"
+        aria-hidden="true"
+        style="font-size: 4rem"
+      ></i>
 
       <h3 class="mt-3">Keine Rechnungen</h3>
       <p class="text-secondary">Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script>
@@ -246,7 +258,7 @@ export default {
       })
       this.isSort = !this.isSort
     },
-    printDocument(){
+    printDocument() {
       window.print()
     }
   }

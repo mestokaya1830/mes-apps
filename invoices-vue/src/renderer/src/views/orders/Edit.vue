@@ -1,172 +1,177 @@
 <template>
-  <div class="main-container">
-     <header class="main-header">
-      <label>{{ title }}</label>
-       <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+  <main class="main-container">
+    <header class="main-header">
+      <h1>{{ title }}</h1>
+      <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
-    <div class="printable">
-      <h2>{{ title }}</h2>
+    <form @submit.prevent="updateOrder">
+      <section class="printable">
+        <h2>{{ title }}</h2>
 
-      <section class="sections">
-        <!-- Status -->
-        <div class="form-group">
-          <div v-if="order.status === 'accepted' || order.status === 'rejected'">
-            <h4>Status:</h4>
-            <div class="inputs disabled">
-              {{
-                order.status === 'accepted'
-                  ? 'Angenommen'
-                  : order.status === 'rejected'
-                    ? 'Abgelehnt'
-                    : order.status
-              }}
-              <small class="text-muted d-block">Status kann nicht mehr geändert werden.</small>
+        <section class="sections">
+          <!-- Status -->
+          <div class="form-group">
+            <div v-if="order.status === 'accepted' || order.status === 'rejected'">
+              <h4>Status:</h4>
+              <div class="inputs disabled">
+                {{
+                  order.status === 'accepted'
+                    ? 'Angenommen'
+                    : order.status === 'rejected'
+                      ? 'Abgelehnt'
+                      : order.status
+                }}
+                <small class="text-muted d-block">Status kann nicht mehr geändert werden.</small>
+              </div>
             </div>
-          </div>
-          <div v-else>
-            <label class="form-label">Status<span class="stars">*</span></label>
-            <select v-model="order.status" class="inputs" required>
-              <option value="" disabled>Status auswählen</option>
-              <option value="draft" :disabled="order.status !== 'sent' ? true : true">
-                Entwurf
-              </option>
-              <option value="sent" :disabled="order.status !== 'draft'">Gesendet</option>
-              <option value="accepted" :disabled="order.status !== 'sent'">Angenommen</option>
-              <option value="rejected" :disabled="order.status !== 'sent'">Abgelehnt</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Status by -->
-        <div class="form-group">
-          <label class="form-label">Bearbeitet von:<span class="stars">*</span></label>
-          <input
-            v-model="order.status_by"
-            type="text"
-            class="inputs"
-            placeholder="Name der bearbeitenden Person eingeben"
-            required
-          />
-        </div>
-
-        <!-- Status date -->
-        <div class="form-group">
-          <label class="form-label">Bearbeitet am:<span class="stars">*</span></label>
-          <input v-model="order.status_date" type="date" class="inputs date" required />
-        </div>
-
-        <!-- Status comments -->
-        <div class="form-group">
-          <label class="form-label">Kommentare:</label>
-          <textarea
-            v-model="order.status_comments"
-            class="inputs"
-            placeholder="Kommentare oder Notizen hier eingeben"
-          ></textarea>
-        </div>
-
-        <!-- Subject -->
-        <div class="form-group">
-          <label class="form-label">Betreff / Subject:</label>
-          <input v-model="order.subject" type="text" class="inputs" />
-        </div>
-
-        <!-- Lieferdaten + Versand -->
-        <div class="sections">
-          <div class="sections-title">📦 Lieferung & Versand</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Gesendet am</label>
-              <input v-model="order.sent_at" type="date" class="inputs date" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Liefertermin<span class="stars">*</span></label>
-              <input v-model="order.delivery_date" type="date" class="inputs date" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Lieferadresse<span class="stars">*</span></label>
-              <input v-model="order.delivery_address" type="text" class="inputs" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label">PLZ<span class="stars">*</span></label>
-              <input v-model="order.delivery_postal_code" type="text" class="inputs" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Stadt<span class="stars">*</span></label>
-              <input v-model="order.delivery_city" type="text" class="inputs" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Land<span class="stars">*</span></label>
-              <input v-model="order.delivery_country" type="text" class="inputs" required />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Versandart:<span class="stars">*</span></label>
-              <select v-model="order.shipping_method" class="inputs" required>
-                <option value="" disabled>Bitte auswählen</option>
-                <option value="dhl">DHL</option>
-                <option value="hermes">Hermes</option>
-                <option value="ups">UPS</option>
-                <option value="dpd">DPD</option>
-                <option value="gls">GLS</option>
-                <option value="email">E-Mail</option>
-                <option value="pickup">Selbstabholung</option>
+            <div v-else>
+              <label class="form-label">Status<span class="stars">*</span></label>
+              <select v-model="order.status" class="inputs" required>
+                <option value="" disabled>Status auswählen</option>
+                <option value="draft" :disabled="order.status !== 'sent' ? true : true">
+                  Entwurf
+                </option>
+                <option value="sent" :disabled="order.status !== 'draft'">Gesendet</option>
+                <option value="accepted" :disabled="order.status !== 'sent'">Angenommen</option>
+                <option value="rejected" :disabled="order.status !== 'sent'">Abgelehnt</option>
               </select>
             </div>
           </div>
-        </div>
 
-        <!-- Payment details -->
-        <div class="form-group">
-          <label class="form-label">Zahlungsbedingungen (Tage):<span class="stars">*</span></label>
-          <input v-model="order.payment_terms" type="number" class="inputs" required />
-        </div>
-        <div class="form-group">
-          <label class="form-label">Zahlungsart<span class="stars">*</span></label>
-          <select v-model="order.payment_method" class="inputs" required>
-            <option value="" disabled>Bitte auswählen</option>
-            <option>Überweisung</option>
-            <option>Bar</option>
-            <option>PayPal</option>
-            <option>Kreditkarte</option>
-            <option>Lastschrift</option>
-            <option>Scheck</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Zahlungsreferenz:</label>
-          <input v-model="order.payment_reference" type="text" class="inputs" />
-        </div>
+          <!-- Status by -->
+          <div class="form-group">
+            <label class="form-label">Bearbeitet von:<span class="stars">*</span></label>
+            <input
+              v-model="order.status_by"
+              type="text"
+              class="inputs"
+              placeholder="Name der bearbeitenden Person eingeben"
+              required
+            />
+          </div>
 
-        <!-- Notes -->
-        <div class="form-group">
-          <label class="form-label">Kundenhinweise:</label>
-          <textarea v-model="order.customer_notes" class="inputs"></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Interne Hinweise:</label>
-          <textarea v-model="order.internal_notes" class="inputs"></textarea>
-        </div>
+          <!-- Status date -->
+          <div class="form-group">
+            <label class="form-label">Bearbeitet am:<span class="stars">*</span></label>
+            <input v-model="order.status_date" type="date" class="inputs date" required />
+          </div>
+
+          <!-- Status comments -->
+          <div class="form-group">
+            <label class="form-label">Kommentare:</label>
+            <textarea
+              v-model="order.status_comments"
+              class="inputs"
+              placeholder="Kommentare oder Notizen hier eingeben"
+            ></textarea>
+          </div>
+
+          <!-- Subject -->
+          <div class="form-group">
+            <label class="form-label">Betreff / Subject:</label>
+            <input v-model="order.subject" type="text" class="inputs" />
+          </div>
+
+          <!-- Lieferdaten + Versand -->
+          <div class="sections">
+            <div class="sections-title">📦 Lieferung & Versand</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Gesendet am</label>
+                <input v-model="order.sent_at" type="date" class="inputs date" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Liefertermin<span class="stars">*</span></label>
+                <input v-model="order.delivery_date" type="date" class="inputs date" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Lieferadresse<span class="stars">*</span></label>
+                <input v-model="order.delivery_address" type="text" class="inputs" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">PLZ<span class="stars">*</span></label>
+                <input v-model="order.delivery_postal_code" type="text" class="inputs" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Stadt<span class="stars">*</span></label>
+                <input v-model="order.delivery_city" type="text" class="inputs" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Land<span class="stars">*</span></label>
+                <input v-model="order.delivery_country" type="text" class="inputs" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Versandart:<span class="stars">*</span></label>
+                <select v-model="order.shipping_method" class="inputs" required>
+                  <option value="" disabled>Bitte auswählen</option>
+                  <option value="dhl">DHL</option>
+                  <option value="hermes">Hermes</option>
+                  <option value="ups">UPS</option>
+                  <option value="dpd">DPD</option>
+                  <option value="gls">GLS</option>
+                  <option value="email">E-Mail</option>
+                  <option value="pickup">Selbstabholung</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment details -->
+          <div class="form-group">
+            <label class="form-label"
+              >Zahlungsbedingungen (Tage):<span class="stars">*</span></label
+            >
+            <input v-model="order.payment_terms" type="number" class="inputs" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zahlungsart<span class="stars">*</span></label>
+            <select v-model="order.payment_method" class="inputs" required>
+              <option value="" disabled>Bitte auswählen</option>
+              <option>Überweisung</option>
+              <option>Bar</option>
+              <option>PayPal</option>
+              <option>Kreditkarte</option>
+              <option>Lastschrift</option>
+              <option>Scheck</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zahlungsreferenz:</label>
+            <input v-model="order.payment_reference" type="text" class="inputs" />
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label class="form-label">Kundenhinweise:</label>
+            <textarea v-model="order.customer_notes" class="inputs"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Interne Hinweise:</label>
+            <textarea v-model="order.internal_notes" class="inputs"></textarea>
+          </div>
+        </section>
       </section>
-    </div>
 
-    <button
-      :disabled="original_status == 'accepted' || original_status == 'rejected'"
-      class="btn btn-update"
-      @click="updateOrder"
-    >
-      Speichern
-    </button>
+      <button
+        type="submit"
+        :disabled="original_status == 'accepted' || original_status == 'rejected'"
+        class="btn btn-update"
+        @click="updateOrder"
+      >
+        Speichern
+      </button>
+    </form>
 
     <router-link :to="`/orders/details/${$route.params.id}`" class="btn back-btn">
       ← Zurück zu den Bestelldetails
     </router-link>
-  </div>
+  </main>
 </template>
 
 <script>

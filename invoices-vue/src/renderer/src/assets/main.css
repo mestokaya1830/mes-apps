@@ -654,7 +654,6 @@ textarea.error {
 .error-message {
   color: #e53e3e;
   font-size: var(--font-size-xs);
-  margin-top: var(--spacing-xs);
 }
 .user-logo {
   width: 120px;
@@ -679,7 +678,10 @@ textarea.error {
 .login-form {
   width: 100%;
 }
-
+.footer-login{
+  display: flex;
+  justify-content: space-between;
+}
 .sort-btn, .list-print-icon {
   height: 36px;
   padding: 6px var(--spacing-lg);

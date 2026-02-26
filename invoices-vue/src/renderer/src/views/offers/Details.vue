@@ -1,8 +1,8 @@
 <template>
-  <div v-if="offer && auth" class="main-container">
+  <main v-if="offer && auth" class="main-container">
     <header class="main-header-right">
       <router-link to="/offers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <div class="printable">
@@ -10,7 +10,7 @@
       <HeaderSidePreview :title="title" :auth="auth" />
 
       <!-- customers -->
-      <div class="recipient">
+      <section class="recipient">
         <div class="recipient-section">
           <div class="recipient-address">
             <div class="section-title">Empfänger</div>
@@ -25,54 +25,54 @@
             </div>
           </div>
         </div>
-        <div class="invoice-details">
+        <dl class="invoice-details">
           <div class="section-title">Angebotsdetails</div>
 
           <div class="recipient-row">
-            <span class="meta-label">Angebots-Nr.:</span>
-            <span class="meta-value">{{ formatOfferId(offer.id) }}</span>
+            <dt class="meta-label">Angebots-Nr.:</dt>
+            <dd class="meta-value">{{ formatOfferId(offer.id) }}</dd>
           </div>
 
           <div class="recipient-row">
-            <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(offer.date) }}</span>
+            <dt class="meta-label">Datum:</dt>
+            <dd class="meta-value">{{ formatDate(offer.date) }}</dd>
           </div>
 
           <!-- Leistungsdatum hinzugefügt -->
           <div v-if="offer.service_date" class="recipient-row">
-            <span class="meta-label">Leistungsdatum:</span>
-            <span class="meta-value">{{ formatDate(offer.service_date) }}</span>
+            <dt class="meta-label">Leistungsdatum:</dt>
+            <dd class="meta-value">{{ formatDate(offer.service_date) }}</dd>
           </div>
 
           <div class="recipient-row">
-            <span class="meta-label">Kunden-Nr.:</span>
-            <span class="meta-value">{{ formatCustomerId(offer.customer.id) }}</span>
+            <dt class="meta-label">Kunden-Nr.:</dt>
+            <dd class="meta-value">{{ formatCustomerId(offer.customer.id) }}</dd>
           </div>
 
           <div class="recipient-row">
-            <span class="meta-label">Steuer-Nr.:</span>
-            <span class="meta-value">{{ offer.customer.vat_id }}</span>
+            <dt class="meta-label">Steuer-Nr.:</dt>
+            <dd class="meta-value">{{ offer.customer.vat_id }}</dd>
           </div>
 
           <div v-if="offer.valid_until" class="recipient-row">
-            <span class="meta-label">Gültig bis:</span>
-            <span class="meta-value">{{ formatDate(offer.valid_until) }}</span>
+            <dt class="meta-label">Gültig bis:</dt>
+            <dd class="meta-value">{{ formatDate(offer.valid_until) }}</dd>
           </div>
-        </div>
-      </div>
+        </dl>
+      </section>
 
       <!-- Document Title -->
-      <div class="document-title">
+      <section class="document-title">
         <h1>{{ offer.title || 'Angebot' }}</h1>
-      </div>
+      </section>
 
       <!-- Subject / Description -->
-      <div class="form-group">
+      <section class="form-group">
         <label class="form-label">Betreff / Beschreibung</label>
         <div class="intro-text">
           {{ offer.subject }}
         </div>
-      </div>
+      </section>
 
       <!-- Intro Text -->
       <div class="intro-text">
@@ -174,13 +174,13 @@
       </div>
 
       <div>
-        <div class="section-title">Notes</div>
+        <h2 class="section-title">Notes</h2>
         <div class="intro-text">
           {{ offer.notes }}
         </div>
       </div>
       <div>
-        <div class="section-title">closing_text</div>
+        <h2 class="section-title">closing_text</h2>
         <div class="intro-text">
           {{ offer.closing_text }}
         </div>
@@ -190,7 +190,7 @@
       <ContactPersonPreview v-if="auth.contact_person" :contactData="auth.contact_person" />
 
       <!-- leagal validity -->
-      <div v-if="offer.is_legal" class="pdf-footer">
+      <section v-if="offer.is_legal" class="pdf-footer">
         <label style="display: flex; align-items: center; gap: 8px">
           <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
           Rechtsgültige Unterschrift erforderlich
@@ -209,13 +209,13 @@
             <div class="signature-label">Unterschrift</div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
     <!-- Action Buttons -->
     <OfferActions v-if="offer" :tableData="offer" :fileName="actionFileName" s />
 
     <router-link to="/offers" class="back-link"> ← Zurück zur Angebotsliste </router-link>
-  </div>
+  </main>
 </template>
 
 <script>

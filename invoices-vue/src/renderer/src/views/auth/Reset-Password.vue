@@ -1,62 +1,53 @@
 <template>
-  <div class="setup-page">
+  <main class="setup-page">
     <header class="logo-header">
-      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
+      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
     </header>
-
-    <div class="form-card">
+    <form class="form-group" @submit.prevent="reset">
       <div class="form-header">
         <h2 class="setup-title">Passwort zurücksetzen</h2>
         <p>Bitte geben Sie Ihre Daten ein</p>
       </div>
-
-      <form @submit.prevent="reset">
-        <div class="form-group">
-          <label for="token" class="form-label">Token</label>
-          <div>
-            <input id="token" v-model="reset_data.token" type="text" class="inputs" />
-            <div v-if="error.token" class="error">{{ error.token }}</div>
-          </div>
+      <div class="form-group">
+        <label for="token" class="form-label">Token</label>
+        <div>
+          <input id="token" v-model="reset_data.token" type="text" class="inputs" />
+          <div v-if="error.token" class="error" role="alert">{{ error.token }}</div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="inputPassword" class="form-label">Passwort</label>
-          <div>
-            <input
-              id="inputPassword"
-              v-model="reset_data.password"
-              type="password"
-              class="inputs"
-            />
-            <div v-if="error.password" class="error">{{ error.password }}</div>
-          </div>
+      <div class="form-group">
+        <label for="Kenntwort" class="form-label">Passwort</label>
+        <div>
+          <input id="inputPassword" v-model="reset_data.password" type="password" class="inputs" />
+          <div v-if="error.password" class="error" role="alert">{{ error.password }}</div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="confirm_password" class="form-label">Passwort bestätigen</label>
-          <div>
-            <input
-              id="confirm_password"
-              v-model="reset_data.passwordConfirmation"
-              type="password"
-              class="inputs"
-            />
-            <div v-if="error.confirm" class="error">{{ error.confirm }}</div>
-          </div>
+      <div class="form-group">
+        <label for="Passwort bestätigen" class="form-label">Passwort bestätigen</label>
+        <div>
+          <input
+            id="confirm_password"
+            v-model="reset_data.passwordConfirmation"
+            type="password"
+            class="inputs"
+          />
+          <div v-if="error.confirm" class="error" role="alert">{{ error.confirm }}</div>
         </div>
+      </div>
 
-        <div v-if="error.success" class="text text-success mt-3 mb-3">
-          {{ error.success }}
-        </div>
+      <div v-if="error.success" class="text text-success mt-3 mb-3" role="status">
+        {{ error.success }}
+      </div>
 
-        <div v-if="error.credential" class="error">
-          {{ error.credential }}
-        </div>
+      <div v-if="error.credential" class="error" role="alert">
+        {{ error.credential }}
+      </div>
 
-        <button class="btn btn-primary btn-setup right mt-20" type="submit">Zurücksetzen</button>
-      </form>
-    </div>
-  </div>
+      <button class="btn btn-primary btn-setup right mt-20" type="submit">Zurücksetzen</button>
+    </form>
+  </main>
 </template>
 
 <script>

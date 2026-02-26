@@ -1,15 +1,15 @@
 <template>
-  <div v-if="offers" class="main-container">
+  <main v-if="offers" class="main-container">
     <header class="main-header">
-      <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
+      <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers" class="btn btn-primary">
-        <i class="bi bi-plus-circle-fill icons"></i>
+        <i class="bi bi-plus-circle-fill icons" aria-hidden="true"></i>
         <span>Neues Angebot erstellen</span>
       </router-link>
     </header>
 
     <!-- FILTER -->
-    <div class="main-filter">
+    <section class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Status</option>
         <option value="all">Alle</option>
@@ -29,23 +29,27 @@
       />
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar-event calendar-icon"></i>
+        <i class="bi bi-calendar-event calendar-icon" aria-hidden="true"></i>
         <input v-model="date_box_start" type="date" class="inputs date" @input="filterDate" />
       </div>
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar-check calendar-icon"></i>
+        <i class="bi bi-calendar-check calendar-icon" aria-hidden="true"></i>
         <input v-model="date_box_end" type="date" class="inputs date" @input="filterDate" />
       </div>
 
       <div class="sort-btn" @click="sorting('id')">
         <i class="bi bi-arrow-down-up"></i>
       </div>
-      <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
-    </div>
+      <i
+        class="bi bi-printer form-title icons list-print-icon"
+        aria-hidden="true"
+        @click="printDocument"
+      ></i>
+    </section>
 
     <!-- LIST -->
-    <div class="list-grid printable">
+    <section class="list-grid printable">
       <div v-for="item in offers" :key="item.id" class="list-card">
         <div class="card-header">
           <div class="card-header-left">
@@ -56,7 +60,7 @@
               <h3 class="list-id">{{ formatOfferId(item.id) }}</h3>
 
               <span class="list-type-badge">
-                <i class="bi bi-building icons"></i>
+                <i class="bi bi-building icons" aria-hidden="true"></i>
                 {{ item.customer?.company_name }}
               </span>
               <br />
@@ -84,20 +88,24 @@
 
         <div class="card-actions">
           <router-link :to="'/offers/details/' + item.id" class="details-btn btn-details">
-            <i class="bi bi-eye-fill icons"></i>
+            <i class="bi bi-eye-fill icons" aria-hidden="true"></i>
             Details
           </router-link>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- EMPTY -->
-    <div v-if="!offers || offers.length === 0" class="empty-state text-center py-5">
-      <i class="bi bi-file-earmark-x text-muted icons" style="font-size: 4rem"></i>
+    <section v-if="!offers || offers.length === 0" class="empty-state text-center py-5">
+      <i
+        class="bi bi-file-earmark-x text-muted icons"
+        aria-hidden="true"
+        style="font-size: 4rem"
+      ></i>
       <h3 class="mt-3">Keine Angebote</h3>
       <p>Erstellen Sie neue Angebote, um sie hier zu sehen.</p>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script>
@@ -215,7 +223,7 @@ export default {
 
       this.isSort = !this.isSort
     },
-    printDocument(){
+    printDocument() {
       window.print()
     }
   }
