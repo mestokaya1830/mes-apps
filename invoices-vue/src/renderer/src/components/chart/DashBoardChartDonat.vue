@@ -1,7 +1,7 @@
 <template>
-  <div class="canvas-con">
-    <canvas :id="canvasId"></canvas>
-  </div>
+  <main class="canvas-con">
+    <canvas :id="canvasId" role="img" aria-label="Startseite Donat Chart "></canvas>
+  </main>
 </template>
 
 <script>

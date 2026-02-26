@@ -1,7 +1,7 @@
 <template>
-  <div class="pie-container">
-    <canvas ref="pieChart"></canvas>
-  </div>
+  <main class="pie-container">
+    <canvas ref="pieChart" role="img" aria-label="Rechung Pie Chart"></canvas>
+  </main>
 </template>
 
 <script>

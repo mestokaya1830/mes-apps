@@ -1,8 +1,12 @@
 <template>
-  <div>
-    <!-- Tarih Filtreleri -->
+  <main>
     <div class="filter-section">
-      <select v-model="date_range" class="inputs" @change="rangeDateFilter">
+      <select
+        v-model="date_range"
+        class="inputs"
+        aria-label="Zeitraum auswählen"
+        @change="rangeDateFilter"
+      >
         <option value="" disabled>Wähle Daten</option>
         <option value="1">Diesen Monat</option>
         <option value="3">Letzte 3 Monate</option>
@@ -13,7 +17,7 @@
       <div class="sections mt-20">
         <div class="form-row">
           <div class="form-group">
-            <label> Von</label>
+            <label for="start-date"> Von</label>
             <div class="date-wrapper">
               <i class="bi bi-calendar3 calendar-icon"></i>
               <input
@@ -21,12 +25,13 @@
                 v-model="date_box_start"
                 type="date"
                 class="inputs date"
+                aria-label="Startdatum"
                 @change="flexDateFilter"
               />
             </div>
           </div>
           <div class="form-group">
-            <label> Bis</label>
+            <label for="end-date"> Bis</label>
             <div class="date-wrapper">
               <i class="bi bi-calendar3 calendar-icon"></i>
               <input
@@ -34,6 +39,7 @@
                 v-model="date_box_end"
                 type="date"
                 class="inputs date"
+                aria-label="Enddatum"
                 @change="flexDateFilter"
               />
             </div>
@@ -42,35 +48,33 @@
       </div>
     </div>
 
-    <div v-if="is_ready" class="printable">
+    <section v-if="is_ready" class="printable">
       <div class="report-header-2">
-        <h2><i class="bi bi-file-earmark-bar-graph me-2"></i>{{ title }}</h2>
+        <h2><i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i>{{ title }}</h2>
         <p class="report-period">
           <i class="bi bi-clock me-1 icons"></i> Zeitraum: {{ selectedPeriod }}
         </p>
       </div>
 
-      <!-- KDV Kartları -->
       <div class="report-summary-cards">
-        <div
+        <article
           v-for="(vatData, vatRate) in dynamicVatSummary"
           :key="vatRate"
           class="report-summary-card"
+          aria-label="Umsatzsteuer"
         >
           <div class="card-content">
             <h3 class="card-value">{{ vatRate }} % MwSt</h3>
             <label class="card-detail">{{ vatData.count }} Positionen</label>
             <h3 class="card-label">{{ formatCurrency(vatData.gross) }}</h3>
           </div>
-        </div>
+        </article>
       </div>
 
-      <!-- tax chart -->
       <TaxChart :chartData="reports" />
 
-      <!-- Vergi Oranları Tablosu -->
-      <div class="vat-summary mt-4">
-        <h3><i class="bi bi-percent icons"></i>Umsatzsteuer-Zusammenfassung</h3>
+      <section class="vat-summary">
+        <h3><i class="bi bi-percent icons" aria-hidden="true"></i>Umsatzsteuer-Zusammenfassung</h3>
         <table class="report-table">
           <thead>
             <tr>
@@ -111,15 +115,15 @@
             </tr>
           </tfoot>
         </table>
-      </div>
-    </div>
-    <ReportActions reportName="Umsatzsteuer-Bericht" :period="period"/>
-  </div>
+      </section>
+    </section>
+    <ReportActions reportName="Umsatzsteuer-Bericht" :period="period" />
+  </main>
 </template>
 
 <script>
-import ReportActions from '../preview/ReportActions.vue';
-import TaxChart from '../chart/TaxChart.vue';
+import ReportActions from '../preview/ReportActions.vue'
+import TaxChart from '../chart/TaxChart.vue'
 export default {
   name: 'VatReport',
   components: { TaxChart, ReportActions },
@@ -238,7 +242,6 @@ export default {
   font-size: 2.2rem;
   font-weight: bold;
 }
-
 
 .card-body {
   text-align: left;

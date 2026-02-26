@@ -1,6 +1,11 @@
 <template>
-  <div>
-    <select v-model="date_range" class="inputs" @change="rangeDateFilter">
+  <main>
+    <select
+      v-model="date_range"
+      class="inputs"
+      aria-label="Zeitraum auswählen"
+      @change="rangeDateFilter"
+    >
       <option value="" disabled>Wähle Daten</option>
       <option value="1">Diesen Monat</option>
       <option value="3">Letzte 3 Monate</option>
@@ -11,27 +16,29 @@
     <div class="sections mt-20">
       <div class="form-row">
         <div class="form-group">
-          <label>Von</label>
+          <label for="start-date">Von</label>
           <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
+            <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
             <input
               ref="date_box_start"
               v-model="date_box_start"
               type="date"
               class="inputs date"
+              aria-label="Startdatum"
               @change="flexDateFilter"
             />
           </div>
         </div>
         <div class="form-group">
-          <label> Bis</label>
+          <label for="end-date"> Bis</label>
           <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
+            <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
             <input
               ref="date_box_end"
               v-model="date_box_end"
               type="date"
               class="inputs date"
+              aria-label="Enddatum"
               @change="flexDateFilter"
             />
           </div>
@@ -39,28 +46,30 @@
       </div>
     </div>
 
-    <div v-if="is_ready" class="printable">
+    <section v-if="is_ready" class="printable" aria-label="Rechnungsberichten">
       <div class="report-header-2">
-        <div>
-          <h2><i class="bi bi-file-earmark-bar-graph me-2"></i>{{ title }}</h2>
-          <p class="report-period">
-            <i class="bi bi-clock me-1 icons"></i> Zeitraum: {{ selectedPeriod }}
-          </p>
-        </div>
+        <h2><i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i>{{ title }}</h2>
+        <p class="report-period">
+          <i class="bi bi-clock me-1 icons" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
+        </p>
       </div>
 
       <div class="report-summary-cards">
-        <div class="report-summary-card">
-          <div class="card-icon text-primary"><i class="bi bi-bar-chart-fill"></i></div>
+        <article class="report-summary-card">
+          <div class="card-icon text-primary">
+            <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
+          </div>
           <div class="card-content">
             <p class="card-label">Summe Ø</p>
             <h3 class="card-value">{{ formatCurrency(summary.all_total) }}</h3>
             <p class="card-detail">{{ summary.all_count }} Rechnungen (100%)</p>
           </div>
-        </div>
+        </article>
 
-        <div class="report-summary-card">
-          <div class="card-icon text-success"><i class="bi bi-check-circle-fill"></i></div>
+        <article class="report-summary-card">
+          <div class="card-icon text-success">
+            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+          </div>
           <div class="card-content">
             <p class="card-label">Pünktlich Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.paid_total) }}</h3>
@@ -68,10 +77,12 @@
               {{ summary.paid_count }} Rechnungen ({{ setPercentage.paid_percentage }})
             </p>
           </div>
-        </div>
+        </article>
 
-        <div class="report-summary-card">
-          <div class="card-icon text-info"><i class="bi bi-pie-chart-fill"></i></div>
+        <article class="report-summary-card">
+          <div class="card-icon text-info">
+            <i class="bi bi-pie-chart-fill" aria-hidden="true"></i>
+          </div>
           <div class="card-content">
             <p class="card-label">Teilzhaltig Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.partially_paid_total) }}</h3>
@@ -81,10 +92,12 @@
               }})
             </p>
           </div>
-        </div>
+        </article>
 
-        <div class="report-summary-card">
-          <div class="card-icon text-secondary"><i class="bi bi-hourglass-split"></i></div>
+        <article class="report-summary-card">
+          <div class="card-icon text-secondary">
+            <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+          </div>
           <div class="card-content">
             <p class="card-label">Unbezahlt (fällig)</p>
             <h3 class="card-value">{{ formatCurrency(summary.unpaid_total) }}</h3>
@@ -92,10 +105,12 @@
               {{ summary.unpaid_count }} Rechnungen ({{ setPercentage.unpaid_percentage }})
             </p>
           </div>
-        </div>
+        </article>
 
-        <div class="report-summary-card">
-          <div class="card-icon text-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
+        <article class="report-summary-card">
+          <div class="card-icon text-danger">
+            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+          </div>
           <div class="card-content">
             <p class="card-label">Überfällig</p>
             <h3 class="card-value">{{ formatCurrency(summary.overdue_total) }}</h3>
@@ -103,15 +118,15 @@
               {{ summary.overdue_count }} Rechnungen ({{ setPercentage.overdue_percentage }})
             </p>
           </div>
-        </div>
+        </article>
       </div>
 
-      <div class="chart-container">
+      <section class="chart-container">
         <InvoiceChart :chartData="summary" />
         <InvoicePieChart :percentData="setPercentage" />
-      </div>
+      </section>
 
-      <div class="report-table-container">
+      <section class="report-table-container">
         <div class="report-filter-tabs">
           <button
             :class="['report-filter-tab', { active: activeTab === 'all' }]"
@@ -149,16 +164,24 @@
           <thead>
             <tr>
               <th class="sortable" @click="sorting('id')">
-                Rechnungsnr. <i class="bi bi-caret-down-fill ms-1"></i>
+                Rechnungsnr. <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
               </th>
-              <th class="sortable">Datum <i class="bi bi-caret-down-fill ms-1"></i></th>
+              <th class="sortable">
+                Datum <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+              </th>
               <th>Kunde</th>
-              <th class="sortable">Fälligkeitsdatum <i class="bi bi-caret-down-fill ms-1"></i></th>
-              <th class="sortable amount">Netto <i class="bi bi-caret-down-fill ms-1"></i></th>
-              <th class="sortable amount">
-                MwSt-Betrag <i class="bi bi-caret-down-fill ms-1"></i>
+              <th class="sortable">
+                Fälligkeitsdatum <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
               </th>
-              <th class="sortable amount">Brutto <i class="bi bi-caret-down-fill ms-1"></i></th>
+              <th class="sortable amount">
+                Netto <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+              </th>
+              <th class="sortable amount">
+                MwSt-Betrag <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+              </th>
+              <th class="sortable amount">
+                Brutto <i class="bi bi-caret-down-fill" aria-hidden="true"></i>
+              </th>
               <th>Status</th>
               <th>Zahlungsdatum</th>
               <th>Aktionen</th>
@@ -190,20 +213,20 @@
               <td>{{ formatDate(item.paid_at) || '--------' }}</td>
               <td>
                 <button class="btn-report-details">
-                  <i class="bi bi-eye"></i>
+                  <i class="bi bi-eye" aria-hidden="true"></i>
                 </button>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
+      </section>
+    </section>
     <ReportActions reportName="Rechnungsbericht" :period="period" />
-  </div>
+  </main>
 </template>
 
 <script>
-import ReportActions from '../preview/ReportActions.vue';
+import ReportActions from '../preview/ReportActions.vue'
 import InvoiceChart from '../chart/InvoiceChart.vue'
 import InvoicePieChart from '../chart/InvoicePieChart.vue'
 export default {

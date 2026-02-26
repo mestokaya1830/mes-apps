@@ -16,7 +16,7 @@
         <span>Drucken</span>
       </button>
 
-      <router-link :to="`/invoices/edit/${tableData.id}`">
+      <router-link :to="`/offers/edit/${tableData.id}`">
         <button v-if="tableData.id !== 'preview' && tableData.is_active" class="btn btn-cancel">
           <i class="bi bi-pencil-square icons"></i>
           <span>Stornieren</span>

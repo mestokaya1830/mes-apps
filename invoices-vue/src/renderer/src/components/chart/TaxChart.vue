@@ -1,36 +1,55 @@
 <template>
-  <div class="vat-chart-wrapper">
-    <div class="chart-header">
+  <main class="vat-chart-wrapper">
+    <header class="chart-header">
       <h3 class="chart-title"><i class="bi bi-percent me-2"></i>Umsatzsteuer nach Steuersätzen</h3>
-    </div>
+    </header>
 
-    <div class="charts-grid">
+    <section class="charts-grid">
       <!-- Bar Chart -->
       <div class="chart-card chart-main">
-        <canvas ref="barChart"></canvas>
+        <canvas
+          ref="barChart"
+          role="img"
+          aria-label="Balkendiagramm Umsatzsteuer nach Steuersätzen"
+        ></canvas>
       </div>
 
       <!-- Donut Chart -->
       <div class="chart-card chart-side">
-        <canvas ref="donutChart"></canvas>
+        <canvas
+          ref="donutChart"
+          aria-label="Balkendiagramm Umsatzsteuer nach Steuersätzen"
+        ></canvas>
       </div>
-    </div>
+    </section>
 
     <!-- KPI Strip -->
-    <div class="kpi-strip">
-      <div class="kpi-item" v-for="(vatData, vatRate) in vatRatesData" :key="vatRate">
+    <section class="kpi-strip">
+      <div
+        v-for="(vatData, vatRate) in vatRatesData"
+        :key="vatRate"
+        class="kpi-item"
+        role="listitem"
+        :aria-label="`${vatRate} Prozent MwSt: ${vatData.gross} EUR, ${vatData.count} Positionen`"
+      >
+        >
         <span class="kpi-dot" :style="`background:${getVatColor(vatRate)}`"></span>
         <span class="kpi-label">{{ vatRate }}% MwSt.</span>
         <span class="kpi-value">{{ formatEur(vatData.gross) }}</span>
         <span class="kpi-count">{{ vatData.count }} Positionen</span>
       </div>
-      <div class="kpi-item kpi-total">
+      <div
+        class="kpi-item kpi-total"
+        role="listitem"
+        :aria-label="`${vatRate} Prozent MwSt: ${vatData.gross} EUR, ${vatData.count} Positionen`"
+      >
+        >
         <span class="kpi-label">Gesamt MwSt.</span>
         <span class="kpi-value">{{ formatEur(totalVat.gross) }}</span>
         <span class="kpi-count">{{ totalVat.count }} Positionen</span>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
 </template>
 
 <script>

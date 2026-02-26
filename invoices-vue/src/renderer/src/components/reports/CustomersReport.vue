@@ -1,148 +1,142 @@
 <template>
-  <div>
-    <select v-model="date_range" class="inputs" @change="rangeDateFilter">
-      <option value="" disabled>Waehle Daten</option>
-      <option value="1">Diesen Monat</option>
-      <option value="3">Letzte 3 Monate</option>
-      <option value="6">Letzte 6 Monate</option>
-      <option value="12">Letztes Jahr</option>
-    </select>
+  <main>
+    <section aria-label="Datumsbereich auswählen">
+      <select
+        id="date-range"
+        v-model="date_range"
+        class="inputs"
+        aria-label="Zeitraum auswählen"
+        @change="rangeDateFilter"
+      >
+        <option value="" disabled>Waehle Daten</option>
+        <option value="1">Diesen Monat</option>
+        <option value="3">Letzte 3 Monate</option>
+        <option value="6">Letzte 6 Monate</option>
+        <option value="12">Letztes Jahr</option>
+      </select>
 
-    <div class="sections mt-20">
-      <div class="form-row">
-        <div class="form-group">
-          <label for=""> Von</label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input
-              v-model="date_box_start"
-              type="date"
-              class="inputs date"
-              @change="flexDateFilter()"
-            />
+      <div class="sections mt-20">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date-start">Von</label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
+              <input
+                id="date-start"
+                v-model="date_box_start"
+                type="date"
+                class="inputs date"
+                aria-label="Startdatum"
+                @change="flexDateFilter()"
+              />
+            </div>
           </div>
-        </div>
-        <div class="form-group">
-          <label for=""> Bis</label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input
-              v-model="date_box_end"
-              type="date"
-              class="inputs date"
-              @change="flexDateFilter()"
-            />
+          <div class="form-group">
+            <label for="date-end">Bis</label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
+              <input
+                id="date-end"
+                v-model="date_box_end"
+                type="date"
+                class="inputs date"
+                aria-label="Enddatum"
+                @change="flexDateFilter()"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div v-if="reports" class="printable">
+    <section v-if="reports" aria-label="Bericht Zusammenfassung">
       <div class="report-header-2">
-        <div>
-          <h2><i class="bi bi-bar-chart-line-fill me-1 icons"></i>{{ title }}</h2>
-          <p class="report-period">
-            <i class="bi bi-clock-history me-1"></i> Zeitraum: {{ selectedPeriod }}
-          </p>
-        </div>
+        <h2><i class="bi bi-bar-chart-line-fill me-1 icons" aria-hidden="true"></i>{{ title }}</h2>
+        <p class="report-period">
+          <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Zeitraum: {{ selectedPeriod }}
+        </p>
       </div>
 
       <div class="report-summary-cards">
-        <div class="report-summary-card">
-          <div class="card-icon"><i class="bi bi-people-fill"></i></div>
+        <article class="report-summary-card" aria-label="Aktive Kunden">
+          <div class="card-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
           <div class="card-content">
             <p class="card-label">Aktive Kunden</p>
             <h3 class="card-value">{{ reports.length }}</h3>
             <p class="card-detail">Im Zeitraum {{ selectedPeriod }}</p>
           </div>
-        </div>
+        </article>
 
-        <div class="report-summary-card">
-          <div class="card-icon"><i class="bi bi-cash-stack"></i></div>
+        <article class="report-summary-card" aria-label="Ø Gesamtumsatz">
+          <div class="card-icon"><i class="bi bi-cash-stack" aria-hidden="true"></i></div>
           <div class="card-content">
             <p class="card-label">Ø Gesamtumsatz</p>
             <h3 class="card-value">{{ formatCurrency(summary.total_revenue) }}</h3>
             <p class="card-detail">Im Zeitraum</p>
           </div>
-        </div>
+        </article>
 
-        <div v-if="summary.top_customer" class="report-summary-card">
-          <div class="card-icon"><i class="bi bi-trophy-fill text-warning"></i></div>
+        <article v-if="summary.top_customer" class="report-summary-card" aria-label="Top Kunde">
+          <div class="card-icon">
+            <i class="bi bi-trophy-fill text-warning" aria-hidden="true"></i>
+          </div>
           <div class="card-content">
             <p class="card-label">Top Kunde</p>
-            <h3 class="card-value">
-              {{ formatCurrency(summary.top_customer.invoice_total) }}
-            </h3>
-            <h3 class="card-detail">{{ summary.top_customer.company_name }}</h3>
+            <h3 class="card-value">{{ formatCurrency(summary.top_customer.invoice_total) }}</h3>
+            <p class="card-detail">{{ summary.top_customer.company_name }}</p>
             <p class="card-detail">{{ summary.top_customer.full_name }}</p>
             <p class="card-detail">ID: {{ summary.top_customer.id }}</p>
           </div>
-        </div>
+        </article>
 
-        <div class="report-summary-card">
-          <div class="card-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <article class="report-summary-card" aria-label="Umsatz pro Kunde">
+          <div class="card-icon"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i></div>
           <div class="card-content">
             <p class="card-label">Umsatz pro Kunde</p>
             <h3 class="card-value">{{ formatCurrency(summary.total_avarage) }}</h3>
-            <p class="card-detail">Durchschchnitt</p>
+            <p class="card-detail">Durchschnitt</p>
           </div>
-        </div>
+        </article>
       </div>
+    </section>
 
-      <div class="sections">
-        <h3><i class="bi bi-award me-1 icons"></i>Kunden</h3>
-        <div v-for="(item, index) in reports" :key="item.id" class="top-customer-list">
-          <div class="top-customer-item">
-            <div class="customer-rank gold">{{ index + 1 }}</div>
-            <div class="customer-info">
-              <div class="customer-name">{{ item.company_name }}</div>
-              <div class="customer-detail">{{ item.full_name }}</div>
-              <div class="customer-bar">
-                <div class="customer-bar-fill" :style="`width: ${item.percentage}%`"></div>
-              </div>
-              <small> {{ item.percentage }} %</small>
-            </div>
-            <div class="customer-revenue">
-              <div class="revenue-amount">{{ formatCurrency(item.invoice_total) }}</div>
-              <div class="revenue-count">{{ item.invoice_count }} Rechnungen</div>
-              <small> {{ item.percentage }} %</small>
-            </div>
-          </div>
-        </div>
-      </div>
+    <section class="table-section" aria-label="Detaillierte Kundenübersicht">
+      <h3>
+        <i class="bi bi-list-check me-1 icons" aria-hidden="true"></i>Detaillierte Kundenübersicht
+      </h3>
+      <table class="report-table">
+        <caption>
+          Kundenübersicht
+        </caption>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Firma</th>
+            <th>Name</th>
+            <th>Stadt</th>
+            <th>Rechnungen</th>
+            <th>Gesamtumsatz</th>
+            <th>Anteil %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in reports" :key="item.id">
+            <td>{{ index + 1 }}</td>
+            <td>{{ item.id }}</td>
+            <td>{{ item.company_name || '-' }}</td>
+            <td>{{ item.full_name || '-' }}</td>
+            <td>{{ item.city || '-' }}</td>
+            <td class="text-center">{{ item.invoice_count }}</td>
+            <td class="text-right">{{ formatCurrency(item.invoice_total) }}</td>
+            <td class="text-center">{{ item.percentage }}%</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-      <div class="table-section">
-        <h3><i class="bi bi-list-check me-1 icons"></i>Detaillierte Kundenübersicht</h3>
-        <table class="report-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>ID</th>
-              <th>Firma</th>
-              <th>Name</th>
-              <th>Stadt</th>
-              <th>Rechnungen</th>
-              <th>Gesamtumsatz</th>
-              <th>Anteil %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in reports" :key="item.id">
-              <td>{{ index + 1 }}</td>
-              <td>{{ item.id }}</td>
-              <td>{{ item.company_name || '-' }}</td>
-              <td>{{ item.full_name || '-' }}</td>
-              <td>{{ item.city || '-' }}</td>
-              <td class="text-center">{{ item.invoice_count }}</td>
-              <td class="text-right">{{ formatCurrency(item.invoice_total) }}</td>
-              <td class="text-center">{{ item.percentage }}%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
     <ReportActions reportName="Kundenberichte" :period="period" />
-  </div>
+  </main>
 </template>
 
 <script>
