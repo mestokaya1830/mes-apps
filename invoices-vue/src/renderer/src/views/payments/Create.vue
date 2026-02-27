@@ -1,59 +1,57 @@
 <template>
-  <div v-if="payment" class="main-container">
+  <main v-if="payment" class="main-container">
     <header class="main-header">
-      <label>{{ title }}</label>
+      <h1>{{ title }}</h1>
       <router-link to="/invoices" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
-    <div>
+    <form @submit.prevent="submitStore">
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-file-text icons"></i>Ausgewählte Rechnung</div>
-        <div class="customer-details" style="margin-top: 16px">
+        <h2 class="sections-title">
+          <i class="bi bi-file-text icons" aria-hidden="true"></i>Ausgewählte Rechnung
+        </h2>
+        <dl class="customer-details" style="margin-top: 16px">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Rechnung-Nr. <span class="star">*</span></label>
-              <label class="inputs">{{ formatInvoiceId(payment.invoice.id) }}</label>
+              <dt class="form-label">Rechnung-Nr. <span class="star">*</span></dt>
+              <dd class="inputs">{{ formatInvoiceId(payment.invoice.id) }}</dd>
             </div>
             <div class="form-group">
-              <label class="form-label">Kunden-Nr. <span class="star">*</span></label>
-              <label class="inputs">{{ formatCustomerId(payment.invoice.customer_id) }}</label>
+              <dt class="form-label">Kunden-Nr. <span class="star">*</span></dt>
+              <dd class="inputs">{{ formatCustomerId(payment.invoice.customer_id) }}</dd>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Rechnungsdatum <span class="star">*</span></label>
-              <label class="inputs">{{ formatDate(payment.invoice.date) }}</label>
+              <dt class="form-label">Rechnungsdatum <span class="star">*</span></dt>
+              <dd class="inputs">{{ formatDate(payment.invoice.date) }}</dd>
             </div>
             <div class="form-group">
-              <label class="form-label">Fälligkeitsdatum <span class="star">*</span></label>
-              <label class="inputs">{{ formatDate(payment.invoice.due_date) }}</label>
+              <dt class="form-label">Fälligkeitsdatum <span class="star">*</span></dt>
+              <dd class="inputs">{{ formatDate(payment.invoice.due_date) }}</dd>
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">
-              <div>
-                Gesamtsumme:
-                {{ formatCurrency(payment.invoice.gross_total, payment.invoice.currency) }}
-              </div>
-              <div>
-                Bereits gezahlt:
-                {{ formatCurrency(payment.payment_total, payment.invoice.currency) }}
-              </div>
-              <div>
-                Offener Betrag:
-                {{ formatCurrency(outstanding, payment.invoice.currency) }}
-              </div>
-            </label>
-          </div>
-        </div>
+          <dl class="form-group">
+            <dt class="form-label">Gesamtsumme:</dt>
+            <dd>
+              {{ formatCurrency(payment.invoice.gross_total, payment.invoice.currency) }}
+            </dd>
+            <dt>Bereits gezahlt:</dt>
+            <dd>{{ formatCurrency(payment.payment_total, payment.invoice.currency) }}</dd>
+            <dt>Offener Betrag:</dt>
+            <dd>{{ formatCurrency(outstanding, payment.invoice.currency) }}</dd>
+          </dl>
+        </dl>
       </section>
 
       <section class="sections iban-section">
-        <div class="sections-title"><i class="bi bi-bank2 icons"></i>Gegenpartei Informationen</div>
+        <h2 class="sections-title">
+          <i class="bi bi-bank2 icons" aria-hidden="true"></i>Gegenpartei Informationen
+        </h2>
 
         <IbanComponent
           ref="ibanSection"
@@ -68,9 +66,9 @@
       </section>
 
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-coin icons"></i>Währung</div>
+        <h2 class="sections-title"><i class="bi bi-coin icons" aria-hidden="true"></i>Währung</h2>
         <div class="form-group">
-          <label class="form-label">Währung <span class="star">*</span></label>
+          <label for="Währung" class="form-label">Währung <span class="star">*</span></label>
           <select v-model="payment.invoice.currency" class="inputs">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
@@ -87,12 +85,14 @@
       </section>
 
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-cash-stack icons"></i>Zahlungsdetails</div>
+        <h2 class="sections-title">
+          <i class="bi bi-cash-stack icons" aria-hidden="true"></i>Zahlungsdetails
+        </h2>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Zahlungsdatum <span class="star">*</span></label>
+            <label for="Zahlungsdatum" class="form-label">Zahlungsdatum <span class="star">*</span></label>
             <div class="date-wrapper">
-              <i class="bi bi-calendar3 calendar-icon"></i>
+              <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
               <input
                 ref="date"
                 v-model="payment.date"
@@ -101,11 +101,11 @@
                 @change="checkEarlyPayment"
               />
             </div>
-            <small v-if="error.date" class="error">{{ error.date }}</small>
+            <small v-if="error.date" class="error" role="alert">{{ error.date }}</small>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Betrag (€) <span class="star">*</span></label>
+            <label for="Betrag" class="form-label">Betrag (€) <span class="star">*</span></label>
             <input
               ref="payment_amount"
               v-model="payment.payment_amount"
@@ -115,20 +115,20 @@
               :disabled="isPaymentAmountDisabled"
               @input="onAmountInput"
             />
-            <small v-if="error.payment_amount" class="error">{{ error.payment_amount }}</small>
+            <small v-if="error.payment_amount" class="error" role="alert">{{ error.payment_amount }}</small>
             <small v-if="paymentAmountError" class="form-warning"
               >Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small
             >
             <div class="payment-row">
               <div class="form-group">
-                <small class="form-label">Rabatt</small>
+                <label for="Rabatt" class="form-label">Rabatt</label>
                 <small v-if="is_early_payment_selected">{{
                   payment.invoice.early_payment_discount
                 }}</small>
                 <small v-else>0</small>
               </div>
               <div class="form-group">
-                <small class="form-label">Offener Betrag</small>
+                <label for="Offener Betrag" class="form-label">Offener Betrag</label>
                 <small>{{ formatCurrency(setOutstanding, payment.invoice.currency) }}</small>
               </div>
             </div>
@@ -137,7 +137,7 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Zahlungsmethode <span class="star">*</span></label>
+            <label for="Zahlungsmethode" class="form-label">Zahlungsmethode <span class="star">*</span></label>
             <select v-model="payment.payment_method" class="inputs">
               <option>Überweisung</option>
               <option>Bar</option>
@@ -149,7 +149,7 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Zahlungsreferenz</label>
+            <label for="Zahlungsreferenz" class="form-label">Zahlungsreferenz</label>
             <input
               v-model="payment.payment_reference"
               type="text"
@@ -162,39 +162,40 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Beleg / Zahlungsnachweis (optional)</label>
+            <label for="Beleg / Zahlungsnachweis (optional)" class="form-label">Beleg / Zahlungsnachweis (optional)</label>
             <input type="file" accept=".pdf,image/*" @change="setImage" />
           </div>
 
           <div class="form-group">
-            <label class="form-label">Ausgewählte Datei</label>
+            <label for="Ausgewählte Datei" class="form-label">Ausgewählte Datei</label>
             <img v-if="selectedImage" :src="selectedImage" alt="" class="selected-image" />
             <div v-else>{{ payment.file_name }}</div>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Notizen (optional)</label>
+          <label for="Notizen (optional)" class="form-label">Notizen (optional)</label>
           <textarea v-model="payment.notes" class="inputs" rows="3"></textarea>
         </div>
       </section>
 
       <!-- GoBD Compliance Hinweis -->
-       <section class="sections">
-         <div class="compliance-notice">
-           <i class="bi bi-info-circle-fill icons"></i> <strong>GoBD-Hinweis:</strong> Alle mit *
-           markierten Felder sind für die ordnungsgemäße Buchführung nach deutschen Steuergesetzen
-           erforderlich. Die Daten werden revisionssicher gespeichert.
-         </div>
-       </section>
-
-      <section class="sections btn-container">
-        <button class="btn btn-preview" @click="submitStore">
-          <i class="bi bi-eye icons"></i>Vorschau anzeigen
-        </button>
+      <section class="sections">
+        <div class="compliance-notice">
+          <i class="bi bi-info-circle-fill icons" aria-hidden="true"></i>
+          <strong>GoBD-Hinweis:</strong> Alle mit * markierten Felder sind für die ordnungsgemäße
+          Buchführung nach deutschen Steuergesetzen erforderlich. Die Daten werden revisionssicher
+          gespeichert.
+        </div>
       </section>
-    </div>
-  </div>
+
+      <footer class="sections btn-container">
+        <button type="submit" class="btn btn-preview" @click="submitStore">
+          <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
+        </button>
+      </footer>
+    </form>
+  </main>
 </template>
 
 <script>
@@ -402,7 +403,7 @@ export default {
         })
       })
     },
-    
+
     async submitStore() {
       // if (!this.formValid) {
       //   this.scrollToIban()

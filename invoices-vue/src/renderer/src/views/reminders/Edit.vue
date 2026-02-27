@@ -1,70 +1,69 @@
 <template>
-  <div v-if="$route.params.id" class="main-container">
+  <main v-if="$route.params.id" class="main-container">
     <header class="main-header">
-      <label class="main-title">{{ title }}</label>
-       <router-link :to="`/reminders/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+      <h1 class="main-title">{{ title }}</h1>
+      <router-link :to="`/reminders/details/${$route.params.id}`" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
-    <div class="printable">
-      <!-- Header -->
-      <h2>{{ title }}</h2>
+    <form @submit.prevent="updateReminder">
+      <div class="printable">
+        <h2>{{ title }}</h2>
+        <div class="sections">
+          <div class="custom-row">
+            <div class="form-group">
+              <label for="">Rechnung-Nr.:</label>
+              <label class="inputs">{{ formatReminderId($route.params.id) }}</label>
+            </div>
 
-      <div class="sections">
-        <div class="custom-row">
-          <div class="form-group">
-            <label for="">Rechnung-Nr.:</label>
-            <label class="inputs">{{ formatReminderId($route.params.id) }}</label>
-          </div>
+            <div class="form-group">
+              <label for="">Storniert am<span class="stars">*</span></label>
+              <div class="date-wrapper">
+                <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
+                <input
+                  v-model="cancelled_at"
+                  type="date"
+                  class="inputs date"
+                  placeholder="Datum der Stornierung auswählen"
+                  required
+                />
+              </div>
+              <div v-if="error.cancelled_at" class="error" role="alert">{{ error.cancelled_at }}</div>
+            </div>
 
-          <div class="form-group">
-            <label for="">Storniert am<span class="stars">*</span></label>
-            <div class="date-wrapper">
-              <i class="bi bi-calendar calendar-icon"></i>
+            <div class="form-group">
+              <label for="">Storniert von<span class="stars">*</span></label>
               <input
-                v-model="cancelled_at"
-                type="date"
-                class="inputs date"
-                placeholder="Datum der Stornierung auswählen"
+                v-model="cancelled_by"
+                type="text"
+                class="inputs"
+                placeholder="Name der Person, die storniert"
                 required
               />
+              <div v-if="error.cancelled_by" class="error" role="alert">{{ error.cancelled_by }}</div>
             </div>
-            <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
-          </div>
 
-          <div class="form-group">
-            <label for="">Storniert von<span class="stars">*</span></label>
-            <input
-              v-model="cancelled_by"
-              type="text"
-              class="inputs"
-              placeholder="Name der Person, die storniert"
-              required
-            />
-            <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
-          </div>
-
-          <div class="form-group">
-            <label for="">Stornierungsgrund<span class="stars">*</span></label>
-            <textarea
-              v-model="cancellation_reason"
-              class="inputs"
-              placeholder="Grund der Stornierung hier eingeben"
-              required
-            ></textarea>
-            <div v-if="error.cancellation_reason" class="error">
-              {{ error.cancellation_reason }}
+            <div class="form-group">
+              <label for="">Stornierungsgrund<span class="stars">*</span></label>
+              <textarea
+                v-model="cancellation_reason"
+                class="inputs"
+                placeholder="Grund der Stornierung hier eingeben"
+                required
+              ></textarea>
+              <div v-if="error.cancellation_reason" class="error" role="alert">
+                {{ error.cancellation_reason }}
+              </div>
             </div>
           </div>
-
-          <button @click="updateReminder" class="btn btn-cancel">Stornieren</button>
         </div>
       </div>
-    </div>
+      <button type="submit" @click="updateReminder" class="btn btn-cancel">Stornieren</button>
+    </form>
     <router-link :to="`/invoices/details/${$route.params.id}`" class="btn back-btn">
       ← Zurück zur Rechnungsdetails
     </router-link>
-  </div>
+  </main>
 </template>
 
 <script>

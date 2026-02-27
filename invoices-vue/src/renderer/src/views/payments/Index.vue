@@ -1,14 +1,14 @@
 <template>
-  <div v-if="payments" class="main-container">
+  <main v-if="payments" class="main-container">
     <header class="main-header">
-      <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
+      <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/payments/create" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons"></i>
+        <i class="bi bi-plus-circle icons" aria-hidden="treu"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
     </header>
 
-    <div class="main-filter">
+    <section class="main-filter">
       <select v-model="categories_filter" class="inputs select" @change="filterCategories">
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
@@ -55,8 +55,9 @@
 
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
       <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
-    </div>
-    <div class="list-grid printable">
+    </section>
+
+    <section class="list-grid printable">
       <div v-for="item in payments" :key="item.id" class="list-card">
         <div class="card-header">
           <div class="card-header-left">
@@ -100,19 +101,19 @@
           </router-link>
 
           <router-link :to="'/payments/details/' + item.id" class="btn btn-details">
-            <i class="bi bi-eye icons"></i>
+            <i class="bi bi-eye icons" aria-hidden="treu"></i>
             Details
           </router-link>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div v-if="payments.length === 0" class="empty-state">
-      <i class="bi bi-people icons"></i>
+    <footer v-if="payments.length === 0" class="empty-state">
+      <i class="bi bi-people icons" aria-hidden="treu"></i>
       <h3>Keine Kunden</h3>
       <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
-    </div>
-  </div>
+    </footer>
+  </main>
 </template>
 
 

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="reminders" class="main-container">
+  <main v-if="reminders" class="main-container">
     <header class="main-header">
-      <label>{{ title }} {{ total_count }} / {{ current_count }}</label>
+      <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/reminders/create" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons"></i>
+        <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
         <span>Neue Kunden erstellen</span>
       </router-link>
     </header>
@@ -32,7 +32,7 @@
       />
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
         <input
           ref="date_box_start"
           v-model="date_box_start"
@@ -43,7 +43,7 @@
       </div>
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
         <input
           ref="date_box_end"
           v-model="date_box_end"
@@ -54,7 +54,11 @@
       </div>
 
       <div class="sort-btn" @click="sorting('id')">&#8645;</div>
-      <i class="bi bi-printer form-title icons list-print-icon" @click="printDocument"></i>
+      <i
+        class="bi bi-printer form-title icons list-print-icon"
+        aria-hidden="true"
+        @click="printDocument"
+      ></i>
     </div>
     <div class="list-grid printable">
       <div v-for="item in reminders" :key="item.id" class="list-card">
@@ -69,7 +73,7 @@
               <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
             </div>
           </div>
-          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
+          <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'" role="status">
             {{ item.is_active ? 'Active' : 'Inactive' }}
           </div>
         </div>
@@ -79,7 +83,7 @@
             :to="{ path: '/invoices/create', query: { id: item.id } }"
             class="btn btn-rechnung"
           >
-            <i class="bi bi-receipt"></i>
+            <i class="bi bi-receipt" aria-hidden="true"></i>
             Rechnung erstellen
           </router-link>
 
@@ -87,7 +91,7 @@
             :to="{ path: '/offers/create', query: { id: item.id } }"
             class="btn btn-angebot"
           >
-            <i class="bi bi-file-earmark-tex icons"></i>
+            <i class="bi bi-file-earmark-tex icons" aria-hidden="true"></i>
             Neues Angebot erstellen
           </router-link>
 
@@ -95,12 +99,12 @@
             :to="{ path: '/orders/create', query: { id: item.id } }"
             class="btn btn-auftrag"
           >
-            <i class="bi bi-box-seam"></i>
+            <i class="bi bi-box-seam" aria-hidden="true"></i>
             Neues Auftrag erstellen
           </router-link>
 
           <router-link :to="'/reminders/details/' + item.id" class="btn btn-details">
-            <i class="bi bi-eye icons"></i>
+            <i class="bi bi-eye icons" aria-hidden="true"></i>
             Details
           </router-link>
         </div>
@@ -108,16 +112,15 @@
     </div>
 
     <div v-if="reminders.length === 0" class="empty-state">
-      <i class="bi bi-people icons"></i>
+      <i class="bi bi-people icons" aria-hidden="true"></i>
       <h3>Keine Kunden</h3>
       <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
     </div>
-  </div>
+  </main>
 </template>
 
-
 <script>
-import store from '../../store/store';
+import store from '../../store/store'
 export default {
   name: 'Reminders',
   inject: ['formatCustomerId'],
@@ -186,7 +189,7 @@ export default {
       })
       this.isSort = !this.isSort
     },
-    printDocument(){
+    printDocument() {
       window.print()
     }
   }
@@ -201,7 +204,8 @@ export default {
 }
 
 .action-btn,
-.details-btn, .preview-btn {
+.details-btn,
+.preview-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;

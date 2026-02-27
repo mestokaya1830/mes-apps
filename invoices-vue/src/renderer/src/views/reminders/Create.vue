@@ -1,115 +1,124 @@
 <template>
-  <div v-if="reminder" class="main-container">
+  <main v-if="reminder" class="main-container">
     <header class="main-header">
-      <div class="main-title">{{ title }}</div>
+      <h1 class="main-title">{{ title }}</h1>
       <router-link :to="`/invoices/details/${reminder.invoice_id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
-    <section class="sections">
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Versandtermin <span class="stars">*</span></label>
-          <div class="date-wrapper">
-            <i class="bi bi-calendar3 calendar-icon"></i>
-            <input v-model="reminder.date" type="datetime-local" class="inputs date" />
+    <form @submit.prevent="submitStore">
+      <section class="sections">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Versandtermin <span class="stars">*</span></label>
+            <div class="date-wrapper">
+              <i class="bi bi-calendar3 calendar-icon"></i>
+              <input v-model="reminder.date" type="datetime-local" class="inputs date" />
+            </div>
+            <small v-if="error.date" class="error" role="alert">{{ error.date }}</small>
           </div>
-          <small v-if="error.date" class="error">{{ error.date }}</small>
+          <div class="form-group">
+            <label class="form-label">Versandart <span class="stars">*</span></label>
+            <select v-model="reminder.sent_method" class="inputs">
+              <option value="" disabled>Wählen</option>
+              <option value="email">Email</option>
+              <option value="post">Post</option>
+              <option value="einschreiben">Einschreiben</option>
+              <option value="portal">Portal</option>
+            </select>
+            <small v-if="error.sent_method" class="error" role="alert">{{
+              error.sent_method
+            }}</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Zahlungsnachweis</label>
+            <input v-model="reminder.proof_type" type="text" class="inputs" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">💼 Betreff (Level) <span class="stars">*</span></label>
+            <select v-model="reminder.level" class="inputs" @change="updateTexts">
+              <option value="" disabled>Wähle Betreff</option>
+              <option value="1">Zahlungserinnerung / 1. Mahnung</option>
+              <option value="2">2. Mahnung</option>
+              <option value="3">Letzte Mahnung vor gerichtlichem Mahnverfahren</option>
+            </select>
+            <small v-if="error.level" class="error" role="alert">{{ error.level }}</small>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Mahngebühr</label>
+            <input v-model="reminder.reminder_fee" type="number" class="inputs" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Verzugszinsen</label>
+            <input v-model="reminder.late_interest" type="number" class="inputs" />
+          </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Versandart <span class="stars">*</span></label>
-          <select v-model="reminder.sent_method" class="inputs">
-            <option value="" disabled>Wählen</option>
-            <option value="email">Email</option>
-            <option value="post">Post</option>
-            <option value="einschreiben">Einschreiben</option>
-            <option value="portal">Portal</option>
+          <label class="form-label">Zahlungsfrist auswählen <span class="stars">*</span></label>
+          <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
+            <option value="" disabled selected>Bitte auswählen</option>
+            <option value="innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
+            <option value="innerhalb von 5 Tagen">Innerhalb von 5 Tagen</option>
+            <option value="innerhalb von 14 Tagen">Innerhalb von 14 Tagen</option>
+            <option value="innerhalb von 30 Tagen">Innerhalb von 30 Tagen</option>
+            <option value="sofort / innerhalb von 3 Tagen">
+              Sofort fällig / Innerhalb von 3 Tagen
+            </option>
+            <option value="sofort zahlbar">Sofort zahlbar</option>
+            <option value="nach Vereinbarung">Nach Vereinbarung</option>
           </select>
-          <small v-if="error.sent_method" class="error">{{ error.sent_method }}</small>
+          <small v-if="error.payment_deadline" class="error" role="alert">{{
+            error.payment_deadline
+          }}</small>
         </div>
-      </div>
+      </section>
 
-      <div class="form-row">
+      <section v-if="reminder.level" class="sections">
         <div class="form-group">
-          <label class="form-label">Zahlungsnachweis</label>
-          <input v-model="reminder.proof_type" type="text" class="inputs" />
+          <label class="form-label">Intro Text <span class="stars">*</span></label>
+          <textarea v-model="reminder.intro_text" class="inputs"></textarea>
         </div>
+
+        <div v-if="reminder.level != '1'" class="form-group">
+          <label class="form-label">Warnung <span class="stars">*</span></label>
+          <textarea v-model="reminder.warning_text" class="inputs"></textarea>
+        </div>
+
         <div class="form-group">
-          <label class="form-label">💼 Betreff (Level) <span class="stars">*</span></label>
-          <select v-model="reminder.level" class="inputs" @change="updateTexts">
-            <option value="" disabled>Wähle Betreff</option>
-            <option value="1">Zahlungserinnerung / 1. Mahnung</option>
-            <option value="2">2. Mahnung</option>
-            <option value="3">Letzte Mahnung vor gerichtlichem Mahnverfahren</option>
-          </select>
-          <small v-if="error.level" class="error">{{ error.level }}</small>
+          <label class="form-label">Endtext <span class="stars">*</span></label>
+          <textarea v-model="reminder.closing_text" class="inputs"></textarea>
         </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Mahngebühr</label>
-          <input v-model="reminder.reminder_fee" type="number" class="inputs" />
+      </section>
+
+      <section class="sections">
+        <div class="compliance-notice legal">
+          <i class="bi bi-shield-check icons" aria-hidden="true"></i
+          ><strong>Rechtliche Hinweise (Deutschland):</strong>
+          <ul class="reminder-container">
+            <li>Mahngebühren müssen angemessen sein (üblicherweise 5-10€ für 1. Mahnung)</li>
+            <li>Verzugszinsen: Basiszinssatz + 5% (B2C) oder + 9% (B2B) gem. §§ 288, 247 BGB</li>
+            <li>Bei Einschreiben mit Rückschein wird Zustellung rechtssicher dokumentiert</li>
+            <li>
+              Verjährungsfrist beachten: 3 Jahre ab Ende des Jahres der Fälligkeit (§ 195 BGB)
+            </li>
+            <li>Mahnung muss bestimmt sein und Zahlungsaufforderung enthalten</li>
+          </ul>
         </div>
-        <div class="form-group">
-          <label class="form-label">Verzugszinsen</label>
-          <input v-model="reminder.late_interest" type="number" class="inputs" />
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Zahlungsfrist auswählen <span class="stars">*</span></label>
-        <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
-          <option value="" disabled selected>Bitte auswählen</option>
-          <option value="innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
-          <option value="innerhalb von 5 Tagen">Innerhalb von 5 Tagen</option>
-          <option value="innerhalb von 14 Tagen">Innerhalb von 14 Tagen</option>
-          <option value="innerhalb von 30 Tagen">Innerhalb von 30 Tagen</option>
-          <option value="sofort / innerhalb von 3 Tagen">
-            Sofort fällig / Innerhalb von 3 Tagen
-          </option>
-          <option value="sofort zahlbar">Sofort zahlbar</option>
-          <option value="nach Vereinbarung">Nach Vereinbarung</option>
-        </select>
-        <small v-if="error.payment_deadline" class="error">{{ error.payment_deadline }}</small>
-      </div>
-    </section>
+      </section>
 
-    <section v-if="reminder.level" class="sections">
-      <div class="form-group">
-        <label class="form-label">Intro Text <span class="stars">*</span></label>
-        <textarea v-model="reminder.intro_text" class="inputs"></textarea>
-      </div>
-
-      <div v-if="reminder.level != '1'" class="form-group">
-        <label class="form-label">Warnung <span class="stars">*</span></label>
-        <textarea v-model="reminder.warning_text" class="inputs"></textarea>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Endtext <span class="stars">*</span></label>
-        <textarea v-model="reminder.closing_text" class="inputs"></textarea>
-      </div>
-    </section>
-
-    <section class="sections">
-      <div class="compliance-notice legal">
-        <i class="bi bi-shield-check icons"></i><strong>Rechtliche Hinweise (Deutschland):</strong>
-        <ul class="reminder-container">
-          <li>Mahngebühren müssen angemessen sein (üblicherweise 5-10€ für 1. Mahnung)</li>
-          <li>Verzugszinsen: Basiszinssatz + 5% (B2C) oder + 9% (B2B) gem. §§ 288, 247 BGB</li>
-          <li>Bei Einschreiben mit Rückschein wird Zustellung rechtssicher dokumentiert</li>
-          <li>Verjährungsfrist beachten: 3 Jahre ab Ende des Jahres der Fälligkeit (§ 195 BGB)</li>
-          <li>Mahnung muss bestimmt sein und Zahlungsaufforderung enthalten</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="sections btn-container">
-      <button class="btn btn-preview" @click="submitStore">
-        <i class="bi bi-eye icons"></i>Vorschau anzeigen
-      </button>
-    </section>
-  </div>
+      <footer class="sections btn-container">
+        <button class="btn btn-preview" @click="submitStore">
+          <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
+        </button>
+      </footer>
+    </form>
+  </main>
 </template>
 
 <script>

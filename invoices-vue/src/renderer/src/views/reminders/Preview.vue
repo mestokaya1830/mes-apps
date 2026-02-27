@@ -1,160 +1,164 @@
 <template>
-  <div v-if="reminderPreview && auth" class="main-container">
-    <div class="printable">
-      <!-- Header -->
-      <HeaderSidePreview :title="title" :auth="auth" />
-
-      <!-- customers -->
-      <div class="recipient">
-        <div class="recipient-address">
-          <div class="recipient-title">Empfänger</div>
-          <div class="company-name-subtitle">
-            {{ reminderPreview.customer.company_name }}
+  <main v-if="reminderPreview && auth" class="main-container">
+    <form @submit.prevent="saveReminder">
+      <div class="printable">
+        <HeaderSidePreview :title="title" :auth="auth" />
+        <div class="recipient">
+          <div class="recipient-address">
+            <div class="recipient-title">Empfänger</div>
+            <div class="company-name-subtitle">
+              {{ reminderPreview.customer.company_name }}
+            </div>
+            <div class="meta-label">{{ reminderPreview.customer.address }}</div>
+            <div class="meta-label">
+              {{ reminderPreview.customer.postal_code }}
+              {{ reminderPreview.customer.city }}<br />
+              {{ reminderPreview.customer.country }}
+            </div>
           </div>
-          <div class="meta-label">{{ reminderPreview.customer.address }}</div>
-          <div class="meta-label">
-            {{ reminderPreview.customer.postal_code }}
-            {{ reminderPreview.customer.city }}<br />
-            {{ reminderPreview.customer.country }}
+          <!-- recipient details -->
+          <dl class="recipient-details">
+            <div class="recipient-title">Rechnungsdetails</div>
+
+            <div class="meta-row">
+              <dt class="meta-label">Mahnung-Nr.:</dt>
+              <defined class="meta-value">{{ formatReminderId(reminderPreview.id) }}</defined>
+            </div>
+            <div class="meta-row">
+              <dt class="meta-label">Rechnung-Nr.:</dt>
+              <dd class="meta-value">{{ formatInvoiceId(reminderPreview.invoice_id) }}</dd>
+            </div>
+
+            <div class="meta-row">
+              <dt class="meta-label">Datum:</dt>
+              <dd class="meta-value">{{ formatDate(reminderPreview.date) }}</dd>
+            </div>
+
+            <div class="meta-row">
+              <dt class="meta-label">Kunden-Nr.:</dt>
+              <dd class="meta-value">{{ formatCustomerId(reminderPreview.customer.id) }}</dd>
+            </div>
+
+            <div class="meta-row">
+              <dt class="meta-label">USt-IdNr.:</dt>
+              <dd class="meta-value">{{ reminderPreview.customer.vat_id || '' }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <!-- Content -->
+        <div>
+          <p class="greeting">Sehr geehrte Damen und Herren,</p>
+          <p v-if="reminderPreview?.intro_text">{{ reminderPreview.intro_text }}</p>
+        </div>
+
+        <!-- reminders Details -->
+        <dl class="reminders-card">
+          <h3 class="reminders-title">
+            <i class="bi bi-file-text icons" aria-hidden="true"></i>Offene Rechnung(en)
+          </h3>
+
+          <div class="info-row">
+            <dt>Rechnungsnummer</dt>
+            <dd>{{ formatInvoiceId(reminderPreview.invoice.id) }}</dd>
+          </div>
+
+          <div class="info-row">
+            <dt>Rechnungsdatum</dt>
+            <dd>{{ formatDate(reminderPreview.invoice.date) }}</dd>
+          </div>
+
+          <div class="info-row">
+            <dt>Fälligkeitsdatum</dt>
+            <dd>{{ formatDate(reminderPreview.invoice.due_date) }}</dd>
+          </div>
+
+          <div class="info-row">
+            <dt>Betrag</dt>
+            <dd>{{ formatCurrency(reminderPreview.invoice.gross_total) }}</dd>
+          </div>
+
+          <div class="info-row muted">
+            <dt>Mahngebühr</dt>
+            <dd>{{ formatCurrency(reminderPreview.reminder_fee) }}</dd>
+          </div>
+
+          <div class="info-row muted">
+            <dt>Verzugszinsen</dt>
+            <dd>{{ formatCurrency(reminderPreview.late_interest) }}</dd>
+          </div>
+
+          <div class="info-row total">
+            <dt>Offener Gesamtbetrag</dt>
+            <dd>
+              {{ formatCurrency(setTotalAmount, reminderPreview.invoice.currency) }}
+            </dd>
+          </div>
+        </dl>
+
+        <!-- Bank Info -->
+        <div v-if="auth" class="preview-box">
+          <div class="preview-box-title"><i class="bi bi-bank2 icons"></i>Bankverbindung</div>
+          <dl class="bank-info">
+            <dt class="preview-box-label">Bank:</dt>
+            <dd class="preview-box-value">{{ auth.bank_name }}</dd>
+            <dt class="preview-box-label">IBAN:</dt>
+            <dd class="preview-box-value">{{ auth.iban }}</dd>
+            <dt class="preview-box-label">BIC:</dt>
+            <dd class="preview-box-value">{{ auth.bic }}</dd>
+            <dt class="preview-box-value">Zahlungsziel:</dt>
+            <dd>{{ reminderPreview.payment_deadline }}</dd>
+          </dl>
+        </div>
+
+        <!-- Warning Box -->
+        <div v-if="reminderPreview?.level >= 2" class="warning-box">
+          <div v-if="reminderPreview.level === '2'">
+            <strong
+              ><i class="bi bi-exclamation-triangle-fill text-warning icons" aria-hidden="true"></i
+              >Wichtiger Hinweis:</strong
+            ><br />
+            <p>{{ reminderPreview.warning_text }}</p>
+          </div>
+          <div v-if="reminderPreview.level === '3'">
+            <strong
+              ><i class="bi bi-exclamation-octagon-fill text-danger icons" aria-hidden="true"></i
+              >Letzte Mahnung:</strong
+            ><br />
+            <p>{{ reminderPreview.warning_text }}</p>
           </div>
         </div>
-        <!-- recipient details -->
-        <div class="recipient-details">
-          <div class="recipient-title">Rechnungsdetails</div>
 
-          <div class="meta-row">
-            <span class="meta-label">Mahnung-Nr.:</span>
-            <span class="meta-value">{{ formatReminderId(reminderPreview.id) }}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Rechnung-Nr.:</span>
-            <span class="meta-value">{{ formatInvoiceId(reminderPreview.invoice_id) }}</span>
-          </div>
-
-          <div class="meta-row">
-            <span class="meta-label">Datum:</span>
-            <span class="meta-value">{{ formatDate(reminderPreview.date) }}</span>
-          </div>
-
-          <div class="meta-row">
-            <span class="meta-label">Kunden-Nr.:</span>
-            <span class="meta-value">{{ formatCustomerId(reminderPreview.customer.id) }}</span>
-          </div>
-
-          <div class="meta-row">
-            <span class="meta-label">USt-IdNr.:</span>
-            <span class="meta-value">{{ reminderPreview.customer.vat_id || '' }}</span>
-          </div>
+        <div class="reminderPreview-content">
+          <p v-if="reminderPreview?.closing_text">{{ reminderPreview.closing_text }}</p>
         </div>
+
+        <!-- Closing -->
+        <div class="closing">
+          <p>Mit freundlichen Grüßen</p>
+          <br />
+          <p v-if="auth">
+            <strong>{{ auth.company_name }}</strong>
+          </p>
+        </div>
+        <!-- Contact Person -->
+        <ContactPersonPreview :contactData="auth.contact_person" />
       </div>
-
-      <!-- Content -->
-      <div>
-        <p class="greeting">Sehr geehrte Damen und Herren,</p>
-        <p v-if="reminderPreview?.intro_text">{{ reminderPreview.intro_text }}</p>
-      </div>
-
-      <!-- reminders Details -->
-      <div class="reminders-card">
-        <h3 class="reminders-title">
-          <i class="bi bi-file-text icons"></i>Offene Rechnung(en)
-        </h3>
-
-        <div class="info-row">
-          <span>Rechnungsnummer</span>
-          <span>{{ formatInvoiceId(reminderPreview.invoice.id) }}</span>
-        </div>
-
-        <div class="info-row">
-          <span>Rechnungsdatum</span>
-          <span>{{ formatDate(reminderPreview.invoice.date) }}</span>
-        </div>
-
-        <div class="info-row">
-          <span>Fälligkeitsdatum</span>
-          <span>{{ formatDate(reminderPreview.invoice.due_date) }}</span>
-        </div>
-
-        <div class="info-row">
-          <span>Betrag</span>
-          <span>{{ formatCurrency(reminderPreview.invoice.gross_total) }}</span>
-        </div>
-
-        <div class="info-row muted">
-          <span>Mahngebühr</span>
-          <span>{{ formatCurrency(reminderPreview.reminder_fee) }}</span>
-        </div>
-
-        <div class="info-row muted">
-          <span>Verzugszinsen</span>
-          <span>{{ formatCurrency(reminderPreview.late_interest) }}</span>
-        </div>
-
-        <div class="info-row total">
-          <span>Offener Gesamtbetrag</span>
-          <span>
-            {{ formatCurrency(setTotalAmount, reminderPreview.invoice.currency) }}
-          </span>
-        </div>
-      </div>
-
-      <!-- Bank Info -->
-      <div v-if="auth" class="preview-box">
-        <div class="preview-box-title">
-          <i class="bi bi-bank2 icons"></i>Bankverbindung
-        </div>
-        <div class="bank-info">
-          <span class="preview-box-label">Bank:</span>
-          <span class="preview-box-value">{{ auth.bank_name }}</span>
-          <span class="preview-box-label">IBAN:</span>
-          <span class="preview-box-value">{{ auth.iban }}</span>
-          <span class="preview-box-label">BIC:</span>
-          <span class="preview-box-value">{{ auth.bic }}</span>
-          <span class="preview-box-value">Zahlungsziel: {{ reminderPreview.payment_deadline }}</span>
-        </div>
-      </div>
-
-      <!-- Warning Box -->
-      <div v-if="reminderPreview?.level >= 2" class="warning-box">
-        <div v-if="reminderPreview.level === '2'">
-          <strong><i class="bi bi-exclamation-triangle-fill text-warning icons"></i>Wichtiger Hinweis:</strong><br />
-          <p>{{ reminderPreview.warning_text }}</p>
-        </div>
-        <div v-if="reminderPreview.level === '3'">
-          <strong><i class="bi bi-exclamation-octagon-fill text-danger  icons"></i>Letzte Mahnung:</strong><br />
-          <p>{{ reminderPreview.warning_text }}</p>
-        </div>
-      </div>
-
-      <div class="reminderPreview-content">
-        <p v-if="reminderPreview?.closing_text">{{ reminderPreview.closing_text }}</p>
-      </div>
-
-      <!-- Closing -->
-      <div class="closing">
-        <p>Mit freundlichen Grüßen</p>
-        <br />
-        <p v-if="auth">
-          <strong>{{ auth.company_name }}</strong>
-        </p>
-      </div>
-      <!-- Contact Person -->
-      <ContactPersonPreview :contactData="auth.contact_person" />
-    </div>
-    <div class="sections btn-container">
-      <button class="btn btn-primary" @click="saveReminder">
-        <i class="bi bi-floppy-fill icons"></i>
-        <span>Speichern</span>
-      </button>
-    </div>
+      <footer class="sections btn-container">
+        <button class="btn btn-primary" @click="saveReminder">
+          <i class="bi bi-floppy-fill icons" aria-hidden="true"></i>
+          Speichern
+        </button>
+      </footer>
+    </form>
     <router-link
       v-if="reminderPreview"
       :to="`/reminders/create/${reminderPreview.invoice_id}`"
       class="back-link"
     >
-      <i class="bi bi-arrow-left icons"></i>Zurück zur Rechnungserstellung
+      <i class="bi bi-arrow-left icons" aria-hidden="true"></i>Zurück zur Rechnungserstellung
     </router-link>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -205,14 +209,16 @@ export default {
       this.reminderPreview = store.state.reminder
       this.auth = store.state.auth
     },
-     async saveReminder() {
+    async saveReminder() {
       if (this.reminderPreview) {
-        const result = await window.api.addReminder(JSON.parse(JSON.stringify(this.reminderPreview)))
+        const result = await window.api.addReminder(
+          JSON.parse(JSON.stringify(this.reminderPreview))
+        )
         if (!result.success) return
         await store.clearStore('reminder')
         this.$router.push('/invoices/details/' + this.reminderPreview.invoice_id)
       }
-    },
+    }
   }
 }
 </script>

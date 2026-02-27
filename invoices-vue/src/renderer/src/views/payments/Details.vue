@@ -1,9 +1,9 @@
 <template>
-  <div v-if="payment && auth" class="main-container">
+  <main v-if="payment && auth" class="main-container">
     <header class="main-header">
-      <label>{{ title }}</label>
+      <h1>{{ title }}</h1>
       <router-link to="/payments" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <div class="printable">
@@ -136,15 +136,17 @@
 
       <!-- Bank Info -->
       <div class="preview-box">
-        <div class="preview-box-title">🏦 Bankverbindung</div>
-        <div class="bank-info">
-          <span class="preview-box-label">Bank:</span>
-          <span class="preview-box-value">{{ auth.bank_name }}</span>
-          <span class="preview-box-label">IBAN:</span>
-          <span class="preview-box-value">{{ auth.iban }}</span>
-          <span class="preview-box-label">BIC:</span>
-          <span class="preview-box-value">{{ auth.bic }}</span>
+        <div class="preview-box-title">
+          <i class="bi bi-bank2 icons" aria-hidden="true"></i>Bankverbindung
         </div>
+        <dl class="bank-info">
+          <dt class="preview-box-label">Bank:</dt>
+          <dd class="preview-box-value">{{ auth.bank_name }}</dd>
+          <dt class="preview-box-label">IBAN:</dt>
+          <dd class="preview-box-value">{{ auth.iban }}</dd>
+          <dt class="preview-box-label">BIC:</dt>
+          <dd class="preview-box-value">{{ auth.bic }}</dd>
+        </dl>
       </div>
     </div>
 
@@ -154,7 +156,7 @@
     <router-link :to="`/invoices/details/${payment.invoice_id}`" class="btn back-btn">
       ← Zurück zur Rechnungsdetails
     </router-link>
-  </div>
+  </main>
 </template>
 
 <script>
