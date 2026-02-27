@@ -89,7 +89,7 @@
         <div class="info-title">Stammdaten</div>
         <dl class="data-row">
           <dt>Aktive Kunden</dt>
-          <dd>{{ tablesCount.customers }}</dd>
+          <dd>{{ tablesCount ? tablesCount.customers : 0 }}</dd>
         </dl>
         <dl class="data-row">
           <dt>Bezahlte Rechnungen</dt>
@@ -97,11 +97,11 @@
         </dl>
         <dl class="data-row">
           <dt>Offene Angebote</dt>
-          <dd>{{ tablesCount.offers }}</dd>
+          <dd>{{ tablesCount ? tablesCount.offers : 0 }}</dd>
         </dl>
         <dl class="data-row">
           <dt>Laufende Aufträge</dt>
-          <dd>{{ tablesCount.orders }}</dd>
+          <dd>{{ tablesCount ? tablesCount.orders : 0 }}</dd>
         </dl>
         <div style="margin-top: 1.5rem">
           <div class="progress-item">
