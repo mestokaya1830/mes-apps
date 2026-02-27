@@ -1,5 +1,5 @@
 <template>
-  <div class="app-layout">
+  <main class="app-layout">
     <header>
       <TitleBar />
     </header>
@@ -9,7 +9,7 @@
     <main ref="layouts" class="layouts">
       <router-view />
     </main>
-    <footer aria-labbel="Nach oben">
+    <footer>
       <button
         v-if="showGoTop"
         class="go-top-button"
@@ -19,7 +19,7 @@
         <i class="bi bi-arrow-up" aria-hidden="true"></i>
       </button>
     </footer>
-  </div>
+  </main>
 </template>
 
 <script>

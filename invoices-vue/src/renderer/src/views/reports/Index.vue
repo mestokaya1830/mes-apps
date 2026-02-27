@@ -1,11 +1,11 @@
 <template>
-  <div class="report-container">
+  <main class="report-container">
     <header class="main-header">
-      <label>{{ title }}</label>
+      <h1>{{ title }}</h1>
     </header>
     <div class="sections">
       <div class="form-group">
-        <select v-model="report_type" class="inputs">
+        <select v-model="report_type" class="inputs" aria-label="Waehle Bericht">
           <option value="" disabled>Waehle Bericht</option>
           <option value="Kundenbezogener">Kundenbezogener Bericht</option>
           <option value="Rechnungsliste">Rechnungsliste</option>
@@ -16,7 +16,7 @@
       <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
       <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
     </div>
-  </div>
+  </main>
 </template>
 
 <script>

@@ -1,13 +1,15 @@
 <template>
-  <div class="main-container">
+  <main class="main-container">
     <header class="main-header">
-      <label>{{ title }}</label>
-       <router-link to="/" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+      <h1>{{ title }}</h1>
+      <router-link to="/" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
-    <form>
-      <div class="sections-title"><i class="bi bi-info-circle icons"></i>General</div>
+    <form @submit.prevent="updateUser">
+      <div class="sections-title">
+        <i class="bi bi-info-circle icons" aria-hidden="true"></i>General
+      </div>
       <div>
         <label for="bank">Bank Name</label>
         <input id="bank" v-model="user.bank_name" type="text" />
@@ -29,7 +31,9 @@
         <img ref="logo" class="profile-logo" :src="imageSrc" alt="" @click="triggerFile" />
         <input id="logo" ref="logoInput" type="file" @change="setLogo" />
       </div>
-      <div class="sections-title"><i class="bi bi-people icons"></i>Contact Person</div>
+      <div class="sections-title">
+        <i class="bi bi-people icons" aria-hidden="true"></i>Contact Person
+      </div>
       <div>
         <label for="bic">Bic</label>
         <input id="bic" v-model="user.contact_person.first_name" type="text" />
@@ -37,9 +41,9 @@
         <input id="bic" v-model="user.contact_person.email" type="text" />
         <input id="bic" v-model="user.contact_person.phone" type="text" />
       </div>
+      <button type="submit" class="btn btn-update" @click="updateUser()">Update</button>
     </form>
-    <button class="btn btn-update" @click="updateUser()">Update</button>
-  </div>
+  </main>
 </template>
 
 <script>

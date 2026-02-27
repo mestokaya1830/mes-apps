@@ -1,54 +1,54 @@
 <template>
-  <div class="main-container">
-    <div class="main-header">
-      <label>{{ title }}</label>
+  <main class="main-container">
+    <header class="main-header">
+      <h1>{{ title }}</h1>
       <button class="btn btn-secondary">
-        <i class="bi bi-download icons"></i>
+        <i class="bi bi-download icons" aria-hidden="true"></i>
         Exportieren
       </button>
-    </div>
+    </header>
     <div class="dashboard-grid">
       <div class="dashboard-card customers" @click="goTo('customers')">
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
-            <i :class="`bi bi-people-fill icons`"></i>
+            <i :class="`bi bi-people-fill icons`" aria-hidden="true"></i>
           </div>
           <div class="dashboard-badge">Aktiv</div>
         </div>
-        <h3 class="dashboard-title">Kunden</h3>
+        <div class="dashboard-title">Kunden</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.customers : 0 }}</span>
       </div>
 
       <div class="dashboard-card invoices" @click="goTo('invoices')">
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
-            <i :class="`bi bi-file-earmark-text-fill icons`"></i>
+            <i :class="`bi bi-file-earmark-text-fill icons`" aria-hidden="true"></i>
           </div>
           <div class="dashboard-badge">Aktiv</div>
         </div>
-        <h3 class="dashboard-title">Rechnungen</h3>
+        <div class="dashboard-title">Rechnungen</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.invoices : 0 }}</span>
       </div>
 
       <div class="dashboard-card offers" @click="goTo('offers')">
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
-            <i :class="`bi bi-file-earmark-text-fill icons`"></i>
+            <i :class="`bi bi-file-earmark-text-fill icons`" aria-hidden="true"></i>
           </div>
           <div class="dashboard-badge">Aktiv</div>
         </div>
-        <h3 class="dashboard-title">Angebote</h3>
+        <div class="dashboard-title">Angebote</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.offers : 0 }}</span>
       </div>
 
       <div class="dashboard-card orders" @click="goTo('orders')">
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
-            <i :class="`bi bi-file-earmark-text-fill icons`"></i>
+            <i :class="`bi bi-file-earmark-text-fill icons`" aria-hidden="true"></i>
           </div>
           <div class="dashboard-badge">Aktiv</div>
         </div>
-        <h3 class="dashboard-title">Bestellungen</h3>
+        <div class="dashboard-title">Bestellungen</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.orders : 0 }}</span>
       </div>
     </div>
@@ -57,7 +57,7 @@
     <div class="charts-grid">
       <div class="chart-card">
         <div class="chart-header">
-          <h3>Umsatzentwicklung</h3>
+          <div>Umsatzentwicklung</div>
           <div class="time-filter">
             <button :class="{ active: selectedPeriod === '1M' }" @click="updateChartData('1M')">
               1M
@@ -78,7 +78,7 @@
 
       <div class="chart-card">
         <div class="chart-header">
-          <h3>Verteilung</h3>
+          <div>Verteilung</div>
         </div>
         <DashboardChartDonat v-if="chartDataDonat" :chartData="chartDataDonat" :key="chartKey" />
       </div>
@@ -86,49 +86,49 @@
 
     <div class="info-grid">
       <div class="info-card">
-        <h3 class="info-title">Stammdaten</h3>
-        <div class="data-row">
-          <span>Aktive Kunden</span>
-          <span>30</span>
-        </div>
-        <div class="data-row">
-          <span>Bezahlte Rechnungen</span>
-          <span>{{ tablesCount ? tablesCount.paid_count : 0 }}</span>
-        </div>
-        <div class="data-row">
-          <span>Offene Angebote</span>
-          <span>0</span>
-        </div>
-        <div class="data-row">
-          <span>Laufende Aufträge</span>
-          <span>0</span>
-        </div>
+        <div class="info-title">Stammdaten</div>
+        <dl class="data-row">
+          <dt>Aktive Kunden</dt>
+          <dd>{{ tablesCount.customers }}</dd>
+        </dl>
+        <dl class="data-row">
+          <dt>Bezahlte Rechnungen</dt>
+          <dd>{{ tablesCount ? tablesCount.paid_count : 0 }}</dd>
+        </dl>
+        <dl class="data-row">
+          <dt>Offene Angebote</dt>
+          <dd>{{ tablesCount.offers }}</dd>
+        </dl>
+        <dl class="data-row">
+          <dt>Laufende Aufträge</dt>
+          <dd>{{ tablesCount.orders }}</dd>
+        </dl>
         <div style="margin-top: 1.5rem">
           <div class="progress-item">
-            <div class="progress-header">
-              <span>Zahlungspünktlichkeit</span>
-              <span>{{ invoiceStats.paymentRate }}%</span>
-            </div>
+            <dl class="progress-header">
+              <dt>Zahlungspünktlichkeit</dt>
+              <dd>{{ invoiceStats.paymentRate }}%</dd>
+            </dl>
             <div class="progress-bar">
               <div class="progress-fill" :style="{ width: invoiceStats.paymentRate + '%' }"></div>
             </div>
           </div>
 
           <div class="progress-item">
-            <div class="progress-header">
-              <span>Unbezahlt Quote</span>
-              <span>{{ invoiceStats.unpaidRate }}%</span>
-            </div>
+            <dl class="progress-header">
+              <dt>Unbezahlt Quote</dt>
+              <dd>{{ invoiceStats.unpaidRate }}%</dd>
+            </dl>
             <div class="progress-bar">
               <div class="progress-fill" :style="{ width: invoiceStats.unpaidRate + '%' }"></div>
             </div>
           </div>
 
           <div class="progress-item">
-            <div class="progress-header">
-              <span>Überfällig Quote</span>
-              <span>{{ invoiceStats.overdueRate }}%</span>
-            </div>
+            <dl class="progress-header">
+              <dt>Überfällig Quote</dt>
+              <dd>{{ invoiceStats.overdueRate }}%</dd>
+            </dl>
             <div class="progress-bar">
               <div class="progress-fill" :style="{ width: invoiceStats.overdueRate + '%' }"></div>
             </div>
@@ -137,12 +137,12 @@
       </div>
 
       <div v-if="last_activities" class="info-card">
-        <h3 class="info-title">
-          <i class="bi bi-clock-history info-title-icon icons"></i>
+        <div class="info-title">
+          <i class="bi bi-clock-history info-title-icon icons" aria-hidden="true"></i>
           Letzte Aktivitäten
-        </h3>
+        </div>
         <div class="activity-item">
-          <i class="bi bi-person-plus-fill icons"></i>
+          <i class="bi bi-person-plus-fill icons" aria-hidden="true"></i>
           <div class="activity-content">
             <div class="activity-title">Neuer Kunde registriert</div>
             <div class="activity-subtitle">Schmidt Solutions GmbH</div>
@@ -153,7 +153,7 @@
         </div>
 
         <div class="activity-item">
-          <i class="bi bi-check-circle-fill icons"></i>
+          <i class="bi bi-check-circle-fill icons" aria-hidden="true"></i>
           <div class="activity-content">
             <div class="activity-title">
               Rechnung {{ last_activities.lastPaidInvoice?.id }} bezahlt
@@ -168,7 +168,7 @@
         </div>
 
         <div class="activity-item">
-          <i class="bi bi-exclamation-triangle-fill icons"></i>
+          <i class="bi bi-exclamation-triangle-fill icons" aria-hidden="true"></i>
           <div class="activity-content">
             <div class="activity-title">Rechnung fällig</div>
             <div class="activity-subtitle">
@@ -181,7 +181,7 @@
         </div>
 
         <div class="activity-item">
-          <i class="bi bi-file-earmark-text icons"></i>
+          <i class="bi bi-file-earmark-text icons" aria-hidden="true"></i>
           <div class="activity-content">
             <div class="activity-title">Neues Angebot erstellt</div>
             <div class="activity-subtitle">
@@ -194,7 +194,7 @@
           </div>
         </div>
         <div class="activity-item">
-          <i class="bi bi-file-earmark-text icons"></i>
+          <i class="bi bi-file-earmark-text icons" aria-hidden="true"></i>
           <div class="activity-content">
             <div class="activity-title">Neues Auftrag erstellt</div>
             <div class="activity-subtitle">
@@ -208,7 +208,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -463,7 +463,7 @@ export default {
   align-items: center;
   margin-bottom: 1.5rem;
 }
-.chart-header h3 {
+.chart-header div {
   font-size: 1.25rem;
   color: #111827;
 }
