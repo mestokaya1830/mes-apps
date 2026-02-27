@@ -355,7 +355,7 @@ export default {
 }
 .dashboard-subtitle {
   font-size: 1rem;
-  color: #6b7280;
+  color: #374151;
   margin-bottom: 0.5rem;
 }
 .dashboard-header-actions {
@@ -376,6 +376,7 @@ export default {
   box-shadow:
     0 2px 6px rgba(0, 0, 0, 0.05),
     0 6px 12px rgba(0, 0, 0, 0.03);
+  color: #111827;
 }
 .dashboard-card:hover {
   transform: translateY(-4px);
@@ -385,31 +386,31 @@ export default {
 }
 .dashboard-card.customers {
   background: #ecfdf5;
-  border-top: 4px solid #3ba55c;
+  border-top: 4px solid #065f46;
 }
 .dashboard-card.invoices {
   background: #fffbeb;
-  border-top: 4px solid #f59e0b;
+  border-top: 4px solid #b45309;
 }
 .dashboard-card.offers {
   background: #eef2ff;
-  border-top: 4px solid #6366f1;
+  border-top: 4px solid #4338ca;
 }
 .dashboard-card.orders {
   background: #ffe4e6;
-  border-top: 4px solid #ef4444;
+  border-top: 4px solid #b91c1c;
 }
 .dashboard-card.customers .icons {
-  color: #3ba55c;
+  color: #065f46;
 }
 .dashboard-card.invoices .icons {
-  color: #f59e0b;
+  color: #b45309;
 }
 .dashboard-card.offers .icons {
-  color: #6366f1;
+  color: #4338ca;
 }
 .dashboard-card.orders .icons {
-  color: #ef4444;
+  color: #b91c1c;
 }
 .dashboard-badge {
   font-size: 0.75rem;
@@ -418,10 +419,10 @@ export default {
   border-radius: 5px;
   border: 1px solid #ddd;
   font-weight: 600;
-  color: #15803c;
+  color: #065f46;
 }
 .dashboard-title {
-  color: #6b7280;
+  color: #111827;
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -450,6 +451,7 @@ export default {
     0 2px 6px rgba(0, 0, 0, 0.05),
     0 6px 12px rgba(0, 0, 0, 0.03);
   transition: all 0.25s ease;
+  color: #111827;
 }
 .chart-card:hover,
 .info-card:hover {
@@ -481,12 +483,12 @@ export default {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  color: #6b7280;
+  color: #111827;
   font-size: 0.875rem;
 }
 .time-filter button.active {
   background: white;
-  color: #3ba55c;
+  color: #065f46;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .time-filter button:hover:not(.active) {
@@ -532,7 +534,7 @@ export default {
 }
 .progress-header span:last-child {
   font-weight: 700;
-  color: #3ba55c;
+  color: #065f46;
 }
 .progress-bar {
   height: 8px;
@@ -567,10 +569,10 @@ export default {
 }
 .activity-subtitle {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #374151;
 }
 .activity-time {
-  color: #9ca3af;
+  color: #6b7280;
   font-size: 0.875rem;
   flex-shrink: 0;
 }

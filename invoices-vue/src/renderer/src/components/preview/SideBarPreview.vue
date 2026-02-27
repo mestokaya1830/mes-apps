@@ -6,7 +6,7 @@
 
     <nav aria-label="Hauptnavigation">
       <section>
-        <div class="nav-label">Hauptmenü</div>
+        <h2 class="nav-label">Hauptmenü</h2>
         <ul>
           <li class="nav-item">
             <router-link to="/" exact-active-class="active" class="nav-link">
@@ -50,7 +50,7 @@
         </ul>
       </section>
      <section>
-       <div class="nav-label">Verwaltung</div>
+       <h2 class="nav-label">Verwaltung</h2>
        <ul>
           <li class="nav-item">
             <router-link to="/reports" exact-active-class="active" class="nav-link">
