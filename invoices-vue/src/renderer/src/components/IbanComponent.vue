@@ -1,52 +1,76 @@
 <template>
   <div>
-    <div class="sections">
+    <section class="sections" aria-label="Bank- und Partnerinformationen">
       <div class="form-row">
+        <!-- Name der Gegenpartei -->
         <div class="form-group">
-          <label class="form-label">Name der Gegenpartei <span class="stars">*</span></label>
-
+          <label for="partner-name" class="form-label">
+            Name der Gegenpartei <span class="stars">*</span>
+          </label>
           <input
+            id="partner-name"
             v-model="localNamePartner"
             type="text"
             class="inputs"
             placeholder="z.B. Kunde / Lieferant"
+            :aria-invalid="nameError ? 'true' : 'false'"
+            aria-required="true"
             @input="updateName"
           />
-          <p class="error" v-if="nameError">{{ nameError }}</p>
+          <p v-if="nameError" class="error" role="alert">{{ nameError }}</p>
         </div>
+
+        <!-- IBAN -->
         <div class="form-group">
-          <label class="form-label">IBAN <span class="stars">*</span></label>
+          <label for="iban" class="form-label">IBAN <span class="stars">*</span></label>
           <input
+            id="iban"
             type="text"
             :value="iban"
             placeholder="DE89 3704 0044 0532 0130 00"
             class="inputs"
+            :aria-invalid="ibanError ? 'true' : 'false'"
+            aria-required="true"
             @input="handleIban($event.target.value)"
           />
-          <span v-if="ibanCountryFlag" class="flag">{{ ibanCountryFlag }}</span>
-          <p class="error" v-if="ibanError">{{ ibanError }}</p>
+          <span v-if="ibanCountryFlag" class="flag" aria-hidden="true">{{ ibanCountryFlag }}</span>
+          <p v-if="ibanError" class="error" role="alert">{{ ibanError }}</p>
         </div>
       </div>
 
       <div class="form-row">
+        <!-- BIC -->
         <div class="form-group">
-          <label class="form-label">BIC <span class="stars">*</span></label>
+          <label for="bic" class="form-label">BIC <span class="stars">*</span></label>
           <input
+            id="bic"
             type="text"
             :value="bic"
             placeholder="DEUTDEFF500"
             class="inputs"
+            :aria-invalid="bicError ? 'true' : 'false'"
+            aria-required="true"
             @input="handleBic($event.target.value)"
           />
-          <p class="error" v-if="bicError">{{ bicError }}</p>
+          <p v-if="bicError" class="error" role="alert">{{ bicError }}</p>
         </div>
 
+        <!-- Bankname -->
         <div class="form-group">
-          <label class="form-label">Bankname (automatisch) <span class="stars">*</span></label>
-          <input type="text" :value="bankName" readonly class="inputs" />
+          <label for="bank-name" class="form-label"
+            >Bankname (automatisch) <span class="stars">*</span></label
+          >
+          <input
+            id="bank-name"
+            type="text"
+            :value="bankName"
+            readonly
+            class="inputs"
+            aria-readonly="true"
+          />
         </div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 

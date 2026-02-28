@@ -8,8 +8,13 @@
       </router-link>
     </header>
 
-    <section class="main-filter">
-      <select v-model="categories_filter" class="inputs select" @change="filterCategories">
+        <section class="main-filter">
+      <select
+        v-model="categories_filter"
+        aria-label="Kategorie"
+        class="inputs select"
+        @change="filterCategories"
+      >
         <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
         <option value="active">Aktiv</option>
@@ -27,38 +32,39 @@
       <input
         v-model="search_box"
         class="inputs"
+        aria-label="Suchen"
         placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
         @input="searchFilter"
       />
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
+        <i class="bi bi-calendar calendar-icon"></i>
         <input
           ref="date_box_start"
           v-model="date_box_start"
           type="date"
+          aria-label="Startdatum"
           class="inputs date"
           @input="formDate()"
         />
       </div>
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
+        <i class="bi bi-calendar calendar-icon"></i>
         <input
           ref="date_box_end"
           v-model="date_box_end"
           type="date"
+          aria-label="Enddatum"
           class="inputs date"
           @input="formDate()"
         />
       </div>
 
-      <div class="sort-btn" @click="sorting('id')">&#8645;</div>
-      <i
-        class="bi bi-printer form-title icons list-print-icon"
-        aria-hidden="true"
-        @click="printDocument"
-      ></i>
+      <button class="sort-btn" aria-label="Sortirien" @click="sorting('id')">&#8645;</button>
+      <button class="list-print-icon" aria-label="Drucken">
+        <i class="bi bi-printer form-title icons" aria-hidden="true" @click="printDocument"></i>
+      </button>
     </section>
 
     <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
@@ -73,7 +79,7 @@
               {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
             </div>
             <div class="list-info">
-              <h3 class="list-id">{{ formatOrderId(item.id) }}</h3>
+              <h2 class="list-id">{{ formatOrderId(item.id) }}</h2>
               <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
               <span class="list-name"
                 >{{ item.customer.first_name }} {{ item.customer.last_name }}</span

@@ -1,5 +1,5 @@
 <template lang="">
-  <main>
+  <div>
     <section v-if="contact" class="preview-box" aria-label="Kontaktdaten">
       <h2 class="preview-box-title">
         <i class="bi bi-person-lines-fill icons" aria-hidden="true"></i>Kontaktdaten
@@ -13,7 +13,7 @@
         <dm class="preview-box-value">{{ contact.email }}</dm>
       </dl>
     </section>
-  </main>
+  </div>
 </template>
 <script>
 export default {

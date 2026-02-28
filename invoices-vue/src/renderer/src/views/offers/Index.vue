@@ -9,43 +9,63 @@
     </header>
 
     <!-- FILTER -->
-    <section class="main-filter">
-      <select v-model="categories_filter" class="inputs select" @change="filterCategories">
-        <option value="" disabled>Status</option>
+       <section class="main-filter">
+      <select
+        v-model="categories_filter"
+        aria-label="Kategorie"
+        class="inputs select"
+        @change="filterCategories"
+      >
+        <option value="" disabled>Kategorie</option>
         <option value="all">Alle</option>
-        <option value="draft">Entwurf</option>
-        <option value="sent">Gesendet</option>
-        <option value="accepted">Angenommen</option>
-        <option value="rejected">Abgelehnt</option>
-        <option value="expired">Abgelaufen</option>
+        <option value="active">Aktiv</option>
         <option value="canceled">Storniert</option>
+        <option value="is_paid">Bezahlt</option>
+        <option value="is_partially_paid">Teilweise bezahlt</option>
+        <option value="unpaid">Unbezahlt</option>
+        <option value="overdue">Überfällig</option>
+        <option value="outstanding">Ausstehend</option>
+        <option value="is_early_paid">Frühzahlung</option>
+        <option value="is_late_paid">Spät bezahlt</option>
+        <option value="is_reminded">Erinnert</option>
       </select>
 
       <input
         v-model="search_box"
         class="inputs"
-        placeholder="Kunde, Firma oder Angebots-ID suchen... "
+        aria-label="Suchen"
+        placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
         @input="searchFilter"
       />
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar-event calendar-icon" aria-hidden="true"></i>
-        <input v-model="date_box_start" type="date" class="inputs date" @input="filterDate" />
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_start"
+          v-model="date_box_start"
+          type="date"
+          aria-label="Startdatum"
+          class="inputs date"
+          @input="formDate()"
+        />
       </div>
 
       <div class="date-wrapper">
-        <i class="bi bi-calendar-check calendar-icon" aria-hidden="true"></i>
-        <input v-model="date_box_end" type="date" class="inputs date" @input="filterDate" />
+        <i class="bi bi-calendar calendar-icon"></i>
+        <input
+          ref="date_box_end"
+          v-model="date_box_end"
+          type="date"
+          aria-label="Enddatum"
+          class="inputs date"
+          @input="formDate()"
+        />
       </div>
 
-      <div class="sort-btn" @click="sorting('id')">
-        <i class="bi bi-arrow-down-up"></i>
-      </div>
-      <i
-        class="bi bi-printer form-title icons list-print-icon"
-        aria-hidden="true"
-        @click="printDocument"
-      ></i>
+      <button class="sort-btn" aria-label="Sortirien" @click="sorting('id')">&#8645;</button>
+      <button class="list-print-icon" aria-label="Drucken">
+        <i class="bi bi-printer form-title icons" aria-hidden="true" @click="printDocument"></i>
+      </button>
     </section>
 
     <!-- LIST -->
@@ -57,10 +77,9 @@
               {{ avatarStyle(item.customer?.first_name, item.customer?.last_name) }}
             </div>
             <div class="list-info">
-              <h3 class="list-id">{{ formatOfferId(item.id) }}</h3>
+              <h2 class="list-id">{{ formatOfferId(item.id) }}</h2>
 
               <span class="list-type-badge">
-                <i class="bi bi-building icons" aria-hidden="true"></i>
                 {{ item.customer?.company_name }}
               </span>
               <br />

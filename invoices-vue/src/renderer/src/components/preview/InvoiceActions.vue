@@ -1,26 +1,28 @@
 <template>
   <div>
-    <div class="sections btn-container">
+    <div class="sections btn-container" role="toolbar" aria-label="Recnungaktionen">
       <button class="btn btn-email" @click="sendEmail">
-        <i class="bi bi-envelope form-title icons"></i>
-        <span>E-Mail</span>
+        <i class="bi bi-envelope form-title icons" aria-hidden="true"></i>
+        E-Mail
       </button>
 
       <button class="btn btn-pdf" @click="exportPDF">
-        <i class="bi bi-file-earmark-pdf form-title icons"></i>
-        <span>PDF</span>
+        <i class="bi bi-file-earmark-pdf form-title icons" aria-hidden="true"></i>
+        PDF
       </button>
 
       <button class="btn btn-print" @click="printDocument">
-        <i class="bi bi-printer form-title icons"></i>
-        <span>Drucken</span>
+        <i class="bi bi-printer form-title icons" aria-hidden="true"></i>
+        Drucken
       </button>
 
-      <router-link :to="`/invoices/edit/${tableData.id}`">
-        <button v-if="tableData.id !== 'preview' && tableData.is_active" class="btn btn-cancel">
-          <i class="bi bi-pencil-square icons"></i>
-          <span>Stornieren</span>
-        </button>
+      <router-link
+        v-if="tableData.id !== 'preview' && tableData.is_active"
+        :to="`/invoices/edit/${tableData.id}`"
+        class="btn btn-cancel"
+      >
+        <i class="bi bi-pencil-square icons" aria-hidden="true"></i>
+        Stornieren
       </router-link>
     </div>
   </div>

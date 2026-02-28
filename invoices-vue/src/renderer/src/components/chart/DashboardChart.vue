@@ -1,7 +1,7 @@
 <template>
-  <main class="canvas-con">
+  <section class="canvas-con">
     <canvas :id="canvasId" role="img" aria-label="Startseite Chart"></canvas>
-  </main>
+  </section>
 </template>
 
 <script>

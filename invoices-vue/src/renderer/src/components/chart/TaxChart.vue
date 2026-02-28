@@ -1,5 +1,5 @@
 <template>
-  <main class="vat-chart-wrapper">
+  <div class="vat-chart-wrapper">
     <header class="chart-header">
       <h3 class="chart-title"><i class="bi bi-percent me-2"></i>Umsatzsteuer nach Steuersätzen</h3>
     </header>
@@ -49,7 +49,7 @@
         <span class="kpi-count">{{ totalVat.count }} Positionen</span>
       </div>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>

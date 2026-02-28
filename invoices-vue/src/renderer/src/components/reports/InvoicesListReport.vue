@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <select
       v-model="date_range"
       class="inputs"
@@ -222,7 +222,7 @@
       </section>
     </section>
     <ReportActions reportName="Rechnungsbericht" :period="period" />
-  </main>
+  </div>
 </template>
 
 <script>

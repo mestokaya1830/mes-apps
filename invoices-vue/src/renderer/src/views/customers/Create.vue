@@ -3,11 +3,13 @@
     <header class="main-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>
+        Zurück
       </router-link>
     </header>
+
     <form @submit.prevent="saveCustomer">
-      <!-- Base -->
+      <!-- Kundeninformationen -->
       <section class="sections">
         <header class="sections-title">
           <i class="bi bi-person-badge me-2 form-title icons" aria-hidden="true"></i>
@@ -16,47 +18,69 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Unternehmenstyp <span class="stars">*</span></label>
-            <select v-model="customer.company_type" class="inputs">
+            <label for="company_type" class="form-label">
+              Unternehmenstyp <span class="stars">*</span>
+            </label>
+            <select id="company_type" v-model="customer.company_type" class="inputs">
               <option disabled value="">Wähle Unternehmenstyp</option>
               <option v-for="item in companies" :key="item.value" :value="item.value">
                 {{ item.label }}
               </option>
             </select>
-            <div v-if="error.company_type" class="error" role="alert">{{ error.company_type }}</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Firmenname <span class="stars">*</span></label>
-            <input v-model="customer.company_name" type="text" class="inputs" />
-            <div v-if="error.company_name" class="error" role="alert">{{ error.company_name }}</div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Vorname <span class="stars">*</span></label>
-            <input v-model="customer.first_name" type="text" class="inputs" />
-            <div v-if="error.first_name" class="error" role="alert">{{ error.first_name }}</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Nachname <span class="stars">*</span></label>
-            <input v-model="customer.last_name" type="text" class="inputs" />
-            <div v-if="error.last_name" class="error" role="alert">{{ error.last_name }}</div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">E-Mail <span class="stars">*</span></label>
-              <input v-model="customer.email" type="email" class="inputs" />
-              <div v-if="error.email" class="error" role="alert">{{ error.email }}</div>
+            <div v-if="error.company_type" class="error" role="alert">
+              {{ error.company_type }}
             </div>
+          </div>
 
-            <div class="form-group">
-              <label class="form-label">Telefonnummer <span class="stars">*</span></label>
-              <input v-model="customer.phone" type="text" class="inputs" />
-              <div v-if="error.phone" class="error" role="alert">{{ error.phone }}</div>
+          <div class="form-group">
+            <label for="company_name" class="form-label">
+              Firmenname <span class="stars">*</span>
+            </label>
+            <input id="company_name" v-model="customer.company_name" type="text" class="inputs" />
+            <div v-if="error.company_name" class="error" role="alert">
+              {{ error.company_name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first_name" class="form-label">
+              Vorname <span class="stars">*</span>
+            </label>
+            <input id="first_name" v-model="customer.first_name" type="text" class="inputs" />
+            <div v-if="error.first_name" class="error" role="alert">
+              {{ error.first_name }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="last_name" class="form-label">
+              Nachname <span class="stars">*</span>
+            </label>
+            <input id="last_name" v-model="customer.last_name" type="text" class="inputs" />
+            <div v-if="error.last_name" class="error" role="alert">
+              {{ error.last_name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email" class="form-label"> E-Mail <span class="stars">*</span> </label>
+            <input id="email" v-model="customer.email" type="email" class="inputs" />
+            <div v-if="error.email" class="error" role="alert">
+              {{ error.email }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone" class="form-label">
+              Telefonnummer <span class="stars">*</span>
+            </label>
+            <input id="phone" v-model="customer.phone" type="text" class="inputs" />
+            <div v-if="error.phone" class="error" role="alert">
+              {{ error.phone }}
             </div>
           </div>
         </div>
@@ -64,31 +88,46 @@
 
       <!-- Adressdaten -->
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-geo-alt form-title icons" aria-hidden="true"></i>Adressdaten</div>
+        <div class="sections-title">
+          <i class="bi bi-geo-alt form-title icons" aria-hidden="true"></i>
+          Adressdaten
+        </div>
+
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Adresse <span class="stars">*</span></label>
-            <input v-model="customer.address" type="text" class="inputs" />
-            <div v-if="error.address" class="error" role="alert">{{ error.address }}</div>
+            <label for="address" class="form-label"> Adresse <span class="stars">*</span> </label>
+            <input id="address" v-model="customer.address" type="text" class="inputs" />
+            <div v-if="error.address" class="error" role="alert">
+              {{ error.address }}
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Postleitzahl <span class="stars">*</span></label>
-            <input v-model="customer.postal_code" type="text" class="inputs" />
-            <div v-if="error.postal_code" class="error" role="alert">{{ error.postal_code }}</div>
+            <label for="postal_code" class="form-label">
+              Postleitzahl <span class="stars">*</span>
+            </label>
+            <input id="postal_code" v-model="customer.postal_code" type="text" class="inputs" />
+            <div v-if="error.postal_code" class="error" role="alert">
+              {{ error.postal_code }}
+            </div>
           </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Stadt <span class="stars">*</span></label>
-            <input v-model="customer.city" type="text" class="inputs" />
-            <div v-if="error.city" class="error" role="alert">{{ error.city }}</div>
+            <label for="city" class="form-label"> Stadt <span class="stars">*</span> </label>
+            <input id="city" v-model="customer.city" type="text" class="inputs" />
+            <div v-if="error.city" class="error" role="alert">
+              {{ error.city }}
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">Land <span class="stars">*</span></label>
-            <input v-model="customer.country" type="text" class="inputs" />
-            <div v-if="error.country" class="error" role-alert>{{ error.country }}</div>
+            <label for="country" class="form-label"> Land <span class="stars">*</span> </label>
+            <input id="country" v-model="customer.country" type="text" class="inputs" />
+            <div v-if="error.country" class="error" role="alert">
+              {{ error.country }}
+            </div>
           </div>
         </div>
       </section>
@@ -96,26 +135,34 @@
       <!-- Steuerinformationen -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-briefcase form-title icons" aria-hidden="true"></i>Steuerinformationen
+          <i class="bi bi-briefcase form-title icons" aria-hidden="true"></i>
+          Steuerinformationen
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Steuernummer <span class="stars">*</span></label>
-            <input v-model="customer.tax_number" type="text" class="inputs" />
-            <div v-if="error.tax_number" class="error" rol="alert">{{ error.tax_number }}</div>
+            <label for="tax_number" class="form-label">
+              Steuernummer <span class="stars">*</span>
+            </label>
+            <input id="tax_number" v-model="customer.tax_number" type="text" class="inputs" />
+            <div v-if="error.tax_number" class="error" role="alert">
+              {{ error.tax_number }}
+            </div>
           </div>
 
           <div class="form-group">
-            <label class="form-label">USt-IdNr. <span class="stars">*</span></label>
-            <input v-model="customer.vat_id" type="text" class="inputs" />
-            <div v-if="error.vat_id" class="error" role="alert">{{ error.vat_id }}</div>
+            <label for="vat_id" class="form-label"> USt-IdNr. <span class="stars">*</span> </label>
+            <input id="vat_id" v-model="customer.vat_id" type="text" class="inputs" />
+            <div v-if="error.vat_id" class="error" role="alert">
+              {{ error.vat_id }}
+            </div>
           </div>
         </div>
       </section>
 
       <!-- Submit -->
       <section class="sections btn-container">
-        <div v-if="showSuccess" class="">
+        <div v-if="showSuccess">
           <p class="font-medium text-success" role="status">
             <i class="bi bi-check-circle icons" aria-hidden="true"></i>
             Kunde erfolgreich gespeichert!
@@ -123,7 +170,8 @@
         </div>
 
         <button type="submit" class="btn btn-primary">
-          <i class="bi bi-save icons" aria-hidden="true"></i>Speichern
+          <i class="bi bi-save icons" aria-hidden="true"></i>
+          Speichern
         </button>
       </section>
     </form>

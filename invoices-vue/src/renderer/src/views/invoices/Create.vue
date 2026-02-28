@@ -59,12 +59,12 @@
         </div>
         <div v-if="invoice.customer?.id" class="customer-details">
           <div class="form-group">
-            <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
+            <label for="Kunden-Nr" class="form-label">Kunden-Nr. <span class="stars">*</span></label>
             <input v-model="invoice.customer.id" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Firmenname <span class="stars">*</span></label>
-            <input v-model="invoice.customer.company_name" type="text" class="inputs" readonly />
+            <label for="Firmenname" class="form-label">Firmenname <span class="stars">*</span></label>
+            <input v-model="invoice.customer.company_name" type="text" id="Firmenname" class="inputs" readonly />
           </div>
           <div class="form-row">
             <div class="form-group">

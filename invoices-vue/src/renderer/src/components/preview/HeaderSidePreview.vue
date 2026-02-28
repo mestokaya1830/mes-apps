@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <header>
       <h1 class="main-title">{{ title }}</h1>
     </header>
@@ -35,7 +35,7 @@
         aria-hidden="true"
       />
     </section>
-  </main>
+  </div>
 </template>
 
 <script>

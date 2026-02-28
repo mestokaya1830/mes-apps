@@ -140,6 +140,21 @@
   margin: 0;
 }
 
+.btn-setup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--margin-lg) 45px;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  background: linear-gradient(135deg, #12b486 0%, #0d8a6b 100%);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--border-radius-xl);
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-button);
+}
 @media screen and (min-width: 1610px) {
   .logo-header {
     margin-bottom: 45px;

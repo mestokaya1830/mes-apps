@@ -1,7 +1,7 @@
 <template>
-  <main class="canvas-con">
+  <section class="canvas-con">
     <canvas id="myChart" role="img" aria-label="Rechnung Chart"></canvas>
-  </main>
+  </section>
 </template>
 
 <script>

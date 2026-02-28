@@ -172,7 +172,9 @@
                 {{ item.label }}
               </option>
             </select>
-            <div v-if="error.company_details" class="error" role="alert">{{ error.company_details }}</div>
+            <div v-if="error.company_details" class="error" role="alert">
+              {{ error.company_details }}
+            </div>
           </div>
         </div>
         <div class="form-row">
@@ -186,7 +188,9 @@
           <figure class="form-group logo-preview-wrapper">
             <figcaption>Logo-Vorschau</figcaption>
             <img :src="selectedImage" class="user-logo" alt="Company Logo" aria-hidden="true" />
-            <div v-if="error.selectedImage" class="error" role="alert">{{ error.selectedImage }}</div>
+            <div v-if="error.selectedImage" class="error" role="alert">
+              {{ error.selectedImage }}
+            </div>
           </figure>
         </div>
       </section>
@@ -672,7 +676,7 @@ export default {
 
       // Tax info - ✅ DÜZELTME
       if (this.user.tax_number && this.user.tax_number.trim() !== '') {
-        const cleanTaxNumber = this.user.tax_number.replace(/[\s\/\-]/g, '')
+        const cleanTaxNumber = this.user.tax_number.replace(/[\s/-]/g, '')
         if (!/^\d+$/.test(cleanTaxNumber)) {
           this.error.tax_number = 'Steuernummer darf nur Zahlen enthalten.'
           valid = false

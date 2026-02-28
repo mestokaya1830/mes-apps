@@ -1,6 +1,6 @@
 <template>
-  <main>
-    <div class="filter-section">
+  <div>
+    <section class="filter-section">
       <select
         v-model="date_range"
         class="inputs"
@@ -46,7 +46,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <section v-if="is_ready" class="printable">
       <div class="report-header-2">
@@ -118,7 +118,7 @@
       </section>
     </section>
     <ReportActions reportName="Umsatzsteuer-Bericht" :period="period" />
-  </main>
+  </div>
 </template>
 
 <script>

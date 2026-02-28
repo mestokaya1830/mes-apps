@@ -1,7 +1,7 @@
 <template>
-  <main class="pie-container">
+  <section class="pie-container">
     <canvas ref="pieChart" role="img" aria-label="Rechung Pie Chart"></canvas>
-  </main>
+  </section>
 </template>
 
 <script>

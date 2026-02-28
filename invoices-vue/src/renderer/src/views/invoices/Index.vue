@@ -2,37 +2,56 @@
   <main v-if="invoices" class="main-container">
     <header class="main-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
+
       <router-link to="/customers" class="btn btn-primary">
         <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>
     </header>
+
     <section class="main-filter">
-      <select v-model="categories_filter" class="inputs select" @change="filterCategories">
-        <option value="" disabled>Kategorie</option>
-        <option value="all">Alle</option>
-        <option value="active">Aktiv</option>
-        <option value="canceled">Storniert</option>
-        <option value="is_paid">Bezahlt</option>
-        <option value="is_partially_paid">Teilweise bezahlt</option>
-        <option value="unpaid">Unbezahlt</option>
-        <option value="overdue">Überfällig</option>
-        <option value="outstanding">Ausstehend</option>
-        <option value="is_early_paid">Frühzahlung</option>
-        <option value="is_late_paid">Spät bezahlt</option>
-        <option value="is_reminded">Erinnert</option>
-      </select>
+      <!-- Kategorie -->
+      <div class="form-group">
+        <label for="categories_filter" class="visually-hidden"> Kategorie auswählen </label>
+        <select
+          id="categories_filter"
+          v-model="categories_filter"
+          class="inputs select"
+          @change="filterCategories"
+        >
+          <option value="" disabled>Kategorie</option>
+          <option value="all">Alle</option>
+          <option value="active">Aktiv</option>
+          <option value="canceled">Storniert</option>
+          <option value="is_paid">Bezahlt</option>
+          <option value="is_partially_paid">Teilweise bezahlt</option>
+          <option value="unpaid">Unbezahlt</option>
+          <option value="overdue">Überfällig</option>
+          <option value="outstanding">Ausstehend</option>
+          <option value="is_early_paid">Frühzahlung</option>
+          <option value="is_late_paid">Spät bezahlt</option>
+          <option value="is_reminded">Erinnert</option>
+        </select>
+      </div>
 
-      <input
-        v-model="search_box"
-        class="inputs"
-        placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
-        @input="searchFilter"
-      />
-
-      <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+      <!-- Suche -->
+      <div class="form-group">
+        <label for="search_box" class="visually-hidden"> Rechnung suchen </label>
         <input
+          id="search_box"
+          v-model="search_box"
+          class="inputs"
+          placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
+          @input="searchFilter"
+        />
+      </div>
+
+      <!-- Startdatum -->
+      <div class="date-wrapper">
+        <label for="date_box_start" class="visually-hidden"> Startdatum auswählen </label>
+        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
+        <input
+          id="date_box_start"
           ref="date_box_start"
           v-model="date_box_start"
           type="date"
@@ -41,9 +60,12 @@
         />
       </div>
 
+      <!-- Enddatum -->
       <div class="date-wrapper">
-        <i class="bi bi-calendar calendar-icon"></i>
+        <label for="date_box_end" class="visually-hidden"> Enddatum auswählen </label>
+        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
         <input
+          id="date_box_end"
           ref="date_box_end"
           v-model="date_box_end"
           type="date"
@@ -52,13 +74,26 @@
         />
       </div>
 
-      <div class="sort-btn" @click="sorting('id')">&#8645;</div>
-       <i class="bi bi-printer form-title icons list-print-icon" aria-hidden="true" @click="printDocument"></i>
+      <!-- Sortieren -->
+      <button type="button" class="sort-btn" aria-label="Nach ID sortieren" @click="sorting('id')">
+        &#8645;
+      </button>
+
+      <!-- Drucken -->
+      <button
+        type="button"
+        class="list-print-icon"
+        aria-label="Rechnungen drucken"
+        @click="printDocument"
+      >
+        <i class="bi bi-printer form-title icons" aria-hidden="true"></i>
+      </button>
     </section>
 
-    <div v-if="search_box && search_box.length < 4" class="hint">Mindestens 2 Zeichen eingeben</div>
+    <!-- Hinweis -->
+    <div v-if="search_box && search_box.length < 2" class="hint">Mindestens 2 Zeichen eingeben</div>
 
-    <!-- Invoice card -->
+    <!-- Invoice List -->
     <section class="list-grid printable">
       <div v-for="item in invoices" :key="item.id" class="list-card">
         <!-- Card Header -->
@@ -67,18 +102,28 @@
             <div class="list-avatar">
               {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
             </div>
+
             <div class="list-info">
-              <h2 class="list-id">{{ formatInvoiceId(item.id) }}</h2>
-              <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
-              <span class="list-name"
-                >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
-              >
+              <h2 class="list-id">
+                {{ formatInvoiceId(item.id) }}
+              </h2>
+
+              <span class="list-type-badge">
+                {{ item.customer.company_name }}
+              </span>
+              <br />
+
+              <span class="list-name">
+                {{ item.customer.first_name }} {{ item.customer.last_name }}
+              </span>
             </div>
           </div>
+
           <div class="status-badge-container">
             <div class="status-badge" :class="item.is_active ? 'active' : 'inactive'">
               {{ item.is_active ? 'Aktiv' : 'Storniert' }}
             </div>
+
             <div class="status-badge total">
               {{ formatCurrency(item.gross_total, item.currency) }}
             </div>
@@ -87,8 +132,9 @@
               v-if="item.payment_status !== 'paid' && item.is_active === 1"
               :to="`/payments/create/${item.id}`"
               class="status-badge payment"
-              >Zahlung erfassen</router-link
             >
+              Zahlung erfassen
+            </router-link>
 
             <div
               v-if="item.payment_status === 'paid' && item.is_active === 1"
@@ -97,13 +143,18 @@
               <i
                 v-if="item.paid_at && item.paid_at < item.due_date"
                 class="bi bi-clock-history"
+                aria-hidden="true"
               ></i>
               Bezahlt
-              <i v-if="item.early_paid_discount_applied" class="bi bi-currency-euro" aria-hidden="true"></i>
+              <i
+                v-if="item.early_paid_discount_applied"
+                class="bi bi-currency-euro"
+                aria-hidden="true"
+              ></i>
             </div>
 
             <div v-if="item.is_active === 0" class="status-badge canceled">
-              <small>Storniert am: {{ formatDate(item.cancelled_at) }}</small>
+              <small> Storniert am: {{ formatDate(item.cancelled_at) }} </small>
             </div>
           </div>
         </div>
