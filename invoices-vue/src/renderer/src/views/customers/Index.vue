@@ -77,7 +77,7 @@
                   {{ avatarStyle(item.first_name, item.last_name) }}
                 </div>
                 <div class="list-info">
-                  <h3 class="list-id">{{ formatCustomerId(item.id) }}</h3>
+                  <h2 class="list-id">{{ formatCustomerId(item.id) }}</h2>
                   <span class="list-type-badge">{{ item.company_type || 'Standard' }}</span>
                   <span class="list-name">{{ item.first_name }} {{ item.last_name }}</span>
                 </div>

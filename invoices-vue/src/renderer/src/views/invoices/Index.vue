@@ -68,7 +68,7 @@
               {{ avatarStyle(item.customer.first_name, item.customer.last_name) }}
             </div>
             <div class="list-info">
-              <h3 class="list-id">{{ formatInvoiceId(item.id) }}</h3>
+              <h2 class="list-id">{{ formatInvoiceId(item.id) }}</h2>
               <span class="list-type-badge">{{ item.customer.company_name }}</span> <br />
               <span class="list-name"
                 >{{ item.customer.first_name }} {{ item.customer.last_name }}</span
