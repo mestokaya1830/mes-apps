@@ -4,6 +4,7 @@
   --bg-green-dark:#086B53;;
   --bg-light-green: #3dac78;
   --bg-gray-light: #e7f3ff;
+  --bg-red: #dc2626;
   --color-white: #fff;
   --color-black: #000;
   --color-green: #12B486;
@@ -159,7 +160,7 @@ select {
 
 .btn-delete {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: var(--colot-white);
+  color: var(--color-white);
 }
 
 .btn-preview {
@@ -169,27 +170,27 @@ select {
 
 .btn-pdf {
   background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-  color:var(--bg-white)
+  color:var(--color-white)
 }
 
 .btn-print {
   background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  color:var(--bg-white)
+  color:var(--color-white)
 }
 
 .btn-email {
   background: linear-gradient(135deg, lightseagreen, rgb(22, 118, 113));
-  color:var(--bg-white)
+  color:var(--color-white)
 }
 
 .btn-cancel {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color:var(--bg-black)
+  color:var(--color-white)
 }
 
 .btn-reminder {
   background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-  color:var(--bg-black)
+  color:var(--color-white)
 }
 .btn-report-details{
   display: flex;
@@ -687,10 +688,28 @@ textarea.error {
   margin-left: auto;
 }
 
-
-.text-success i {
+.currently-paid {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--padding-sm);
+  background-color: var(--bg-green-dark);
+  border-radius: var(--border-radius-sm);
+}
+.currently-paid > span {
   font-size: var(--font-size-base);
-  margin-right: 0.35rem;
+  color: var(--color-white);
+}
+.outstanding-amount {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--padding-sm);
+  background-color: var(--bg-red);
+  margin: var(--margin-sm) 0;
+  border-radius: var(--border-radius-sm);
+}
+.outstanding-amount > span {
+  font-size: var(--font-size-base);
+  color: var(--color-white);
 }
 
 .positions-header {
@@ -704,7 +723,7 @@ textarea.error {
   display: flex;
   width: fit-content;
   justify-content: center;
-  background: #3ba55c;
+  background: var(--bg-green-dark);
   color: var(--bg-white);
   border: none;
   padding: var(--margin-md) var(--margin-lg);
@@ -890,9 +909,9 @@ textarea.error {
 
 
 .preview-box {
-  margin: var(--margin-3xl) 0;
-  padding: var(--margin-xl);
-  border: 1px solid var(--border-darker);
+  margin: var(--margin-lg) 0;
+  padding: var(--padding-lg);
+  border: var(--border-sm);
   border-radius: var(--border-radius-md);
 }
 

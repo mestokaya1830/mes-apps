@@ -76,10 +76,10 @@
 
     <!-- Actions -->
     <footer class="sections btn-container">
-      <router-link :to="`/customers/edit/${customer.id}`">
-        <button class="btn btn-edit">Bearbeiten</button>
+      <router-link :to="`/customers/edit/${customer.id}`" class="btn btn-edit">
+        Bearbeiten
       </router-link>
-      <button class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
+      <button type="button" class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
     </footer>
   </main>
 </template>

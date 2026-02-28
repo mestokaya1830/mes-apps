@@ -23,45 +23,45 @@
             </div>
           </div>
 
-          <dl class="recipient-details">
+          <dv class="recipient-details">
             <div class="recipient-title">
               <i class="bi bi-file-earmark-text icons"></i>Rechnungsdetails
             </div>
 
-            <div class="recipient-row">
+            <dl class="recipient-row">
               <dt class="meta-label">Rechnung-Nr.:</dt>
               <dd class="meta-value">{{ formatInvoiceId(invoice.id) }}</dd>
-            </div>
+            </dl>
 
-            <div v-if="invoice.service_date" class="recipient-row">
+            <dl v-if="invoice.service_date" class="recipient-row">
               <dt class="meta-label">Leistungsdatum:</dt>
               <dd class="meta-value">{{ formatDate(invoice.service_date) }}</dd>
-            </div>
+            </dl>
 
-            <div class="recipient-row">
+            <dl class="recipient-row">
               <dt class="meta-label">Datum:</dt>
               <dd class="meta-value">{{ formatDate(invoice.date) }}</dd>
-            </div>
+            </dl>
 
-            <div class="recipient-row">
+            <dl class="recipient-row">
               <dt class="meta-label">Fälligkeitsdatum:</dt>
               <dd class="meta-value">{{ formatDate(invoice.due_date) }}</dd>
-            </div>
+            </dl>
 
-            <div class="recipient-row">
+            <dl class="recipient-row">
               <dt class="meta-label">Kunden-Nr.:</dt>
               <dd class="meta-value">{{ formatCustomerId(invoice.customer.id) }}</dd>
-            </div>
+            </dl>
 
-            <div v-if="invoice.country === 'Germany' && invoice.tax_number" class="recipient-row">
+            <dl v-if="invoice.country === 'Germany' && invoice.tax_number" class="recipient-row">
               <dt class="meta-label">Steuer-Nr.:</dt>
               <dd class="meta-value">{{ invoice.tax_number }}</dd>
-            </div>
-            <div v-else-if="invoice.vat_id" class="recipient-row">
+            </dl>
+            <dl v-else-if="invoice.vat_id" class="recipient-row">
               <dt class="meta-label">USt-IdNr.:</dt>
               <dd class="meta-value">{{ invoice.vat_id }}</dd>
-            </div>
-          </dl>
+            </dl>
+          </dv>
         </div>
 
         <div class="intro-text">
@@ -104,38 +104,41 @@
         </table>
 
         <section class="summary-section">
-          <div class="total-row">
-            <span class="total-label">Zwischensumme (netto):</span>
-            <span class="total-value">{{
+          <dl class="total-row">
+            <dt class="total-label">Zwischensumme (netto):</dt>
+            <dd class="total-value">{{
               formatCurrency(invoice.net_total, invoice.currency)
-            }}</span>
-          </div>
+            }}</dd>
+          </dl>
 
-          <div class="total-row">
-            <span class="total-label">MwSt.:</span>
-            <span class="total-value">{{
+          <dl class="total-row">
+            <dt class="total-label">MwSt.:</dt>
+            <dd class="total-value">{{
               formatCurrency(invoice.vat_total, invoice.currency)
-            }}</span>
-          </div>
+            }}</dd>
+          </dl>
 
-          <div class="total-row subtotal">
-            <span class="total-label">Rechnungsbetrag (brutto):</span>
-            <span class="total-value">{{
+          <dl class="total-row subtotal">
+            <dt class="total-label">Rechnungsbetrag (brutto):</dt>
+            <dd class="total-value">{{
               formatCurrency(invoice.gross_total, invoice.currency)
-            }}</span>
-          </div>
+            }}</dd>
+          </dl>
 
           <div class="preview-section">
             <div v-if="invoice.is_small_company" class="tax-note small-company">
-              <i class="bi bi-exclamation-triangle-fill icons" aria-hidden="true"></i> Gemäß <span>§19 UStG</span> wird
-              keine Umsatzsteuer berechnet.
+              <i class="bi bi-exclamation-triangle-fill icons" aria-hidden="true"></i> Gemäß
+              <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
             </div>
             <div v-else-if="invoice.is_reverse_charge" class="tax-note">
-              <i class="bi bi-info-circle-fill icons"  aria-hidden="true"></i> Reverse-Charge-Verfahren –
-              Steuerschuldnerschaft des Leistungsempfängers (<span>§13b UStG</span>)
+              <i class="bi bi-info-circle-fill icons" aria-hidden="true"></i>
+              Reverse-Charge-Verfahren – Steuerschuldnerschaft des Leistungsempfängers (<span
+                >§13b UStG</span
+              >)
             </div>
             <div v-else-if="invoice.is_eu_delivery" class="tax-note">
-              <i class="bi bi-globe icons"  aria-hidden="true"></i> Innergemeinschaftliche Lieferung – steuerfrei gemäß
+              <i class="bi bi-globe icons" aria-hidden="true"></i> Innergemeinschaftliche Lieferung
+              – steuerfrei gemäß
               <span>§4 Nr.1b UStG</span>
             </div>
           </div>
@@ -151,7 +154,9 @@
               {{ formatDate(invoice.due_date) }})
             </div>
             <div v-if="invoice.early_payment_offer" class="payment-term-item skonto-highlight">
-              <strong><i class="bi bi-piggy-bank-fill icons" aria-hidden="true"></i> Skonto:</strong>
+              <strong
+                ><i class="bi bi-piggy-bank-fill icons" aria-hidden="true"></i> Skonto:</strong
+              >
               {{ invoice.early_payment_percentage }}% Skonto bis
               {{ formatDate(invoice.early_payment_deadline) }}
             </div>
@@ -161,22 +166,26 @@
         <ContactPersonPreview :contactData="auth.contact_person" />
 
         <section class="preview-box">
-          <div class="preview-box-title"><i class="bi bi-bank2 icons" aria-hidden="true"></i>Bankverbindung</div>
-          <div class="preview-box-content">
-            <span class="preview-box-label">Bank:</span>
-            <span class="preview-box-value">{{ auth.bank_name }}</span>
-            <span class="preview-box-label">IBAN:</span>
-            <span class="preview-box-value">{{ auth.iban }}</span>
-            <span class="preview-box-label">BIC:</span>
-            <span class="preview-box-value">{{ auth.bic }}</span>
+          <div class="preview-box-title">
+            <i class="bi bi-bank2 icons" aria-hidden="true"></i>Bankverbindung
           </div>
+          <dl class="preview-box-content">
+            <dt class="preview-box-label">Bank:</dt>
+            <dd class="preview-box-value">{{ auth.bank_name }}</dd>
+            <dt class="preview-box-label">IBAN:</dt>
+            <dd class="preview-box-value">{{ auth.iban }}</dd>
+            <dt class="preview-box-label">BIC:</dt>
+            <dd class="preview-box-value">{{ auth.bic }}</dd>
+          </dl>
         </section>
       </div>
 
       <InvoiceActions v-if="invoice" :tableData="invoice" :fileName="actionFileName" />
 
       <section v-if="payments && payments.length" class="report-table-container">
-        <h4 class="mb-3"><i class="bi bi-cash-stack icons" aria-hidden="true"></i>Zahlungshistorie</h4>
+        <h4 class="mb-3">
+          <i class="bi bi-cash-stack icons" aria-hidden="true"></i>Zahlungshistorie
+        </h4>
         <table class="report-table">
           <thead>
             <tr>
@@ -213,7 +222,9 @@
       </section>
 
       <section v-if="reminders && reminders.length">
-        <h4 class="mb-3"><i class="bi bi-exclamation-octagon-fill btn-reminder" aria-hidden="true"></i>Mahnungen</h4>
+        <h4 class="mb-3">
+          <i class="bi bi-exclamation-octagon-fill btn-reminder" aria-hidden="true"></i>Mahnungen
+        </h4>
         <table class="table-auto w-full border">
           <thead>
             <tr>

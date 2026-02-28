@@ -5,7 +5,9 @@
 
       <div v-if="invoicePreview.customer" class="recipient">
         <div class="recipient-address">
-          <div class="recipient-title"><i class="bi bi-person-fill icons"></i>Empfänger</div>
+          <div class="recipient-title">
+            <i class="bi bi-person-fill icons" aria-hidden="true"></i>Empfänger
+          </div>
           <div class="company-name-subtitle">
             {{ invoicePreview.customer.company_name }}
           </div>
@@ -18,7 +20,7 @@
         </div>
         <div class="recipient-details">
           <div class="recipient-title">
-            <i class="bi bi-info-circle-fill icons"></i>Rechnungsdetails
+            <i class="bi bi-info-circle-fill icons" aria-hidden="true"></i>Rechnungsdetails
           </div>
 
           <div class="recipient-row">
@@ -132,43 +134,39 @@
           }}</span>
         </div>
 
-        <div class="total-row paid text-success">
-          <span class="total-label"
-            ><i class="bi bi-check-circle-fill me-1"></i> Bereits bezahlt:</span
-          >
-          <span class="total-value"> - {{ formatCurrency(0, invoicePreview.currency) }} </span>
+        <div class="currently-paid">
+          <span><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Bereits bezahlt:</span>
+          <span> - {{ formatCurrency(0, invoicePreview.currency) }} </span>
         </div>
 
-        <div class="total-row outstanding text-danger">
-          <span class="total-label"
-            ><i class="bi bi-exclamation-circle-fill me-1"></i> Offener Betrag:</span
+        <div class="outstanding-amount">
+          <span
+            ><i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> Offener Betrag:</span
           >
-          <span class="total-value">{{
-            formatCurrency(invoicePreview.gross_total, invoicePreview.currency)
-          }}</span>
+          <span>{{ formatCurrency(invoicePreview.gross_total, invoicePreview.currency) }}</span>
         </div>
 
         <div class="preview-section">
           <div v-if="invoicePreview.is_small_company" class="tax-note small-company">
-            <i class="bi bi-info-square-fill me-1"></i> Gemäß <span>§19 UStG</span> wird keine
-            Umsatzsteuer berechnet.
+            <i class="bi bi-info-square-fill" aria-hidden="true"></i> Gemäß
+            <span>§19 UStG</span> wird keine Umsatzsteuer berechnet.
           </div>
 
           <div v-else-if="invoicePreview.is_reverse_charge" class="tax-note">
-            <i class="bi bi-arrow-repeat me-1"></i> Reverse-Charge-Verfahren – Steuerschuldnerschaft
-            des Leistungsempfängers (<span>§13b UStG</span>)
+            <i class="bi bi-arrow-repeat" aria-hidden="true"></i> Reverse-Charge-Verfahren –
+            Steuerschuldnerschaft des Leistungsempfängers (<span>§13b UStG</span>)
           </div>
 
           <div v-else-if="invoicePreview.is_eu_delivery" class="tax-note">
-            <i class="bi bi-globe-europe-africa me-1"></i> Innergemeinschaftliche Lieferung –
-            steuerfrei gemäß <span>§4 Nr.1b UStG</span>
+            <i class="bi bi-globe-europe-africa" aria-hidden="true"></i> Innergemeinschaftliche
+            Lieferung – steuerfrei gemäß <span>§4 Nr.1b UStG</span>
           </div>
         </div>
       </div>
 
       <div class="preview-box">
         <div class="preview-box-title">
-          <i class="bi bi-credit-card-2-back-fill icons"></i>Zahlungsbedingungen
+          <i class="bi bi-credit-card-2-back-fill icons" aria-hidden="true"></i>Zahlungsbedingungen
         </div>
         <div class="preview-box-contentt">
           <div v-if="invoicePreview.payment_terms" class="payment-term-item">
@@ -177,7 +175,7 @@
           </div>
 
           <div v-if="invoicePreview.early_payment_offer" class="payment-term-item skonto-highlight">
-            <strong><i class="bi bi-lightning-charge-fill me-1"></i> Skonto:</strong>
+            <strong><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> Skonto:</strong>
             {{ invoicePreview.early_payment_percentage }}% Skonto bis
             {{ formatDate(invoicePreview.early_payment_deadline) }}
           </div>
@@ -189,7 +187,9 @@
 
       <!-- Bankinformationen -->
       <div class="preview-box">
-        <div class="preview-box-title"><i class="bi bi-bank icons"></i>Bankverbindung</div>
+        <div class="preview-box-title">
+          <i class="bi bi-bank icons" aria-hidden="true"></i>Bankverbindung
+        </div>
         <div class="preview-box-content">
           <span class="preview-box-label">Bank:</span>
           <span class="preview-box-value">{{ auth.bank_name }}</span>
@@ -203,13 +203,13 @@
 
     <footer class="sections btn-container">
       <button class="btn btn-primary" @click="saveInvoice">
-        <i class="bi bi-save form-title icons"></i>
+        <i class="bi bi-save form-title icons" aria-hidden="true"></i>
         <span>Speichern</span>
       </button>
     </footer>
 
     <router-link to="/invoices/create" class="back-link">
-      <i class="bi bi-arrow-left icons"></i> Zurück zur Rechnungserstellung
+      <i class="bi bi-arrow-left icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
     </router-link>
   </div>
 </template>
@@ -280,7 +280,6 @@ export default {
           await store.clearStore('invoice')
           return
         }
-
       } catch (err) {
         console.error('PDF save error:', err)
       }

@@ -6,11 +6,11 @@
       </h2>
       <dl class="preview-box-content">
         <dt class="preview-box-label">SM:</dt>
-        <dm class="preview-box-value">{{ contact.first_name }} {{ contact.last_name }}</dm>
+        <dd class="preview-box-value">{{ contact.first_name }} {{ contact.last_name }}</dd>
         <dt class="preview-box-label">Tel:</dt>
-        <dm class="preview-box-value">+{{ contact.phone }}</dm>
+        <dd class="preview-box-value">+{{ contact.phone }}</dd>
         <dt class="preview-box-label">Email:</dt>
-        <dm class="preview-box-value">{{ contact.email }}</dm>
+        <dd class="preview-box-value">{{ contact.email }}</dd>
       </dl>
     </section>
   </div>

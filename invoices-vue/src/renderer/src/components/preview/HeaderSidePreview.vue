@@ -5,16 +5,15 @@
     </header>
 
     <section v-if="headerData" class="header-component" aria-label="Seitenkopf">
-      <div class="header-company-info">
-        <h2 class="sr-only">Firmeninformationen</h2>
-        <dl>
+      <div aria-label="Firmeninformationen">
+        <dl class="header-company-info">
           <dt>Firma:</dt>
           <dd>{{ headerData.company_name }}</dd>
 
           <dt>Adresse:</dt>
           <dd>{{ headerData.address }}</dd>
 
-          <dt>PLZ / Ort:</dt>
+          <dt>PLZ-Ort:</dt>
           <dd>{{ headerData.postal_code }} {{ headerData.city }}</dd>
 
           <dt>Tel:</dt>
@@ -75,7 +74,15 @@ export default {
   border-top: 0.5px solid #ddd;
   border-bottom: 3px solid #91a7c5;
 }
-
+.header-company-info {
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  gap: var(--margin-xs);
+  line-height: 1.6;
+  font-size: var(--font-size-xs);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
 .header-company-name {
   font-size: 18px;
   font-weight: bold;

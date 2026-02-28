@@ -14,16 +14,21 @@
           <i class="bi bi-pin-angle-fill form-title" aria-hidden="true"></i>Grunddaten
         </h2>
         <div class="form-group">
-          <label class="form-label">Rechnungsnummer <span class="stars">*</span></label>
-          <input v-model="invoice.id" type="text" class="inputs" readonly />
+          <label for="rechnung-id" class="form-label"
+            >Rechnungsnummer <span class="stars">*</span></label
+          >
+          <input id="rechnung-id" v-model="invoice.id" type="text" class="inputs" readonly />
           <small class="form-hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Leistungsdatum <span class="stars">*</span></label>
+            <label for="leistungsdatum" class="form-label"
+              >Leistungsdatum <span class="stars">*</span></label
+            >
             <div class="date-wrapper">
               <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
               <input
+                id="leistungsdatum"
                 ref="service_date"
                 v-model="invoice.service_date"
                 type="date"
@@ -35,10 +40,13 @@
             <div v-if="error.service_date" class="error">{{ error.service_date }}</div>
           </div>
           <div class="form-group">
-            <label class="form-label">Rechnungsdatum <span class="stars">*</span></label>
+            <label for="rechnungsdatum" class="form-label"
+              >Rechnungsdatum <span class="stars">*</span></label
+            >
             <div class="date-wrapper">
               <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
               <input
+                id="rechnungsdatum"
                 ref="date"
                 v-model="invoice.date"
                 type="date"
@@ -51,7 +59,7 @@
           </div>
         </div>
       </section>
-  
+
       <!-- Kundendaten -->
       <section v-if="invoice.customer" class="sections">
         <div class="sections-title">
@@ -59,40 +67,86 @@
         </div>
         <div v-if="invoice.customer?.id" class="customer-details">
           <div class="form-group">
-            <label for="Kunden-Nr" class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-            <input v-model="invoice.customer.id" type="text" class="inputs" readonly />
+            <label for="kunden-id" class="form-label"
+              >Kunden-Nr. <span class="stars">*</span></label
+            >
+            <input
+              id="kunden-id"
+              v-model="invoice.customer.id"
+              type="text"
+              class="inputs"
+              readonly
+            />
           </div>
           <div class="form-group">
-            <label for="Firmenname" class="form-label">Firmenname <span class="stars">*</span></label>
-            <input v-model="invoice.customer.company_name" type="text" id="Firmenname" class="inputs" readonly />
+            <label for="firmenname" class="form-label"
+              >Firmenname <span class="stars">*</span></label
+            >
+            <input
+              id="firmenname"
+              v-model="invoice.customer.company_name"
+              type="text"
+              class="inputs"
+              readonly
+            />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Vorname <span class="stars">*</span></label>
-              <input v-model="invoice.customer.first_name" type="text" class="inputs" readonly />
+              <label for="vorname" class="form-label">Vorname <span class="stars">*</span></label>
+              <input
+                id="vorname"
+                v-model="invoice.customer.first_name"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
             <div class="form-group">
-              <label class="form-label">Nachname <span class="stars">*</span></label>
-              <input v-model="invoice.customer.last_name" type="text" class="inputs" readonly />
+              <label for="nachname" class="form-label">Nachname <span class="stars">*</span></label>
+              <input
+                id="nachname"
+                v-model="invoice.customer.last_name"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Adresse <span class="stars">*</span></label>
-            <input v-model="invoice.customer.address" type="text" class="inputs" readonly />
+            <label for="adresse" class="form-label">Adresse <span class="stars">*</span></label>
+            <input
+              id="adresse"
+              v-model="invoice.customer.address"
+              type="text"
+              class="inputs"
+              readonly
+            />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">PLZ <span class="stars">*</span></label>
-              <input v-model="invoice.customer.postal_code" type="text" class="inputs" readonly />
+              <label for="plz" class="form-label">PLZ <span class="stars">*</span></label>
+              <input
+                id="plz"
+                v-model="invoice.customer.postal_code"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
             <div class="form-group">
-              <label class="form-label">Stadt <span class="stars">*</span></label>
-              <input v-model="invoice.customer.city" type="text" class="inputs" readonly />
+              <label for="stadt" class="form-label">Stadt <span class="stars">*</span></label>
+              <input
+                id="stadt"
+                v-model="invoice.customer.city"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
           </div>
         </div>
       </section>
-  
+
       <!-- Steueroptionen -->
       <section class="sections">
         <h2 class="sections-title">
@@ -100,9 +154,9 @@
         </h2>
         <div class="sections">
           <div class="switch-container">
-            <label for="is_small_company" class="switch">
+            <label for="kleinunternehmer" class="switch">
               <input
-                id="is_small_company"
+                id="kleinunternehmer"
                 v-model="invoice.is_small_company"
                 type="checkbox"
                 @change="checkVatOptions('is_small_company')"
@@ -115,9 +169,9 @@
             </div>
           </div>
           <div class="switch-container">
-            <label for="is_reverse_charge" class="switch">
+            <label for="reverse-charge" class="switch">
               <input
-                id="is_reverse_charge"
+                id="reverse-charge"
                 v-model="invoice.is_reverse_charge"
                 type="checkbox"
                 @change="checkVatOptions('is_reverse_charge')"
@@ -126,15 +180,15 @@
             </label>
             <div class="switch-text">
               <strong>Reverse-Charge-Verfahren</strong>
-              <small class="option-description">
-                Steuerschuldnerschaft des Leistungsempfängers (§13b UStG)
-              </small>
+              <small class="option-description"
+                >Steuerschuldnerschaft des Leistungsempfängers (§13b UStG)</small
+              >
             </div>
           </div>
           <div class="switch-container">
-            <label for="is_eu_delivery" class="switch">
+            <label for="eu-lieferung" class="switch">
               <input
-                id="is_eu_delivery"
+                id="eu-lieferung"
                 v-model="invoice.is_eu_delivery"
                 type="checkbox"
                 @change="checkVatOptions('is_eu_delivery')"
@@ -143,21 +197,22 @@
             </label>
             <div class="switch-text">
               <strong>Innergemeinschaftliche Lieferung</strong>
-              <small class="option-description">
-                Steuerfrei gemäß §4 Nr.1b UStG (Europa içi, opsiyonel)
-              </small>
+              <small class="option-description"
+                >Steuerfrei gemäß §4 Nr.1b UStG (Europa içi, opsiyonel)</small
+              >
             </div>
           </div>
         </div>
       </section>
-  
+
       <!-- Währung -->
       <section class="sections">
         <h2 class="sections-title">
           <i class="bi bi-currency-exchange icons" aria-hidden="true"></i>Währung
         </h2>
         <div class="form-group">
-          <select v-model="invoice.currency" class="inputs">
+          <label for="waehrung" class="form-label">Währung</label>
+          <select id="waehrung" v-model="invoice.currency" class="inputs">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
             <option value="GBP.en-GB">GBP</option>
@@ -171,14 +226,14 @@
           </select>
         </div>
       </section>
-  
+
       <!-- Positionen -->
       <section class="sections positions-error">
         <h2 class="sections-title">
           <i class="bi bi-box-seam icons" aria-hidden="true"></i>
           Positionen <span class="stars">*</span>
         </h2>
-  
+
         <div v-if="invoice.positions && invoice.positions.length === 0">
           Keine Positionen vorhanden
         </div>
@@ -197,10 +252,13 @@
               <!-- FORM FIELDS -->
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Leistungsdatum Von <span class="stars">*</span></label>
+                  <label :for="`leistungsdatum-von-${index}`" class="form-label"
+                    >Leistungsdatum Von <span class="stars">*</span></label
+                  >
                   <div class="date-wrapper">
                     <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
                     <input
+                      :id="`leistungsdatum-von-${index}`"
                       :ref="`service_period_start_${index}`"
                       v-model="item.service_period_start"
                       type="date"
@@ -214,10 +272,13 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Leistungsdatum Bis <span class="stars">*</span></label>
+                  <label :for="`leistungsdatum-bis-${index}`" class="form-label"
+                    >Leistungsdatum Bis <span class="stars">*</span></label
+                  >
                   <div class="date-wrapper">
                     <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
                     <input
+                      :id="`leistungsdatum-bis-${index}`"
                       :ref="`service_period_end_${index}`"
                       v-model="item.service_period_end"
                       type="date"
@@ -231,10 +292,12 @@
                   </div>
                 </div>
               </div>
+
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Bezeichnung</label>
+                  <label :for="`bezeichnung-${index}`" class="form-label">Bezeichnung</label>
                   <input
+                    :id="`bezeichnung-${index}`"
                     v-model="item.title"
                     type="text"
                     class="inputs"
@@ -242,8 +305,9 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Beschreibung</label>
+                  <label :for="`beschreibung-${index}`" class="form-label">Beschreibung</label>
                   <input
+                    :id="`beschreibung-${index}`"
                     v-model="item.description"
                     type="text"
                     class="inputs"
@@ -251,16 +315,22 @@
                   />
                 </div>
               </div>
-  
+
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Menge</label>
-                  <input v-model.number="item.quantity" type="number" class="inputs" min="1" />
-                </div>
-  
-                <div class="form-group">
-                  <label class="form-label">Einzelpreis</label>
+                  <label :for="`menge-${index}`" class="form-label">Menge</label>
                   <input
+                    :id="`menge-${index}`"
+                    v-model.number="item.quantity"
+                    type="number"
+                    class="inputs"
+                    min="1"
+                  />
+                </div>
+                <div class="form-group">
+                  <label :for="`einzelpreis-${index}`" class="form-label">Einzelpreis</label>
+                  <input
+                    :id="`einzelpreis-${index}`"
                     v-model.number="item.price"
                     type="number"
                     class="inputs"
@@ -268,16 +338,14 @@
                     @input="checkVatOptions"
                   />
                 </div>
-  
                 <div class="form-group">
-                  <label class="form-label">MwSt %</label>
-                  <select v-model.number="item.vat" class="inputs">
+                  <label :for="`mwst-${index}`" class="form-label">MwSt %</label>
+                  <select :id="`mwst-${index}`" v-model.number="item.vat" class="inputs">
                     <option :value="0">0 %</option>
                     <option :value="7">7 %</option>
                     <option :value="19">19 %</option>
                   </select>
                 </div>
-  
                 <div class="form-group">
                   <label class="form-label">Gesamt</label>
                   <input type="text" class="inputs" :value="positionTotal(item)" disabled />
@@ -325,7 +393,7 @@
           Position hinzufügen
         </button>
       </section>
-  
+
       <!-- Zahlungsinformationen -->
       <section class="sections">
         <h2 class="sections-title">
@@ -333,13 +401,21 @@
         </h2>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Zahlungsziel (Tage) <span class="stars">*</span></label>
-            <input v-model.number="invoice.payment_terms" type="number" class="inputs" required />
+            <label for="zahlungsziel" class="form-label"
+              >Zahlungsziel (Tage) <span class="stars">*</span></label
+            >
+            <input
+              id="zahlungsziel"
+              v-model.number="invoice.payment_terms"
+              type="number"
+              class="inputs"
+              required
+            />
             <small class="form-hint">
               Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto
             </small>
           </div>
-  
+
           <div class="switch-container">
             <label for="skonto-checkbox" class="switch">
               <input
@@ -351,16 +427,17 @@
               <span class="slider round"></span>
             </label>
             <div class="switch-text">
-              <i class="bi bi-percent me-1 icons" aria-hidden="true"></i
-              ><strong>Skonto gewähren</strong>
+              <i class="bi bi-percent me-1 icons" aria-hidden="true"></i>
+              <strong>Skonto gewähren</strong>
             </div>
           </div>
         </div>
-  
+
         <div v-if="invoice.early_payment_offer" class="form-row">
           <div class="form-group">
-            <label class="form-label">Skonto (%)</label>
+            <label for="skonto-prozent" class="form-label">Skonto (%)</label>
             <input
+              id="skonto-prozent"
               v-model.number="invoice.early_payment_percentage"
               type="number"
               step="0.1"
@@ -368,14 +445,22 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label">Skonto Frist (Tage)</label>
-            <input v-model.number="invoice.early_payment_days" type="number" class="inputs" />
+            <label for="skonto-tage" class="form-label">Skonto Frist (Tage)</label>
+            <input
+              id="skonto-tage"
+              v-model.number="invoice.early_payment_days"
+              type="number"
+              class="inputs"
+            />
           </div>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Zusätzliche Zahlungsbedingungen</label>
+          <label for="zahlungsbedingungen" class="form-label"
+            >Zusätzliche Zahlungsbedingungen</label
+          >
           <textarea
+            id="zahlungsbedingungen"
             v-model="invoice.payment_conditions"
             class="inputs"
             rows="3"
@@ -383,7 +468,7 @@
           ></textarea>
         </div>
       </section>
-  
+
       <footer class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
