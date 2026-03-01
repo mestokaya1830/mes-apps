@@ -321,7 +321,7 @@ select {
   bottom: 0;
   background-color: #ccc;
   transition: var(--transition-slow);
-  border-radius: var(--margin-2xl);
+  border-radius: var(--border-radius-xxl);
 }
 
 .slider:before {

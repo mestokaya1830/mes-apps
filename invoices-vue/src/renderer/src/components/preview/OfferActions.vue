@@ -19,6 +19,14 @@
       <router-link
         v-if="tableData.id !== 'preview' && tableData.is_active"
         :to="`/offers/edit/${tableData.id}`"
+        class="btn btn-edit"
+      >
+        <i class="bi bi-pencil-square icons" aria-hidden="true"></i>
+        Bearbeiten
+      </router-link>
+      <router-link
+        v-if="tableData.id !== 'preview' && tableData.is_active"
+        :to="`/offers/edit-cancel/${tableData.id}`"
         class="btn btn-cancel"
       >
         <i class="bi bi-pencil-square icons" aria-hidden="true"></i>

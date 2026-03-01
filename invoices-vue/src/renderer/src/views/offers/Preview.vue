@@ -20,62 +20,62 @@
             </div>
           </div>
         </div>
-        <dl class="recipient-details">
+        <div class="recipient-details">
           <div class="section-title">Angebotsdetails</div>
 
-          <div class="recipient-row">
+          <dl class="recipient-row">
             <dt class="meta-label">Angebots-Nr.:</dt>
             <dd class="meta-value">{{ formatOfferId(offerPreview.id) }}</dd>
-          </div>
+          </dl>
 
-          <div class="recipient-row">
+          <dl class="recipient-row">
             <dt class="meta-label">Datum:</dt>
             <dd class="meta-value">{{ formatDate(offerPreview.date) }}</dd>
-          </div>
+          </dl>
 
-          <div class="recipient-row">
+          <dl class="recipient-row">
             <dt class="meta-label">Kunden-Nr.:</dt>
             <dd class="meta-value">{{ formatCustomerId(offerPreview.customer.id) }}</dd>
-          </div>
+          </dl>
 
-          <div
+          <dl
             v-if="offerPreview.customer.country === 'Germany' && offerPreview.customer.tax_number"
             class="recipient-row"
           >
             <dt class="meta-label">Steuer-Nr.:</dt>
             <dd class="meta-value">{{ offerPreview.customer.tax_number }}</dd>
-          </div>
+          </dl>
 
-          <div
+          <dl
             v-else-if="offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
             class="recipient-row"
           >
             <dt class="meta-label">USt-IdNr.:</dt>
             <dd class="meta-value">{{ offerPreview.customer.vat_id }}</dd>
-          </div>
+          </dl>
 
-          <div
+          <dl
             v-else-if="!offerPreview.customer.is_in_eu && offerPreview.customer.vat_id"
             class="recipient-row"
           >
             <dt class="meta-label">VAT ID:</dt>
             <dd class="meta-value">{{ offerPreview.customer.vat_id }}</dd>
-          </div>
+          </dl>
 
-          <div v-if="offerPreview.valid_until" class="recipient-row">
+          <dl v-if="offerPreview.valid_until" class="recipient-row">
             <dt class="meta-label">Gültig bis:</dt>
             <dd class="meta-value">{{ formatDate(offerPreview.valid_until) }}</dd>
-          </div>
+          </dl>
 
-          <div v-if="offerPreview.status" class="recipient-row">
+          <dl v-if="offerPreview.status" class="recipient-row">
             <dt class="meta-label">Status:</dt>
             <dd class="meta-value">{{ getStatusText(offerPreview.status) }}</dd>
-          </div>
-        </dl>
+          </dl>
+        </div>
       </section>
 
       <!-- Subject / Description -->
-      <section v-if="offerPreview.subject" class="form-group">
+      <section v-if="offerPreview.subject" aria-label="Betreff / Beschreibung" class="form-group">
         <label class="form-label">Betreff / Beschreibung</label>
         <div class="intro-text">
           {{ offerPreview.subject }}
@@ -83,7 +83,7 @@
       </section>
 
       <!-- Introduction Text -->
-      <section class="intro-text">
+      <section class="intro-text" aria-label="Intro text">
         <span v-if="offerPreview.introduction_text">
           {{ offerPreview.introduction_text }}
         </span>
@@ -258,7 +258,7 @@
     <footer class="sections btn-container">
       <button type="submit" class="btn btn-primary" @click="saveOffer">
         <i class="bi bi-floppy-fill icons" aria-hidden="true"></i>
-        <span>Speichern</span>
+        Speichern
       </button>
     </footer>
 

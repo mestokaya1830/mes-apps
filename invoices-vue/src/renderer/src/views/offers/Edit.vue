@@ -10,12 +10,6 @@
       <div class="printable">
         <!-- Header -->
         <h2>{{ title }}</h2>
-        <!-- 
-          Status and disable logic
-          draft → only sent can be selected.
-          sent → only accepted and rejected can be selected; draft and sent are disabled.
-          accepted/rejected → all options are disabled; only the current status is shown. 
-        -->
         <section class="sections">
           <div class="form-group">
             <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
@@ -32,17 +26,19 @@
                 <small class="text-muted d-block">Status kann nicht mehr geändert werden.</small>
               </div>
             </div>
-            <div v-else>
-              <label for="Status" class="form-label">Status<span class="stars">*</span></label>
-              <select v-model="offer.status" class="inputs" required>
-                <option value="" disabled>Status auswählen</option>
-                <option value="draft" :disabled="offer.status !== 'sent' ? true : true">
-                  Entwurf
-                </option>
-                <option value="sent" :disabled="offer.status !== 'draft'">Gesendet</option>
-                <option value="accepted" :disabled="offer.status !== 'sent'">Angenommen</option>
-                <option value="rejected" :disabled="offer.status !== 'sent'">Abgelehnt</option>
-              </select>
+            <div v-else class="form-row">
+              <div class="form-group">
+                <label for="Status" class="form-label">Status<span class="stars">*</span></label>
+                <select v-model="offer.status" class="inputs select" required>
+                  <option value="" disabled>Status auswählen</option>
+                  <option value="draft" :disabled="offer.status !== 'sent' ? true : true">
+                    Entwurf
+                  </option>
+                  <option value="sent" :disabled="offer.status !== 'draft'">Gesendet</option>
+                  <option value="accepted" :disabled="offer.status !== 'sent'">Angenommen</option>
+                  <option value="rejected" :disabled="offer.status !== 'sent'">Abgelehnt</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -78,14 +74,16 @@
           </div>
         </section>
       </div>
-      <button
-        type="submit"
-        :disabled="original_status == 'accepted' || original_status == 'rejected'"
-        class="btn btn-update"
-        @click="updateOffer"
-      >
-        Speichern Status
-      </button>
+      <section class="sections btn-container">
+        <button
+          type="submit"
+          :disabled="original_status == 'accepted' || original_status == 'rejected'"
+          class="btn btn-update"
+          @click="updateOffer"
+        >
+          Aktualisieren
+        </button>
+      </section>
     </form>
     <router-link :to="`/offers/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Angebotsdetails
@@ -106,7 +104,8 @@ export default {
         status_by: '',
         status_comments: ''
       },
-      original_status: ''
+      original_status: '',
+      error: {}
     }
   },
   mounted() {

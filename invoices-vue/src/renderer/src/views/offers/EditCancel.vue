@@ -1,8 +1,8 @@
 <template>
   <main v-if="$route.params.id" class="main-container">
-     <header class="main-header">
+    <header class="main-header">
       <h1>{{ title }}</h1>
-       <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
+      <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
@@ -10,14 +10,14 @@
       <div class="printable">
         <!-- Header -->
         <h2>{{ title }}</h2>
-  
+
         <section class="sections">
           <div class="custom-row">
-            <div class="form-group">
-              <label for="">Rechnung-Nr.:</label>
-              <label class="inputs">{{ formatOfferId($route.params.id) }}</label>
-            </div>
-  
+            <dl class="form-group">
+              <dt>Rechnung-Nr.:</dt>
+              <dd class="inputs">{{ formatOfferId($route.params.id) }}</dd>
+            </dl>
+
             <div class="form-group">
               <label for="">Storniert am</label>
               <div class="date-wrapper">
@@ -29,9 +29,11 @@
                   placeholder="Datum der Stornierung auswählen"
                 />
               </div>
-              <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
+              <div v-if="error.cancelled_at" class="error" role="alert">
+                {{ error.cancelled_at }}
+              </div>
             </div>
-  
+
             <div class="form-group">
               <label for="">Storniert von</label>
               <input
@@ -40,9 +42,11 @@
                 class="inputs"
                 placeholder="Name der Person, die storniert"
               />
-              <div v-if="error.cancelled_by" class="error">{{ error.cancelled_by }}</div>
+              <div v-if="error.cancelled_by" class="error" role="alert">
+                {{ error.cancelled_by }}
+              </div>
             </div>
-  
+
             <div class="form-group">
               <label for="">Stornierungsgrund</label>
               <textarea
@@ -50,15 +54,16 @@
                 class="inputs"
                 placeholder="Grund der Stornierung hier eingeben"
               ></textarea>
-              <div v-if="error.cancellation_reason" class="error">
+              <div v-if="error.cancellation_reason" class="error" role="alert">
                 {{ error.cancellation_reason }}
               </div>
             </div>
-  
           </div>
         </section>
       </div>
-      <button type="submit" class="btn btn-cancel" @click="updateOffer">Aktualisieren</button>
+      <section class="sections btn-container">
+        <button type="submit" class="btn btn-update" @click="updateOffer">Aktualisieren</button>
+      </section>
     </form>
     <router-link :to="`/offers/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Angebotsdetails

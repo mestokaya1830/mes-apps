@@ -25,18 +25,18 @@
             </div>
           </div>
         </div>
-        <dl class="invoice-details">
-          <div class="section-title">Angebotsdetails</div>
+        <div class="invoice-details">
+          <h2 class="section-title">Angebotsdetails</h2>
 
-          <div class="recipient-row">
+          <dl class="recipient-row">
             <dt class="meta-label">Angebots-Nr.:</dt>
             <dd class="meta-value">{{ formatOfferId(offer.id) }}</dd>
-          </div>
+          </dl>
 
-          <div class="recipient-row">
+          <dl class="recipient-row">
             <dt class="meta-label">Datum:</dt>
             <dd class="meta-value">{{ formatDate(offer.date) }}</dd>
-          </div>
+          </dl>
 
           <!-- Leistungsdatum hinzugefügt -->
           <div v-if="offer.service_date" class="recipient-row">
@@ -44,21 +44,21 @@
             <dd class="meta-value">{{ formatDate(offer.service_date) }}</dd>
           </div>
 
-          <div class="recipient-row">
+          <dl class="recipient-row">
             <dt class="meta-label">Kunden-Nr.:</dt>
             <dd class="meta-value">{{ formatCustomerId(offer.customer.id) }}</dd>
-          </div>
+          </dl>
 
-          <div class="recipient-row">
+          <dl class="recipient-row">
             <dt class="meta-label">Steuer-Nr.:</dt>
             <dd class="meta-value">{{ offer.customer.vat_id }}</dd>
-          </div>
+          </dl>
 
-          <div v-if="offer.valid_until" class="recipient-row">
+          <dl v-if="offer.valid_until" class="recipient-row">
             <dt class="meta-label">Gültig bis:</dt>
             <dd class="meta-value">{{ formatDate(offer.valid_until) }}</dd>
-          </div>
-        </dl>
+          </dl>
+        </div>
       </section>
 
       <!-- Document Title -->
@@ -67,7 +67,7 @@
       </section>
 
       <!-- Subject / Description -->
-      <section class="form-group">
+      <section class="form-group" aria-label="Betreff / Beschreibung">
         <label class="form-label">Betreff / Beschreibung</label>
         <div class="intro-text">
           {{ offer.subject }}
@@ -81,7 +81,7 @@
       </div>
 
       <div>
-        <div class="section-title">introduction_text</div>
+        <h2 class="section-title">introduction_text</h2>
         <div class="intro-text">
           {{ offer.introduction_text }}
         </div>
@@ -132,24 +132,24 @@
 
       <!-- summary -->
       <div class="summary-section">
-        <div class="total-row">
-          <span class="total-label">Zwischensumme (netto):</span>
-          <span class="total-value">{{ formatCurrency(offer.net_total, offer.currency) }}</span>
-        </div>
+        <dl class="total-row">
+          <dt class="total-label">Zwischensumme (netto):</dt>
+          <dd class="total-value">{{ formatCurrency(offer.net_total, offer.currency) }}</dd>
+        </dl>
 
-        <div class="total-row">
-          <span class="total-label">MwSt.:</span>
-          <span class="total-value">{{ formatCurrency(offer.vat_total, offer.currency) }}</span>
-        </div>
+        <dl class="total-row">
+          <dt class="total-label">MwSt.:</dt>
+          <dd class="total-value">{{ formatCurrency(offer.vat_total, offer.currency) }}</dd>
+        </dl>
 
-        <div class="total-row subtotal">
-          <span class="total-label">Rechnungsbetrag (brutto):</span>
-          <span class="total-value">{{ formatCurrency(offer.gross_total, offer.currency) }}</span>
-        </div>
+        <dl class="total-row subtotal">
+          <dt class="total-label">Rechnungsbetrag (brutto):</dt>
+          <dd class="total-value">{{ formatCurrency(offer.gross_total, offer.currency) }}</dd>
+        </dl>
       </div>
 
       <!-- Payment Terms -->
-      <div class="payment-section">
+      <div class="payment-section" aria-label="Zahlungsbedingungen">
         <div class="section-heading">Zahlungsbedingungen</div>
         <div class="payment-content">
           <p>
@@ -159,7 +159,7 @@
         </div>
       </div>
       <!-- delivery Terms -->
-      <div class="payment-section">
+      <div class="payment-section" aria-label="Lieferung terms">
         <div class="section-heading">Lieferung terms</div>
         <div class="payment-content">
           <p>{{ offer.delivery_terms }}</p>

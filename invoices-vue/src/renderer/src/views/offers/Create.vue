@@ -3,25 +3,32 @@
     <header class="main-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
     <form @submit.prevent="submitStore">
       <!-- Grunddaten -->
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-pin-angle-fill form-title" aria-hidden="true"></i>Grunddaten</div>
+        <div class="sections-title">
+          <i class="bi bi-pin-angle-fill form-title" aria-hidden="true"></i>Grunddaten
+        </div>
         <div class="form-group">
-          <label class="form-label">Angebotsnummer <span class="stars">*</span></label>
-          <input v-model="offer.id" type="text" class="inputs" readonly />
+          <label for="angebot-id" class="form-label"
+            >Angebotsnummer <span class="stars">*</span></label
+          >
+          <input id="angebot-id" v-model="offer.id" type="text" class="inputs" readonly />
           <small class="form-hint">Format: AN-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Angebotsdatum <span class="stars">*</span></label>
+            <label for="angebot-datum" class="form-label"
+              >Angebotsdatum <span class="stars">*</span></label
+            >
             <div class="date-wrapper">
-              <i class="bi bi-calendar3 calendar-icon"></i>
+              <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
               <input
+                id="angebot-datum"
                 ref="date"
                 v-model="offer.date"
                 type="date"
@@ -33,10 +40,13 @@
             <div v-if="error.date" class="error">{{ error.date }}</div>
           </div>
           <div class="form-group">
-            <label class="form-label">Gültigkeitsdatum <span class="stars">*</span></label>
+            <label for="gueltig-bis" class="form-label"
+              >Gültigkeitsdatum <span class="stars">*</span></label
+            >
             <div class="date-wrapper">
               <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
               <input
+                id="gueltig-bis"
                 ref="valid_until"
                 v-model="offer.valid_until"
                 type="date"
@@ -49,8 +59,9 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Betreff / Beschreibung</label>
+          <label for="angebot-subject" class="form-label">Betreff / Beschreibung</label>
           <input
+            id="angebot-subject"
             v-model="offer.subject"
             type="text"
             class="inputs"
@@ -58,7 +69,7 @@
           />
         </div>
       </section>
-  
+
       <!-- Kundendaten -->
       <section v-if="offer.customer" class="sections">
         <div class="sections-title">
@@ -66,67 +77,113 @@
         </div>
         <div v-if="offer.customer?.id" class="customer-details">
           <div class="form-group">
-            <label class="form-label">Kunden-Nr. <span class="stars">*</span></label>
-            <input v-model="offer.customer.id" type="text" class="inputs" readonly />
+            <label for="kunde-id" class="form-label">Kunden-Nr. <span class="stars">*</span></label>
+            <input id="kunde-id" v-model="offer.customer.id" type="text" class="inputs" readonly />
           </div>
           <div class="form-group">
-            <label class="form-label">Firmname <span class="stars">*</span></label>
-            <input v-model="offer.customer.company_name" type="text" class="inputs" readonly />
+            <label for="firma-name" class="form-label">Firmname <span class="stars">*</span></label>
+            <input
+              id="firma-name"
+              v-model="offer.customer.company_name"
+              type="text"
+              class="inputs"
+              readonly
+            />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Vorname <span class="stars">*</span></label>
-              <input v-model="offer.customer.first_name" type="text" class="inputs" readonly />
+              <label for="kunde-vorname" class="form-label"
+                >Vorname <span class="stars">*</span></label
+              >
+              <input
+                id="kunde-vorname"
+                v-model="offer.customer.first_name"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
             <div class="form-group">
-              <label class="form-label">Nachname <span class="stars">*</span></label>
-              <input v-model="offer.customer.last_name" type="text" class="inputs" readonly />
+              <label for="kunde-nachname" class="form-label"
+                >Nachname <span class="stars">*</span></label
+              >
+              <input
+                id="kunde-nachname"
+                v-model="offer.customer.last_name"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
           </div>
           <div class="form-group">
-            <label class="form-label">Adresse <span class="stars">*</span></label>
-            <input v-model="offer.customer.address" type="text" class="inputs" readonly />
+            <label for="kunde-adresse" class="form-label"
+              >Adresse <span class="stars">*</span></label
+            >
+            <input
+              id="kunde-adresse"
+              v-model="offer.customer.address"
+              type="text"
+              class="inputs"
+              readonly
+            />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">PLZ <span class="stars">*</span></label>
-              <input v-model="offer.customer.postal_code" type="text" class="inputs" readonly />
+              <label for="kunde-plz" class="form-label">PLZ <span class="stars">*</span></label>
+              <input
+                id="kunde-plz"
+                v-model="offer.customer.postal_code"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
             <div class="form-group">
-              <label class="form-label">Stadt <span class="stars">*</span></label>
-              <input v-model="offer.customer.city" type="text" class="inputs" readonly />
+              <label for="kunde-stadt" class="form-label">Stadt <span class="stars">*</span></label>
+              <input
+                id="kunde-stadt"
+                v-model="offer.customer.city"
+                type="text"
+                class="inputs"
+                readonly
+              />
             </div>
           </div>
         </div>
       </section>
-  
+
       <!-- Status -->
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-info-circle form-title icons" aria-hidden="true"></i>Status</div>
-  
+        <div class="sections-title">
+          <i class="bi bi-info-circle form-title icons" aria-hidden="true"></i>Status
+        </div>
+
         <div class="form-group">
-          <label class="form-label">Status</label>
-          <select v-model="offer.status" class="inputs">
+          <label for="status" class="form-label">Status</label>
+          <select id="status" v-model="offer.status" class="inputs">
             <option value="draft">Entwurf</option>
             <option value="sent">Gesendet</option>
             <option value="accepted">Angenommen</option>
             <option value="rejected">Abgelehnt</option>
           </select>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Status geändert von</label>
+          <label for="status-by" class="form-label">Status geändert von</label>
           <input
+            id="status-by"
             v-model="offer.status_by"
             type="text"
             class="inputs"
             placeholder="z. B. Max Mustermann"
           />
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Statuskommentar</label>
+          <label for="status-comments" class="form-label">Statuskommentar</label>
           <textarea
+            id="status-comments"
             v-model="offer.status_comments"
             class="inputs"
             rows="2"
@@ -134,14 +191,15 @@
           ></textarea>
         </div>
       </section>
-  
+
       <!-- Währung -->
       <section class="sections">
         <div class="sections-title">
           <i class="bi bi-currency-exchange form-title icons" aria-hidden="true"></i>Währung
         </div>
         <div class="form-group">
-          <select v-model="offer.currency" class="inputs">
+          <label for="waehrung" class="form-label">Währung</label>
+          <select id="waehrung" v-model="offer.currency" class="inputs">
             <option value="EUR.de-DE">EUR</option>
             <option value="USD.en-US">USD</option>
             <option value="GBP.en-GB">GBP</option>
@@ -155,18 +213,17 @@
           </select>
         </div>
       </section>
-  
+
       <!-- Positions -->
       <section class="sections positions-error">
         <div class="sections-title">
           <i class="bi bi-box-seam icons" aria-hidden="true"></i>
           Positionen <span class="stars">*</span>
         </div>
-  
+
         <div v-if="offer.positions && offer.positions.length === 0">Keine Positionen vorhanden</div>
-        <div v-if="error.positions" class="error">
-          {{ error.positions }}
-        </div>
+        <div v-if="error.positions" class="error">{{ error.positions }}</div>
+
         <div v-else class="positions-editor">
           <div v-for="(item, index) in offer.positions" :key="index" class="position-item">
             <div class="sections">
@@ -176,47 +233,44 @@
                   <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Löschen
                 </button>
               </div>
+
               <!-- FORM FIELDS -->
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Leistungsdatum Von <span class="stars">*</span></label>
-                  <div class="date-wrapper">
-                    <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
-                    <input
-                      :ref="`service_period_start_${index}`"
-                      v-model="item.service_period_start"
-                      type="date"
-                      class="inputs date"
-                      required
-                      @input="error.service_period_start = ''"
-                    />
-                  </div>
-                  <div v-if="error.service_period_start" class="error">
-                    {{ error.service_period_start }}
-                  </div>
+                  <label :for="`leistungsdatum-von-${index}`" class="form-label"
+                    >Leistungsdatum Von <span class="stars">*</span></label
+                  >
+                  <input
+                    :id="`leistungsdatum-von-${index}`"
+                    :ref="`service_period_start_${index}`"
+                    v-model="item.service_period_start"
+                    type="date"
+                    class="inputs date"
+                    required
+                    @input="error.service_period_start = ''"
+                  />
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Leistungsdatum Bis <span class="stars">*</span></label>
-                  <div class="date-wrapper">
-                    <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
-                    <input
-                      :ref="`service_period_end_${index}`"
-                      v-model="item.service_period_end"
-                      type="date"
-                      class="inputs date"
-                      required
-                      @input="error.service_period_end = ''"
-                    />
-                  </div>
-                  <div v-if="error.service_period_end" class="error">
-                    {{ error.service_period_end }}
-                  </div>
+                  <label :for="`leistungsdatum-bis-${index}`" class="form-label"
+                    >Leistungsdatum Bis <span class="stars">*</span></label
+                  >
+                  <input
+                    :id="`leistungsdatum-bis-${index}`"
+                    :ref="`service_period_end_${index}`"
+                    v-model="item.service_period_end"
+                    type="date"
+                    class="inputs date"
+                    required
+                    @input="error.service_period_end = ''"
+                  />
                 </div>
               </div>
+
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Bezeichnung</label>
+                  <label :for="`bezeichnung-${index}`" class="form-label">Bezeichnung</label>
                   <input
+                    :id="`bezeichnung-${index}`"
                     v-model="item.title"
                     type="text"
                     class="inputs"
@@ -224,8 +278,9 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Beschreibung</label>
+                  <label :for="`beschreibung-${index}`" class="form-label">Beschreibung</label>
                   <input
+                    :id="`beschreibung-${index}`"
                     v-model="item.description"
                     type="text"
                     class="inputs"
@@ -233,141 +288,122 @@
                   />
                 </div>
               </div>
-  
+
               <div class="form-row">
                 <div class="form-group">
-                  <label class="form-label">Menge</label>
-                  <input v-model.number="item.quantity" type="number" class="inputs" min="1" />
+                  <label :for="`menge-${index}`" class="form-label">Menge</label>
+                  <input
+                    :id="`menge-${index}`"
+                    v-model.number="item.quantity"
+                    type="number"
+                    class="inputs"
+                    min="1"
+                  />
                 </div>
-  
                 <div class="form-group">
-                  <label class="form-label">Einzelpreis</label>
-                  <input v-model.number="item.price" type="number" class="inputs" step="0.01" />
+                  <label :for="`einzelpreis-${index}`" class="form-label">Einzelpreis</label>
+                  <input
+                    :id="`einzelpreis-${index}`"
+                    v-model.number="item.price"
+                    type="number"
+                    class="inputs"
+                    step="0.01"
+                  />
                 </div>
-  
                 <div class="form-group">
-                  <label class="form-label">MwSt %</label>
-                  <select v-model.number="item.vat" class="inputs">
+                  <label :for="`mwst-${index}`" class="form-label">MwSt %</label>
+                  <select :id="`mwst-${index}`" v-model.number="item.vat" class="inputs">
                     <option :value="0">0 %</option>
                     <option :value="7">7 %</option>
                     <option :value="19">19 %</option>
                   </select>
                 </div>
-  
                 <div class="form-group">
-                  <label class="form-label">Gesamt</label>
-                  <input type="text" class="inputs" :value="positionTotal(item)" disabled />
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-if="offer.positions.length > 0" class="sections">
-            <div class="btn-container">
-              <div class="summary-item">
-                <label class="form-label">Nettobetrag</label>
-                <div class="form-result-item">
-                  {{ formatCurrency(summary.net_total, offer.currency) }}
-                </div>
-              </div>
-              <div class="summary-item">
-                <label class="form-label">MwSt Gesamt</label>
-                <div class="form-result-item">
-                  {{ formatCurrency(summary.vat_total, offer.currency) }}
-                </div>
-              </div>
-              <div class="summary-item">
-                <label class="form-label">Bruttobetrag</label>
-                <div class="form-result-item">
-                  {{ formatCurrency(summary.gross_total, offer.currency) }}
-                </div>
-              </div>
-              <div class="summary-item">
-                <label class="form-label">Rabatt</label>
-                <div class="form-result-item">
-                  {{ formatCurrency(summary.early_payment_discount, offer.currency) }}
-                </div>
-              </div>
-              <div class="summary-item">
-                <label class="form-label">Endbetrag</label>
-                <div class="form-result-item">
-                  {{ formatCurrency(summary.gross_total_after_discount, offer.currency) }}
+                  <label for="gesamt" class="form-label">Gesamt</label>
+                  <input id="gesamt" type="text" class="inputs" :value="positionTotal(item)" disabled />
                 </div>
               </div>
             </div>
           </div>
         </div>
         <button type="button" class="add-position-btn" @click="addPosition">
-          <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
-          Position hinzufügen
+          <i class="bi bi-plus-circle icons" aria-hidden="true"></i>Position hinzufügen
         </button>
       </section>
-  
+
       <!-- Zusätzliche Informationen -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-file-text-fill form-title icons" aria-hidden="true"></i>Zusätzliche Informationen
+          <i class="bi bi-file-text-fill form-title icons" aria-hidden="true"></i>Zusätzliche
+          Informationen
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Zahlungsbedingungen</label>
+          <label for="zahlung-bedingungen" class="form-label">Zahlungsbedingungen</label>
           <textarea
+            id="zahlung-bedingungen"
             v-model="offer.payment_terms"
             class="inputs"
             rows="2"
             placeholder="z. B. 14 Tage netto, 2 % Skonto bei Zahlung innerhalb 8 Tagen"
           ></textarea>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Lieferbedingungen</label>
+          <label for="liefer-bedingungen" class="form-label">Lieferbedingungen</label>
           <textarea
+            id="liefer-bedingungen"
             v-model="offer.delivery_terms"
             class="inputs"
             rows="2"
             placeholder="z. B. frei Haus, ab Werk, DAP, EXW unserer Niederlassung in Berlin"
           ></textarea>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Lieferzeit</label>
+          <label for="lieferzeit" class="form-label">Lieferzeit</label>
           <div class="date-wrapper">
-            <input v-model="offer.delivery_time" type="date" class="inputs date" />
+            <input id="lieferzeit" v-model="offer.delivery_time" type="date" class="inputs date" />
           </div>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Einleitungstext</label>
+          <label for="einleitung-text" class="form-label">Einleitungstext</label>
           <textarea
+            id="einleitung-text"
             v-model="offer.introduction_text"
             class="inputs"
             rows="3"
             placeholder="Vielen Dank für Ihre Anfrage vom XX.XX.XXXX. Gerne unterbreiten wir Ihnen nachfolgend unser Angebot…"
           ></textarea>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Abschlusstext</label>
+          <label for="abschluss-text" class="form-label">Abschlusstext</label>
           <textarea
+            id="abschluss-text"
             v-model="offer.closing_text"
             class="inputs"
             rows="3"
             placeholder="Wir freuen uns auf Ihre Rückmeldung und stehen bei Rückfragen jederzeit gerne zur Verfügung. Mit freundlichen Grüßen"
           ></textarea>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Notizen (für Kunden sichtbar)</label>
+          <label for="kunden-notizen" class="form-label">Notizen (für Kunden sichtbar)</label>
           <textarea
+            id="kunden-notizen"
             v-model="offer.notes"
             class="inputs"
             rows="3"
             placeholder="z. B. Preise verstehen sich zzgl. gesetzlicher MwSt. • Gültigkeit des Angebots: 30 Tage"
           ></textarea>
         </div>
-  
+
         <div class="form-group">
-          <label class="form-label">Interne Notizen</label>
+          <label for="interne-notizen" class="form-label">Interne Notizen</label>
           <textarea
+            id="interne-notizen"
             v-model="offer.internal_notes"
             class="inputs"
             rows="3"
@@ -375,8 +411,8 @@
           ></textarea>
         </div>
       </section>
-  
-      <section class="switch-container">
+
+      <section class="switch-container" aria-label="Legally binding signature">
         <label for="is_legal" class="switch">
           <input id="is_legal" v-model="offer.is_legal" type="checkbox" />
           <span class="slider round"></span>
@@ -386,7 +422,7 @@
           ><strong>Legally binding signature</strong>
         </div>
       </section>
-  
+
       <footer class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
