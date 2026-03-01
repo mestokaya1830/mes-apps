@@ -142,8 +142,40 @@
           <dt>Laufende Aufträge</dt>
           <dd>{{ tablesCount ? tablesCount.orders : 0 }}</dd>
         </dl>
-      </div>
 
+          <div style="margin-top: 1.5rem">
+          <div class="progress-item">
+            <dl class="progress-header">
+              <dt>Zahlungspünktlichkeit</dt>
+              <dd>{{ invoiceStats.paymentRate }}%</dd>
+            </dl>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: invoiceStats.paymentRate + '%' }"></div>
+            </div>
+          </div>
+
+          <div class="progress-item">
+            <dl class="progress-header">
+              <dt>Unbezahlt Quote</dt>
+              <dd>{{ invoiceStats.unpaidRate }}%</dd>
+            </dl>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: invoiceStats.unpaidRate + '%' }"></div>
+            </div>
+          </div>
+
+          <div class="progress-item">
+            <dl class="progress-header">
+              <dt>Überfällig Quote</dt>
+              <dd>{{ invoiceStats.overdueRate }}%</dd>
+            </dl>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: invoiceStats.overdueRate + '%' }"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+     
       <div v-if="last_activities" class="info-card">
         <div class="info-title">
           <i class="bi bi-clock-history info-title-icon icons" aria-hidden="true"></i>
