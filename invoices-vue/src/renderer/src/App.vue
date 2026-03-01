@@ -6,12 +6,13 @@
     <aside class="sidebar">
       <SideBar />
     </aside>
-    <main ref="layouts" class="layouts">
+    <div ref="layouts" class="layouts">
       <router-view />
-    </main>
+    </div>
     <footer>
       <button
         v-if="showGoTop"
+        type="button"
         class="go-top-button"
         aria-label="Nach oben scrollen"
         @click="scrollToTop"
@@ -189,7 +190,6 @@ export default {
 </script>
 
 <style>
-
 .titlebar {
   height: 60px;
   background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
@@ -269,7 +269,8 @@ export default {
   position: relative;
 }
 
-.nav-link:hover, .nav-link:focus {
+.nav-link:hover,
+.nav-link:focus {
   background: rgba(255, 255, 255, 0.08);
   color: white;
   outline-offset: 1px;
