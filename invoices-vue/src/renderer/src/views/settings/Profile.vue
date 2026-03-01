@@ -34,10 +34,11 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-field"
+            <label for="Kenntwort" class="form-field"
               >Passwort <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="Kenntwort"
               v-model="user.password"
               type="password"
               class="inputs"
@@ -45,30 +46,45 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-field"
+            <label for="Telefon" class="form-field"
               >Telefon <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <input v-model="user.phone" type="tel" class="inputs" placeholder="+49 30 12345678" />
+            <input
+              id="Telefon"
+              v-model="user.phone"
+              type="tel"
+              class="inputs"
+              placeholder="+49 30 12345678"
+            />
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-field"
+          <label for="Webseite" class="form-field"
             >Webseite <i class="bi bi-pencil icons" aria-hidden="true"></i
           ></label>
-          <input v-model="user.website" type="url" class="inputs" placeholder="www.example.com" />
+          <input
+            id="Webseite"
+            v-model="user.website"
+            type="url"
+            class="inputs"
+            placeholder="www.example.com"
+          />
         </div>
       </section>
 
       <!-- Address Information -->
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-geo-alt" aria-hidden="true"></i>Adressdaten</div>
+        <div class="sections-title">
+          <i class="bi bi-geo-alt" aria-hidden="true"></i>Adressdaten
+        </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label"
+            <label for="Adresse" class="form-label"
               >Adresse <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="Adresse"
               v-model="user.address"
               type="text"
               class="inputs"
@@ -76,25 +92,31 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label"
+            <label for="Postleitzahl" class="form-label"
               >Postleitzahl <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <input v-model="user.postal_code" type="text" class="inputs" placeholder="10115" />
+            <input
+              id="Postleitzahl"
+              v-model="user.postal_code"
+              type="text"
+              class="inputs"
+              placeholder="10115"
+            />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label"
+            <label for="Stadt" class="form-label"
               >Stadt <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
+            <input id="Stadt" v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
           </div>
           <div class="form-group">
-            <label for="city" class="form-label"
+            <label for="state" class="form-label"
               ><i class="bi bi-flag" aria-hidden="true"></i>Bundesland (Deutschland)
               <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <select v-model="user.state" class="inputs" id="city">
+            <select id="state" v-model="user.state" class="inputs">
               <option disabled value="">Bitte wählen</option>
               <option v-for="item in german_states" :key="item.value" :value="item.value">
                 {{ item.label }}
@@ -110,16 +132,16 @@
           <i class="bi bi-building icons" aria-hidden="true"></i>Unternehmensdaten
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-field">Firmenname</label>
-            <label for="" class="inputs">{{ user.company_name }}</label>
-          </div>
+          <dl class="form-group">
+            <dt class="form-field">Firmenname</dt>
+            <dd class="inputs">{{ user.company_name }}</dd>
+          </dl>
           <div class="form-group">
             <label for="Unternehmensform" class="form-field"
               ><i class="bi bi-flag icons" aria-hidden="true"></i>Unternehmensform
               (Deutschland)</label
             >
-            <select v-model="user.company_details" class="inputs" id="Unternehmensform">
+            <select id="Unternehmensform" v-model="user.company_details" class="inputs">
               <option disabled value="">-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
@@ -133,7 +155,7 @@
               >Firmenlogo (Neues Logo hochladen)
               <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <input type="file" id="file" @change="setLogo($event)" />
+            <input id="file" type="file" @change="setLogo($event)" />
           </div>
           <div class="form-group">
             <label class="form-field"
@@ -158,7 +180,7 @@
             <label for="Anrede" class="form-label"
               >Anrede <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <select v-model="user.contact_person.gender" class="inputs" id="Anrede">
+            <select id="Anrede" v-model="user.contact_person.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -166,10 +188,11 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label"
+            <label for="Vorname" class="form-label"
               >Vorname <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="Vorname"
               v-model="user.contact_person.first_name"
               type="text"
               class="inputs"
@@ -179,8 +202,9 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Nachname <i class="bi bi-pencil"></i></label>
+            <label for="Nachname" class="form-label">Nachname <i class="bi bi-pencil"></i></label>
             <input
+              id="Nachname"
               v-model="user.contact_person.last_name"
               type="text"
               class="inputs"
@@ -188,10 +212,11 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-label"
+            <label for="Telefon" class="form-label"
               >Telefon <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="Telefon"
               v-model="user.contact_person.phone"
               type="tel"
               class="inputs"
@@ -200,10 +225,11 @@
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label"
+          <label for="email" class="form-label"
             >E-Mail <i class="bi bi-pencil icons" aria-hidden="true"></i
           ></label>
           <input
+            id="email"
             v-model="user.contact_person.email"
             type="email"
             class="inputs"
@@ -218,15 +244,16 @@
           <i class="bi bi-briefcase icons" aria-hidden="true"></i>Steuerinformationen
         </div>
         <div class="form-row">
+          <dl class="form-group">
+            <dt class="form-label">Steuernummer</dt>
+            <dd class="inputs">{{ user.tax_number }}</dd>
+          </dl>
           <div class="form-group">
-            <label class="form-label">Steuernummer</label>
-            <label for="" class="inputs">{{ user.tax_number }}</label>
-          </div>
-          <div class="form-group">
-            <label class="form-label"
+            <label for="Finanzamt" class="form-label"
               >Finanzamt <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="Finanzamt"
               v-model="user.tax_office"
               type="text"
               class="inputs"
@@ -235,32 +262,33 @@
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">USt-IdNr.</label>
-            <label for="" class="inputs">{{ user.vat_id }}</label>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Handelsregistereintrag</label>
-            <label for="" class="inputs">{{ user.court_registration }}</label>
-          </div>
+          <dl class="form-group">
+            <dt class="form-label">USt-IdNr.</dt>
+            <dd class="inputs">{{ user.vat_id }}</dd>
+          </dl>
+          <dl class="form-group">
+            <dt class="form-label">Handelsregistereintrag</dt>
+            <dd class="inputs">{{ user.court_registration }}</dd>
+          </dl>
         </div>
-        <div class="form-group">
-          <label class="form-label"
-            >Gerichtsstand <i class="bi bi-pencil" aria-hidden="true"></i
-          ></label>
-          <label for="" class="inputs">{{ user.court_location }}</label>
-        </div>
+        <dl class="form-group">
+          <dt class="form-label">Gerichtsstand <i class="bi bi-pencil" aria-hidden="true"></i></dt>
+          <dd class="inputs">{{ user.court_location }}</dd>
+        </dl>
       </section>
 
       <!-- Bank Information -->
       <section class="sections">
-        <div class="sections-title"><i class="bi bi-credit-card icons"></i>Zahlungsinformationen</div>
+        <div class="sections-title">
+          <i class="bi bi-credit-card icons"></i>Zahlungsinformationen
+        </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-field"
+            <label for="Bankname" class="form-field"
               >Bankname <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="Bankname"
               v-model="user.bank_name"
               type="text"
               class="inputs"
@@ -268,18 +296,25 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-field"
+            <label for="BIC" class="form-field"
               >BIC <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <input v-model="user.bic" type="text" class="inputs" placeholder="DEUTDEBBXXX" />
+            <input
+              id="BIC"
+              v-model="user.bic"
+              type="text"
+              class="inputs"
+              placeholder="DEUTDEBBXXX"
+            />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-field"
+            <label for="IBAN" class="form-field"
               >IBAN <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="IBAN"
               v-model="user.iban"
               type="text"
               class="inputs"
@@ -287,10 +322,11 @@
             />
           </div>
           <div class="form-group">
-            <label class="form-field"
+            <label for="Kontoinhaber" class="form-field"
               >Kontoinhaber <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
             <input
+              id="Kontoinhaber"
               v-model="user.bank_account_holder"
               type="text"
               class="inputs"
@@ -307,10 +343,11 @@
           Unternehmenssignatur
         </div>
 
-        <label class="form-field">
+        <label for="Signaturtext" class="form-field">
           <span>Signaturtext <i class="bi bi-pencil icons" aria-hidden="true"></i></span>
         </label>
         <textarea
+          id="Signaturtext"
           v-model="user.company_signature"
           rows="4"
           placeholder="Mit freundlichen Grüßen&#10;TechSolutions GmbH&#10;Hans Mueller&#10;Geschäftsführer"

@@ -4,7 +4,7 @@
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers/create" class="btn btn-primary">
         <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
-        Neue Kunden erstellen
+        Neuen Kunden erstellen
       </router-link>
     </header>
 
@@ -95,7 +95,7 @@
                   aria-label="Rechnung erstellen für {{ item.first_name }} {{ item.last_name }}"
                 >
                   <i class="bi bi-receipt" aria-hidden="true"></i>
-                  Rechnung erstellen
+                  Neue Rechnung erstellen
                 </router-link>
 
                 <router-link
@@ -113,7 +113,7 @@
                   aria-label="Neuen Auftrag erstellen für {{ item.first_name }} {{ item.last_name }}"
                 >
                   <i class="bi bi-box-seam" aria-hidden="true"></i>
-                  Neues Auftrag erstellen
+                  Neuen Auftrag erstellen
                 </router-link>
 
                 <router-link

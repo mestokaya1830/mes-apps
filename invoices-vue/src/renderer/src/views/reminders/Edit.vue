@@ -11,16 +11,17 @@
         <h2>{{ title }}</h2>
         <div class="sections">
           <div class="custom-row">
-            <div class="form-group">
-              <label for="">Rechnung-Nr.:</label>
-              <label class="inputs">{{ formatReminderId($route.params.id) }}</label>
-            </div>
+            <dl class="form-group">
+              <dt for="">Rechnung-Nr.:</dt>
+              <dd class="inputs">{{ formatReminderId($route.params.id) }}</dd>
+            </dl>
 
             <div class="form-group">
-              <label for="">Storniert am<span class="stars">*</span></label>
+              <label for="Storniert am">Storniert am<span class="stars">*</span></label>
               <div class="date-wrapper">
                 <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
                 <input
+                  id="Storniert am"
                   v-model="cancelled_at"
                   type="date"
                   class="inputs date"
@@ -28,24 +29,30 @@
                   required
                 />
               </div>
-              <div v-if="error.cancelled_at" class="error" role="alert">{{ error.cancelled_at }}</div>
+              <div v-if="error.cancelled_at" class="error" role="alert">
+                {{ error.cancelled_at }}
+              </div>
             </div>
 
             <div class="form-group">
-              <label for="">Storniert von<span class="stars">*</span></label>
+              <label for="Storniert von">Storniert von<span class="stars">*</span></label>
               <input
+                id="Storniert von"
                 v-model="cancelled_by"
                 type="text"
                 class="inputs"
                 placeholder="Name der Person, die storniert"
                 required
               />
-              <div v-if="error.cancelled_by" class="error" role="alert">{{ error.cancelled_by }}</div>
+              <div v-if="error.cancelled_by" class="error" role="alert">
+                {{ error.cancelled_by }}
+              </div>
             </div>
 
             <div class="form-group">
-              <label for="">Stornierungsgrund<span class="stars">*</span></label>
+              <label for="Stornierungsgrund">Stornierungsgrund<span class="stars">*</span></label>
               <textarea
+                id="Stornierungsgrund"
                 v-model="cancellation_reason"
                 class="inputs"
                 placeholder="Grund der Stornierung hier eingeben"

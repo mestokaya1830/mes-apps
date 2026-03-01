@@ -8,7 +8,7 @@
     </header>
     <div class="printable">
       <HeaderSidePreview :title="title" :auth="auth" />
-      <div class="recipient">
+      <div class="recipient" aria-label="Empfänger">
         <div class="recipient-address">
           <div class="recipient-title">Empfänger</div>
           <div class="company-name-subtitle">
@@ -22,33 +22,33 @@
           </div>
         </div>
         <!-- recipient details -->
-        <dl class="recipient-details">
+        <div class="recipient-details">
           <div class="recipient-title">Rechnungsdetails</div>
 
-          <div class="meta-row">
+          <dl class="meta-row">
             <dt class="meta-label">Mahnung-Nr.:</dt>
             <dd class="meta-value">{{ formatReminderId(reminder.id) }}</dd>
-          </div>
-          <div class="meta-row">
+          </dl>
+          <dl class="meta-row">
             <dt class="meta-label">Rechnung-Nr.:</dt>
             <dd class="meta-value">{{ formatInvoiceId(reminder.invoice_id) }}</dd>
-          </div>
+          </dl>
 
-          <div class="meta-row">
+          <dl class="meta-row">
             <dt class="meta-label">Datum:</dt>
             <dd class="meta-value">{{ formatDate(reminder.date) }}</dd>
-          </div>
+          </dl>
 
-          <div class="meta-row">
+          <dl class="meta-row">
             <dt class="meta-label">Kunden-Nr.:</dt>
             <dd class="meta-value">{{ formatCustomerId(reminder.customer.id) }}</dd>
-          </div>
+          </dl>
 
-          <div class="meta-row">
+          <dl class="meta-row">
             <dt class="meta-label">USt-IdNr.:</dt>
             <dd class="meta-value">{{ reminder.customer.vat_id || '' }}</dd>
-          </div>
-        </dl>
+          </dl>
+        </div>
       </div>
 
       <!-- Content -->
@@ -58,46 +58,46 @@
       </div>
 
       <!-- reminders Details -->
-      <dl class="reminders-card">
+      <div class="reminders-card">
         <h3 class="reminders-title"><i class="bi bi-file-text icons"></i>Offene Rechnung(en)</h3>
 
-        <div class="info-row">
+        <dl class="info-row">
           <dt>Rechnungsnummer</dt>
           <dd>{{ formatInvoiceId(reminder.invoice.id) }}</dd>
-        </div>
+        </dl>
 
-        <div class="info-row">
+        <dl class="info-row">
           <dt>Rechnungsdatum</dt>
           <dd>{{ formatDate(reminder.invoice.date) }}</dd>
-        </div>
+        </dl>
 
-        <div class="info-row">
+        <dl class="info-row">
           <dt>Fälligkeitsdatum</dt>
           <dd>{{ formatDate(reminder.invoice.due_date) }}</dd>
-        </div>
+        </dl>
 
-        <div class="info-row">
+        <dl class="info-row">
           <dt>Betrag</dt>
           <dd>{{ formatCurrency(reminder.invoice.gross_total) }}</dd>
-        </div>
+        </dl>
 
-        <div class="info-row muted">
+        <dl class="info-row muted">
           <dt>Mahngebühr</dt>
           <dd>{{ formatCurrency(reminder.reminder_fee) }}</dd>
-        </div>
+        </dl>
 
-        <div class="info-row muted">
+        <dl class="info-row muted">
           <dt>Verzugszinsen</dt>
           <dd>{{ formatCurrency(reminder.late_interest) }}</dd>
-        </div>
+        </dl>
 
-        <div class="info-row total">
+        <dl class="info-row total">
           <dt>Offener Gesamtbetrag</dt>
           <dd>
             {{ formatCurrency(setTotalAmount, reminder.invoice.currency) }}
           </dd>
-        </div>
-      </dl>
+        </dl>
+      </div>
 
       <!-- Bank Info -->
       <div v-if="auth" class="preview-box">

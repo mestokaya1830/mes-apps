@@ -123,9 +123,9 @@
             </tbody>
           </table>
           <div v-if="payment.file_name" class="download-container">
-            <img :src="`/uploads/payments/${payment.file_name}`" alt="No image" class="img" />
+            <img :src="`/uploads/payments/${payment.file_name}`" alt="No image" class="img" aria-hidden="true" />
             <a :href="`/uploads/payments/${payment.file_name}`" :download="payment.file_name">
-              <button class="btn-download">Datei herunterladen</button>
+              <button type="button" class="btn-download">Datei herunterladen</button>
             </a>
           </div>
         </div>

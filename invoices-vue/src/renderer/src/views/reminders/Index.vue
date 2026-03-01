@@ -8,7 +8,7 @@
       </router-link>
     </header>
 
-        <section class="main-filter">
+    <section class="main-filter">
       <select
         v-model="categories_filter"
         aria-label="Kategorie"

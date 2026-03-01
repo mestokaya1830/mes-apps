@@ -226,13 +226,14 @@
         </dl>
 
         <!-- Abschlusstext -->
-        <div class="closing-text">
+        <div class="closing-text" aria-label="closing-text">
           {{ orderPreview.closing_text }}
           <p>Mit freundlichen Grüßen,</p>
         </div>
 
         <!-- Interne Notizen -->
         <div
+          aria-label="internal-notes"
           v-if="orderPreview.internal_notes"
           class="internal-notes"
           style="opacity: 0.6; margin-top: 25px; border-left: 4px solid #999; padding-left: 12px"
@@ -245,8 +246,8 @@
         <ContactPersonPreview :contactData="auth.contact_person" />
 
         <!-- Bankinformationen -->
-        <div class="preview-box">
-          <div class="preview-box-title">🏦 Bankinformationen</div>
+        <div class="preview-box" aria-label="Bankinformationen">
+          <i class="bi bi-bank2 icons" aria-hidden="true"></i>Bankverbindung
           <dl class="preview-box-content">
             <dt class="preview-box-label">Bank:</dt>
             <dd class="preview-box-value">{{ auth.bank_name }}</dd>
@@ -259,8 +260,14 @@
 
         <!-- Rechtsgültigkeit -->
         <div v-if="orderPreview.is_legal" class="pdf-footer">
-          <label style="display: flex; align-items: center; gap: 8px">
-            <input type="checkbox" checked disabled style="width: 16px; height: 16px" />
+          <label for="Rechtsgültigkeit" style="display: flex; align-items: center; gap: 8px">
+            <input
+              id="Rechtsgültigkeit"
+              type="checkbox"
+              checked
+              disabled
+              style="width: 16px; height: 16px"
+            />
             Rechtsgültige Unterschrift erforderlich
           </label>
           <div

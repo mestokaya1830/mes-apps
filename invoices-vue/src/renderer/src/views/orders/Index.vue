@@ -4,7 +4,7 @@
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers" class="btn btn-primary">
         <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
-        <span>Neue Rechnung erstellen</span>
+        <span>Neuen Auftrag erstellen</span>
       </router-link>
     </header>
 
@@ -137,7 +137,7 @@
         style="font-size: 4rem"
       ></i>
 
-      <h3 class="mt-3">Keine Rechnungen</h3>
+      <h2 class="mt-3">Keine Rechnungen</h2>
       <p class="text-secondary">Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </section>
   </main>

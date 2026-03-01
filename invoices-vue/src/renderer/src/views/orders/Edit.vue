@@ -27,8 +27,8 @@
               </div>
             </div>
             <div v-else>
-              <label class="form-label">Status<span class="stars">*</span></label>
-              <select v-model="order.status" class="inputs" required>
+              <label for="Status" class="form-label">Status<span class="stars">*</span></label>
+              <select id="Status" v-model="order.status" class="inputs" required>
                 <option value="" disabled>Status auswählen</option>
                 <option value="draft" :disabled="order.status !== 'sent' ? true : true">
                   Entwurf
@@ -42,8 +42,11 @@
 
           <!-- Status by -->
           <div class="form-group">
-            <label class="form-label">Bearbeitet von:<span class="stars">*</span></label>
+            <label for="Bearbeitet von" class="form-label"
+              >Bearbeitet von:<span class="stars">*</span></label
+            >
             <input
+              id="Bearbeitet von"
               v-model="order.status_by"
               type="text"
               class="inputs"
@@ -54,14 +57,23 @@
 
           <!-- Status date -->
           <div class="form-group">
-            <label class="form-label">Bearbeitet am:<span class="stars">*</span></label>
-            <input v-model="order.status_date" type="date" class="inputs date" required />
+            <label for="Bearbeitet am" class="form-label"
+              >Bearbeitet am:<span class="stars">*</span></label
+            >
+            <input
+              id="Bearbeitet am"
+              v-model="order.status_date"
+              type="date"
+              class="inputs date"
+              required
+            />
           </div>
 
           <!-- Status comments -->
           <div class="form-group">
-            <label class="form-label">Kommentare:</label>
+            <label for="Kommentare" class="form-label">Kommentare:</label>
             <textarea
+              id="Kommentare"
               v-model="order.status_comments"
               class="inputs"
               placeholder="Kommentare oder Notizen hier eingeben"
@@ -70,45 +82,81 @@
 
           <!-- Subject -->
           <div class="form-group">
-            <label class="form-label">Betreff / Subject:</label>
-            <input v-model="order.subject" type="text" class="inputs" />
+            <label for="Betreff / Subject" class="form-label">Betreff / Subject:</label>
+            <input id="Betreff / Subject" v-model="order.subject" type="text" class="inputs" />
           </div>
 
           <!-- Lieferdaten + Versand -->
-          <div class="sections">
+          <div class="sections" aria-label="Lieferung & Versand">
             <div class="sections-title">📦 Lieferung & Versand</div>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Gesendet am</label>
-                <input v-model="order.sent_at" type="date" class="inputs date" />
+                <label for="Gesendet am" class="form-label">Gesendet am</label>
+                <input id="Gesendet am" v-model="order.sent_at" type="date" class="inputs date" />
               </div>
               <div class="form-group">
-                <label class="form-label">Liefertermin<span class="stars">*</span></label>
-                <input v-model="order.delivery_date" type="date" class="inputs date" required />
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Lieferadresse<span class="stars">*</span></label>
-                <input v-model="order.delivery_address" type="text" class="inputs" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label">PLZ<span class="stars">*</span></label>
-                <input v-model="order.delivery_postal_code" type="text" class="inputs" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Stadt<span class="stars">*</span></label>
-                <input v-model="order.delivery_city" type="text" class="inputs" required />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Land<span class="stars">*</span></label>
-                <input v-model="order.delivery_country" type="text" class="inputs" required />
+                <label for="Liefertermin" class="form-label"
+                  >Liefertermin<span class="stars">*</span></label
+                >
+                <input
+                  id="Liefertermin"
+                  v-model="order.delivery_date"
+                  type="date"
+                  class="inputs date"
+                  required
+                />
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Versandart:<span class="stars">*</span></label>
-                <select v-model="order.shipping_method" class="inputs" required>
+                <label for="Lieferadresse" class="form-label"
+                  >Lieferadresse<span class="stars">*</span></label
+                >
+                <input
+                  id="Lieferadresse"
+                  v-model="order.delivery_address"
+                  type="text"
+                  class="inputs"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="PLZ" class="form-label">PLZ<span class="stars">*</span></label>
+                <input
+                  id="PLZ"
+                  v-model="order.delivery_postal_code"
+                  type="text"
+                  class="inputs"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="Stadt" class="form-label">Stadt<span class="stars">*</span></label>
+                <input
+                  id="Stadt"
+                  v-model="order.delivery_city"
+                  type="text"
+                  class="inputs"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="Land" class="form-label">Land<span class="stars">*</span></label>
+                <input
+                  id="Land"
+                  v-model="order.delivery_country"
+                  type="text"
+                  class="inputs"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="Versandart" class="form-label"
+                  >Versandart:<span class="stars">*</span></label
+                >
+                <select id="Versandart" v-model="order.shipping_method" class="inputs" required>
                   <option value="" disabled>Bitte auswählen</option>
                   <option value="dhl">DHL</option>
                   <option value="hermes">Hermes</option>
@@ -124,14 +172,22 @@
 
           <!-- Payment details -->
           <div class="form-group">
-            <label class="form-label"
+            <label for="Zahlungsbedingungen" class="form-label"
               >Zahlungsbedingungen (Tage):<span class="stars">*</span></label
             >
-            <input v-model="order.payment_terms" type="number" class="inputs" required />
+            <input
+              id="Zahlungsbedingungen"
+              v-model="order.payment_terms"
+              type="number"
+              class="inputs"
+              required
+            />
           </div>
           <div class="form-group">
-            <label class="form-label">Zahlungsart<span class="stars">*</span></label>
-            <select v-model="order.payment_method" class="inputs" required>
+            <label for="Zahlungsart" class="form-label"
+              >Zahlungsart<span class="stars">*</span></label
+            >
+            <select id="Zahlungsart" v-model="order.payment_method" class="inputs" required>
               <option value="" disabled>Bitte auswählen</option>
               <option>Überweisung</option>
               <option>Bar</option>
@@ -142,14 +198,19 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Zahlungsreferenz:</label>
-            <input v-model="order.payment_reference" type="text" class="inputs" />
+            <label for="Zahlungsreferenz" class="form-label">Zahlungsreferenz:</label>
+            <input
+              id="Zahlungsreferenz"
+              v-model="order.payment_reference"
+              type="text"
+              class="inputs"
+            />
           </div>
 
           <!-- Notes -->
           <div class="form-group">
-            <label class="form-label">Kundenhinweise:</label>
-            <textarea v-model="order.customer_notes" class="inputs"></textarea>
+            <label for="Kundenhinweise" class="form-label">Kundenhinweise:</label>
+            <textarea id="Kundenhinweise" v-model="order.customer_notes" class="inputs"></textarea>
           </div>
           <div class="form-group">
             <label class="form-label">Interne Hinweise:</label>

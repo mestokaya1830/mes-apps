@@ -2,73 +2,112 @@
   <main class="main-container">
     <header class="main-header">
       <h1>{{ title }}</h1>
-      <button class="btn btn-secondary">
+      <button class="btn btn-secondary" aria-label="Daten exportieren">
         <i class="bi bi-download icons" aria-hidden="true"></i>
         Exportieren
       </button>
     </header>
     <div class="dashboard-grid">
-      <div class="dashboard-card customers" @click="goTo('customers')">
+      <div
+        class="dashboard-card customers"
+        @click="goTo('customers')"
+        role="button"
+        tabindex="0"
+        aria-label="Kunden anzeigen"
+      >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
             <i :class="`bi bi-people-fill icons`" aria-hidden="true"></i>
           </div>
-          <div class="dashboard-badge">Aktiv</div>
+          <div class="dashboard-badge" aria-label="Aktiv">Aktiv</div>
         </div>
-        <div class="dashboard-title">Kunden</div>
+        <div class="dashboard-title" aria-label="Kunden">Kunden</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.customers : 0 }}</span>
       </div>
 
-      <div class="dashboard-card invoices" @click="goTo('invoices')">
+      <div
+        class="dashboard-card invoices"
+        @click="goTo('invoices')"
+        role="button"
+        tabindex="0"
+        aria-label="Rechnungen anzeigen"
+      >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
             <i :class="`bi bi-file-earmark-text-fill icons`" aria-hidden="true"></i>
           </div>
-          <div class="dashboard-badge">Aktiv</div>
+          <div class="dashboard-badge" aria-label="Aktiv">Aktiv</div>
         </div>
         <div class="dashboard-title">Rechnungen</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.invoices : 0 }}</span>
       </div>
 
-      <div class="dashboard-card offers" @click="goTo('offers')">
+      <div
+        class="dashboard-card offers"
+        @click="goTo('offers')"
+        role="button"
+        tabindex="0"
+        aria-label="Angebote anzeigen"
+      >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
             <i :class="`bi bi-file-earmark-text-fill icons`" aria-hidden="true"></i>
           </div>
-          <div class="dashboard-badge">Aktiv</div>
+          <div class="dashboard-badge" aria-label="Aktiv">Aktiv</div>
         </div>
         <div class="dashboard-title">Angebote</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.offers : 0 }}</span>
       </div>
 
-      <div class="dashboard-card orders" @click="goTo('orders')">
+      <div
+        class="dashboard-card orders"
+        @click="goTo('orders')"
+        role="button"
+        tabindex="0"
+        aria-label="Bestellungen anzeigen"
+      >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
             <i :class="`bi bi-file-earmark-text-fill icons`" aria-hidden="true"></i>
           </div>
-          <div class="dashboard-badge">Aktiv</div>
+          <div class="dashboard-badge" aria-label="Aktiv">Aktiv</div>
         </div>
         <div class="dashboard-title">Bestellungen</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.orders : 0 }}</span>
       </div>
     </div>
 
-    <!-- Grafikleri göster -->
     <div class="charts-grid">
       <div class="chart-card">
         <div class="chart-header">
           <div>Umsatzentwicklung</div>
           <div class="time-filter">
-            <button :class="{ active: selectedPeriod === '1M' }" @click="updateChartData('1M')">
+            <button
+              :class="{ active: selectedPeriod === '1M' }"
+              @click="updateChartData('1M')"
+              aria-label="1 Monat"
+            >
               1M
             </button>
-            <button :class="{ active: selectedPeriod === '3M' }" @click="updateChartData('3M')">
+            <button
+              :class="{ active: selectedPeriod === '3M' }"
+              @click="updateChartData('3M')"
+              aria-label="3 Monate"
+            >
               3M
             </button>
-            <button :class="{ active: selectedPeriod === '6M' }" @click="updateChartData('6M')">
+            <button
+              :class="{ active: selectedPeriod === '6M' }"
+              @click="updateChartData('6M')"
+              aria-label="6 Monate"
+            >
               6M
             </button>
-            <button :class="{ active: selectedPeriod === '1J' }" @click="updateChartData('1J')">
+            <button
+              :class="{ active: selectedPeriod === '1J' }"
+              @click="updateChartData('1J')"
+              aria-label="1 Jahr"
+            >
               1J
             </button>
           </div>
@@ -103,37 +142,6 @@
           <dt>Laufende Aufträge</dt>
           <dd>{{ tablesCount ? tablesCount.orders : 0 }}</dd>
         </dl>
-        <div style="margin-top: 1.5rem">
-          <div class="progress-item">
-            <dl class="progress-header">
-              <dt>Zahlungspünktlichkeit</dt>
-              <dd>{{ invoiceStats.paymentRate }}%</dd>
-            </dl>
-            <div class="progress-bar">
-              <div class="progress-fill" :style="{ width: invoiceStats.paymentRate + '%' }"></div>
-            </div>
-          </div>
-
-          <div class="progress-item">
-            <dl class="progress-header">
-              <dt>Unbezahlt Quote</dt>
-              <dd>{{ invoiceStats.unpaidRate }}%</dd>
-            </dl>
-            <div class="progress-bar">
-              <div class="progress-fill" :style="{ width: invoiceStats.unpaidRate + '%' }"></div>
-            </div>
-          </div>
-
-          <div class="progress-item">
-            <dl class="progress-header">
-              <dt>Überfällig Quote</dt>
-              <dd>{{ invoiceStats.overdueRate }}%</dd>
-            </dl>
-            <div class="progress-bar">
-              <div class="progress-fill" :style="{ width: invoiceStats.overdueRate + '%' }"></div>
-            </div>
-          </div>
-        </div>
       </div>
 
       <div v-if="last_activities" class="info-card">
@@ -147,7 +155,10 @@
             <div class="activity-title">Neuer Kunde registriert</div>
             <div class="activity-subtitle">Schmidt Solutions GmbH</div>
           </div>
-          <div class="activity-time">
+          <div
+            class="activity-time"
+            aria-label="Vor {{ daysDiff(last_activities.lastCustomer?.created_at) }} Tagen"
+          >
             Vor {{ daysDiff(last_activities.lastCustomer?.created_at) }} Tagen
           </div>
         </div>
@@ -162,7 +173,10 @@
               Kunde-Nr: {{ last_activities.lastPaidInvoice?.customer_id }}
             </div>
           </div>
-          <div class="activity-time">
+          <div
+            class="activity-time"
+            aria-label="Vor {{ daysDiff(last_activities.lastPaidInvoice?.created_at) }} Tagen"
+          >
             Vor {{ daysDiff(last_activities.lastPaidInvoice?.created_at) }} Tagen
           </div>
         </div>
@@ -175,7 +189,10 @@
               Rechnung-Nr: {{ last_activities.lastOverdueInvoice?.id }}
             </div>
           </div>
-          <div class="activity-time">
+          <div
+            class="activity-time"
+            aria-label="Fällig in {{ daysDiff(last_activities.lastOverdueInvoice?.due_date) }} Tagen"
+          >
             Fällig in {{ daysDiff(last_activities.lastOverdueInvoice?.due_date) }} Tagen
           </div>
         </div>
@@ -189,10 +206,14 @@
               {{ last_activities.lastOffer?.customer_name }}
             </div>
           </div>
-          <div class="activity-time">
+          <div
+            class="activity-time"
+            aria-label="Vor {{ daysDiff(last_activities.lastOffer?.created_at) }} Tagen"
+          >
             Vor {{ daysDiff(last_activities.lastOffer?.created_at) }} Tagen
           </div>
         </div>
+
         <div class="activity-item">
           <i class="bi bi-file-earmark-text icons" aria-hidden="true"></i>
           <div class="activity-content">
@@ -202,7 +223,10 @@
               {{ last_activities.lastOrder?.customer_name }}
             </div>
           </div>
-          <div class="activity-time">
+          <div
+            class="activity-time"
+            aria-label="Vor {{ daysDiff(last_activities.lastOrder?.created_at) }} Tagen"
+          >
             Vor {{ daysDiff(last_activities.lastOrder?.created_at) }} Tagen
           </div>
         </div>

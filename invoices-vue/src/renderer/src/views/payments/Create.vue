@@ -90,10 +90,13 @@
         </h2>
         <div class="form-row">
           <div class="form-group">
-            <label for="Zahlungsdatum" class="form-label">Zahlungsdatum <span class="star">*</span></label>
+            <label for="Zahlungsdatum" class="form-label"
+              >Zahlungsdatum <span class="star">*</span></label
+            >
             <div class="date-wrapper">
               <i class="bi bi-calendar3 calendar-icon" aria-hidden="true"></i>
               <input
+                id="Zahlungsdatum"
                 ref="date"
                 v-model="payment.date"
                 type="date"
@@ -107,6 +110,7 @@
           <div class="form-group">
             <label for="Betrag" class="form-label">Betrag (€) <span class="star">*</span></label>
             <input
+              id="Betrag"
               ref="payment_amount"
               v-model="payment.payment_amount"
               type="number"
@@ -115,7 +119,9 @@
               :disabled="isPaymentAmountDisabled"
               @input="onAmountInput"
             />
-            <small v-if="error.payment_amount" class="error" role="alert">{{ error.payment_amount }}</small>
+            <small v-if="error.payment_amount" class="error" role="alert">{{
+              error.payment_amount
+            }}</small>
             <small v-if="paymentAmountError" class="form-warning"
               >Der Zahlungsbetrag darf den Rechnungsbetrag nicht überschreiten.</small
             >
@@ -127,18 +133,20 @@
                 }}</small>
                 <small v-else>0</small>
               </div>
-              <div class="form-group">
-                <label for="Offener Betrag" class="form-label">Offener Betrag</label>
-                <small>{{ formatCurrency(setOutstanding, payment.invoice.currency) }}</small>
-              </div>
+              <dl class="form-group">
+                <dt for="Offener Betrag" class="form-label">Offener Betrag</dt>
+                <dd>{{ formatCurrency(setOutstanding, payment.invoice.currency) }}</dd>
+              </dl>
             </div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="Zahlungsmethode" class="form-label">Zahlungsmethode <span class="star">*</span></label>
-            <select v-model="payment.payment_method" class="inputs">
+            <label for="Zahlungsmethode" class="form-label"
+              >Zahlungsmethode <span class="star">*</span></label
+            >
+            <select id="Zahlungsmethode" v-model="payment.payment_method" class="inputs">
               <option>Überweisung</option>
               <option>Bar</option>
               <option>PayPal</option>
@@ -151,6 +159,7 @@
           <div class="form-group">
             <label for="Zahlungsreferenz" class="form-label">Zahlungsreferenz</label>
             <input
+              id="Zahlungsreferenz"
               v-model="payment.payment_reference"
               type="text"
               class="inputs"
@@ -162,20 +171,28 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label for="Beleg / Zahlungsnachweis (optional)" class="form-label">Beleg / Zahlungsnachweis (optional)</label>
+            <label for="Beleg / Zahlungsnachweis (optional)" class="form-label"
+              >Beleg / Zahlungsnachweis (optional)</label
+            >
             <input type="file" accept=".pdf,image/*" @change="setImage" />
           </div>
 
           <div class="form-group">
             <label for="Ausgewählte Datei" class="form-label">Ausgewählte Datei</label>
-            <img v-if="selectedImage" :src="selectedImage" alt="" class="selected-image" />
+            <img
+              v-if="selectedImage"
+              :src="selectedImage"
+              alt=""
+              class="selected-image"
+              aria-hidden="true"
+            />
             <div v-else>{{ payment.file_name }}</div>
           </div>
         </div>
 
         <div class="form-group">
           <label for="Notizen (optional)" class="form-label">Notizen (optional)</label>
-          <textarea v-model="payment.notes" class="inputs" rows="3"></textarea>
+          <textarea id="Notizen" v-model="payment.notes" class="inputs" rows="3"></textarea>
         </div>
       </section>
 

@@ -12,39 +12,46 @@
 
         <div class="sections">
           <div class="custom-row">
-            <div class="form-group">
-              <label for="">Auftrags-Nr.:</label>
-              <label class="inputs">{{ formatOrderId($route.params.id) }}</label>
-            </div>
+            <dl class="form-group">
+              <dt>Auftrags-Nr.:</dt>
+              <dd class="inputs">{{ formatOrderId($route.params.id) }}</dd>
+            </dl>
 
             <div class="form-group">
               <label for="Storniert am">Storniert am</label>
               <div class="date-wrapper">
                 <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
                 <input
+                  id="Storniert am"
                   v-model="cancelled_at"
                   type="date"
                   class="inputs date"
                   placeholder="Datum der Stornierung auswählen"
                 />
               </div>
-              <div v-if="error.cancelled_at" class="error" role="alert">{{ error.cancelled_at }}</div>
+              <div v-if="error.cancelled_at" class="error" role="alert">
+                {{ error.cancelled_at }}
+              </div>
             </div>
 
             <div class="form-group">
               <label for="Storniert von">Storniert von</label>
               <input
+                id="Storniert von"
                 v-model="cancelled_by"
                 type="text"
                 class="inputs"
                 placeholder="Name der Person, die storniert"
               />
-              <div v-if="error.cancelled_by" class="error" role="alert">{{ error.cancelled_by }}</div>
+              <div v-if="error.cancelled_by" class="error" role="alert">
+                {{ error.cancelled_by }}
+              </div>
             </div>
 
             <div class="form-group">
               <label for="Stornierungsgrund">Stornierungsgrund</label>
               <textarea
+                id="Stornierungsgrund"
                 v-model="cancellation_reason"
                 class="inputs"
                 placeholder="Grund der Stornierung hier eingeben"

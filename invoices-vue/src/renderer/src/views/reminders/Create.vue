@@ -11,16 +11,25 @@
       <section class="sections">
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Versandtermin <span class="stars">*</span></label>
+            <label for="Versandtermin" class="form-label"
+              >Versandtermin <span class="stars">*</span></label
+            >
             <div class="date-wrapper">
               <i class="bi bi-calendar3 calendar-icon"></i>
-              <input v-model="reminder.date" type="datetime-local" class="inputs date" />
+              <input
+                id="Versandtermin"
+                v-model="reminder.date"
+                type="datetime-local"
+                class="inputs date"
+              />
             </div>
             <small v-if="error.date" class="error" role="alert">{{ error.date }}</small>
           </div>
           <div class="form-group">
-            <label class="form-label">Versandart <span class="stars">*</span></label>
-            <select v-model="reminder.sent_method" class="inputs">
+            <label for="Versandart" class="form-label"
+              >Versandart <span class="stars">*</span></label
+            >
+            <select id="Versandart" v-model="reminder.sent_method" class="inputs">
               <option value="" disabled>Wählen</option>
               <option value="email">Email</option>
               <option value="post">Post</option>
@@ -35,12 +44,14 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Zahlungsnachweis</label>
-            <input v-model="reminder.proof_type" type="text" class="inputs" />
+            <label for="Zahlungsnachweis" class="form-label">Zahlungsnachweis</label>
+            <input id="Zahlungsnachweis" v-model="reminder.proof_type" type="text" class="inputs" />
           </div>
           <div class="form-group">
-            <label class="form-label">💼 Betreff (Level) <span class="stars">*</span></label>
-            <select v-model="reminder.level" class="inputs" @change="updateTexts">
+            <label for="Betreff" class="form-label"
+              >💼 Betreff (Level) <span class="stars">*</span></label
+            >
+            <select id="Betreff" v-model="reminder.level" class="inputs" @change="updateTexts">
               <option value="" disabled>Wähle Betreff</option>
               <option value="1">Zahlungserinnerung / 1. Mahnung</option>
               <option value="2">2. Mahnung</option>
@@ -51,17 +62,29 @@
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Mahngebühr</label>
-            <input v-model="reminder.reminder_fee" type="number" class="inputs" />
+            <label for="Mahngebühr" class="form-label">Mahngebühr</label>
+            <input id="Mahngebühr" v-model="reminder.reminder_fee" type="number" class="inputs" />
           </div>
           <div class="form-group">
-            <label class="form-label">Verzugszinsen</label>
-            <input v-model="reminder.late_interest" type="number" class="inputs" />
+            <label for="Verzugszinsen" class="form-label">Verzugszinsen</label>
+            <input
+              id="Verzugszinsen"
+              v-model="reminder.late_interest"
+              type="number"
+              class="inputs"
+            />
           </div>
         </div>
         <div class="form-group">
-          <label class="form-label">Zahlungsfrist auswählen <span class="stars">*</span></label>
-          <select v-model="reminder.payment_deadline" class="inputs" @change="updateTexts">
+          <label for="Zahlungsfrist auswählen" class="form-label"
+            >Zahlungsfrist auswählen <span class="stars">*</span></label
+          >
+          <select
+            id="Zahlungsfrist auswählen"
+            v-model="reminder.payment_deadline"
+            class="inputs"
+            @change="updateTexts"
+          >
             <option value="" disabled selected>Bitte auswählen</option>
             <option value="innerhalb von 7 Tagen">Innerhalb von 7 Tagen</option>
             <option value="innerhalb von 5 Tagen">Innerhalb von 5 Tagen</option>
@@ -81,18 +104,18 @@
 
       <section v-if="reminder.level" class="sections">
         <div class="form-group">
-          <label class="form-label">Intro Text <span class="stars">*</span></label>
-          <textarea v-model="reminder.intro_text" class="inputs"></textarea>
+          <label for="Intro Text" class="form-label">Intro Text <span class="stars">*</span></label>
+          <textarea id="Intro Text" v-model="reminder.intro_text" class="inputs"></textarea>
         </div>
 
         <div v-if="reminder.level != '1'" class="form-group">
-          <label class="form-label">Warnung <span class="stars">*</span></label>
-          <textarea v-model="reminder.warning_text" class="inputs"></textarea>
+          <label for="Warnung" class="form-label">Warnung <span class="stars">*</span></label>
+          <textarea id="Warnung" v-model="reminder.warning_text" class="inputs"></textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Endtext <span class="stars">*</span></label>
-          <textarea v-model="reminder.closing_text" class="inputs"></textarea>
+          <label for="Endtext" class="form-label">Endtext <span class="stars">*</span></label>
+          <textarea id="Endtext" v-model="reminder.closing_text" class="inputs"></textarea>
         </div>
       </section>
 
@@ -113,7 +136,7 @@
       </section>
 
       <footer class="sections btn-container">
-        <button class="btn btn-preview" @click="submitStore">
+        <button type="submit" class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </footer>

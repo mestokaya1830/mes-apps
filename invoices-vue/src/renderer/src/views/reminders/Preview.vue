@@ -17,33 +17,33 @@
             </div>
           </div>
           <!-- recipient details -->
-          <dl class="recipient-details">
+          <div class="recipient-details">
             <div class="recipient-title">Rechnungsdetails</div>
 
-            <div class="meta-row">
+            <dl class="meta-row">
               <dt class="meta-label">Mahnung-Nr.:</dt>
               <defined class="meta-value">{{ formatReminderId(reminderPreview.id) }}</defined>
-            </div>
-            <div class="meta-row">
+            </dl>
+            <dl class="meta-row">
               <dt class="meta-label">Rechnung-Nr.:</dt>
               <dd class="meta-value">{{ formatInvoiceId(reminderPreview.invoice_id) }}</dd>
-            </div>
+            </dl>
 
-            <div class="meta-row">
+            <dl class="meta-row">
               <dt class="meta-label">Datum:</dt>
               <dd class="meta-value">{{ formatDate(reminderPreview.date) }}</dd>
-            </div>
+            </dl>
 
-            <div class="meta-row">
+            <dl class="meta-row">
               <dt class="meta-label">Kunden-Nr.:</dt>
               <dd class="meta-value">{{ formatCustomerId(reminderPreview.customer.id) }}</dd>
-            </div>
+            </dl>
 
-            <div class="meta-row">
+            <dl class="meta-row">
               <dt class="meta-label">USt-IdNr.:</dt>
               <dd class="meta-value">{{ reminderPreview.customer.vat_id || '' }}</dd>
-            </div>
-          </dl>
+            </dl>
+          </div>
         </div>
 
         <!-- Content -->
@@ -53,48 +53,48 @@
         </div>
 
         <!-- reminders Details -->
-        <dl class="reminders-card">
+        <div class="reminders-card">
           <h3 class="reminders-title">
             <i class="bi bi-file-text icons" aria-hidden="true"></i>Offene Rechnung(en)
           </h3>
 
-          <div class="info-row">
+          <dl class="info-row">
             <dt>Rechnungsnummer</dt>
             <dd>{{ formatInvoiceId(reminderPreview.invoice.id) }}</dd>
-          </div>
+          </dl>
 
-          <div class="info-row">
+          <dl class="info-row">
             <dt>Rechnungsdatum</dt>
             <dd>{{ formatDate(reminderPreview.invoice.date) }}</dd>
-          </div>
+          </dl>
 
-          <div class="info-row">
+          <dl class="info-row">
             <dt>Fälligkeitsdatum</dt>
             <dd>{{ formatDate(reminderPreview.invoice.due_date) }}</dd>
-          </div>
+          </dl>
 
-          <div class="info-row">
+          <dl class="info-row">
             <dt>Betrag</dt>
             <dd>{{ formatCurrency(reminderPreview.invoice.gross_total) }}</dd>
-          </div>
+          </dl>
 
-          <div class="info-row muted">
+          <dl class="info-row muted">
             <dt>Mahngebühr</dt>
             <dd>{{ formatCurrency(reminderPreview.reminder_fee) }}</dd>
-          </div>
+          </dl>
 
-          <div class="info-row muted">
+          <dl class="info-row muted">
             <dt>Verzugszinsen</dt>
             <dd>{{ formatCurrency(reminderPreview.late_interest) }}</dd>
-          </div>
+          </dl>
 
-          <div class="info-row total">
+          <dl class="info-row total">
             <dt>Offener Gesamtbetrag</dt>
             <dd>
               {{ formatCurrency(setTotalAmount, reminderPreview.invoice.currency) }}
             </dd>
-          </div>
-        </dl>
+          </dl>
+        </div>
 
         <!-- Bank Info -->
         <div v-if="auth" class="preview-box">
@@ -145,7 +145,7 @@
         <ContactPersonPreview :contactData="auth.contact_person" />
       </div>
       <footer class="sections btn-container">
-        <button class="btn btn-primary" @click="saveReminder">
+        <button type="submit" class="btn btn-primary" @click="saveReminder">
           <i class="bi bi-floppy-fill icons" aria-hidden="true"></i>
           Speichern
         </button>
