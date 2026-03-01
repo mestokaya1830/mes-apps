@@ -350,7 +350,7 @@
       <!-- Bank Information -->
       <section class="sections">
         <h3 class="section-title">
-          <i class="bi bi-bank" aria-hidden="true"></i> Bankinformationen
+          <i class="bi bi-bank2" aria-hidden="true"></i> Bankinformationen
         </h3>
         <div class="form-row">
           <div class="form-group">
@@ -618,7 +618,17 @@ export default {
         this.error.password = 'Passwort muss mindestens 6 Zeichen enthalten.'
         valid = false
       }
-
+      if (!this.user.phone || !/^\+?49\d{5,14}$/.test(this.user.phone)) {
+        this.error.phone = 'Bitte geben Sie eine gültige deutsche Telefonnummer ein.'
+        valid = false
+      }
+      if (this.user.website) {
+        const urlPattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9\-]+\.[a-z]{2,}([\/\w\-.?&=]*)*$/
+        if (!urlPattern.test(this.user.website)) {
+          this.error.website = 'Bitte geben Sie eine gültige Website-Adresse ein.'
+          valid = false
+        }
+      }
       // Address
       if (!this.user.address || this.user.address.trim().length < 3) {
         this.error.address = 'Adresse muss mindestens 3 Zeichen enthalten.'

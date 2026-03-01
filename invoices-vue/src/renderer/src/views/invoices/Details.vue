@@ -2,7 +2,7 @@
   <main v-if="invoice && auth" class="main-container">
     <header class="main-header-right">
       <router-link to="/invoices" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <section>
@@ -11,7 +11,9 @@
 
         <div v-if="invoice" class="recipient">
           <div class="recipient-address">
-            <div class="recipient-title"><i class="bi bi-person-badge icons"></i>Empfänger</div>
+            <div class="recipient-title">
+              <i class="bi bi-person-badge icons" aria-hidden="true"></i>Empfänger
+            </div>
             <div class="company-name-subtitle">
               {{ invoice.customer.company_name }}
             </div>
@@ -23,9 +25,9 @@
             </div>
           </div>
 
-          <dv class="recipient-details">
+          <div class="recipient-details">
             <div class="recipient-title">
-              <i class="bi bi-file-earmark-text icons"></i>Rechnungsdetails
+              <i class="bi bi-file-earmark-text icons" aria-hidden="true"></i>Rechnungsdetails
             </div>
 
             <dl class="recipient-row">
@@ -61,7 +63,7 @@
               <dt class="meta-label">USt-IdNr.:</dt>
               <dd class="meta-value">{{ invoice.vat_id }}</dd>
             </dl>
-          </dv>
+          </div>
         </div>
 
         <div class="intro-text">
@@ -106,23 +108,17 @@
         <section class="summary-section">
           <dl class="total-row">
             <dt class="total-label">Zwischensumme (netto):</dt>
-            <dd class="total-value">{{
-              formatCurrency(invoice.net_total, invoice.currency)
-            }}</dd>
+            <dd class="total-value">{{ formatCurrency(invoice.net_total, invoice.currency) }}</dd>
           </dl>
 
           <dl class="total-row">
             <dt class="total-label">MwSt.:</dt>
-            <dd class="total-value">{{
-              formatCurrency(invoice.vat_total, invoice.currency)
-            }}</dd>
+            <dd class="total-value">{{ formatCurrency(invoice.vat_total, invoice.currency) }}</dd>
           </dl>
 
           <dl class="total-row subtotal">
             <dt class="total-label">Rechnungsbetrag (brutto):</dt>
-            <dd class="total-value">{{
-              formatCurrency(invoice.gross_total, invoice.currency)
-            }}</dd>
+            <dd class="total-value">{{ formatCurrency(invoice.gross_total, invoice.currency) }}</dd>
           </dl>
 
           <div class="preview-section">
