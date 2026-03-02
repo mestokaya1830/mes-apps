@@ -18,7 +18,7 @@ import html2pdf from 'html2pdf.js'
 export default {
   inject: ['formatDate'],
   props: {
-    reportName: {
+    fileName: {
       type: String,
       required: true
     },
@@ -34,7 +34,7 @@ export default {
       const element = document.querySelector('.printable')
       if (!element) return
 
-      const fileName = `${this.reportName}-${this.formatDate(this.period.start)} - ${this.formatDate(this.period.end)}`
+      const fileName = `${this.fileName}-${this.formatDate(this.period.start)} - ${this.formatDate(this.period.end)}`
       const options = {
         margin: 16,
         filename: fileName + '.jpeg',

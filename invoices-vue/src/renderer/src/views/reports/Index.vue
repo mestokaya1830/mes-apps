@@ -1,5 +1,5 @@
 <template>
-  <main class="report-container">
+  <main class="main-container">
     <header class="main-header">
       <h1>{{ title }}</h1>
     </header>

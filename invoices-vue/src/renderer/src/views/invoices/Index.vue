@@ -9,84 +9,62 @@
       </router-link>
     </header>
 
-    <section class="main-filter">
-      <!-- Kategorie -->
-      <div class="form-group">
-        <label for="categories_filter" class="visually-hidden"> Kategorie auswählen </label>
-        <select
-          id="categories_filter"
-          v-model="categories_filter"
-          class="inputs select"
-          @change="filterCategories"
-        >
-          <option value="" disabled>Kategorie</option>
-          <option value="all">Alle</option>
-          <option value="active">Aktiv</option>
-          <option value="canceled">Storniert</option>
-          <option value="is_paid">Bezahlt</option>
-          <option value="is_partially_paid">Teilweise bezahlt</option>
-          <option value="unpaid">Unbezahlt</option>
-          <option value="overdue">Überfällig</option>
-          <option value="outstanding">Ausstehend</option>
-          <option value="is_early_paid">Frühzahlung</option>
-          <option value="is_late_paid">Spät bezahlt</option>
-          <option value="is_reminded">Erinnert</option>
-        </select>
-      </div>
+     <section class="main-filter" aria-label="customer filter">
+      <select
+        v-model="categories_filter"
+        class="inputs select"
+        aria-label="Kategorien"
+        @change="filterCategories"
+      >
+        <option value="" disabled>Kategorie</option>
+        <option value="all">Alle</option>
+        <option value="active">Aktiv</option>
+        <option value="canceled">Storniert</option>
+        <option value="is_paid">Bezahlt</option>
+        <option value="is_partially_paid">Teilweise bezahlt</option>
+        <option value="unpaid">Unbezahlt</option>
+        <option value="overdue">Überfällig</option>
+        <option value="outstanding">Ausstehend</option>
+        <option value="is_early_paid">Frühzahlung</option>
+        <option value="is_late_paid">Spät bezahlt</option>
+        <option value="is_reminded">Erinnert</option>
+      </select>
 
-      <!-- Suche -->
-      <div class="form-group">
-        <label for="search_box" class="visually-hidden"> Rechnung suchen </label>
-        <input
-          id="search_box"
-          v-model="search_box"
-          class="inputs"
-          placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
-          @input="searchFilter"
-        />
-      </div>
+      <input
+        v-model="search_box"
+        class="inputs"
+        placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
+        aria-label="Kunden, Firma oder Rechnungs-ID suchen"
+        @input="searchInvoice"
+      />
 
-      <!-- Startdatum -->
       <div class="date-wrapper">
-        <label for="date_box_start" class="visually-hidden"> Startdatum auswählen </label>
         <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
         <input
-          id="date_box_start"
           ref="date_box_start"
           v-model="date_box_start"
           type="date"
           class="inputs date"
+          aria-label="Startdatum"
           @input="formDate()"
         />
       </div>
 
-      <!-- Enddatum -->
       <div class="date-wrapper">
-        <label for="date_box_end" class="visually-hidden"> Enddatum auswählen </label>
-        <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
+        <i class="bi bi-calendar calendar-icon"></i>
         <input
-          id="date_box_end"
           ref="date_box_end"
           v-model="date_box_end"
           type="date"
           class="inputs date"
+          aria-label="Enddatum"
           @input="formDate()"
         />
       </div>
 
-      <!-- Sortieren -->
-      <button type="button" class="sort-btn" aria-label="Nach ID sortieren" @click="sorting('id')">
-        &#8645;
-      </button>
-
-      <!-- Drucken -->
-      <button
-        type="button"
-        class="list-print-icon"
-        aria-label="Rechnungen drucken"
-        @click="printDocument"
-      >
-        <i class="bi bi-printer form-title icons" aria-hidden="true"></i>
+      <button class="sort-btn" aria-label="Sortieren" @click="sorting('id')">&#8645;</button>
+      <button type="button" class="sort-btn" @click="printDocument" aria-label="Drucken">
+        <i class="bi bi-printer" aria-hidden="true"></i>
       </button>
     </section>
 

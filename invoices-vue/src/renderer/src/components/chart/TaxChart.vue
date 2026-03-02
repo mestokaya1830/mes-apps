@@ -30,7 +30,6 @@
         :key="vatRate"
         class="kpi-item"
         role="listitem"
-        :aria-label="`${vatRate} Prozent MwSt: ${vatData.gross} EUR, ${vatData.count} Positionen`"
       >
         >
         <span class="kpi-dot" :style="`background:${getVatColor(vatRate)}`"></span>
@@ -38,11 +37,7 @@
         <span class="kpi-value">{{ formatEur(vatData.gross) }}</span>
         <span class="kpi-count">{{ vatData.count }} Positionen</span>
       </div>
-      <div
-        class="kpi-item kpi-total"
-        role="listitem"
-        :aria-label="`${vatRate} Prozent MwSt: ${vatData.gross} EUR, ${vatData.count} Positionen`"
-      >
+      <div class="kpi-item kpi-total" role="listitem">
         >
         <span class="kpi-label">Gesamt MwSt.</span>
         <span class="kpi-value">{{ formatEur(totalVat.gross) }}</span>
@@ -69,6 +64,7 @@ export default {
       donutChartInstance: null
     }
   },
+
   computed: {
     vatRatesData() {
       const vatMap = {}
@@ -120,14 +116,15 @@ export default {
       )
     }
   },
-  mounted() {
-    this.$nextTick(() => this.renderCharts())
-  },
   watch: {
     chartData() {
       this.$nextTick(() => this.renderCharts())
     }
   },
+  mounted() {
+    this.$nextTick(() => this.renderCharts())
+  },
+
   beforeUnmount() {
     this.destroyCharts()
   },
@@ -146,7 +143,7 @@ export default {
     },
 
     renderBarChart() {
-      const ctx = this.$refs.barChart
+      const ctx = this.$refs.barChart?.getContext('2d')
       if (!ctx) return
       const rates = Object.keys(this.vatRatesData)
       const labels = rates.map((r) => `${r}%`)
@@ -198,7 +195,7 @@ export default {
     },
 
     renderDonutChart() {
-      const ctx = this.$refs.donutChart
+      const ctx = this.$refs.donutChart?.getContext('2d')
       if (!ctx) return
       const rates = Object.keys(this.vatRatesData)
       const labels = rates.map((r) => `${r}% MwSt.`)

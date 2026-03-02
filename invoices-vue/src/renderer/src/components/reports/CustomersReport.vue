@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <main>
     <section aria-label="Datumsbereich auswählen">
       <select
         id="date-range"
@@ -135,8 +135,8 @@
       </table>
     </section>
 
-    <ReportActions reportName="Kundenberichte" :period="period" />
-  </div>
+    <ReportActions fileName="Kundenberichte" :period="period" />
+  </main>
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <section class="filter-section">
+  <main>
+    <div class="filter-section">
       <select
         v-model="date_range"
         class="inputs"
@@ -46,7 +46,7 @@
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
     <section v-if="is_ready" class="printable">
       <div class="report-header-2">
@@ -117,8 +117,8 @@
         </table>
       </section>
     </section>
-    <ReportActions reportName="Umsatzsteuer-Bericht" :period="period" />
-  </div>
+    <ReportActions fileName="Umsatzsteuer-Bericht" :period="period" />
+  </main>
 </template>
 
 <script>
@@ -151,8 +151,9 @@ export default {
         let positions = []
         try {
           positions = JSON.parse(invoice.positions)
-        } catch (err) {
+        } catch (error) {
           positions = []
+          console.log(error)
         }
 
         positions.forEach((position) => {

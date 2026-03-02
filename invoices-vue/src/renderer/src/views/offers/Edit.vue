@@ -10,7 +10,7 @@
       <div class="printable">
         <!-- Header -->
         <h2>{{ title }}</h2>
-        <section class="sections">
+        <section class="sections" aria-label="status">
           <div class="form-group">
             <div v-if="offer.status === 'accepted' || offer.status === 'rejected'">
               <h4>Status:</h4>
@@ -28,8 +28,8 @@
             </div>
             <div v-else class="form-row">
               <div class="form-group">
-                <label for="Status" class="form-label">Status<span class="stars">*</span></label>
-                <select v-model="offer.status" class="inputs select" required>
+                <label for="status" class="form-label">Status<span class="stars">*</span></label>
+                <select id="status" v-model="offer.status" class="inputs select" required>
                   <option value="" disabled>Status auswählen</option>
                   <option value="draft" :disabled="offer.status !== 'sent' ? true : true">
                     Entwurf
@@ -43,8 +43,9 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Bearbeitet von:<span class="stars">*</span></label>
+            <label for="Bearbeitet von" class="form-label">Bearbeitet von:<span class="stars">*</span></label>
             <input
+            id="Bearbeitet von"
               v-model="offer.status_by"
               type="text"
               class="inputs"
@@ -59,7 +60,7 @@
             >
             <div class="date-wrapper">
               <i class="bi bi-calendar calendar-icon"></i>
-              <input v-model="offer.date" type="date" class="inputs date" required />
+              <input id="Bearbeitet am" v-model="offer.date" type="date" class="inputs date" required />
             </div>
             <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
           </div>
@@ -67,6 +68,7 @@
           <div class="form-group">
             <label for="Kommentare" class="form-label">Kommentare:</label>
             <textarea
+            id="Kommentare"
               v-model="offer.status_comments"
               class="inputs"
               placeholder="Kommentare oder Notizen hier eingeben"
