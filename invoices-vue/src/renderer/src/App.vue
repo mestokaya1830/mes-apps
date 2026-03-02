@@ -1,14 +1,17 @@
 <template>
-  <main class="app-layout">
+  <div class="app-layout">
     <header>
       <TitleBar />
     </header>
+
     <aside class="sidebar">
       <SideBar />
     </aside>
-    <div ref="layouts" class="layouts">
+
+    <main ref="layouts" class="layouts">
       <router-view />
-    </div>
+    </main>
+
     <footer>
       <button
         v-if="showGoTop"
@@ -20,7 +23,7 @@
         <i class="bi bi-arrow-up" aria-hidden="true"></i>
       </button>
     </footer>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -172,17 +175,20 @@ export default {
       layouts.addEventListener('scroll', this.handleScroll)
     }
   },
+  beforeUnmount() {
+    const layouts = this.$refs.layouts
+    if (layouts) layouts.removeEventListener('scroll', this.handleScroll)
+  },
   methods: {
-    handleScroll(event) {
-      this.showGoTop = event.target.scrollTop > 300
+    handleScroll() {
+      const layouts = this.$refs.layouts
+      if (!layouts) return
+      this.showGoTop = layouts.scrollTop > 300
     },
     scrollToTop() {
       const layouts = this.$refs.layouts
       if (layouts) {
-        layouts.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        })
+        layouts.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }
   }
@@ -218,7 +224,8 @@ export default {
   display: flex;
   flex: 1;
   justify-content: center;
-  padding: 20px;
+  height: calc(100vh - 60px);
+  margin-top: 60px;
   overflow-y: auto;
 }
 /* ===== SIDEBAR ===== */
