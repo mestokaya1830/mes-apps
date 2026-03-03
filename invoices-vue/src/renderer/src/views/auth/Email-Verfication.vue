@@ -2,7 +2,7 @@
   <div>
     <div class="main-container">
       <div class="auth-logo-header">
-        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
+        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
       <form @submit.prevent="sendEmail">
         <h2 class="auth-title">E-Mail-Verifizierung</h2>

@@ -3,7 +3,7 @@
     <AuthPage v-if="!register" />
     <div v-else class="main-container">
       <div class="auth-logo-header">
-        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
+        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
       <form aria-label="Abmeldeformular" @submit.prevent="loginUser">
         <h1 class="auth-title">Willkommen bei Mes App</h1>
