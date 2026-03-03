@@ -1,21 +1,21 @@
 <template>
-  <section class="main-container">
+  <div class="main-container">
     <h2 class="page-title">
       <i class="bi bi-person-plus-fill icons" aria-hidden="true"></i>
       Benutzerregistrierungsformular
     </h2>
 
-    <form class="settings-form" @submit.prevent="register">
+    <form @submit.prevent="register">
       <!-- Personal Information -->
       <fieldset class="sections">
-        <legend class="section-title">
-          <i class="bi bi-person-circle" aria-hidden="true"></i> Persönliche Informationen
+        <legend class="sections-title">
+          <i class="bi bi-person-circle icons" aria-hidden="true"></i> Persönliche Informationen
         </legend>
 
         <div class="form-row">
           <div class="form-group">
             <label for="anrede">Anrede <span class="stars">*</span></label>
-            <select id="anrede" v-model="user.gender" class="inputs">
+            <select id="anrede" ref="gender" v-model="user.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -30,6 +30,7 @@
             <label for="vorname">Vorname <span class="stars">*</span></label>
             <input
               id="vorname"
+              ref="first_name"
               v-model="user.first_name"
               type="text"
               class="inputs"
@@ -42,6 +43,7 @@
             <label for="nachname">Nachname <span class="stars">*</span></label>
             <input
               id="nachname"
+              ref="last_name"
               v-model="user.last_name"
               type="text"
               class="inputs"
@@ -56,6 +58,7 @@
             <label for="email">E-Mail <span class="stars">*</span></label>
             <input
               id="email"
+              ref="email"
               v-model="user.email"
               type="email"
               class="inputs"
@@ -65,9 +68,10 @@
           </div>
 
           <div class="form-group">
-            <label for="passwort">Passwort <span class="stars">*</span></label>
+            <label for="kenntwort">Passwort <span class="stars">*</span></label>
             <input
-              id="passwort"
+              id="kenntwort"
+              ref="password"
               v-model="user.password"
               type="password"
               class="inputs"
@@ -82,6 +86,7 @@
             <label for="telefon">Telefon</label>
             <input
               id="telefon"
+              ref="phone"
               v-model="user.phone"
               type="tel"
               class="inputs"
@@ -95,6 +100,7 @@
             <label for="webseite">Webseite</label>
             <input
               id="webseite"
+              ref="website"
               v-model="user.website"
               type="url"
               class="inputs"
@@ -108,7 +114,7 @@
       <!-- Address Information -->
       <fieldset class="sections">
         <legend class="section-title">
-          <i class="bi bi-geo-alt-fill" aria-hidden="true"></i> Adressinformationen
+          <i class="bi bi-geo-alt-fill icons" aria-hidden="true"></i> Adressinformationen
         </legend>
 
         <div class="form-row">
@@ -116,6 +122,7 @@
             <label for="adresse">Adresse <span class="stars">*</span></label>
             <input
               id="adresse"
+              ref="address"
               v-model="user.address"
               type="text"
               class="inputs"
@@ -129,6 +136,7 @@
             <label for="postleitzahl">Postleitzahl <span class="stars">*</span></label>
             <input
               id="postleitzahl"
+              ref="postal_code"
               v-model="user.postal_code"
               type="text"
               class="inputs"
@@ -142,7 +150,14 @@
         <div class="form-row">
           <div class="form-group">
             <label for="stadt">Stadt <span class="stars">*</span></label>
-            <input id="stadt" v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
+            <input
+              id="stadt"
+              ref="city"
+              v-model="user.city"
+              type="text"
+              class="inputs"
+              placeholder="Berlin"
+            />
             <div v-if="error.city" class="error" role="alert">{{ error.city }}</div>
           </div>
 
@@ -175,7 +190,7 @@
       <!-- Company Information -->
       <fieldset class="sections">
         <legend class="section-title">
-          <i class="bi bi-building" aria-hidden="true"></i> Unternehmensinformationen
+          <i class="bi bi-building icons" aria-hidden="true"></i> Unternehmensinformationen
         </legend>
 
         <div class="form-row">
@@ -183,6 +198,7 @@
             <label for="firmenname">Firmenname <span class="stars">*</span></label>
             <input
               id="firmenname"
+              ref="company_name"
               v-model="user.company_name"
               type="text"
               class="inputs"
@@ -193,7 +209,12 @@
 
           <div class="form-group">
             <label for="unternehmensform">🇩🇪 Unternehmensform <span class="stars">*</span></label>
-            <select id="unternehmensform" v-model="user.company_details" class="inputs">
+            <select
+              id="unternehmensform"
+              ref="company_details"
+              v-model="user.company_details"
+              class="inputs"
+            >
               <option :value="null" disabled>-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
@@ -208,7 +229,13 @@
         <div class="form-row">
           <div class="form-group">
             <label for="firmenlogo">Firmenlogo</label>
-            <input id="firmenlogo" type="file" accept="image/*" @change="setLogo($event)" />
+            <input
+              id="firmenlogo"
+              ref="company_logo"
+              type="file"
+              accept="image/*"
+              @change="setLogo($event)"
+            />
             <small class="hint">PNG, JPG oder SVG (max. 2MB)</small>
             <div v-if="error.company_logo" class="error" role="alert">{{ error.company_logo }}</div>
           </div>
@@ -223,14 +250,19 @@
       <!-- Contact Person -->
       <fieldset class="sections">
         <legend class="section-title">
-          <i class="bi bi-person-badge" aria-hidden="true"></i> Ansprechpartner
+          <i class="bi bi-person-badge icons" aria-hidden="true"></i> Ansprechpartner
           <small class="text-muted">(Optional - falls abweichend)</small>
         </legend>
 
         <div class="form-row">
           <div class="form-group col-span-1">
             <label for="kontakt-anrede">Anrede</label>
-            <select id="kontakt-anrede" v-model="user.contact_person.gender" class="inputs">
+            <select
+              id="kontakt-anrede"
+              ref="contact_person_gender"
+              v-model="user.contact_person.gender"
+              class="inputs"
+            >
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -247,6 +279,7 @@
             <label for="kontakt-vorname">Vorname</label>
             <input
               id="kontakt-vorname"
+              ref="contact_person.first_name"
               v-model="user.contact_person.first_name"
               type="text"
               class="inputs"
@@ -261,6 +294,7 @@
             <label for="kontakt-nachname">Nachname</label>
             <input
               id="kontakt-nachname"
+              ref="contact_person.last_name"
               v-model="user.contact_person.last_name"
               type="text"
               class="inputs"
@@ -277,6 +311,7 @@
             <label for="kontakt-telefon">Telefon</label>
             <input
               id="kontakt-telefon"
+              ref="contact_person.phone"
               v-model="user.contact_person.phone"
               type="tel"
               class="inputs"
@@ -291,6 +326,7 @@
             <label for="kontakt-email">E-Mail</label>
             <input
               id="kontakt-email"
+              ref="contact_person.email"
               v-model="user.contact_person.email"
               type="email"
               class="inputs"
@@ -306,11 +342,11 @@
       <!-- Tax Information -->
       <fieldset class="sections">
         <legend class="section-title">
-          <i class="bi bi-calculator" aria-hidden="true"></i> Steuerinformationen
+          <i class="bi bi-calculator icons" aria-hidden="true"></i> Steuerinformationen
         </legend>
 
-        <div class="alert-info" role="note">
-          <i class="bi bi-info-circle" aria-hidden="true"></i>
+        <div class="register-info-text" role="note">
+          <i class="bi bi-info-circle icons-info" aria-hidden="true"></i>
           <strong>Wichtig:</strong> Für rechtsgültige Rechnungen ist mindestens eine Steuernummer
           oder USt-IdNr. erforderlich.
         </div>
@@ -320,6 +356,7 @@
             <label for="steuernummer">Steuernummer <span class="stars">*</span></label>
             <input
               id="steuernummer"
+              ref="tax_number"
               v-model="user.tax_number"
               type="text"
               class="inputs"
@@ -334,6 +371,7 @@
             <label for="ust-idnr">USt-IdNr. <span class="stars">*</span></label>
             <input
               id="ust-idnr"
+              ref="vat_id"
               v-model="user.vat_id"
               type="text"
               class="inputs"
@@ -351,6 +389,7 @@
             <label for="finanzamt">Finanzamt</label>
             <input
               id="finanzamt"
+              ref="tax_office"
               v-model="user.tax_office"
               type="text"
               class="inputs"
@@ -363,6 +402,7 @@
             <label for="handelsregistereintrag">Handelsregistereintrag</label>
             <input
               id="handelsregistereintrag"
+              ref="court_registration"
               v-model="user.court_registration"
               type="text"
               class="inputs"
@@ -380,6 +420,7 @@
             <label for="gerichtsstand">Gerichtsstand</label>
             <input
               id="gerichtsstand"
+              ref="court_location"
               v-model="user.court_location"
               type="text"
               class="inputs"
@@ -395,7 +436,7 @@
       <!-- Bank Information -->
       <fieldset class="sections">
         <legend class="section-title">
-          <i class="bi bi-bank2" aria-hidden="true"></i> Bankverbindung
+          <i class="bi bi-bank2 icons" aria-hidden="true"></i> Bankverbindung
         </legend>
 
         <div class="form-row">
@@ -403,6 +444,7 @@
             <label for="iban">IBAN <span class="stars">*</span></label>
             <input
               id="iban"
+              ref="iban"
               v-model="user.iban"
               type="text"
               class="inputs"
@@ -420,6 +462,7 @@
             <label for="kontoinhaber">Kontoinhaber <span class="stars">*</span></label>
             <input
               id="kontoinhaber"
+              ref="bank_account_holder"
               v-model="user.bank_account_holder"
               type="text"
               class="inputs"
@@ -436,6 +479,7 @@
             <label for="bankname">Bankname</label>
             <input
               id="bankname"
+              ref="bank_name"
               v-model="user.bank_name"
               type="text"
               class="inputs"
@@ -448,6 +492,7 @@
             <label for="bic">BIC</label>
             <input
               id="bic"
+              ref="bic"
               v-model="user.bic"
               type="text"
               class="inputs"
@@ -463,13 +508,14 @@
       <!-- Company Signature -->
       <fieldset class="sections">
         <legend class="section-title">
-          <i class="bi bi-pen" aria-hidden="true"></i> Unternehmenssignatur
+          <i class="bi bi-pen icons" aria-hidden="true"></i> Unternehmenssignatur
         </legend>
 
         <div class="form-group">
           <label for="signaturtext">Signaturtext</label>
           <textarea
             id="signaturtext"
+            ref="company_signature"
             v-model="user.company_signature"
             rows="4"
             class="inputs"
@@ -483,24 +529,23 @@
       </fieldset>
 
       <!-- Submit -->
+      
       <p v-if="showError" class="error" role="alert" aria-live="assertive">{{ showError }}</p>
-      <p v-if="showSuccess" class="success" role="status" aria-live="polite">{{ showSuccess }}</p>
-
       <div class="sections btn-container">
         <button type="button" class="btn btn-secondary" @click="fillExampleData">
-          <i class="bi bi-clipboard-data" aria-hidden="true"></i> Beispieldaten füllen
+          <i class="bi bi-clipboard-data icons" aria-hidden="true"></i> Beispieldaten füllen
         </button>
         <button v-if="!showSuccess" type="submit" class="btn btn-secondary">
           <i class="bi bi-save icons" aria-hidden="true"></i>
           Benutzer speichern
         </button>
-        <button v-else type="button" class="btn btn-setup" @click="goToLogin">
+        <button v-else type="button" class="btn btn-auth" @click="goToLogin">
           <i class="bi bi-save icons" aria-hidden="true"></i>
           Weiter
         </button>
       </div>
     </form>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -691,11 +736,11 @@ export default {
         valid = false
       }
 
-      if (this.user.postal_code && !/^\d{5}$/.test(this.user.postal_code)) {
+      if (!this.user.postal_code || !/^\d{5}$/.test(this.user.postal_code)) {
         this.error.postal_code = 'Postleitzahl muss 5 Ziffern enthalten.'
         valid = false
       }
-      if (this.user.city && this.user.city.length < 2) {
+      if (!this.user.city || this.user.city.length < 2) {
         this.error.city = 'Stadt muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
@@ -724,15 +769,15 @@ export default {
         this.error['contact_person.gender'] = 'Bitte Anrede auswählen.'
         valid = false
       }
-      if (cp.first_name && cp.first_name.length < 2) {
+      if (!cp.first_name || cp.first_name.length < 2) {
         this.error['contact_person.first_name'] = 'Vorname muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
-      if (cp.last_name && cp.last_name.length < 2) {
+      if (!cp.last_name || cp.last_name.length < 2) {
         this.error['contact_person.last_name'] = 'Nachname muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
-      if (cp.email && !emailRegex.test(cp.email)) {
+      if (!cp.email || !emailRegex.test(cp.email)) {
         this.error['contact_person.email'] = 'Ungültige E-Mail-Adresse.'
         valid = false
       }
@@ -767,7 +812,7 @@ export default {
         this.$nextTick(() => {
           const firstErrorField = Object.keys(this.error)[0]
           if (firstErrorField) {
-            const inputElement = document.getElementById(firstErrorField)
+            const inputElement = this.$refs[firstErrorField]
             if (inputElement) inputElement.focus()
           }
         })

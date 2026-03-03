@@ -1,15 +1,18 @@
 <template>
-  <section class="setup-page">
-    <setup-page v-if="!register" />
-
-    <div v-else class="login-container">
-      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
-      <form class="login-form" aria-label="Abmeldeformular" @submit.prevent="loginUser">
-        <h1 class="setup-title">Willkommen bei Mes App</h1>
+  <div>
+    <AuthPage v-if="!register" />
+    <div v-else class="main-container">
+      <div class="auth-logo-header">
+        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
+      </div>
+      <form aria-label="Abmeldeformular" @submit.prevent="loginUser">
+        <h1 class="auth-title">Willkommen bei Mes App</h1>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="email" class="form-label">E-Mail-Adresse</label>
+            <label for="email" class="form-label"
+              >E-Mail-Adresse <span class="stars">*</span></label
+            >
             <input
               id="email"
               v-model="user.email"
@@ -17,13 +20,13 @@
               :class="['inputs', { error: error.email }]"
               placeholder="Geben Sie Ihre E-Mail-Adresse ein"
             />
-            <div v-if="error.email" class="error-message" role="alert">{{ error.email }}</div>
+            <div v-if="error.email" class="error" role="alert">{{ error.email }}</div>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label for="kenntwort" class="form-label">Passwort</label>
+            <label for="kenntwort" class="form-label">Passwort <span class="stars">*</span></label>
             <input
               id="kenntwort"
               v-model="user.password"
@@ -31,7 +34,7 @@
               :class="['inputs', { error: error.password }]"
               placeholder="Geben Sie Ihr Passwort ein"
             />
-            <div v-if="error.password" class="error-message" role="alert">{{ error.password }}</div>
+            <div v-if="error.password" class="error" role="alert">{{ error.password }}</div>
           </div>
         </div>
 
@@ -43,23 +46,23 @@
             Kenntwort vergessen?
           </router-link>
 
-          <button type="submit" class="btn btn-setup right mt-20">
+          <button type="submit" class="btn btn-auth">
             <i class="bi bi-arrow-right ioncs" aria-hidden="true"></i>
             Anmelden
           </button>
         </div>
       </form>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
 import store from '../../store/store.js'
-import SetupPage from '../../components/preview/SetupPage.vue'
+import AuthPage from '../../components/preview/AuthPage.vue'
 
 export default {
   name: 'Login',
-  components: { SetupPage },
+  components: { AuthPage },
   inject: ['trimFormFields'],
   data() {
     return {

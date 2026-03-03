@@ -1,7 +1,6 @@
 <template>
-  <aside>
-    <img src="/app_logo.png" class="sidebar-logo" alt="Firmen logo" />
-
+  <div>
+    <img src="/app_logo.png" alt="Firmen logo" class="sidebar-logo" />
     <nav aria-label="Hauptnavigation">
       <section>
         <h2 class="nav-label">Hauptmenü</h2>
@@ -12,7 +11,7 @@
               <span class="nav-text">Startseite</span>
             </router-link>
           </li>
-  
+
           <li class="nav-item">
             <router-link to="/customers" exact-active-class="active" class="nav-link">
               <i class="bi bi-people nav-icon" aria-hidden="true"></i>
@@ -25,14 +24,14 @@
               <span class="nav-text">Rechnungen</span>
             </router-link>
           </li>
-  
+
           <li class="nav-item">
             <router-link to="/offers" exact-active-class="active" class="nav-link">
               <i class="bi bi-file-earmark-text nav-icon" aria-hidden="true"></i>
               <span class="nav-text">Angebote</span>
             </router-link>
           </li>
-  
+
           <li class="nav-item">
             <router-link to="/orders" exact-active-class="active" class="nav-link">
               <i class="bi bi-bag-check nav-icon" aria-hidden="true"></i>
@@ -47,16 +46,16 @@
           </li>
         </ul>
       </section>
-     <section>
-       <h2 class="nav-label">Verwaltung</h2>
-       <ul>
+      <section>
+        <h2 class="nav-label">Verwaltung</h2>
+        <ul>
           <li class="nav-item">
             <router-link to="/reports" exact-active-class="active" class="nav-link">
               <i class="bi bi-bar-chart nav-icon" aria-hidden="true"></i>
               <span class="nav-text">Berichte</span>
             </router-link>
           </li>
-  
+
           <li class="nav-item">
             <router-link to="/profile" exact-active-class="active" class="nav-link">
               <i class="bi bi-gear nav-icon" aria-hidden="true"></i>
@@ -64,7 +63,7 @@
             </router-link>
           </li>
         </ul>
-     </section>
+      </section>
     </nav>
 
     <footer v-if="checkLogout" class="sidebar-footer">
@@ -73,7 +72,7 @@
         <span class="logout-text">Abmelden</span>
       </a>
     </footer>
-  </aside>
+  </div>
 </template>
 
 <script>

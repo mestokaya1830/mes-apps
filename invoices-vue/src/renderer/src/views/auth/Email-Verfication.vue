@@ -1,30 +1,33 @@
 <template>
-  <section class="login-container">
-    <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
-    <form class="login-form" @submit.prevent="sendEmail">
-      <h2 class="setup-title">E-Mail-Verifizierung</h2>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email" class="form-label">E-Mail-Adresse</label>
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            class="inputs"
-            placeholder="beispiel@email.com"
-            @input="error = ''"
-          />
-          <p v-if="error" class="error" role="alert" aria-live="assertive">
-            {{ error }}
-          </p>
-        </div>
+  <div>
+    <div class="main-container">
+      <div class="auth-logo-header">
+        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
       </div>
-      <button class="btn btn-setup mt-20" type="submit">E-Mail senden</button>
-      <p v-if="success" class="success" role="status" aria-live="polite">
-        {{ success }}
-      </p>
-    </form>
-  </section>
+      <form @submit.prevent="sendEmail">
+        <h2 class="auth-title">E-Mail-Verifizierung</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email" class="form-label">E-Mail-Adresse</label>
+            <input
+              id="email"
+              v-model="email"
+              type="email"
+              class="inputs"
+              placeholder="beispiel@email.com"
+              @input="error = ''"
+            />
+            <p v-if="error" class="error" role="alert" aria-live="assertive">
+              {{ error }}
+            </p>
+          </div>
+        </div>
+        <div class="btn-container">
+          <button class="btn btn-auth" type="submit">E-Mail senden</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </template>
 
 <script>
