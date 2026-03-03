@@ -16,7 +16,7 @@
         <div class="form-row">
           <div class="form-group">
             <span>Anrede <span class="stars">*</span></span>
-            <select v-model="user.gender" class="inputs">
+            <select id="gender" v-model="user.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -29,14 +29,26 @@
           <!-- First Name -->
           <div class="form-group">
             <span>Vorname <span class="stars">*</span></span>
-            <input v-model="user.first_name" type="text" class="inputs" placeholder="Max" />
+            <input
+              id="first_name"
+              v-model="user.first_name"
+              type="text"
+              class="inputs"
+              placeholder="Max"
+            />
             <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
           </div>
 
           <!-- Last Name -->
           <div class="form-group">
             <span>Nachname <span class="stars">*</span></span>
-            <input v-model="user.last_name" type="text" class="inputs" placeholder="Mustermann" />
+            <input
+              id="last_name"
+              v-model="user.last_name"
+              type="text"
+              class="inputs"
+              placeholder="Mustermann"
+            />
             <div v-if="error.last_name" class="error" role="alert">{{ error.last_name }}</div>
           </div>
         </div>
@@ -44,7 +56,13 @@
           <!-- Email -->
           <div class="form-group">
             <span>E-Mail <span class="stars">*</span></span>
-            <input v-model="user.email" type="email" class="inputs" placeholder="max@beispiel.de" />
+            <input
+              id="email"
+              v-model="user.email"
+              type="email"
+              class="inputs"
+              placeholder="max@beispiel.de"
+            />
             <div v-if="error.email" class="error" role="alert">{{ error.email }}</div>
           </div>
 
@@ -52,6 +70,7 @@
           <div class="form-group">
             <span>Passwort <span class="stars">*</span></span>
             <input
+              id="password"
               v-model="user.password"
               type="password"
               class="inputs"
@@ -64,7 +83,13 @@
           <!-- Phone -->
           <div class="form-group">
             <span>Telefon</span>
-            <input v-model="user.phone" type="tel" class="inputs" placeholder="+49 30 12345678" />
+            <input
+              id="phone"
+              v-model="user.phone"
+              type="tel"
+              class="inputs"
+              placeholder="+49 30 12345678"
+            />
             <small class="hint">Für Rückfragen empfohlen</small>
             <div v-if="error.phone" class="error" role="alert">{{ error.phone }}</div>
           </div>
@@ -73,6 +98,7 @@
           <div class="form-group">
             <span>Webseite</span>
             <input
+              id="website"
               v-model="user.website"
               type="url"
               class="inputs"
@@ -92,6 +118,7 @@
           <div class="form-group">
             <span>Adresse <span class="stars">*</span></span>
             <input
+              id="address"
               v-model="user.address"
               type="text"
               class="inputs"
@@ -104,6 +131,7 @@
           <div class="form-group">
             <span>Postleitzahl <span class="stars">*</span></span>
             <input
+              id="postal_code"
               v-model="user.postal_code"
               type="text"
               class="inputs"
@@ -117,13 +145,13 @@
         <div class="form-row">
           <div class="form-group">
             <span>Stadt <span class="stars">*</span></span>
-            <input v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
+            <input id="city" v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
             <div v-if="error.city" class="error" role="alert">{{ error.city }}</div>
           </div>
 
           <div class="form-group">
             <span>🇩🇪 Bundesland <span class="stars">*</span></span>
-            <select v-model="user.state" class="inputs">
+            <select id="state" v-model="user.state" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Baden-Württemberg">Baden-Württemberg</option>
               <option value="Bayern">Bayern</option>
@@ -156,6 +184,7 @@
           <div class="form-group">
             <span>Firmenname <span class="stars">*</span></span>
             <input
+              id="company_name"
               v-model="user.company_name"
               type="text"
               class="inputs"
@@ -166,7 +195,7 @@
 
           <div class="form-group">
             <span>🇩🇪 Unternehmensform <span class="stars">*</span></span>
-            <select v-model="user.company_details" class="inputs">
+            <select id="company_details" v-model="user.company_details" class="inputs">
               <option :value="null" disabled>-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
@@ -180,7 +209,7 @@
         <div class="form-row">
           <div class="form-group">
             <span>Firmenlogo</span>
-            <input type="file" @change="setLogo($event)" accept="image/*" />
+            <input id="company_logo" type="file" accept="image/*" @change="setLogo($event)" />
             <small class="hint">PNG, JPG oder SVG (max. 2MB)</small>
             <div v-if="error.company_logo" class="error" role="alert">{{ error.company_logo }}</div>
           </div>
@@ -188,9 +217,6 @@
           <figure class="form-group logo-preview-wrapper">
             <figcaption>Logo-Vorschau</figcaption>
             <img :src="selectedImage" class="user-logo" alt="Company Logo" aria-hidden="true" />
-            <div v-if="error.selectedImage" class="error" role="alert">
-              {{ error.selectedImage }}
-            </div>
           </figure>
         </div>
       </section>
@@ -204,7 +230,7 @@
         <div class="form-row">
           <div class="form-group col-span-1">
             <span>Anrede</span>
-            <select v-model="user.contact_person.gender" class="inputs">
+            <select id="contact_person_gender" v-model="user.contact_person.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -219,6 +245,7 @@
           <div class="form-group">
             <span>Vorname</span>
             <input
+              id="contact_person_first_name"
               v-model="user.contact_person.first_name"
               type="text"
               class="inputs"
@@ -232,6 +259,7 @@
           <div class="form-group">
             <span>Nachname</span>
             <input
+              id="contact_person_last_name"
               v-model="user.contact_person.last_name"
               type="text"
               class="inputs"
@@ -246,6 +274,7 @@
           <div class="form-group">
             <span>Telefon</span>
             <input
+              id="contact_person_phone"
               v-model="user.contact_person.phone"
               type="tel"
               class="inputs"
@@ -259,6 +288,7 @@
           <div class="form-group">
             <span>E-Mail</span>
             <input
+              id="contact_person_email"
               v-model="user.contact_person.email"
               type="email"
               class="inputs"
@@ -285,6 +315,7 @@
           <div class="form-group">
             <span>Steuernummer <span class="stars">*</span></span>
             <input
+              id="tax_number"
               v-model="user.tax_number"
               type="text"
               class="inputs"
@@ -298,6 +329,7 @@
           <div class="form-group">
             <span>USt-IdNr. <span class="stars">*</span></span>
             <input
+              id="vat_id"
               v-model="user.vat_id"
               type="text"
               class="inputs"
@@ -313,6 +345,7 @@
           <div class="form-group">
             <span>Finanzamt</span>
             <input
+              id="tax_office"
               v-model="user.tax_office"
               type="text"
               class="inputs"
@@ -324,6 +357,7 @@
           <div class="form-group">
             <span>Handelsregistereintrag</span>
             <input
+              id="court_registration"
               v-model="user.court_registration"
               type="text"
               class="inputs"
@@ -337,6 +371,7 @@
           <div class="form-group">
             <span>Gerichtsstand</span>
             <input
+              id="court_location"
               v-model="user.court_location"
               type="text"
               class="inputs"
@@ -349,27 +384,28 @@
 
       <!-- Bank Information -->
       <section class="sections">
-        <h3 class="section-title">
-          <i class="bi bi-bank2" aria-hidden="true"></i> Bankinformationen
-        </h3>
+        <h3 class="section-title"><i class="bi bi-bank2" aria-hidden="true"></i> Bankverbindung</h3>
         <div class="form-row">
           <div class="form-group">
             <span>IBAN <span class="stars">*</span></span>
             <input
+              id="iban"
               v-model="user.iban"
               type="text"
               class="inputs"
               placeholder="DE89 3704 0044 0532 0130 00"
               maxlength="27"
-              @input="formatIban"
+              @input="handleIban($event.target.value)"
             />
-            <small class="hint">DE + 20 Ziffern</small>
+            <span v-if="ibanFlag">{{ ibanFlag }}</span>
             <div v-if="error.iban" class="error">{{ error.iban }}</div>
+            <div v-if="ibanValid" class="success">✅ IBAN gültig</div>
           </div>
 
           <div class="form-group">
             <span>Kontoinhaber <span class="stars">*</span></span>
             <input
+              id="bank_account_holder"
               v-model="user.bank_account_holder"
               type="text"
               class="inputs"
@@ -384,6 +420,7 @@
           <div class="form-group">
             <span>Bankname</span>
             <input
+              id="bank_name"
               v-model="user.bank_name"
               type="text"
               class="inputs"
@@ -395,6 +432,7 @@
           <div class="form-group">
             <span>BIC</span>
             <input
+              id="bic"
               v-model="user.bic"
               type="text"
               class="inputs"
@@ -415,6 +453,7 @@
         <div class="form-group">
           <span>Signaturtext</span>
           <textarea
+            id="company_signature"
             v-model="user.company_signature"
             rows="4"
             class="inputs"
@@ -447,9 +486,11 @@
 </template>
 
 <script>
+import { bankDataMixin } from '../../mixins/BankData'
 export default {
   name: 'UserRegistrationForm',
-  inject: ['trimFormFields'],
+  mixins: [bankDataMixin],
+  inject: ['trimFormFields', 'validateIban'],
   data() {
     return {
       isSubmitting: false,
@@ -518,7 +559,11 @@ export default {
         { value: 'Stiftung', label: 'Stiftung', is_small_company: false },
         { value: 'Ag', label: 'AG (Aktiengesellschaft)', is_small_company: false },
         { value: 'Se', label: 'SE (Societas Europaea)', is_small_company: false }
-      ]
+      ],
+      iban: '',
+      ibanFlag: '',
+      ibanError: '',
+      ibanValid: false
     }
   },
   watch: {
@@ -536,7 +581,7 @@ export default {
         last_name: 'Schmidt',
         password: '121212',
         email: 'admin@admin.de',
-        phone: '+49 30 12345678',
+        phone: '+493012345678',
         address: 'Friedrichstraße 123',
         postal_code: '10117',
         city: 'Berlin',
@@ -575,12 +620,6 @@ export default {
         }
       }
       this.user.vat_id = val.substring(0, 11)
-    },
-
-    formatIban() {
-      let val = this.user.iban.toUpperCase().replace(/[^A-Z0-9]/g, '')
-      val = val.match(/.{1,4}/g)?.join(' ') || val
-      this.user.iban = val.substring(0, 27)
     },
 
     async setLogo(event) {
@@ -661,7 +700,7 @@ export default {
         valid = false
       }
       if (!this.selectedImage) {
-        this.error.selectedImage = 'Bitte Unternehmenlogo auswählen.'
+        this.error.company_logo = 'Bitte Unternehmenlogo auswählen.'
         valid = false
       }
 
@@ -704,16 +743,30 @@ export default {
         }
       }
 
-      // Bank info
-      if (this.user.iban && this.user.iban.trim() !== '') {
-        const cleanIban = this.user.iban.replace(/\s/g, '')
-        if (!/^DE\d{20}$/.test(cleanIban)) {
-          this.error.iban = 'Ungültige deutsche IBAN (Format: DE + 20 Ziffern).'
-          valid = false
-        }
+      if (!this.ibanValid) {
+        this.error.iban = this.ibanError
+        valid = false
       }
 
+      // Focus
+      if (!valid) {
+        this.$nextTick(() => {
+          const firstErrorField = Object.keys(this.error)[0]
+          if (firstErrorField) {
+            const inputElement = document.getElementById(firstErrorField)
+            if (inputElement) inputElement.focus()
+          }
+        })
+      }
       return valid
+    },
+    handleIban(iban) {
+      if (!iban) return
+      const result = this.validateIban(iban)
+      this.iban = result.formatted
+      this.ibanFlag = result.flag
+      this.ibanError = result.error
+      this.ibanValid = result.valid
     },
 
     async register() {
@@ -734,13 +787,13 @@ export default {
           image_file: this.blobImage,
           user: JSON.parse(JSON.stringify(this.user))
         }
-        const result = await window.api.register(data)
+        // const result = await window.api.register(data)
 
-        if (!result.success) {
-          this.showError = true
-          this.errorMessage = result.message || 'Fehler beim Speichern'
-          return
-        }
+        // if (!result.success) {
+        //   this.showError = true
+        //   this.errorMessage = result.message || 'Fehler beim Speichern'
+        //   return
+        // }
 
         this.showSuccess = true
         setTimeout(() => {

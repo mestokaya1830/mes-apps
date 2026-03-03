@@ -1,6 +1,6 @@
 <template>
   <main v-if="payments" class="main-container">
-    <header class="main-header">
+    <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/payments/create" class="btn btn-primary">
         <i class="bi bi-plus-circle icons" aria-hidden="treu"></i>

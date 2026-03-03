@@ -1,6 +1,6 @@
 <template>
   <main v-if="invoices" class="main-container">
-    <header class="main-header">
+    <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
 
       <router-link to="/customers" class="btn btn-primary">

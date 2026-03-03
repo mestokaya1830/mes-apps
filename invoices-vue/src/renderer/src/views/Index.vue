@@ -1,19 +1,19 @@
 <template>
-  <main class="main-container">
-    <header class="main-header">
+  <div class="main-container">
+    <header class="page-header">
       <h1>{{ title }}</h1>
       <button class="btn btn-secondary" aria-label="Daten exportieren">
         <i class="bi bi-download icons" aria-hidden="true"></i>
         Exportieren
       </button>
     </header>
-    <div class="dashboard-grid">
-      <div
+
+    <section class="dashboard-grid">
+      <article
         class="dashboard-card customers"
-        @click="goTo('customers')"
-        role="button"
         tabindex="0"
         aria-label="Kunden anzeigen"
+        @click="goTo('customers')"
       >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
@@ -23,14 +23,13 @@
         </div>
         <div class="dashboard-title" aria-label="Kunden">Kunden</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.customers : 0 }}</span>
-      </div>
+      </article>
 
-      <div
+      <article
         class="dashboard-card invoices"
-        @click="goTo('invoices')"
-        role="button"
         tabindex="0"
         aria-label="Rechnungen anzeigen"
+        @click="goTo('invoices')"
       >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
@@ -40,14 +39,13 @@
         </div>
         <div class="dashboard-title">Rechnungen</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.invoices : 0 }}</span>
-      </div>
+      </article>
 
-      <div
+      <article
         class="dashboard-card offers"
-        @click="goTo('offers')"
-        role="button"
-        tabindex="0"
         aria-label="Angebote anzeigen"
+        tabindex="0"
+        @click="goTo('offers')"
       >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
@@ -57,14 +55,13 @@
         </div>
         <div class="dashboard-title">Angebote</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.offers : 0 }}</span>
-      </div>
+      </article>
 
-      <div
+      <article
         class="dashboard-card orders"
-        @click="goTo('orders')"
-        role="button"
         tabindex="0"
         aria-label="Bestellungen anzeigen"
+        @click="goTo('orders')"
       >
         <div class="dashboard-card-header">
           <div class="dashboard-avatar">
@@ -74,76 +71,77 @@
         </div>
         <div class="dashboard-title">Bestellungen</div>
         <span class="dashboard-value">{{ tablesCount ? tablesCount.orders : 0 }}</span>
-      </div>
-    </div>
+      </article>
+    </section>
 
-    <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-header">
-          <div>Umsatzentwicklung</div>
+    <section class="charts-grid">
+      <article class="chart-card">
+        <header class="chart-header">
+          <h2>Umsatzentwicklung</h2>
           <div class="time-filter">
             <button
               :class="{ active: selectedPeriod === '1M' }"
-              @click="updateChartData('1M')"
               aria-label="1 Monat"
+              @click="updateChartData('1M')"
             >
               1M
             </button>
             <button
               :class="{ active: selectedPeriod === '3M' }"
-              @click="updateChartData('3M')"
               aria-label="3 Monate"
+              @click="updateChartData('3M')"
             >
               3M
             </button>
             <button
               :class="{ active: selectedPeriod === '6M' }"
-              @click="updateChartData('6M')"
               aria-label="6 Monate"
+              @click="updateChartData('6M')"
             >
               6M
             </button>
             <button
               :class="{ active: selectedPeriod === '1J' }"
-              @click="updateChartData('1J')"
               aria-label="1 Jahr"
+              @click="updateChartData('1J')"
             >
               1J
             </button>
           </div>
-        </div>
+        </header>
         <DashboardChart v-if="chartData" :chartData="chartData" :key="chartKey" />
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-header">
-          <div>Verteilung</div>
-        </div>
+      </article>
+      <article class="chart-card">
+        <header class="chart-header">
+          <h2>Verteilung</h2>
+        </header>
         <DashboardChartDonat v-if="chartDataDonat" :chartData="chartDataDonat" :key="chartKey" />
-      </div>
-    </div>
+      </article>
+    </section>
 
-    <div class="info-grid">
-      <div class="info-card">
-        <div class="info-title">Stammdaten</div>
-        <dl class="data-row">
-          <dt>Aktive Kunden</dt>
-          <dd>{{ tablesCount ? tablesCount.customers : 0 }}</dd>
-        </dl>
-        <dl class="data-row">
-          <dt>Bezahlte Rechnungen</dt>
-          <dd>{{ tablesCount ? tablesCount.paid_count : 0 }}</dd>
-        </dl>
-        <dl class="data-row">
-          <dt>Offene Angebote</dt>
-          <dd>{{ tablesCount ? tablesCount.offers : 0 }}</dd>
-        </dl>
-        <dl class="data-row">
-          <dt>Laufende Aufträge</dt>
-          <dd>{{ tablesCount ? tablesCount.orders : 0 }}</dd>
+    <section class="info-grid">
+      <article class="info-card">
+        <header class="info-title">Stammdaten</header>
+        <dl>
+          <div class="data-row">
+            <dt>Aktive Kunden</dt>
+            <dd>{{ tablesCount ? tablesCount.customers : 0 }}</dd>
+          </div>
+          <div class="data-row">
+            <dt>Bezahlte Rechnungen</dt>
+            <dd>{{ tablesCount ? tablesCount.paid_count : 0 }}</dd>
+          </div>
+          <div class="data-row">
+            <dt>Offene Angebote</dt>
+            <dd>{{ tablesCount ? tablesCount.offers : 0 }}</dd>
+          </div>
+          <div class="data-row">
+            <dt>Laufende Aufträge</dt>
+            <dd>{{ tablesCount ? tablesCount.orders : 0 }}</dd>
+          </div>
         </dl>
 
-          <div style="margin-top: 1.5rem">
+        <div style="margin-top: 1.5rem">
           <div class="progress-item">
             <dl class="progress-header">
               <dt>Zahlungspünktlichkeit</dt>
@@ -174,13 +172,15 @@
             </div>
           </div>
         </div>
-      </div>
-     
-      <div v-if="last_activities" class="info-card">
-        <div class="info-title">
-          <i class="bi bi-clock-history info-title-icon icons" aria-hidden="true"></i>
-          Letzte Aktivitäten
-        </div>
+      </article>
+
+      <article v-if="last_activities" class="info-card">
+        <header class="info-title">
+          <h2>
+            <i class="bi bi-clock-history info-title-icon icons" aria-hidden="true"></i>
+            Letzte Aktivitäten
+          </h2>
+        </header>
         <div class="activity-item">
           <i class="bi bi-person-plus-fill icons" aria-hidden="true"></i>
           <div class="activity-content">
@@ -262,9 +262,9 @@
             Vor {{ daysDiff(last_activities.lastOrder?.created_at) }} Tagen
           </div>
         </div>
-      </div>
-    </div>
-  </main>
+      </article>
+    </section>
+  </div>
 </template>
 
 <script>

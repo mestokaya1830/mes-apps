@@ -1,6 +1,6 @@
 <template>
   <main v-if="invoice" class="main-container">
-    <header class="main-header">
+    <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill me-1 icons" aria-hidden="true"></i>Zurück

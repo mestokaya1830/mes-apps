@@ -1,6 +1,6 @@
 <template>
   <main class="main-container">
-    <header class="main-header">
+    <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
@@ -605,7 +605,7 @@ export default {
         }
       }
 
-      // Focus: ilk hatalı inputu seç
+      // Focus
       if (!valid) {
         this.$nextTick(() => {
           const firstErrorField = Object.keys(this.error)[0]

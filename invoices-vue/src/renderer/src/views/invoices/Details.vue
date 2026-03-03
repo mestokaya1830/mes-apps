@@ -1,6 +1,6 @@
 <template>
   <main v-if="invoice && auth" class="main-container">
-    <header class="main-header-right">
+    <header class="page-header-right">
       <router-link to="/invoices" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>

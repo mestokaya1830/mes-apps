@@ -1,6 +1,6 @@
 <template>
   <main v-if="$route.params.id" class="main-container">
-    <header class="main-header">
+    <header class="page-header">
       <h1 class="main-title">{{ title }}</h1>
       <router-link :to="`/reminders/details/${$route.params.id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück

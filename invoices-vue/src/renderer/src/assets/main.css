@@ -1,10 +1,54 @@
 /* CSS VARIABLES */
 :root {
-  /* Renkler - Ana Palet */
+  /* colors-------------------------------------------------- */
+  --color-white: #fff;
+  --color-green: #12B486;
+  --color-green-dark: #0D8A6B;
+
+  /* fonts---------------------------------------------------- */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.75rem;   /* 28px */
+
+  /* paddings-------------------------------------------------- */
+  --padding-xs: 4px;
+  --padding-sm: 8px;
+  --padding-md: 12px;
+  --padding-lg: 16px;
+  --padding-xl: 20px;
+  --padding-2xl: 24px;
+  --padding-3xl: 30px;
+  --padding-4xl: 40px;
+
+ /* margins-------------------------------------------------- */
+  --margin-xs: 4px;
+  --margin-sm: 8px;
+  --margin-md: 12px;
+  --margin-lg: 16px;
+  --margin-xl: 20px;
+  --margin-2xl: 24px;
+  --margin-3xl: 30px;
+  --margin-4xl: 40px;
+
+
+   /* borders-------------------------------------------------- */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 20px;
+  --border-radius-full: 50px;
+  --border-radius-circle: 50%;
+
   --primary-color: #12B486;
   --primary-dark: #0D8A6B;
   --primary-light: #3dac78;
   
+  /* buttons-------------------------------------------------- */
+  --btn-primary: linear-gradient(135deg, #3dac78 0%, #1f2937 100%);
+
   /* Durum Renkleri */
   --success-color: #10b981;
   --success-dark: #059669;
@@ -70,12 +114,7 @@
   --status-partially-paid-bg: #f59e0b;
   
   /* Boyutlar */
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-  --border-radius-xl: 20px;
-  --border-radius-full: 50px;
-  --border-radius-circle: 50%;
+  
   
   /* Boşluklar */
   --spacing-xs: 4px;
@@ -88,12 +127,7 @@
   --spacing-4xl: 40px;
   
   /* Font Boyutları */
-  --font-size-xs: 0.75rem;    /* 12px */
-  --font-size-sm: 0.875rem;   /* 14px */
-  --font-size-base: 1rem;     /* 16px */
-  --font-size-lg: 1.125rem;   /* 18px */
-  --font-size-xl: 1.25rem;    /* 20px */
-  --font-size-2xl: 1.75rem;   /* 28px */
+  
   
   /* Shadows */
   --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -110,7 +144,7 @@
   --transition-slow: 0.4s ease;
   
   /* Gradients */
-  --btn-primary: linear-gradient(135deg, #3dac78 0%, #1f2937 100%);
+  
   --btn-primary-alt: linear-gradient(135deg, #12B486 0%, #0D8A6B 100%);
   --btn-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
   --btn-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
@@ -222,7 +256,7 @@ select {
   margin-left: var(--spacing-sm);
 }
 
-.main-header {
+.page-header {
   display: flex;
   justify-content: space-between;
   font-size: var(--font-size-1xl);
@@ -234,7 +268,7 @@ select {
   align-items: center;
   gap: var(--spacing-md);
 }
-.main-header-right{
+.page-header-right{
   display: flex;
   justify-content: flex-end;
 }
@@ -656,7 +690,7 @@ textarea.error {
   width: 100%;
   height: auto;
   padding: 5rem;
-  background: var(--bg-white);
+  background-color: var(--bg-white);
 }
 
 .login-container {

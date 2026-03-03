@@ -1,6 +1,6 @@
 <template>
   <main class="main-container">
-    <header class="main-header">
+    <header class="page-header">
       <h1>{{ title }}</h1>
     </header>
     <div class="sections">

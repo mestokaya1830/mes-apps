@@ -1,6 +1,6 @@
 <template>
   <main v-if="reminder" class="main-container">
-    <header class="main-header">
+    <header class="page-header">
       <h1 class="main-title">{{ title }}</h1>
       <router-link :to="`/invoices/details/${reminder.invoice_id}`" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück

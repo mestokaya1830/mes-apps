@@ -160,6 +160,128 @@ export default {
       formatPercentage(value, total) {
         if (!total || total === 0) return '0%'
         return ((value / total) * 100).toFixed(0) + '%'
+      },
+      validateIban(input) {
+        const SEPA_IBAN_LENGTHS = {
+          AT: 20,
+          BE: 16,
+          BG: 22,
+          CH: 21,
+          CY: 28,
+          CZ: 24,
+          DE: 22,
+          DK: 18,
+          EE: 20,
+          ES: 24,
+          FI: 18,
+          FR: 27,
+          GB: 22,
+          GR: 27,
+          HR: 21,
+          HU: 28,
+          IE: 22,
+          IS: 26,
+          IT: 27,
+          LI: 21,
+          LT: 20,
+          LU: 20,
+          LV: 21,
+          MC: 27,
+          MT: 31,
+          NL: 18,
+          NO: 15,
+          PL: 28,
+          PT: 25,
+          RO: 24,
+          SE: 24,
+          SI: 19,
+          SK: 24,
+          SM: 27,
+          VA: 22
+        }
+
+        const COUNTRY_FLAGS = {
+          AT: '🇦🇹',
+          BE: '🇧🇪',
+          BG: '🇧🇬',
+          CH: '🇨🇭',
+          CY: '🇨🇾',
+          CZ: '🇨🇿',
+          DE: '🇩🇪',
+          DK: '🇩🇰',
+          EE: '🇪🇪',
+          ES: '🇪🇸',
+          FI: '🇫🇮',
+          FR: '🇫🇷',
+          GB: '🇬🇧',
+          GR: '🇬🇷',
+          HR: '🇭🇷',
+          HU: '🇭🇺',
+          IE: '🇮🇪',
+          IS: '🇮🇸',
+          IT: '🇮🇹',
+          LI: '🇱🇮',
+          LT: '🇱🇹',
+          LU: '🇱🇺',
+          LV: '🇱🇻',
+          MC: '🇲🇨',
+          MT: '🇲🇹',
+          NL: '🇳🇱',
+          NO: '🇳🇴',
+          PL: '🇵🇱',
+          PT: '🇵🇹',
+          RO: '🇷🇴',
+          SE: '🇸🇪',
+          SI: '🇸🇮',
+          SK: '🇸🇰',
+          SM: '🇸🇲',
+          VA: '🇻🇦'
+        }
+
+        const raw = (input || '')
+          .toString()
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, '')
+
+        // Format: 4
+        const formatted = raw.replace(/(.{4})/g, '$1 ').trim()
+
+        if (!raw) {
+          return { valid: false, formatted, flag: '', error: '' }
+        }
+
+        const country = raw.slice(0, 2)
+        const flag = COUNTRY_FLAGS[country] || ''
+
+        if (!SEPA_IBAN_LENGTHS[country]) {
+          return { valid: false, formatted, flag, error: `${country} ist kein SEPA-Land.` }
+        }
+
+        if (raw.length !== SEPA_IBAN_LENGTHS[country]) {
+          return {
+            valid: false,
+            formatted,
+            flag,
+            error: `${country} IBAN muss ${SEPA_IBAN_LENGTHS[country]} Zeichen haben.`
+          }
+        }
+
+        // MOD-97
+        const rearranged = raw.slice(4) + raw.slice(0, 4)
+        let numeric = ''
+        for (const ch of rearranged) numeric += /[A-Z]/.test(ch) ? ch.charCodeAt(0) - 55 : ch
+
+        let remainder = numeric
+        while (remainder.length > 2) {
+          const block = remainder.slice(0, 9)
+          remainder = (parseInt(block, 10) % 97).toString() + remainder.slice(block.length)
+        }
+
+        if (parseInt(remainder, 10) % 97 !== 1) {
+          return { valid: false, formatted, flag, error: 'IBAN-Prüfsumme ist ungültig.' }
+        }
+
+        return { valid: true, formatted, flag, error: '' }
       }
     }
   },
@@ -224,7 +346,7 @@ export default {
   display: flex;
   flex: 1;
   justify-content: center;
-  height: calc(100vh - 60px);
+  height: calc(100% - 60px);
   margin-top: 60px;
   overflow-y: auto;
 }

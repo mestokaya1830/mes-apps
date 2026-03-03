@@ -1,7 +1,7 @@
 <template>
   <main v-if="customer" class="main-container">
     <!-- Header -->
-    <header class="main-header">
+    <header class="page-header">
       <h1 for="">{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
