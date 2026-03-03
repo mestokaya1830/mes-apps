@@ -1,8 +1,6 @@
 <template>
-  <main>
-    <header class="sidebar-header">
-      <img src="/app_logo.png" class="sidebar-logo" alt="" aria-hidden="true">
-    </header>
+  <aside>
+    <img src="/app_logo.png" class="sidebar-logo" alt="Firmen logo" />
 
     <nav aria-label="Hauptnavigation">
       <section>
@@ -75,7 +73,7 @@
         <span class="logout-text">Abmelden</span>
       </a>
     </footer>
-  </main>
+  </aside>
 </template>
 
 <script>

@@ -230,32 +230,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.vat-rate {
-  font-size: 2.2rem;
-  font-weight: bold;
-}
-
-.card-body {
-  text-align: left;
-}
-
-.gross-amount {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0.5rem 0;
-}
-
-.position-count {
-  font-size: 0.95rem;
-  opacity: 0.85;
-}
-</style>

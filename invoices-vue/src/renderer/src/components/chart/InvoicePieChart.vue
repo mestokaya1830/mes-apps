@@ -81,10 +81,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.pie-container {
-  width: 400px;
-  height: 300px;
-}
-</style>

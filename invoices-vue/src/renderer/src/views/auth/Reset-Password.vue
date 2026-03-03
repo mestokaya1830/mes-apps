@@ -1,11 +1,10 @@
 <template>
-  <main class="setup-page">
-    <header class="logo-header">
-      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
-    </header>
+  <section class="setup-page">
+    <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
+
     <form class="form-group" @submit.prevent="reset">
       <div class="form-header">
-        <h2 class="setup-title">Passwort zurücksetzen</h2>
+        <h2 class="setup-title">Kenntwort zurücksetzen</h2>
         <p>Bitte geben Sie Ihre Daten ein</p>
       </div>
       <div class="form-group">
@@ -17,18 +16,18 @@
       </div>
 
       <div class="form-group">
-        <label for="Kenntwort" class="form-label">Passwort</label>
+        <label for="kenntwort" class="form-label">Kenntwort</label>
         <div>
-          <input id="inputPassword" v-model="reset_data.password" type="password" class="inputs" />
+          <input id="kenntwort" v-model="reset_data.password" type="password" class="inputs" />
           <div v-if="error.password" class="error" role="alert">{{ error.password }}</div>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="Passwort bestätigen" class="form-label">Passwort bestätigen</label>
+        <label for="kenntwort-bestätigen" class="form-label">Kenntwort bestätigen</label>
         <div>
           <input
-            id="confirm_password"
+            id="kenntwort-bestätigen"
             v-model="reset_data.passwordConfirmation"
             type="password"
             class="inputs"
@@ -47,7 +46,7 @@
 
       <button class="btn btn-primary btn-setup right mt-20" type="submit">Zurücksetzen</button>
     </form>
-  </main>
+  </section>
 </template>
 
 <script>
@@ -126,10 +125,4 @@ export default {
 }
 </script>
 
-<style>
-.error {
-  color: red;
-  font-size: 12px;
-  margin-top: 4px;
-}
-</style>
+

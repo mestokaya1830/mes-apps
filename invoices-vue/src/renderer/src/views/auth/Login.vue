@@ -1,17 +1,13 @@
 <template>
-  <main class="setup-page">
-    <div v-if="!register">
-      <setup-page />
-    </div>
-    <div v-else class="login-container">
-      <header class="logo-header">
-        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" aria-hidden="true" />
-      </header>
+  <section class="setup-page">
+    <setup-page v-if="!register" />
 
+    <div v-else class="login-container">
+      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
       <form class="login-form" aria-label="Abmeldeformular" @submit.prevent="loginUser">
         <h1 class="setup-title">Willkommen bei Mes App</h1>
 
-        <section class="form-row">
+        <div class="form-row">
           <div class="form-group">
             <label for="email" class="form-label">E-Mail-Adresse</label>
             <input
@@ -23,13 +19,13 @@
             />
             <div v-if="error.email" class="error-message" role="alert">{{ error.email }}</div>
           </div>
-        </section>
+        </div>
 
-        <section class="form-row">
+        <div class="form-row">
           <div class="form-group">
-            <label for="Kenntwort" class="form-label">Passwort</label>
+            <label for="kenntwort" class="form-label">Passwort</label>
             <input
-              id="inputPassword"
+              id="kenntwort"
               v-model="user.password"
               type="password"
               :class="['inputs', { error: error.password }]"
@@ -37,25 +33,24 @@
             />
             <div v-if="error.password" class="error-message" role="alert">{{ error.password }}</div>
           </div>
-        </section>
+        </div>
 
         <div v-if="error.credential" class="text error-message" role="alert">
           {{ error.credential }}
         </div>
-       <footer class="btn-container">
-         <router-link to="email-verfication" class="forgot-password">
-          Passwort vergessen?
-        </router-link>
+        <div class="btn-container">
+          <router-link to="email-verfication" class="forgot-password">
+            Kenntwort vergessen?
+          </router-link>
 
-
-        <button class="btn btn-setup right mt-20" @click="loginUser">
-          <i class="bi bi-arrow-right ioncs" aria-hidden="true"></i>
-          <span>Anmelden</span>
-        </button>
-       </footer>
+          <button type="submit" class="btn btn-setup right mt-20">
+            <i class="bi bi-arrow-right ioncs" aria-hidden="true"></i>
+            Anmelden
+          </button>
+        </div>
       </form>
     </div>
-  </main>
+  </section>
 </template>
 
 <script>

@@ -1,22 +1,21 @@
 <template>
-  <main class="main-container">
-    <header>
-      <h2 class="page-title">
-        <i class="bi bi-person-plus-fill icons" aria-hidden="true"></i>
-        Benutzerregistrierungsformular
-      </h2>
-    </header>
+  <section class="main-container">
+    <h2 class="page-title">
+      <i class="bi bi-person-plus-fill icons" aria-hidden="true"></i>
+      Benutzerregistrierungsformular
+    </h2>
 
     <form class="settings-form" @submit.prevent="register">
       <!-- Personal Information -->
-      <section class="sections">
-        <h3 class="section-title">
+      <fieldset class="sections">
+        <legend class="section-title">
           <i class="bi bi-person-circle" aria-hidden="true"></i> Persönliche Informationen
-        </h3>
+        </legend>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Anrede <span class="stars">*</span></span>
-            <select id="gender" v-model="user.gender" class="inputs">
+            <label for="anrede">Anrede <span class="stars">*</span></label>
+            <select id="anrede" v-model="user.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -25,25 +24,24 @@
             <div v-if="error.gender" class="error" role="alert">{{ error.gender }}</div>
           </div>
         </div>
+
         <div class="form-row">
-          <!-- First Name -->
           <div class="form-group">
-            <span>Vorname <span class="stars">*</span></span>
+            <label for="vorname">Vorname <span class="stars">*</span></label>
             <input
-              id="first_name"
+              id="vorname"
               v-model="user.first_name"
               type="text"
               class="inputs"
               placeholder="Max"
             />
-            <div v-if="error.first_name" class="error">{{ error.first_name }}</div>
+            <div v-if="error.first_name" class="error" role="alert">{{ error.first_name }}</div>
           </div>
 
-          <!-- Last Name -->
           <div class="form-group">
-            <span>Nachname <span class="stars">*</span></span>
+            <label for="nachname">Nachname <span class="stars">*</span></label>
             <input
-              id="last_name"
+              id="nachname"
               v-model="user.last_name"
               type="text"
               class="inputs"
@@ -52,10 +50,10 @@
             <div v-if="error.last_name" class="error" role="alert">{{ error.last_name }}</div>
           </div>
         </div>
+
         <div class="form-row">
-          <!-- Email -->
           <div class="form-group">
-            <span>E-Mail <span class="stars">*</span></span>
+            <label for="email">E-Mail <span class="stars">*</span></label>
             <input
               id="email"
               v-model="user.email"
@@ -66,11 +64,10 @@
             <div v-if="error.email" class="error" role="alert">{{ error.email }}</div>
           </div>
 
-          <!-- Password -->
           <div class="form-group">
-            <span>Passwort <span class="stars">*</span></span>
+            <label for="passwort">Passwort <span class="stars">*</span></label>
             <input
-              id="password"
+              id="passwort"
               v-model="user.password"
               type="password"
               class="inputs"
@@ -79,12 +76,12 @@
             <div v-if="error.password" class="error" role="alert">{{ error.password }}</div>
           </div>
         </div>
+
         <div class="form-row">
-          <!-- Phone -->
           <div class="form-group">
-            <span>Telefon</span>
+            <label for="telefon">Telefon</label>
             <input
-              id="phone"
+              id="telefon"
               v-model="user.phone"
               type="tel"
               class="inputs"
@@ -94,11 +91,10 @@
             <div v-if="error.phone" class="error" role="alert">{{ error.phone }}</div>
           </div>
 
-          <!-- Website -->
           <div class="form-group">
-            <span>Webseite</span>
+            <label for="webseite">Webseite</label>
             <input
-              id="website"
+              id="webseite"
               v-model="user.website"
               type="url"
               class="inputs"
@@ -107,18 +103,19 @@
             <div v-if="error.website" class="error" role="alert">{{ error.website }}</div>
           </div>
         </div>
-      </section>
+      </fieldset>
 
       <!-- Address Information -->
-      <section class="sections">
-        <h3 class="section-title">
+      <fieldset class="sections">
+        <legend class="section-title">
           <i class="bi bi-geo-alt-fill" aria-hidden="true"></i> Adressinformationen
-        </h3>
+        </legend>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Adresse <span class="stars">*</span></span>
+            <label for="adresse">Adresse <span class="stars">*</span></label>
             <input
-              id="address"
+              id="adresse"
               v-model="user.address"
               type="text"
               class="inputs"
@@ -129,9 +126,9 @@
           </div>
 
           <div class="form-group">
-            <span>Postleitzahl <span class="stars">*</span></span>
+            <label for="postleitzahl">Postleitzahl <span class="stars">*</span></label>
             <input
-              id="postal_code"
+              id="postleitzahl"
               v-model="user.postal_code"
               type="text"
               class="inputs"
@@ -144,14 +141,14 @@
 
         <div class="form-row">
           <div class="form-group">
-            <span>Stadt <span class="stars">*</span></span>
-            <input id="city" v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
+            <label for="stadt">Stadt <span class="stars">*</span></label>
+            <input id="stadt" v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
             <div v-if="error.city" class="error" role="alert">{{ error.city }}</div>
           </div>
 
           <div class="form-group">
-            <span>🇩🇪 Bundesland <span class="stars">*</span></span>
-            <select id="state" v-model="user.state" class="inputs">
+            <label for="bundesland">🇩🇪 Bundesland <span class="stars">*</span></label>
+            <select id="bundesland" v-model="user.state" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Baden-Württemberg">Baden-Württemberg</option>
               <option value="Bayern">Bayern</option>
@@ -173,18 +170,19 @@
             <div v-if="error.state" class="error" role="alert">{{ error.state }}</div>
           </div>
         </div>
-      </section>
+      </fieldset>
 
       <!-- Company Information -->
-      <section class="sections">
-        <h3 class="section-title">
+      <fieldset class="sections">
+        <legend class="section-title">
           <i class="bi bi-building" aria-hidden="true"></i> Unternehmensinformationen
-        </h3>
+        </legend>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Firmenname <span class="stars">*</span></span>
+            <label for="firmenname">Firmenname <span class="stars">*</span></label>
             <input
-              id="company_name"
+              id="firmenname"
               v-model="user.company_name"
               type="text"
               class="inputs"
@@ -194,8 +192,8 @@
           </div>
 
           <div class="form-group">
-            <span>🇩🇪 Unternehmensform <span class="stars">*</span></span>
-            <select id="company_details" v-model="user.company_details" class="inputs">
+            <label for="unternehmensform">🇩🇪 Unternehmensform <span class="stars">*</span></label>
+            <select id="unternehmensform" v-model="user.company_details" class="inputs">
               <option :value="null" disabled>-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
@@ -206,31 +204,33 @@
             </div>
           </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Firmenlogo</span>
-            <input id="company_logo" type="file" accept="image/*" @change="setLogo($event)" />
+            <label for="firmenlogo">Firmenlogo</label>
+            <input id="firmenlogo" type="file" accept="image/*" @change="setLogo($event)" />
             <small class="hint">PNG, JPG oder SVG (max. 2MB)</small>
             <div v-if="error.company_logo" class="error" role="alert">{{ error.company_logo }}</div>
           </div>
 
           <figure class="form-group logo-preview-wrapper">
             <figcaption>Logo-Vorschau</figcaption>
-            <img :src="selectedImage" class="user-logo" alt="Company Logo" aria-hidden="true" />
+            <img :src="selectedImage" class="user-logo" alt="Firmen Logo Vorschau" />
           </figure>
         </div>
-      </section>
+      </fieldset>
 
       <!-- Contact Person -->
-      <section class="sections">
-        <h3 class="section-title">
-          <i class="bi bi-person-badge"></i> Ansprechpartner
+      <fieldset class="sections">
+        <legend class="section-title">
+          <i class="bi bi-person-badge" aria-hidden="true"></i> Ansprechpartner
           <small class="text-muted">(Optional - falls abweichend)</small>
-        </h3>
+        </legend>
+
         <div class="form-row">
           <div class="form-group col-span-1">
-            <span>Anrede</span>
-            <select id="contact_person_gender" v-model="user.contact_person.gender" class="inputs">
+            <label for="kontakt-anrede">Anrede</label>
+            <select id="kontakt-anrede" v-model="user.contact_person.gender" class="inputs">
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
@@ -241,11 +241,12 @@
             </div>
           </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Vorname</span>
+            <label for="kontakt-vorname">Vorname</label>
             <input
-              id="contact_person_first_name"
+              id="kontakt-vorname"
               v-model="user.contact_person.first_name"
               type="text"
               class="inputs"
@@ -257,9 +258,9 @@
           </div>
 
           <div class="form-group">
-            <span>Nachname</span>
+            <label for="kontakt-nachname">Nachname</label>
             <input
-              id="contact_person_last_name"
+              id="kontakt-nachname"
               v-model="user.contact_person.last_name"
               type="text"
               class="inputs"
@@ -270,11 +271,12 @@
             </div>
           </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Telefon</span>
+            <label for="kontakt-telefon">Telefon</label>
             <input
-              id="contact_person_phone"
+              id="kontakt-telefon"
               v-model="user.contact_person.phone"
               type="tel"
               class="inputs"
@@ -286,9 +288,9 @@
           </div>
 
           <div class="form-group">
-            <span>E-Mail</span>
+            <label for="kontakt-email">E-Mail</label>
             <input
-              id="contact_person_email"
+              id="kontakt-email"
               v-model="user.contact_person.email"
               type="email"
               class="inputs"
@@ -299,23 +301,25 @@
             </div>
           </div>
         </div>
-      </section>
+      </fieldset>
 
       <!-- Tax Information -->
-      <section class="sections">
-        <h3 class="section-title">
+      <fieldset class="sections">
+        <legend class="section-title">
           <i class="bi bi-calculator" aria-hidden="true"></i> Steuerinformationen
-        </h3>
-        <div class="alert-info">
+        </legend>
+
+        <div class="alert-info" role="note">
           <i class="bi bi-info-circle" aria-hidden="true"></i>
           <strong>Wichtig:</strong> Für rechtsgültige Rechnungen ist mindestens eine Steuernummer
           oder USt-IdNr. erforderlich.
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Steuernummer <span class="stars">*</span></span>
+            <label for="steuernummer">Steuernummer <span class="stars">*</span></label>
             <input
-              id="tax_number"
+              id="steuernummer"
               v-model="user.tax_number"
               type="text"
               class="inputs"
@@ -323,13 +327,13 @@
               maxlength="15"
             />
             <small class="hint">Format: 123/456/78901 (je nach Bundesland)</small>
-            <div v-if="error.tax_number" class="error">{{ error.tax_number }}</div>
+            <div v-if="error.tax_number" class="error" role="alert">{{ error.tax_number }}</div>
           </div>
 
           <div class="form-group">
-            <span>USt-IdNr. <span class="stars">*</span></span>
+            <label for="ust-idnr">USt-IdNr. <span class="stars">*</span></label>
             <input
-              id="vat_id"
+              id="ust-idnr"
               v-model="user.vat_id"
               type="text"
               class="inputs"
@@ -338,56 +342,65 @@
               @input="formatVatId"
             />
             <small class="hint">Format: DE + 9 Ziffern</small>
-            <div v-if="error.vat_id" class="error">{{ error.vat_id }}</div>
+            <div v-if="error.vat_id" class="error" role="alert">{{ error.vat_id }}</div>
           </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Finanzamt</span>
+            <label for="finanzamt">Finanzamt</label>
             <input
-              id="tax_office"
+              id="finanzamt"
               v-model="user.tax_office"
               type="text"
               class="inputs"
               placeholder="Finanzamt Berlin Mitte/Tiergarten"
             />
-            <div v-if="error.tax_office" class="error">{{ error.tax_office }}</div>
+            <div v-if="error.tax_office" class="error" role="alert">{{ error.tax_office }}</div>
           </div>
 
           <div class="form-group">
-            <span>Handelsregistereintrag</span>
+            <label for="handelsregistereintrag">Handelsregistereintrag</label>
             <input
-              id="court_registration"
+              id="handelsregistereintrag"
               v-model="user.court_registration"
               type="text"
               class="inputs"
               placeholder="HRB 12345 B"
             />
             <small class="hint">Für GmbH, AG, UG erforderlich</small>
-            <div v-if="error.court_registration" class="error">{{ error.court_registration }}</div>
+            <div v-if="error.court_registration" class="error" role="alert">
+              {{ error.court_registration }}
+            </div>
           </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Gerichtsstand</span>
+            <label for="gerichtsstand">Gerichtsstand</label>
             <input
-              id="court_location"
+              id="gerichtsstand"
               v-model="user.court_location"
               type="text"
               class="inputs"
               placeholder="Amtsgericht Berlin"
             />
-            <div v-if="error.court_location" class="error">{{ error.court_location }}</div>
+            <div v-if="error.court_location" class="error" role="alert">
+              {{ error.court_location }}
+            </div>
           </div>
         </div>
-      </section>
+      </fieldset>
 
       <!-- Bank Information -->
-      <section class="sections">
-        <h3 class="section-title"><i class="bi bi-bank2" aria-hidden="true"></i> Bankverbindung</h3>
+      <fieldset class="sections">
+        <legend class="section-title">
+          <i class="bi bi-bank2" aria-hidden="true"></i> Bankverbindung
+        </legend>
+
         <div class="form-row">
           <div class="form-group">
-            <span>IBAN <span class="stars">*</span></span>
+            <label for="iban">IBAN <span class="stars">*</span></label>
             <input
               id="iban"
               v-model="user.iban"
@@ -397,41 +410,42 @@
               maxlength="27"
               @input="handleIban($event.target.value)"
             />
-            <div v-if="error.iban" class="error">{{ error.iban }}</div>
-            <div v-if="ibanValid" class="success">
+            <div v-if="error.iban" class="error" role="alert">{{ error.iban }}</div>
+            <div v-if="ibanValid" class="success" role="status">
               <span v-if="ibanFlag">{{ ibanFlag }} </span> IBAN gültig
             </div>
           </div>
 
           <div class="form-group">
-            <span>Kontoinhaber <span class="stars">*</span></span>
+            <label for="kontoinhaber">Kontoinhaber <span class="stars">*</span></label>
             <input
-              id="bank_account_holder"
+              id="kontoinhaber"
               v-model="user.bank_account_holder"
               type="text"
               class="inputs"
               placeholder="Beispiel GmbH"
             />
-            <div v-if="error.bank_account_holder" class="error">
+            <div v-if="error.bank_account_holder" class="error" role="alert">
               {{ error.bank_account_holder }}
             </div>
           </div>
         </div>
+
         <div class="form-row">
           <div class="form-group">
-            <span>Bankname</span>
+            <label for="bankname">Bankname</label>
             <input
-              id="bank_name"
+              id="bankname"
               v-model="user.bank_name"
               type="text"
               class="inputs"
               placeholder="Deutsche Bank AG"
             />
-            <div v-if="error.bank_name" class="error">{{ error.bank_name }}</div>
+            <div v-if="error.bank_name" class="error" role="alert">{{ error.bank_name }}</div>
           </div>
 
           <div class="form-group">
-            <span>BIC</span>
+            <label for="bic">BIC</label>
             <input
               id="bic"
               v-model="user.bic"
@@ -441,34 +455,38 @@
               maxlength="11"
             />
             <small class="hint">Für internationale Überweisungen empfohlen</small>
-            <div v-if="error.bic" class="error">{{ error.bic }}</div>
+            <div v-if="error.bic" class="error" role="alert">{{ error.bic }}</div>
           </div>
         </div>
-      </section>
+      </fieldset>
 
       <!-- Company Signature -->
-      <section class="sections">
-        <h3 class="section-title">
+      <fieldset class="sections">
+        <legend class="section-title">
           <i class="bi bi-pen" aria-hidden="true"></i> Unternehmenssignatur
-        </h3>
+        </legend>
+
         <div class="form-group">
-          <span>Signaturtext</span>
+          <label for="signaturtext">Signaturtext</label>
           <textarea
-            id="company_signature"
+            id="signaturtext"
             v-model="user.company_signature"
             rows="4"
             class="inputs"
             placeholder="Mit freundlichen Grüßen&#10;Beispiel GmbH&#10;Max Mustermann&#10;Geschäftsführer"
           ></textarea>
           <small class="hint">Wird automatisch am Ende Ihrer Rechnungen eingefügt</small>
-          <div v-if="error.company_signature" class="error">{{ error.company_signature }}</div>
+          <div v-if="error.company_signature" class="error" role="alert">
+            {{ error.company_signature }}
+          </div>
         </div>
-      </section>
+      </fieldset>
 
-      <!-- Submit Button -->
-       <p v-if="showError">{{ showError }}</p>
-       <p>{{ showSuccess }}</p>
-      <section class="sections btn-container">
+      <!-- Submit -->
+      <p v-if="showError" class="error" role="alert" aria-live="assertive">{{ showError }}</p>
+      <p v-if="showSuccess" class="success" role="status" aria-live="polite">{{ showSuccess }}</p>
+
+      <div class="sections btn-container">
         <button type="button" class="btn btn-secondary" @click="fillExampleData">
           <i class="bi bi-clipboard-data" aria-hidden="true"></i> Beispieldaten füllen
         </button>
@@ -480,9 +498,9 @@
           <i class="bi bi-save icons" aria-hidden="true"></i>
           Weiter
         </button>
-      </section>
+      </div>
     </form>
-  </main>
+  </section>
 </template>
 
 <script>
