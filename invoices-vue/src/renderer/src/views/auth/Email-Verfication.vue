@@ -27,7 +27,7 @@
           </p>
         </fieldset>
         <footer class="btn-container">
-          <button class="btn btn-primary mt-20" type="submit">E-Mail senden</button>
+          <button class="btn btn-setup mt-20" type="submit">E-Mail senden</button>
         </footer>
       </form>
     </main>

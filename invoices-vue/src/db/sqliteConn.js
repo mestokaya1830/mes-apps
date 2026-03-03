@@ -31,12 +31,12 @@ export default db
 //   console.error(err.message)
 // }
 
-try {
-  db.prepare(`DELETE FROM users;`).run()
-  db.prepare(`DELETE FROM sqlite_sequence WHERE name = 'users';`).run()
-} catch (error) {
-  console.error(error)
-}
+// try {
+//   db.prepare(`DELETE FROM users;`).run()
+//   db.prepare(`DELETE FROM sqlite_sequence WHERE name = 'users';`).run()
+// } catch (error) {
+//   console.error(error)
+// }
 
 // try {
 //   const result = db.prepare(`PRAGMA table_info(tokens);`).all()

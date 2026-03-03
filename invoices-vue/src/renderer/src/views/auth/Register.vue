@@ -397,9 +397,10 @@
               maxlength="27"
               @input="handleIban($event.target.value)"
             />
-            <span v-if="ibanFlag">{{ ibanFlag }}</span>
             <div v-if="error.iban" class="error">{{ error.iban }}</div>
-            <div v-if="ibanValid" class="success">✅ IBAN gültig</div>
+            <div v-if="ibanValid" class="success">
+              <span v-if="ibanFlag">{{ ibanFlag }} </span> IBAN gültig
+            </div>
           </div>
 
           <div class="form-group">
@@ -465,38 +466,33 @@
       </section>
 
       <!-- Submit Button -->
+       <p v-if="showError">{{ showError }}</p>
+       <p>{{ showSuccess }}</p>
       <section class="sections btn-container">
         <button type="button" class="btn btn-secondary" @click="fillExampleData">
           <i class="bi bi-clipboard-data" aria-hidden="true"></i> Beispieldaten füllen
         </button>
-        <button type="submit" :disabled="isSubmitting" class="btn btn-primary">
+        <button v-if="!showSuccess" type="submit" class="btn btn-secondary">
           <i class="bi bi-save icons" aria-hidden="true"></i>
-          <span v-if="isSubmitting">Wird gespeichert...</span>
-          <span v-else>Benutzer speichern</span>
+          Benutzer speichern
+        </button>
+        <button v-else type="button" class="btn btn-setup" @click="goToLogin">
+          <i class="bi bi-save icons" aria-hidden="true"></i>
+          Weiter
         </button>
       </section>
     </form>
-
-    <!-- Messages -->
-    <p v-if="showSuccess" class="status-message success" role="status">
-      ✅ Benutzer wurde erfolgreich gespeichert!
-    </p>
-    <p v-if="showError" class="status-message error" role="alert">❌ {{ errorMessage }}</p>
   </main>
 </template>
 
 <script>
-import { bankDataMixin } from '../../mixins/BankData'
 export default {
   name: 'UserRegistrationForm',
-  mixins: [bankDataMixin],
   inject: ['trimFormFields', 'validateIban'],
   data() {
     return {
-      isSubmitting: false,
       showSuccess: false,
-      showError: false,
-      errorMessage: '',
+      showError: '',
       error: {},
       user: {
         gender: '',
@@ -760,6 +756,7 @@ export default {
       }
       return valid
     },
+
     handleIban(iban) {
       if (!iban) return
       const result = this.validateIban(iban)
@@ -772,40 +769,30 @@ export default {
     async register() {
       this.trimFormFields(this.user)
 
-      if (!this.validateForm()) {
-        this.showError = true
-        this.errorMessage = 'Bitte alle Pflichtfelder korrekt ausfüllen.'
-        return
-      }
-
-      this.isSubmitting = true
-      this.showSuccess = false
-      this.showError = false
+      if (!this.validateForm()) return
 
       try {
         const data = {
           image_file: this.blobImage,
           user: JSON.parse(JSON.stringify(this.user))
         }
-        // const result = await window.api.register(data)
 
-        // if (!result.success) {
-        //   this.showError = true
-        //   this.errorMessage = result.message || 'Fehler beim Speichern'
-        //   return
-        // }
+        const result = await window.api.register(data)
+
+        if (!result.success) {
+          this.showError = 'Fehler beim Speichern'
+          this.showSuccess = false
+          return
+        }
 
         this.showSuccess = true
-        setTimeout(() => {
-          this.$router.push('/login')
-        }, 2000)
-      } catch (err) {
-        console.error('Register error:', err)
-        this.showError = true
-        this.errorMessage = err.message || 'Fehler beim Speichern'
-      } finally {
-        this.isSubmitting = false
+      } catch (error) {
+        console.error('Register error:', error)
+        this.showError = error.message || 'Fehler beim Speichern'
       }
+    },
+    goToLogin() {
+      this.$router.push('/login')
     }
   }
 }

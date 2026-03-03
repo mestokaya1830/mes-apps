@@ -162,7 +162,7 @@ export default {
         return ((value / total) * 100).toFixed(0) + '%'
       },
       validateIban(input) {
-        const SEPA_IBAN_LENGTHS = {
+        const sepa_iban_lengths = {
           AT: 20,
           BE: 16,
           BG: 22,
@@ -200,7 +200,7 @@ export default {
           VA: 22
         }
 
-        const COUNTRY_FLAGS = {
+        const country_flags = {
           AT: '🇦🇹',
           BE: '🇧🇪',
           BG: '🇧🇬',
@@ -251,18 +251,18 @@ export default {
         }
 
         const country = raw.slice(0, 2)
-        const flag = COUNTRY_FLAGS[country] || ''
+        const flag = country_flags[country] || ''
 
-        if (!SEPA_IBAN_LENGTHS[country]) {
-          return { valid: false, formatted, flag, error: `${country} ist kein SEPA-Land.` }
+        if (!sepa_iban_lengths[country]) {
+          return { valid: false, formatted, error: `${country} ist kein SEPA-Land.` }
         }
 
-        if (raw.length !== SEPA_IBAN_LENGTHS[country]) {
+        if (raw.length !== sepa_iban_lengths[country]) {
           return {
             valid: false,
             formatted,
             flag,
-            error: `${country} IBAN muss ${SEPA_IBAN_LENGTHS[country]} Zeichen haben.`
+            error: `${country} IBAN muss ${sepa_iban_lengths[country]} Zeichen haben.`
           }
         }
 
@@ -378,7 +378,7 @@ export default {
   font-weight: 700;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  background-color: var(--bg-white);
+  background-color: var(--color-white);
 }
 
 .nav-menu {

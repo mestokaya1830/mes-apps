@@ -42,13 +42,13 @@
         <div v-if="error.credential" class="text error-message" role="alert">
           {{ error.credential }}
         </div>
-       <footer class="footer-login">
+       <footer class="btn-container">
          <router-link to="email-verfication" class="forgot-password">
           Passwort vergessen?
         </router-link>
 
 
-        <button class="btn btn-primary btn-setup right mt-20" @click="loginUser">
+        <button class="btn btn-setup right mt-20" @click="loginUser">
           <i class="bi bi-arrow-right ioncs" aria-hidden="true"></i>
           <span>Anmelden</span>
         </button>
