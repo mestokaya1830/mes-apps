@@ -245,8 +245,13 @@
             <div class="sections">
               <div class="positions-header">
                 <span class="position-number"> Position {{ index + 1 }} </span>
-                <button type="button" class="delete-position-btn" @click="deletePosition(index)">
-                  <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Löschen
+                <button
+                  type="button"
+                  class="delete-position-btn"
+                  aria-label="Löschen"
+                  @click="deletePosition(index)"
+                >
+                  <i class="bi bi-trash3 icons" aria-hidden="true"></i>
                 </button>
               </div>
               <!-- FORM FIELDS -->
@@ -397,7 +402,8 @@
       <!-- Zahlungsinformationen -->
       <section class="sections">
         <h2 class="sections-title">
-          <i class="bi bi-credit-card-2-front-fill icons"></i>Zahlungsinformationen
+          <i class="bi bi-credit-card-2-front-fill icons" aria-hidden="true"></i
+          >Zahlungsinformationen
         </h2>
         <div class="form-row">
           <div class="form-group">

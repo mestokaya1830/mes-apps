@@ -23,23 +23,19 @@
   --primary-light: #3dac78;
 
   /* buttons-------------------------------------------------- */
-  --btn-primary-alt: linear-gradient(135deg, #12b486 0%, #0d8a6b 100%);
   --btn-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
   --btn-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   --btn-danger: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  --btn-danger-light: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   --btn-info: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   --btn-purple: linear-gradient(135deg, #3dac78 0%, #764ba2 100%);
   --btn-edit: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
   --btn-cyan: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  --btn-blue-dark: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-  --btn-sky: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
   --btn-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   --btn-indigo: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   --btn-gold: linear-gradient(135deg, #fbbf24, #f59e0b);
   --btn-silver: linear-gradient(135deg, #d1d5db, #9ca3af);
   --btn-bronze: linear-gradient(135deg, #d97706, #92400e);
-  --btn-email: linear-gradient(135deg, lightseagreen, rgb(22, 118, 113));
+  
 
   /* shadows-------------------------------------------------- */
   --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
@@ -697,45 +693,10 @@ textarea.error {
   margin-right: 0.35rem;
 }
 
-.positions-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-}
 
-.add-position-btn {
-  display: flex;
-  width: fit-content;
-  justify-content: center;
-  background: #3ba55c;
-  color: var(--bg-white);
-  border: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-  margin: var(--spacing-xl) 0;
-  margin-left: auto;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-}
 
-.delete-position-btn {
-  background: transparent;
-  border: none;
-  color: var(--danger-light);
-  font-size: var(--font-size-base);
-  cursor: pointer;
-}
 
-.summary-item {
-  width: 140px;
-  text-align: center;
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  color: #4b5563;
-}
+
 
 
 
