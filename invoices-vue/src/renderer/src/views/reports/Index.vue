@@ -1,22 +1,20 @@
 <template>
-  <main class="main-container">
+  <div class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
     </header>
-    <div class="sections">
-      <div class="form-group">
-        <select v-model="report_type" class="inputs" aria-label="Waehle Bericht">
-          <option value="" disabled>Waehle Bericht</option>
-          <option value="Kundenbezogener">Kundenbezogener Bericht</option>
-          <option value="Rechnungsliste">Rechnungsliste</option>
-          <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
-        </select>
-      </div>
-      <CustomersReport v-if="report_type == 'Kundenbezogener'" />
-      <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
-      <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
+    <div class="form-group">
+      <select v-model="report_type" class="inputs" aria-label="Waehle Bericht">
+        <option value="" disabled>Waehle Bericht</option>
+        <option value="Kundenbezogener">Kundenbezogener Bericht</option>
+        <option value="Rechnungsliste">Rechnungsliste</option>
+        <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
+      </select>
     </div>
-  </main>
+    <CustomersReport v-if="report_type == 'Kundenbezogener'"  />
+    <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
+    <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
+  </div>
 </template>
 
 <script>

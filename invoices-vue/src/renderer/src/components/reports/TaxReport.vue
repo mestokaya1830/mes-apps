@@ -14,7 +14,7 @@
         <option value="12">Letztes Jahr</option>
       </select>
 
-      <div class="sections mt-20">
+      <div class="sections report-period">
         <div class="form-row">
           <div class="form-group">
             <label for="start-date"> Von</label>

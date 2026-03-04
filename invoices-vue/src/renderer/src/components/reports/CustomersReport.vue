@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <section aria-label="Datumsbereich auswählen">
       <select
         id="date-range"
@@ -15,7 +15,7 @@
         <option value="12">Letztes Jahr</option>
       </select>
 
-      <div class="sections mt-20">
+      <div class="sections report-period">
         <div class="form-row">
           <div class="form-group">
             <label for="date-start">Von</label>
@@ -50,10 +50,10 @@
     </section>
 
     <section v-if="reports" aria-label="Bericht Zusammenfassung">
-      <div class="report-header-2">
-        <h2><i class="bi bi-bar-chart-line-fill me-1 icons" aria-hidden="true"></i>{{ title }}</h2>
+      <div class="report-header">
+        <h2><i class="bi bi-bar-chart-line-fill icons" aria-hidden="true"></i>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock-history me-1" aria-hidden="true"></i>Zeitraum: {{ selectedPeriod }}
+          <i class="bi bi-clock-history icons-small" aria-hidden="true"></i>Zeitraum: {{ selectedPeriod }}
         </p>
       </div>
 
@@ -136,7 +136,7 @@
     </section>
 
     <ReportActions fileName="Kundenberichte" :period="period" />
-  </main>
+  </div>
 </template>
 
 <script>

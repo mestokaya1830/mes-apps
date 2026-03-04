@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <div>
     <select
       v-model="date_range"
       class="inputs"
@@ -13,7 +13,7 @@
       <option value="12">Letztes Jahr</option>
     </select>
 
-    <div class="sections mt-20">
+    <div class="sections report-period">
       <div class="form-row">
         <div class="form-group">
           <label for="start-date">Von</label>
@@ -46,11 +46,11 @@
       </div>
     </div>
 
-    <section v-if="is_ready" class="printable" aria-label="Rechnungsberichten">
-      <div class="report-header-2">
-        <h2><i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i>{{ title }}</h2>
+    <div v-if="is_ready" class="printable" aria-label="Rechnungsberichten">
+      <div class="report-header">
+        <h2><i class="bi bi-file-earmark-bar-graph icons" aria-hidden="true"></i>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock me-1 icons" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
+          <i class="bi bi-clock icons-small" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
         </p>
       </div>
 
@@ -121,7 +121,7 @@
         </article>
       </div>
 
-      <section class="chart-container">
+      <section class="charts-grid">
         <InvoiceChart :chartData="summary" />
         <InvoicePieChart :percentData="setPercentage" />
       </section>
@@ -220,9 +220,9 @@
           </tbody>
         </table>
       </section>
-    </section>
+    </div>
     <ReportActions fileName="Rechnungsbericht" :period="period" />
-  </main>
+  </div>
 </template>
 
 <script>

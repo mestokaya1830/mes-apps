@@ -1,5 +1,5 @@
 <template>
-  <main class="main-container">
+  <div class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/" class="btn btn-secondary">
@@ -43,7 +43,7 @@
       </div>
       <button type="submit" class="btn btn-update" @click="updateUser()">Update</button>
     </form>
-  </main>
+  </div>
 </template>
 
 <script>

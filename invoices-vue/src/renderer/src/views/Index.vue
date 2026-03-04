@@ -75,7 +75,7 @@
     </section>
 
     <section class="charts-grid">
-      <article class="chart-card dashboard-line-chart">
+      <article class="chart-card chart-main">
         <header class="chart-header">
           <h2>Umsatzentwicklung</h2>
           <div class="time-filter">
@@ -111,7 +111,7 @@
         </header>
         <DashboardChart v-if="chartData" :chartData="chartData" :key="chartKey" />
       </article>
-      <article class="chart-card dashboard-donat-chart">
+      <article class="chart-card chart-side">
         <header class="chart-header">
           <h2>Verteilung</h2>
         </header>

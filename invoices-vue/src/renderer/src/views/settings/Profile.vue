@@ -1,5 +1,5 @@
 <template>
-  <main class="main-container">
+  <div class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/" class="btn btn-secondary">
@@ -368,12 +368,12 @@
       <!-- Company Signature -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-pen icons" style="cursor: pointer"></i>
+          <i class="bi bi-pen icons" aria-hidden="true"></i>
           Unternehmenssignatur
         </div>
 
         <label for="Signaturtext" class="form-field">
-          <span>Signaturtext <i class="bi bi-pencil icons" aria-hidden="true"></i></span>
+          Signaturtext <i class="bi bi-pencil icons" aria-hidden="true"></i>
         </label>
         <textarea
           id="Signaturtext"
@@ -385,12 +385,12 @@
       </section>
 
       <!-- Submit Button -->
-      <footer class="form-section btn-container">
-        <button type="submit" :disabled="isSubmitting" class="btn btn-primary">
+      <div class="form-section btn-container">
+        <button type="submit" :disabled="isSubmitting" class="btn btn-update">
           <span v-if="isSubmitting">Wird gespeichert...</span>
-          <span v-else>Profil Aktualisieren</span>
+          <span v-else>Aktualisieren</span>
         </button>
-      </footer>
+      </div>
     </form>
     <!-- Messages -->
     <p v-if="isLoading" class="status-message loading">Profil wird geladen...</p>
@@ -402,7 +402,7 @@
       <i class="bi bi-x-circle-fill text-danger icons" aria-hidden="true"></i> Fehler:
       {{ errorMessage }}
     </p>
-  </main>
+  </div>
 </template>
 
 <script>

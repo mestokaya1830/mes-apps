@@ -1,7 +1,7 @@
 <template>
   <div class="vat-chart-wrapper">
     <header class="chart-header">
-      <h3 class="chart-title"><i class="bi bi-percent me-2"></i>Umsatzsteuer nach Steuersätzen</h3>
+      <h3 class="chart-title"><i class="bi bi-percent icons" aria-hidden="true"></i>Umsatzsteuer nach Steuersätzen</h3>
     </header>
 
     <section class="charts-grid">

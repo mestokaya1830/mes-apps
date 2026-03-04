@@ -1,7 +1,7 @@
 <template>
-  <section class="canvas-con">
-    <canvas :id="canvasId" role="img" class="canvas-dashboard-line" aria-label="Startseite Chart"></canvas>
-  </section>
+  <div>
+    <canvas ref="dashboardChart" role="img" aria-label="Startseite Chart"></canvas>
+  </div>
 </template>
 
 <script>
@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     initChart() {
-      const ctx = document.getElementById(this.canvasId)
+      const ctx = this.$refs.dashboardChart
       this.chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -76,10 +76,3 @@ export default {
   }
 }
 </script>
-<style>
-.canvas-con {
-  width: 100%;
-  height: 300px;
-  position: relative;
-}
-</style>

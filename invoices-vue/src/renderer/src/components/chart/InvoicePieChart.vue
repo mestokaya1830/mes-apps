@@ -1,7 +1,14 @@
 <template>
-  <section class="pie-container">
-    <canvas ref="pieChart" role="img" aria-label="Rechung Pie Chart"></canvas>
-  </section>
+  <div>
+    <header class="chart-header">
+      <h3 class="chart-title">
+        <i class="bi bi-percent icons" aria-hidden="true"></i>
+      </h3>
+    </header>
+    <div class="chart-card chart-side">
+      <canvas ref="invoicePieChart" role="img" aria-label="Rechnung Pie Chart"></canvas>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -46,7 +53,7 @@ export default {
       const labels = ['Bezahlt', 'Teilweise', 'Unbezahlt', 'Überfällig']
       const colors = ['#10b981', '#60a5fa', '#f59e0b', '#ef4444']
 
-      this.pieChart = new Chart(this.$refs.pieChart, {
+      this.pieChart = new Chart(this.$refs.invoicePieChart, {
         type: 'pie',
         data: {
           labels,

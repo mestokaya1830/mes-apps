@@ -1,7 +1,14 @@
 <template>
-  <section class="canvas-con">
-    <canvas id="myChart" role="img" aria-label="Rechnung Chart"></canvas>
-  </section>
+  <div>
+    <header class="chart-header">
+      <h3 class="chart-title">
+        <i class="bi bi-percent icons" aria-hidden="true"></i>
+      </h3>
+    </header>
+    <div class="chart-card chart-main">
+      <canvas ref="invoiceLineChart" role="img" aria-label="Rechnung Line Chart"></canvas>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -35,7 +42,7 @@ export default {
         this.chartData.overdue_count
       ]
 
-      new Chart(document.getElementById('myChart'), {
+      new Chart(this.$refs.invoiceLineChart, {
         type: 'bar',
         data: {
           labels: labels,
