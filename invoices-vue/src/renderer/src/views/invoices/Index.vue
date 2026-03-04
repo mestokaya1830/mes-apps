@@ -139,7 +139,7 @@
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/invoices/details/' + item.id" class="details-btn btn-details">
+          <router-link :to="'/invoices/details/' + item.id" class="btn-details btn-details">
             <i class="bi bi-eye" aria-hidden="true"></i>
             Details
           </router-link>

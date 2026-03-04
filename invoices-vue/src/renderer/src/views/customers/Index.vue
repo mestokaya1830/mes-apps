@@ -87,45 +87,43 @@
               </p>
             </header>
 
-            <footer>
-              <nav class="card-actions" aria-label="Kundenaktionen">
-                <router-link
-                  :to="{ path: '/invoices/create', query: { id: item.id } }"
-                  class="action-btn btn-rechnung"
-                  aria-label="Rechnung erstellen für {{ item.first_name }} {{ item.last_name }}"
-                >
-                  <i class="bi bi-receipt" aria-hidden="true"></i>
-                  Neue Rechnung erstellen
-                </router-link>
+            <nav class="card-actions" aria-label="Kundenaktionen">
+              <router-link
+                :to="{ path: '/invoices/create', query: { id: item.id } }"
+                class="btn-action btn-rechnung"
+                aria-label="Rechnung erstellen für {{ item.first_name }} {{ item.last_name }}"
+              >
+                <i class="bi bi-receipt" aria-hidden="true"></i>
+                Neue Rechnung erstellen
+              </router-link>
 
-                <router-link
-                  :to="{ path: '/offers/create', query: { id: item.id } }"
-                  class="action-btn btn-angebot"
-                  aria-label="Neues Angebot erstellen für {{ item.first_name }} {{ item.last_name }}"
-                >
-                  <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
-                  Neues Angebot erstellen
-                </router-link>
+              <router-link
+                :to="{ path: '/offers/create', query: { id: item.id } }"
+                class="btn-action btn-angebot"
+                aria-label="Neues Angebot erstellen für {{ item.first_name }} {{ item.last_name }}"
+              >
+                <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
+                Neues Angebot erstellen
+              </router-link>
 
-                <router-link
-                  :to="{ path: '/orders/create', query: { id: item.id } }"
-                  class="action-btn btn-auftrag"
-                  aria-label="Neuen Auftrag erstellen für {{ item.first_name }} {{ item.last_name }}"
-                >
-                  <i class="bi bi-box-seam" aria-hidden="true"></i>
-                  Neuen Auftrag erstellen
-                </router-link>
+              <router-link
+                :to="{ path: '/orders/create', query: { id: item.id } }"
+                class="btn-action btn-auftrag"
+                aria-label="Neuen Auftrag erstellen für {{ item.first_name }} {{ item.last_name }}"
+              >
+                <i class="bi bi-box-seam" aria-hidden="true"></i>
+                Neuen Auftrag erstellen
+              </router-link>
 
-                <router-link
-                  :to="`/customers/details/${item.id}`"
-                  class="details-btn btn-details"
-                  aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
-                >
-                  <i class="bi bi-eye" aria-hidden="true"></i>
-                  Details
-                </router-link>
-              </nav>
-            </footer>
+              <router-link
+                :to="`/customers/details/${item.id}`"
+                class="btn btn-details"
+                aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
+              >
+                <i class="bi bi-eye" aria-hidden="true"></i>
+                Details
+              </router-link>
+            </nav>
           </article>
         </li>
       </ul>

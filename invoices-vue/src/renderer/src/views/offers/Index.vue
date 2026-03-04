@@ -9,7 +9,7 @@
     </header>
 
     <!-- FILTER -->
-       <section class="main-filter">
+    <section class="main-filter">
       <select
         v-model="categories_filter"
         aria-label="Kategorie"
@@ -106,8 +106,12 @@
         </div>
 
         <div class="card-actions">
-          <router-link :to="'/offers/details/' + item.id" class="details-btn btn-details">
-            <i class="bi bi-eye-fill icons" aria-hidden="true"></i>
+          <router-link
+            :to="`/offers/details/${item.id}`"
+            class="btn btn-details"
+            aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
+          >
+            <i class="bi bi-eye" aria-hidden="true"></i>
             Details
           </router-link>
         </div>

@@ -1,10 +1,8 @@
 <template>
-  <main v-if="invoice && auth" class="main-container">
-    <header class="page-header-right">
-      <router-link to="/invoices" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
-      </router-link>
-    </header>
+  <div v-if="invoice && auth" class="main-container">
+    <router-link to="/invoices" class="btn btn-secondary btn-back">
+      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+    </router-link>
     <section>
       <div class="printable">
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -246,7 +244,7 @@
         </table>
       </section>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>

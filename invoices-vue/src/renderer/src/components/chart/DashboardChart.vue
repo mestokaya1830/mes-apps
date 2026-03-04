@@ -1,6 +1,6 @@
 <template>
   <section class="canvas-con">
-    <canvas :id="canvasId" role="img" aria-label="Startseite Chart"></canvas>
+    <canvas :id="canvasId" role="img" class="canvas-dashboard-line" aria-label="Startseite Chart"></canvas>
   </section>
 </template>
 
@@ -76,3 +76,10 @@ export default {
   }
 }
 </script>
+<style>
+.canvas-con {
+  width: 100%;
+  height: 300px;
+  position: relative;
+}
+</style>

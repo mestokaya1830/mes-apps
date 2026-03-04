@@ -1,9 +1,6 @@
 <template>
   <div>
-    <header>
-      <h1 class="main-title">{{ title }}</h1>
-    </header>
-
+    <h1 class="main-title">{{ title }}</h1>
     <section v-if="headerData" class="header-component" aria-label="Seitenkopf">
       <div aria-label="Firmeninformationen">
         <dl class="header-company-info">
