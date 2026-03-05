@@ -195,6 +195,7 @@ export default {
       if (!result.success) return
       this.reports = result.rows
       const totalRevenue = result.rows.reduce((sum, c) => sum + c.invoice_count, 0)
+
       result.rows.forEach((c) => {
         c.percentage = ((c.invoice_count / totalRevenue) * 100).toFixed(2) // örn: "50.00"
       })
@@ -211,6 +212,7 @@ export default {
         start: this.date_box_start,
         end: this.date_box_end
       }
+      console.log('period', this.period)
       this.is_ready = true
     },
     sorting(key) {

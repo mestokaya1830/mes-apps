@@ -27,7 +27,6 @@ export default {
       required: true
     }
   },
-  data() {},
   methods: {
     async savePdf() {
       await this.$nextTick()

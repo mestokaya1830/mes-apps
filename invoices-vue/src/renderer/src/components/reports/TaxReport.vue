@@ -7,7 +7,7 @@
         aria-label="Zeitraum auswählen"
         @change="rangeDateFilter"
       >
-        <option value="" disabled>Wähle Daten</option>
+        <option value="" disabled>Zeitraum wählen</option>
         <option value="1">Diesen Monat</option>
         <option value="3">Letzte 3 Monate</option>
         <option value="6">Letzte 6 Monate</option>
