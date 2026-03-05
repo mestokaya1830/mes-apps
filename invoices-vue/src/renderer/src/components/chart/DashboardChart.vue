@@ -1,6 +1,11 @@
 <template>
   <div>
-    <canvas ref="dashboardChart" role="img" aria-label="Startseite Chart"></canvas>
+    <canvas
+      ref="dashboardChart"
+      class="canvas-dashboard-line"
+      role="img"
+      aria-label="Startseite Chart"
+    ></canvas>
   </div>
 </template>
 
@@ -17,27 +22,23 @@ export default {
   },
   data() {
     return {
-      canvasId: 'lineChart_' + Math.random().toString(36).substr(2, 9),
       chartInstance: null
-    }
-  },
-  watch: {
-    chartData: {
-      deep: true,
-      handler() {
-        this.updateChart()
-      }
     }
   },
   mounted() {
     this.$nextTick(() => this.initChart())
   },
   beforeUnmount() {
-    if (this.chartInstance) this.chartInstance.destroy()
+    if (this.chartInstance) {
+      this.chartInstance.destroy()
+      this.chartInstance = null
+    }
   },
   methods: {
     initChart() {
       const ctx = this.$refs.dashboardChart
+      if (!ctx) return
+
       this.chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -67,12 +68,17 @@ export default {
       })
     },
     updateChart() {
-      if (this.chartInstance) {
-        this.chartInstance.data.labels = this.chartData.labels
-        this.chartInstance.data.datasets[0].data = this.chartData.values
-        this.chartInstance.update()
-      }
+      if (!this.chartInstance || !this.$refs.dashboardChart) return
+      this.chartInstance.data.labels = this.chartData.labels
+      this.chartInstance.data.datasets[0].data = this.chartData.values
+      this.chartInstance.update('none')
     }
   }
 }
 </script>
+
+<style scoped>
+.canvas-dashboard-line {
+  height: 300px;
+}
+</style>

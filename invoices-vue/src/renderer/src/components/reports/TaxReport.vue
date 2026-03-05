@@ -49,73 +49,57 @@
     </div>
 
     <section v-if="is_ready" class="printable">
-      <div class="report-header-2">
-        <h2><i class="bi bi-file-earmark-bar-graph" aria-hidden="true"></i>{{ title }}</h2>
+      <div class="report-header">
+        <h2>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock me-1 icons"></i> Zeitraum: {{ selectedPeriod }}
+          <i class="bi bi-clock icons-small" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
         </p>
-      </div>
-
-      <div class="report-summary-cards">
-        <article
-          v-for="(vatData, vatRate) in dynamicVatSummary"
-          :key="vatRate"
-          class="report-summary-card"
-          aria-label="Umsatzsteuer"
-        >
-          <div class="card-content">
-            <h3 class="card-value">{{ vatRate }} % MwSt</h3>
-            <label class="card-detail">{{ vatData.count }} Positionen</label>
-            <h3 class="card-label">{{ formatCurrency(vatData.gross) }}</h3>
-          </div>
-        </article>
       </div>
 
       <TaxChart :chartData="reports" />
 
-      <section class="vat-summary">
-        <h3><i class="bi bi-percent icons" aria-hidden="true"></i>Umsatzsteuer-Zusammenfassung</h3>
-        <table class="report-table">
-          <thead>
-            <tr>
-              <th>MwSt.-Satz</th>
-              <th class="text-right">Anzahl Positionen</th>
-              <th class="text-right">Nettobetrag</th>
-              <th class="text-right">MwSt.-Betrag</th>
-              <th class="text-right">Bruttobetrag</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(vatData, vatRate) in dynamicVatSummary" :key="vatRate">
-              <td>
-                <strong>{{ vatRate }}% MwSt.</strong>
-                <span v-if="vatRate == 0" class="text-muted"> (Export/Befreit)</span>
-              </td>
-              <td class="text-right">{{ vatData.count }}</td>
-              <td class="text-right">{{ formatCurrency(vatData.net) }}</td>
-              <td class="text-right">{{ formatCurrency(vatData.vat) }}</td>
-              <td class="text-right">{{ formatCurrency(vatData.gross) }}</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr class="total-row">
-              <td><strong>GESAMT</strong></td>
-              <td class="text-right">
-                <strong>{{ totalVatSummary.totalCount }}</strong>
-              </td>
-              <td class="text-right">
-                <strong>{{ formatCurrency(totalVatSummary.totalNet) }}</strong>
-              </td>
-              <td class="text-right">
-                <strong>{{ formatCurrency(totalVatSummary.totalVat) }}</strong>
-              </td>
-              <td class="text-right">
-                <strong>{{ formatCurrency(totalVatSummary.totalGross) }}</strong>
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </section>
+      <h3 class="report-header">Umsatzsteuer-Zusammenfassung</h3>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>MwSt.-Satz</th>
+            <th class="text-right">Anzahl Positionen</th>
+            <th class="text-right">Nettobetrag</th>
+            <th class="text-right">MwSt.-Betrag</th>
+            <th class="text-right">Bruttobetrag</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(vatData, vatRate) in dynamicVatSummary" :key="vatRate">
+            <td>
+              <strong>{{ vatRate }}% MwSt.</strong>
+              <span v-if="vatRate == 0" class="text-muted"> (Export/Befreit)</span>
+            </td>
+            <td class="text-right">{{ vatData.count }}</td>
+            <td class="text-right">{{ formatCurrency(vatData.net) }}</td>
+            <td class="text-right">{{ formatCurrency(vatData.vat) }}</td>
+            <td class="text-right">{{ formatCurrency(vatData.gross) }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td><strong>GESAMT</strong></td>
+            <td class="text-right">
+              <strong>{{ totalVatSummary.totalCount }}</strong>
+            </td>
+            <td class="text-right">
+              <strong>{{ formatCurrency(totalVatSummary.totalNet) }}</strong>
+            </td>
+            <td class="text-right">
+              <strong>{{ formatCurrency(totalVatSummary.totalVat) }}</strong>
+            </td>
+            <td class="text-right">
+              <strong>{{ formatCurrency(totalVatSummary.totalGross) }}</strong>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+     
     </section>
     <ReportActions fileName="Umsatzsteuer-Bericht" :period="period" />
   </main>

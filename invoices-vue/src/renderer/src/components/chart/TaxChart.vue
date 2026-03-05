@@ -1,7 +1,7 @@
 <template>
   <div class="vat-chart-wrapper">
     <header class="chart-header">
-      <h3 class="chart-title"><i class="bi bi-percent icons" aria-hidden="true"></i>Umsatzsteuer nach Steuersätzen</h3>
+      <h3 class="chart-title">Umsatzsteuer nach Steuersätzen</h3>
     </header>
 
     <section class="charts-grid">
@@ -31,14 +31,13 @@
         class="kpi-item"
         role="listitem"
       >
-        >
         <span class="kpi-dot" :style="`background:${getVatColor(vatRate)}`"></span>
         <span class="kpi-label">{{ vatRate }}% MwSt.</span>
         <span class="kpi-value">{{ formatEur(vatData.gross) }}</span>
         <span class="kpi-count">{{ vatData.count }} Positionen</span>
       </div>
       <div class="kpi-item kpi-total" role="listitem">
-        >
+        <span class="kpi-dot" :style="`background:#0d8a6b`"></span>
         <span class="kpi-label">Gesamt MwSt.</span>
         <span class="kpi-value">{{ formatEur(totalVat.gross) }}</span>
         <span class="kpi-count">{{ totalVat.count }} Positionen</span>

@@ -6,17 +6,18 @@
   --color-black-light: #444;
   --color-gray: #4a5568;
   --color-gray-light: #f8f9fa;
-  --color-red: red;
+  --color-purple: #9f3dea;
+  --color-red: #ef4444;
   --color-red-medium: #b91c1c;
   --color-red-light: #b45309;
-  --color-blue: #0056b3;
+  --color-blue: #6366f1;
   --color-green: #0d8a6b;
-  --color-green-light: #12b486;
+  --color-green-light: #10b981;
   --color-green-dark: #065f46;
-  --color-cyan: #06b6d4;
   --color-sky: #0ea5e9;
   --color-sky-light: #d0ebf7;
-  /* linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); */
+  --color-orange: #f59e0b;
+  
   /* fonts---------------------------------------------------- */
   --font-size-xs: 0.75rem; /* 12px */
   --font-size-sm: 0.875rem; /* 14px */
@@ -1518,6 +1519,12 @@ input:checked + .slider:before {
   display: flex;
   flex-direction: column;
   border-bottom: var(--border-md);
+  margin-top: var(--spacing-2xl) ;
+  font-family: 'Inter', sans-serif; /* veya mevcut font'unuz */
+  font-size: 1.125rem;   /* 18px */
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: -0.01em;
 }
 
 .report-title {
@@ -1606,26 +1613,28 @@ input:checked + .slider:before {
 }
 
 .report-summary-card:nth-child(1) {
-  background: var(--color-sky);
+  background: #6366f1;
   color: var(--color-white);
 }
 
 .report-summary-card:nth-child(2) {
-  background: var(--color-green-light);
+  background: #10b981;
   color: var(--color-white);
 }
 
 .report-summary-card:nth-child(3) {
-  background: var(--color-red-medium);
+  background: #9f3dea;
   color: var(--color-white);
 }
 
 .report-summary-card:nth-child(4) {
-  background: var(--color-cyan);
+  background: #f59e0b;
+  color: var(--color-white);
 }
 
 .report-summary-card:nth-child(5) {
-  background: var(--color-red-light);
+  background: #ef4444;
+  color: var(--color-white);
 }
 
 .report-summary-card .card-icon {
@@ -1802,4 +1811,46 @@ input:checked + .slider:before {
 
 .status-cancelled {
   background: #e74c3c;
+}
+
+
+.kpi-strip {
+  display: flex;
+  margin-top: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.kpi-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.85rem 0.5rem;
+  border-right: 1px solid #e5e7eb;
+  gap: 4px;
+}
+.kpi-item:last-child {
+  border-right: none;
+}
+.kpi-total {
+  background: #f8fafc;
+}
+.kpi-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.kpi-label {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+.kpi-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111827;
+}
+.kpi-count {
+  font-size: 0.65rem;
+  color: #9ca3af;
 }

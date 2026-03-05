@@ -48,7 +48,7 @@
 
     <div v-if="is_ready" class="printable" aria-label="Rechnungsberichten">
       <div class="report-header">
-        <h2><i class="bi bi-file-earmark-bar-graph icons" aria-hidden="true"></i>{{ title }}</h2>
+        <h2>{{ title }}</h2>
         <p class="report-period">
           <i class="bi bi-clock icons-small" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
         </p>
@@ -57,7 +57,7 @@
       <div class="report-summary-cards">
         <article class="report-summary-card">
           <div class="card-icon text-primary">
-            <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
+            <i class="bi bi-receipt" aria-hidden="true"></i>
           </div>
           <div class="card-content">
             <p class="card-label">Summe Ø</p>
@@ -81,10 +81,10 @@
 
         <article class="report-summary-card">
           <div class="card-icon text-info">
-            <i class="bi bi-pie-chart-fill" aria-hidden="true"></i>
+            <i class="bi bi-circle-half" aria-hidden="true"></i>
           </div>
           <div class="card-content">
-            <p class="card-label">Teilzhaltig Bezahlt</p>
+            <p class="card-label">Teilzahlig Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.partially_paid_total) }}</h3>
             <p class="card-detail">
               {{ summary.partially_paid_count }} Rechnungen ({{
@@ -96,7 +96,7 @@
 
         <article class="report-summary-card">
           <div class="card-icon text-secondary">
-            <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+            <i class="bi bi bi-clock-fill" aria-hidden="true"></i>
           </div>
           <div class="card-content">
             <p class="card-label">Unbezahlt (fällig)</p>
@@ -144,7 +144,7 @@
             :class="['report-filter-tab', { active: activeTab === 'partially_paid' }]"
             @click="activeTab = 'partially_paid'"
           >
-            Teilweizeltig ({{ summary.partially_paid_count }})
+            Teilweise ({{ summary.partially_paid_count }})
           </button>
           <button
             :class="['report-filter-tab', { active: activeTab === 'unpaid' }]"
@@ -207,7 +207,7 @@
                     item.isOverdue ? 'overdue' : item.payment_status
                   ]"
                 >
-                  {{ item.isOverdue ? 'overdue' : item.payment_status }}
+                  {{ statusLabel(item) }}
                 </span>
               </td>
               <td>{{ formatDate(item.paid_at) || '--------' }}</td>
@@ -372,6 +372,16 @@ export default {
         end: this.date_box_end
       }
       this.is_ready = true
+    },
+    statusLabel(item) {
+      const map = {
+        paid: 'Bezahlt',
+        partial: 'Teilweise',
+        unpaid: 'Unbezahlt',
+        overdue: 'Überfällig'
+      }
+      const key = item.isOverdue ? 'overdue' : item.payment_status
+      return map[key] || key
     },
     sorting(key) {
       if (!key) return

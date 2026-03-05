@@ -1,9 +1,7 @@
 <template>
   <div>
     <header class="chart-header">
-      <h3 class="chart-title">
-        <i class="bi bi-percent icons" aria-hidden="true"></i>
-      </h3>
+      <h3 class="chart-title">Zahlungsverlauf</h3>
     </header>
     <div class="chart-card chart-main">
       <canvas ref="invoiceLineChart" role="img" aria-label="Rechnung Line Chart"></canvas>
@@ -48,7 +46,7 @@ export default {
           labels: labels,
           datasets: [
             {
-              label: 'Bar Chart',
+              label: '',
               data: data,
               backgroundColor: backgroundColor,
               barPercentage: 0.5,

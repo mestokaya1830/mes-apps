@@ -195,46 +195,6 @@
   height: 350px;
 }
 
-.kpi-strip {
-  display: flex;
-  margin-top: 1.25rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-}
-.kpi-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.85rem 0.5rem;
-  border-right: 1px solid #e5e7eb;
-  gap: 4px;
-}
-.kpi-item:last-child {
-  border-right: none;
-}
-.kpi-total {
-  background: #f8fafc;
-}
-.kpi-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-.kpi-label {
-  font-size: 0.7rem;
-  color: #6b7280;
-}
-.kpi-value {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #111827;
-}
-.kpi-count {
-  font-size: 0.65rem;
-  color: #9ca3af;
-}
 .card-header {
   display: flex;
   justify-content: space-between;

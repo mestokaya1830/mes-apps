@@ -1,12 +1,12 @@
 <template>
   <div>
     <header class="chart-header">
-      <h3 class="chart-title">
-        <i class="bi bi-percent icons" aria-hidden="true"></i>
-      </h3>
+      <h3 class="chart-title">Zahlungsübersicht</h3>
     </header>
     <div class="chart-card chart-side">
-      <canvas ref="invoicePieChart" role="img" aria-label="Rechnung Pie Chart"></canvas>
+      <div class="canvas-wrapper">
+        <canvas ref="invoicePieChart" class="canvas-pie-invoice" role="img" aria-label="Rechnung Pie Chart"></canvas>
+      </div>
     </div>
   </div>
 </template>
@@ -31,27 +31,32 @@ export default {
     percentData: {
       deep: true,
       handler() {
-        if (this.pieChart) {
-          this.pieChart.data.datasets[0].data = [
-            this.percentData.paid_percentage,
-            this.percentData.partially_paid_percentage,
-            this.percentData.unpaid_percentage,
-            this.percentData.overdue_percentage
-          ]
-          this.pieChart.update()
-        }
+        this.destroyAndInit()
       }
     }
   },
   mounted() {
-    this.initPie()
+    this.$nextTick(() => this.initPie())
   },
-
+  beforeUnmount() {
+    if (this.pieChart) {
+      this.pieChart.destroy()
+      this.pieChart = null
+    }
+  },
   methods: {
+    destroyAndInit() {
+      if (this.pieChart) {
+        this.pieChart.destroy()
+        this.pieChart = null
+      }
+      this.$nextTick(() => this.initPie())
+    },
     initPie() {
-      console.log('Initializing pie chart with data:', this.percentData)
+      if (!this.$refs.invoicePieChart) return
+
       const labels = ['Bezahlt', 'Teilweise', 'Unbezahlt', 'Überfällig']
-      const colors = ['#10b981', '#60a5fa', '#f59e0b', '#ef4444']
+      const colors = ['#10b981', '#9f3dea', '#f59e0b', '#ef4444']
 
       this.pieChart = new Chart(this.$refs.invoicePieChart, {
         type: 'pie',
@@ -65,20 +70,21 @@ export default {
                 parseFloat(this.percentData.unpaid_percentage),
                 parseFloat(this.percentData.overdue_percentage)
               ],
-              backgroundColor: colors
+              backgroundColor: colors,
+              borderWidth: 2,
+              borderColor: '#ffffff'
             }
           ]
         },
         options: {
-          responsive: false,
-          maintainAspectRatio: true,
           plugins: {
-            legend: { position: 'bottom', labels: { font: { size: 12 } } },
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 12 } }
+            },
             tooltip: {
               callbacks: {
-                label: function (context) {
-                  return `${context.label}: ${context.raw.toFixed(1)}%`
-                }
+                label: (context) => `${context.label}: ${context.raw.toFixed(1)}%`
               }
             }
           }
@@ -88,3 +94,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.canvas-pie-invoice{
+  height: 200px;
+}
+</style>

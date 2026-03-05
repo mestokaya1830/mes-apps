@@ -8,7 +8,7 @@
         aria-label="Zeitraum auswählen"
         @change="rangeDateFilter"
       >
-        <option value="" disabled>Waehle Daten</option>
+        <option value="" disabled>Zeitraum wählen</option>
         <option value="1">Diesen Monat</option>
         <option value="3">Letzte 3 Monate</option>
         <option value="6">Letzte 6 Monate</option>
@@ -51,9 +51,10 @@
 
     <section v-if="reports" aria-label="Bericht Zusammenfassung">
       <div class="report-header">
-        <h2><i class="bi bi-bar-chart-line-fill icons" aria-hidden="true"></i>{{ title }}</h2>
+        <h2>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock-history icons-small" aria-hidden="true"></i>Zeitraum: {{ selectedPeriod }}
+          <i class="bi bi-clock-history icons-small" aria-hidden="true"></i>Zeitraum:
+          {{ selectedPeriod }}
         </p>
       </div>
 
@@ -85,7 +86,6 @@
             <h3 class="card-value">{{ formatCurrency(summary.top_customer.invoice_total) }}</h3>
             <p class="card-detail">{{ summary.top_customer.company_name }}</p>
             <p class="card-detail">{{ summary.top_customer.full_name }}</p>
-            <p class="card-detail">ID: {{ summary.top_customer.id }}</p>
           </div>
         </article>
 
@@ -101,9 +101,7 @@
     </section>
 
     <section class="table-section" aria-label="Detaillierte Kundenübersicht">
-      <h3>
-        <i class="bi bi-list-check me-1 icons" aria-hidden="true"></i>Detaillierte Kundenübersicht
-      </h3>
+      <h2>Detaillierte Kundenübersicht</h2>
       <table class="report-table">
         <caption>
           Kundenübersicht
