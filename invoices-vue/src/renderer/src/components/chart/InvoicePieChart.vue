@@ -4,9 +4,7 @@
       <h3 class="chart-title">Zahlungsübersicht</h3>
     </header>
     <div class="chart-card chart-side">
-      <div class="canvas-wrapper">
-        <canvas ref="invoicePieChart" class="canvas-pie-invoice" role="img" aria-label="Rechnung Pie Chart"></canvas>
-      </div>
+      <canvas ref="invoicePieChart" class="canvas-pie-invoice" role="img" aria-label="Rechnung Pie Chart"></canvas>
     </div>
   </div>
 </template>
@@ -96,7 +94,7 @@ export default {
 </script>
 
 <style scoped>
-.canvas-pie-invoice{
-  height: 200px;
+.chart-side{
+  height: 440px;
 }
 </style>
