@@ -147,12 +147,8 @@
         </button>
       </footer>
     </form>
-    <router-link
-      v-if="paymentPreview"
-      :to="`/payments/create/${paymentPreview.invoice.id}`"
-      class="back-link"
-    >
-      ← Zurück zu den Rechnungsdetails
+    <router-link to="/payments/create" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
     </router-link>
   </main>
 </template>

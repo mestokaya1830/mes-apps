@@ -255,14 +255,16 @@
     </div>
 
     <!-- Action Buttons -->
-    <footer class="sections btn-container">
+    <div class="sections btn-container">
       <button type="submit" class="btn btn-primary" @click="saveOffer">
         <i class="bi bi-floppy-fill icons" aria-hidden="true"></i>
         Speichern
       </button>
-    </footer>
+    </div>
 
-    <router-link to="/offers/create" class="back-link"> ← Zurück zur Bearbeitung </router-link>
+   <router-link to="/offers/create" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
+    </router-link>
   </main>
 </template>
 

@@ -287,15 +287,17 @@
       </section>
 
       <!-- Actions -->
-      <footer class="sections btn-container">
+      <div class="sections btn-container">
         <button type="submit" class="btn btn-primary" @click="saveOrder">
           <i class="bi bi-floppy-fill icons"></i>
           <span>Speichern</span>
         </button>
-      </footer>
+      </div>
     </form>
-
-    <router-link to="/orders/create" class="back-link">← Zurück zur Auftragsliste</router-link>
+    <router-link to="/orders/create" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur
+      Rechnungserstellung
+    </router-link>
   </main>
 </template>
 

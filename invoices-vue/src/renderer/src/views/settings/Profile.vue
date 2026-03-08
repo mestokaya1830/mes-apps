@@ -40,11 +40,12 @@
             <input
               id="Kenntwort"
               v-model="user.password"
+              ref="password"
               type="password"
               class="inputs"
               placeholder="Neues Passwort eingeben"
             />
-            <div v-if="error.Kenntwort" class="error" role="alert">{{ error.Kenntwort }}</div>
+            <div v-if="error.password" class="error" role="alert">{{ error.password }}</div>
           </div>
           <div class="form-group">
             <label for="Telefon" class="form-field"
@@ -53,11 +54,12 @@
             <input
               id="Telefon"
               v-model="user.phone"
+              ref="phone"
               type="tel"
               class="inputs"
               placeholder="+49 30 12345678"
             />
-            <div v-if="error.Telefon" class="error" role="alert">{{ error.Telefon }}</div>
+            <div v-if="error.phone" class="error" role="alert">{{ error.phone }}</div>
           </div>
         </div>
 
@@ -68,11 +70,12 @@
           <input
             id="Webseite"
             v-model="user.website"
+            ref="website"
             type="url"
             class="inputs"
             placeholder="www.example.com"
           />
-          <div v-if="error.Webseite" class="error" role="alert">{{ error.Webseite }}</div>
+          <div v-if="error.website" class="error" role="alert">{{ error.website }}</div>
         </div>
       </section>
 
@@ -89,11 +92,12 @@
             <input
               id="Adresse"
               v-model="user.address"
+              ref="address"
               type="text"
               class="inputs"
               placeholder="Hauptstraße 123"
             />
-            <div v-if="error.Adresse" class="error" role="alert">{{ error.Adresse }}</div>
+            <div v-if="error.address" class="error" role="alert">{{ error.address }}</div>
           </div>
 
           <div class="form-group">
@@ -102,12 +106,13 @@
             ></label>
             <input
               id="Postleitzahl"
+              ref="postal_code"
               v-model="user.postal_code"
               type="text"
               class="inputs"
               placeholder="10115"
             />
-            <div v-if="error.Postleitzahl" class="error" role="alert">{{ error.Adresse }}</div>
+            <div v-if="error.postal_code" class="error" role="alert">{{ error.postal_code }}</div>
           </div>
         </div>
         <div class="form-row">
@@ -115,14 +120,21 @@
             <label for="Stadt" class="form-label"
               >Stadt <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <input id="Stadt" v-model="user.city" type="text" class="inputs" placeholder="Berlin" />
-            <div v-if="error.Stadt" class="error" role="alert">{{ error.Stadt }}</div>
+            <input
+              id="Stadt"
+              ref="city"
+              v-model="user.city"
+              type="text"
+              class="inputs"
+              placeholder="Berlin"
+            />
+            <div v-if="error.city" class="error" role="alert">{{ error.city }}</div>
           </div>
           <div class="form-group">
             <label for="state" class="form-label"
               >Bundesland (Deutschland) <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <select id="state" v-model="user.state" class="inputs">
+            <select id="state" ref="state" v-model="user.state" class="inputs">
               <option disabled value="">Bitte wählen</option>
               <option v-for="item in german_states" :key="item.value" :value="item.value">
                 {{ item.label }}
@@ -148,14 +160,19 @@
               >Unternehmensform (Deutschland)
               <i class="bi bi-pencil icons" aria-hidden="true"></i>
             </label>
-            <select id="Unternehmensform" v-model="user.company_details" class="inputs">
+            <select
+              id="Unternehmensform"
+              ref="company_details"
+              v-model="user.company_details"
+              class="inputs"
+            >
               <option disabled value="">-- Bitte wählen --</option>
               <option v-for="item in companies" :key="item.value" :value="item">
                 {{ item.label }}
               </option>
             </select>
-            <div v-if="error.Unternehmensform" class="error" role="alert">
-              {{ error.Unternehmensform }}
+            <div v-if="error.company_details" class="error" role="alert">
+              {{ error.company_details }}
             </div>
           </div>
         </div>
@@ -165,7 +182,7 @@
               >Firmenlogo (Neues Logo hochladen)
               <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <input id="file" type="file" @change="setLogo($event)" />
+            <input id="file" ref="file" type="file" @change="setLogo($event)" />
           </div>
           <div class="form-group">
             <label class="form-field"
@@ -199,13 +216,20 @@
             <label for="Anrede" class="form-label"
               >Anrede <i class="bi bi-pencil icons" aria-hidden="true"></i
             ></label>
-            <select id="Anrede" v-model="user.contact_person.gender" class="inputs">
+            <select
+              id="Anrede"
+              ref="contact_person_gender"
+              v-model="user.contact_person.gender"
+              class="inputs"
+            >
               <option value="" disabled>Bitte wählen</option>
               <option value="Herr">Herr</option>
               <option value="Frau">Frau</option>
               <option value="Divers">Divers</option>
             </select>
-            <div v-if="error.Anrede" class="error" role="alert">{{ error.Anrede }}</div>
+            <div v-if="error.contact_person_gender" class="error" role="alert">
+              {{ error.contact_person_gender }}
+            </div>
           </div>
           <div class="form-group">
             <label for="Vorname" class="form-label"
@@ -214,11 +238,14 @@
             <input
               id="Vorname"
               v-model="user.contact_person.first_name"
+              ref="contact_person_first_name"
               type="text"
               class="inputs"
               placeholder="Hans Mueller"
             />
-            <div v-if="error.Vorname" class="error" role="alert">{{ error.Vorname }}</div>
+            <div v-if="error.contact_person_first_name" class="error" role="alert">
+              {{ error.contact_person_first_name }}
+            </div>
           </div>
         </div>
         <div class="form-row">
@@ -227,11 +254,14 @@
             <input
               id="Nachname"
               v-model="user.contact_person.last_name"
+              red="contact_person_last_name"
               type="text"
               class="inputs"
               placeholder="Hans Mueller"
             />
-            <div v-if="error.Nachname" class="error" role="alert">{{ error.Nachname }}</div>
+            <div v-if="error.contact_person_last_name" class="error" role="alert">
+              {{ error.contact_person_last_name }}
+            </div>
           </div>
           <div class="form-group">
             <label for="Telefon" class="form-label"
@@ -239,12 +269,15 @@
             ></label>
             <input
               id="Telefon"
+              ref="contact_person_phone"
               v-model="user.contact_person.phone"
               type="tel"
               class="inputs"
               placeholder="+49 30 12345678"
             />
-            <div v-if="error.Telefon" class="error" role="alert">{{ error.Telefon }}</div>
+            <div v-if="error.contact_person_phone" class="error" role="alert">
+              {{ error.contact_person_phone }}
+            </div>
           </div>
         </div>
         <div class="form-group">
@@ -253,12 +286,15 @@
           ></label>
           <input
             id="email"
+            ref="contact_person_email"
             v-model="user.contact_person.email"
             type="email"
             class="inputs"
             placeholder="example@email.com"
           />
-          <div v-if="error.email" class="error" role="alert">{{ error.email }}</div>
+          <div v-if="error.contact_person_email" class="error" role="alert">
+            {{ error.contact_person_email }}
+          </div>
         </div>
       </section>
 
@@ -278,12 +314,13 @@
             ></label>
             <input
               id="Finanzamt"
+              ref="tax_office"
               v-model="user.tax_office"
               type="text"
               class="inputs"
               placeholder="Finanzamt Berlin Mitte/Tiergarten"
             />
-            <div v-if="error.Finanzamt" class="error" role="alert">{{ error.Finanzamt }}</div>
+            <div v-if="error.tax_office" class="error" role="alert">{{ error.tax_office }}</div>
           </div>
         </div>
         <div class="form-row">
@@ -314,12 +351,13 @@
             ></label>
             <input
               id="Bankname"
+              ref="bank_name"
               v-model="user.bank_name"
               type="text"
               class="inputs"
               placeholder="Deutsche Bank AG"
             />
-            <div v-if="error.Bankname" class="error" role="alert">{{ error.Bankname }}</div>
+            <div v-if="error.bank_name" class="error" role="alert">{{ error.bank_name }}</div>
           </div>
           <div class="form-group">
             <label for="BIC" class="form-field"
@@ -327,12 +365,13 @@
             ></label>
             <input
               id="BIC"
+              ref="bic"
               v-model="user.bic"
               type="text"
               class="inputs"
               placeholder="DEUTDEBBXXX"
             />
-            <div v-if="error.BIC" class="error" role="alert">{{ error.BIC }}</div>
+            <div v-if="error.bic" class="error" role="alert">{{ error.bic }}</div>
           </div>
         </div>
         <div class="form-row">
@@ -342,12 +381,13 @@
             ></label>
             <input
               id="IBAN"
+              ref="iban"
               v-model="user.iban"
               type="text"
               class="inputs"
               placeholder="DE89370400440532013000"
             />
-            <div v-if="error.IBAN" class="error" role="alert">{{ error.IBAN }}</div>
+            <div v-if="error.iban" class="error" role="alert">{{ error.iban }}</div>
           </div>
           <div class="form-group">
             <label for="Kontoinhaber" class="form-field"
@@ -355,12 +395,15 @@
             ></label>
             <input
               id="Kontoinhaber"
+              ref="bank_account_holder"
               v-model="user.bank_account_holder"
               type="text"
               class="inputs"
               placeholder="TechSolutions GmbH"
             />
-            <div v-if="error.Kontoinhaber" class="error" role="alert">{{ error.Kontoinhaber }}</div>
+            <div v-if="error.bank_account_holder" class="error" role="alert">
+              {{ error.bank_account_holder }}
+            </div>
           </div>
         </div>
       </section>
@@ -377,11 +420,14 @@
         </label>
         <textarea
           id="Signaturtext"
+          ref="company_signature"
           v-model="user.company_signature"
           rows="4"
           placeholder="Mit freundlichen Grüßen&#10;TechSolutions GmbH&#10;Hans Mueller&#10;Geschäftsführer"
         ></textarea>
-        <div v-if="error.Signaturtext" class="error" role="alert">{{ error.Signaturtext }}</div>
+        <div v-if="error.company_signature" class="error" role="alert">
+          {{ error.company_signature }}
+        </div>
       </section>
 
       <!-- Submit Button -->
@@ -498,13 +544,13 @@ export default {
 
       // Password
       if (!this.user.password || this.user.password.length < 6) {
-        this.error.Kenntwort = 'Passwort muss mindestens 6 Zeichen enthalten.'
+        this.error.password = 'Passwort muss mindestens 6 Zeichen enthalten.'
         valid = false
       }
 
       // Phone (optional)
       if (this.user.phone && !/^\+?49\d{5,14}$/.test(this.user.phone)) {
-        this.error.Telefon = 'Bitte geben Sie eine gültige deutsche Telefonnummer ein.'
+        this.error.phone = 'Bitte geben Sie eine gültige deutsche Telefonnummer ein.'
         valid = false
       }
 
@@ -512,29 +558,29 @@ export default {
       if (this.user.website) {
         const urlPattern = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-z]{2,}([/\w\-.?&=]*)*$/
         if (!urlPattern.test(this.user.website)) {
-          this.error.Webseite = 'Bitte geben Sie eine gültige Website-Adresse ein.'
+          this.error.website = 'Bitte geben Sie eine gültige Website-Adresse ein.'
           valid = false
         }
       }
 
       // Address
       if (!this.user.address || this.user.address.trim().length < 3) {
-        this.error.Adresse = 'Adresse muss mindestens 3 Zeichen enthalten.'
+        this.error.address = 'Adresse muss mindestens 3 Zeichen enthalten.'
         valid = false
       } else if (!/^[A-Za-zÄÖÜäöüß\s\-.]+\s+\d+[A-Za-z]?$/.test(this.user.address)) {
-        this.error.Adresse = 'Adresse muss Straße und Hausnummer enthalten (z.B. Musterstraße 12).'
+        this.error.address = 'Adresse muss Straße und Hausnummer enthalten (z.B. Musterstraße 12).'
         valid = false
       }
 
       // Postal code
       if (this.user.postal_code && !/^\d{5}$/.test(this.user.postal_code)) {
-        this.error.Postleitzahl = 'Postleitzahl muss 5 Ziffern enthalten.'
+        this.error.postal_code = 'Postleitzahl muss 5 Ziffern enthalten.'
         valid = false
       }
 
       // City
       if (this.user.city && this.user.city.length < 2) {
-        this.error.Stadt = 'Stadt muss mindestens 2 Zeichen enthalten.'
+        this.error.city = 'Stadt muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
 
@@ -546,30 +592,30 @@ export default {
 
       // Company
       if (!this.user.company_details || !this.user.company_details.value) {
-        this.error.Unternehmensform = 'Bitte Unternehmensform auswählen.'
+        this.error.company_details = 'Bitte Unternehmensform auswählen.'
         valid = false
       }
 
       // Contact person
       const cp = this.user.contact_person
       if (!cp.gender) {
-        this.error.Anrede = 'Bitte Anrede auswählen.'
+        this.error.contact_person_gender = 'Bitte Anrede auswählen.'
         valid = false
       }
-      if (cp.first_name && cp.first_name.length < 2) {
-        this.error.Vorname = 'Vorname muss mindestens 2 Zeichen enthalten.'
+      if (!cp.first_name && cp.first_name.length < 2) {
+        this.error.contact_person_first_name = 'Vorname muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
-      if (cp.last_name && cp.last_name.length < 2) {
-        this.error.Nachname = 'Nachname muss mindestens 2 Zeichen enthalten.'
+      if (!cp.last_name && cp.last_name.length < 2) {
+        this.error.contact_person_last_name = 'Nachname muss mindestens 2 Zeichen enthalten.'
         valid = false
       }
-      if (cp.email && !emailRegex.test(cp.email)) {
-        this.error.emailCP = 'Ungültige E-Mail-Adresse.'
+      if (!cp.email && !emailRegex.test(cp.email)) {
+        this.error.contact_person_email = 'Ungültige E-Mail-Adresse.'
         valid = false
       }
-      if (cp.phone && !/^\+?49\d{5,14}$/.test(cp.phone)) {
-        this.error.TelefonCP = 'Bitte geben Sie eine gültige deutsche Telefonnummer ein.'
+      if (!cp.phone && !/^\+?49\d{5,14}$/.test(cp.phone)) {
+        this.error.contact_person_phone = 'Bitte geben Sie eine gültige deutsche Telefonnummer ein.'
         valid = false
       }
 
@@ -585,7 +631,7 @@ export default {
         }
       }
       if (!this.user.tax_office) {
-        this.error.Finanzamt = 'Bitte geben Sie eine gültige Finanzamt ein.'
+        this.error.tax_office = 'Bitte geben Sie eine gültige Finanzamt ein.'
         valid = false
       }
       if (this.user.vat_id && this.user.vat_id.trim() !== '') {
@@ -610,7 +656,7 @@ export default {
         this.$nextTick(() => {
           const firstErrorField = Object.keys(this.error)[0]
           if (firstErrorField) {
-            const inputElement = document.getElementById(firstErrorField)
+            const inputElement = this.$refs[firstErrorField]
             if (inputElement) inputElement.focus()
           }
         })

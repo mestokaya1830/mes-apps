@@ -101,7 +101,7 @@
   box-shadow: var(--shadow-button);
 }
 .btn-primary {
-  background: linear-gradient(135deg, #3dac78 0%, #1f2937 100%);
+  background: linear-gradient(135deg, #3dac78 0%, #065f46 100%);
   color: var(--color-white);
 }
 .btn-secondary {
@@ -495,7 +495,7 @@ input:checked + .slider:before {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3ba55c 0%, #122c19 100%);
+  background: linear-gradient(135deg, #3ba55c 0%, #065f46 100%);
   display: flex;
   align-items: center;
   justify-content: center;

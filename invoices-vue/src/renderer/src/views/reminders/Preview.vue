@@ -151,12 +151,8 @@
         </button>
       </footer>
     </form>
-    <router-link
-      v-if="reminderPreview"
-      :to="`/reminders/create/${reminderPreview.invoice_id}`"
-      class="back-link"
-    >
-      <i class="bi bi-arrow-left icons" aria-hidden="true"></i>Zurück zur Rechnungserstellung
+   <router-link to="/reminders/create" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
     </router-link>
   </main>
 </template>

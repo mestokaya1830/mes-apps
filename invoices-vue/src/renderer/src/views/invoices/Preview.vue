@@ -208,8 +208,8 @@
       </button>
     </footer>
 
-    <router-link to="/invoices/create" class="back-link">
-      <i class="bi bi-arrow-left icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
+    <router-link to="/invoices/create" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
     </router-link>
   </div>
 </template>

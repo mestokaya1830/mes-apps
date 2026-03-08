@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
@@ -475,11 +475,11 @@
         </div>
       </section>
 
-      <footer class="sections btn-container">
+      <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
-      </footer>
+      </div>
     </form>
   </main>
 </template>

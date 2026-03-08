@@ -255,7 +255,7 @@
         </legend>
 
         <div class="form-row">
-          <div class="form-group col-span-1">
+          <div class="form-group">
             <label for="kontakt-anrede">Anrede</label>
             <select
               id="kontakt-anrede"
