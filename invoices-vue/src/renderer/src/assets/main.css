@@ -17,7 +17,7 @@
   --color-sky: #0ea5e9;
   --color-sky-light: #d0ebf7;
   --color-orange: #f59e0b;
-  
+
   /* fonts---------------------------------------------------- */
   --font-size-xs: 0.75rem; /* 12px */
   --font-size-sm: 0.875rem; /* 14px */
@@ -62,7 +62,6 @@
   --transition-normal: 0.3s ease;
   --transition-slow: 0.4s ease;
 }
-
 
 .btn-container {
   display: flex;
@@ -110,7 +109,7 @@
   border: var(--border-sm);
 }
 .btn-edit {
-  background:  linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+  background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
   color: var(--color-black);
 }
 .btn-update {
@@ -1464,16 +1463,16 @@ input:checked + .slider:before {
   flex-direction: column;
   width: 90%;
 }
-.report-period{
+.report-period {
   margin-top: var(--spacing-lg);
 }
 .report-header {
   display: flex;
   flex-direction: column;
   border-bottom: var(--border-md);
-  margin-top: var(--spacing-2xl) ;
+  margin-top: var(--spacing-2xl);
   font-family: 'Inter', sans-serif; /* veya mevcut font'unuz */
-  font-size: 1.125rem;   /* 18px */
+  font-size: 1.125rem; /* 18px */
   font-weight: 600;
   color: #1e293b;
   letter-spacing: -0.01em;
@@ -1497,7 +1496,6 @@ input:checked + .slider:before {
   justify-content: space-between;
   margin: var(--spacing-3xl) 0;
 }
-
 
 /* TABS */
 .report-filter-tabs {
@@ -1541,8 +1539,6 @@ input:checked + .slider:before {
   background: var(--bg-info-light);
   color: #1e40af;
 }
-
-
 
 /* SUMMARY CARDS */
 .report-summary-cards {
@@ -1616,8 +1612,6 @@ input:checked + .slider:before {
   opacity: 0.85;
   margin: var(--spacing-xs) 0 0 0;
 }
-
-
 
 /* TABLE */
 .report-table-container {
@@ -1765,7 +1759,6 @@ input:checked + .slider:before {
   background: #e74c3c;
 }
 
-
 .kpi-strip {
   display: flex;
   margin-top: 1.25rem;
@@ -1805,4 +1798,65 @@ input:checked + .slider:before {
 .kpi-count {
   font-size: 0.65rem;
   color: #9ca3af;
+}
+@media screen and (max-width: 1600px) {
+  .main-container,
+  .main-container {
+    padding: 3rem;
+    width: 90%;
+  }
+  .form-card {
+    padding: var(--spacing-2xl);
+    margin: 10px;
+  }
+
+  .form-header h2 {
+    font-size: var(--spacing-2xl);
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .nav-text {
+    display: none;
+  }
+
+  .nav-icon {
+    margin-right: 0;
+  }
+}
+
+/* PRINT STYLES */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .printable,
+  .printable * {
+    visibility: visible;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: var(--bg-white);
+  }
+  .card-actions {
+    display: none !important;
+  }
+  @page {
+    margin: 1.5cm;
+    @bottom-right {
+      content: 'Seite ' counter(page) ' von ' counter(pages);
+    }
+  }
 }
