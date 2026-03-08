@@ -760,7 +760,7 @@ ipcMain.handle('get-customers', async () => {
     const rows = db
       .prepare(
         `
-        SELECT id, company_type, company_name, first_name, last_name, is_active FROM customers ORDER BY id DESC LIMIT ?
+        SELECT id, company_type, company_name, first_name, last_name, is_active FROM customers WHERE is_active = 1 ORDER BY id DESC LIMIT ?
       `
       )
       .all(limit)
@@ -863,12 +863,13 @@ ipcMain.handle('customer-details', async (event, id) => {
   }
 })
 
-ipcMain.handle('delete-customer-by-id', async (event, id) => {
+ipcMain.handle('cancel-customer-by-id', async (event, payload) => {
+  const { id, status } = payload
   if (!id) {
     return { success: false, message: 'No id provided' }
   }
   try {
-    const info = db.prepare('DELETE FROM customers WHERE id = ?').run(id)
+    const info = db.prepare('UPDATE customers SET is_active = ? WHERE id = ?').run(status, id)
     return { success: true, lastInsertId: info.lastInsertRowid }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -934,69 +935,46 @@ ipcMain.handle('flter-customers-categories', async (event, payload) => {
   }
 
   try {
-    const category = payload
     let query = ''
     let countQuery = ''
     let count = 0
     let rows = []
-    let limit = 50
+    const limit = 50
 
-    switch (category) {
+    switch (payload) {
       case 'all':
-        query = `
-          SELECT *
-          FROM customers
-          ORDER BY id DESC
-          LIMIT ?
-        `
+        query = `SELECT * FROM customers ORDER BY id DESC LIMIT ?`
         countQuery = `SELECT COUNT(*) as total FROM customers`
+        rows = db.prepare(query).all(limit)
         break
 
       case 'active':
-        query = `
-          SELECT * 
-          FROM customers
-          WHERE is_active = 1
-          ORDER BY id DESC
-          LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1
-        `
+        query = `SELECT * FROM customers WHERE is_active = 1 ORDER BY id DESC LIMIT ?`
+        countQuery = `SELECT COUNT(*) as total FROM customers WHERE is_active = 1`
+        rows = db.prepare(query).all(limit)
         break
 
       case 'canceled':
-        query = `
-          SELECT *
-          FROM customers
-          WHERE is_active = 0
-          ORDER BY updated_at DESC
-          LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM customers
-          WHERE is_active = 0
-        `
+        query = `SELECT * FROM customers WHERE is_active = 0 ORDER BY id DESC LIMIT ?`
+        countQuery = `SELECT COUNT(*) as total FROM customers WHERE is_active = 0`
+        rows = db.prepare(query).all(limit)
         break
-      default:
-        query = `
-          SELECT *
-          FROM customers
-          WHERE is_active = 1 AND
-          ORDER BY id DESC
-          LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM customers
-          WHERE is_active = 1
-        `
-    }
 
-    rows = db.prepare(query).all(limit)
+      case 'first_10':
+        query = `SELECT * FROM customers ORDER BY id ASC LIMIT 10`
+        countQuery = `SELECT COUNT(*) as total FROM customers`
+        rows = db.prepare(query).all()
+        break
+
+      case 'last_10':
+        query = `SELECT * FROM customers ORDER BY id DESC LIMIT 10`
+        countQuery = `SELECT COUNT(*) as total FROM customers`
+        rows = db.prepare(query).all()
+        break
+
+      default:
+        return { success: false, message: `Unknown category: ${payload}` }
+    }
 
     if (countQuery) {
       const countResult = db.prepare(countQuery).get()

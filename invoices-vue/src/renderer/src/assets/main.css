@@ -177,6 +177,10 @@ textarea::placeholder {
   color: #aaa;
   font-style: italic;
 }
+.select-md{
+  height: 50px;
+  font-size: var(--font-size-1xl);
+}
 .icons {
   width: 36px;
   text-align: center;

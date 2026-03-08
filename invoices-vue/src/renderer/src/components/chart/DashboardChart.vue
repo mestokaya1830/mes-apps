@@ -39,6 +39,11 @@ export default {
       const ctx = this.$refs.dashboardChart
       if (!ctx) return
 
+      if (this.chartInstance) {
+        this.chartInstance.destroy()
+        this.chartInstance = null
+      }
+
       this.chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -58,6 +63,7 @@ export default {
           ]
         },
         options: {
+          animation: false,
           responsive: true,
           maintainAspectRatio: false,
           scales: {
@@ -67,11 +73,12 @@ export default {
         }
       })
     },
+
     updateChart() {
-      if (!this.chartInstance || !this.$refs.dashboardChart) return
+      if (!this.chartInstance?.canvas) return
       this.chartInstance.data.labels = this.chartData.labels
       this.chartInstance.data.datasets[0].data = this.chartData.values
-      this.chartInstance.update('none')
+      this.chartInstance.update()
     }
   }
 }

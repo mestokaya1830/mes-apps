@@ -25,7 +25,7 @@ contextBridge.exposeInMainWorld('api', {
   getCustomers: async (data) => ipcRenderer.invoke('get-customers', data),
   customerDetails: async (id) => ipcRenderer.invoke('customer-details', id),
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
-  deleteCustomerById: async (id) => ipcRenderer.invoke('delete-customer-by-id', id),
+  cancelCustomerById: async (data) => ipcRenderer.invoke('cancel-customer-by-id', data),
   filterCustomersCategories: async (data) => ipcRenderer.invoke('flter-customers-categories', data),
   searchCustomers: async (data) => ipcRenderer.invoke('search-customers', data),
   getCustomerById: async (data) => ipcRenderer.invoke('get-customer-by-id', data), //get customer info und lastid for create invoice ,offer,order

@@ -19,14 +19,8 @@
         <option value="all">Alle</option>
         <option value="active">Aktiv</option>
         <option value="canceled">Storniert</option>
-        <option value="is_paid">Bezahlt</option>
-        <option value="is_partially_paid">Teilweise bezahlt</option>
-        <option value="unpaid">Unbezahlt</option>
-        <option value="overdue">Überfällig</option>
-        <option value="outstanding">Ausstehend</option>
-        <option value="is_early_paid">Frühzahlung</option>
-        <option value="is_late_paid">Spät bezahlt</option>
-        <option value="is_reminded">Erinnert</option>
+        <option value="first_10">Erste 10 Kunden</option>
+        <option value="last_10">Letzte 10 Kunden</option>
       </select>
 
       <input

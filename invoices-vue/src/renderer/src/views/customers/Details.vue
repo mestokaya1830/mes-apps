@@ -76,10 +76,19 @@
 
     <!-- Actions -->
     <div class="sections btn-container">
+      <select
+        v-model="customer_status"
+        class="inputs select-md"
+        aria-label="Kundenstatus wählen"
+        @change="cancelCustomer(customer.id)"
+      >
+        <option value="" disabled>Kundenstatus wählen</option>
+        <option v-if="!customer.is_active" value="1">Aktiv</option>
+        <option v-else value="0">Stornieren</option>
+      </select>
       <router-link :to="`/customers/edit/${customer.id}`" class="btn btn-edit">
         Bearbeiten
       </router-link>
-      <button type="button" class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
     </div>
   </div>
 </template>
@@ -91,7 +100,8 @@ export default {
     return {
       title: 'Kunden Details',
       customer: null,
-      counts: null
+      counts: null,
+      customer_status: ''
     }
   },
   mounted() {
@@ -108,11 +118,16 @@ export default {
         console.error(error)
       }
     },
-    async deleteCustomer(id) {
+    async cancelCustomer(id) {
       if (!id) return
-      if (confirm('Sind Sie sicher, dass Sie diesen Kunden löschen möchten? ✅')) {
+      if (confirm('Sind Sie sicher, dass Sie den Kundenstatus ändern möchten? ✅')) {
+        console.log(this.customer_status)
         try {
-          const result = await window.api.deleteCustomerById(id)
+          const data = {
+            id: id,
+            status: Number(this.customer_status)
+          }
+          const result = await window.api.cancelCustomerById(data)
           if (!result.success) return
           this.$router.push({ name: 'customers' })
         } catch (error) {
