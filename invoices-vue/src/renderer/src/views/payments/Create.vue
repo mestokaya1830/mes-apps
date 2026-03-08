@@ -165,7 +165,7 @@
               class="inputs"
               placeholder="z.B. Bankreferenz, Transaktions-ID"
             />
-            <small class="form-hint">Optional</small>
+            <small class="hint">Optional</small>
           </div>
         </div>
 

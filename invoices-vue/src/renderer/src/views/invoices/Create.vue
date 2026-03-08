@@ -18,7 +18,7 @@
             >Rechnungsnummer <span class="stars">*</span></label
           >
           <input id="rechnung-id" v-model="invoice.id" type="text" class="inputs" readonly />
-          <small class="form-hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
+          <small class="hint">Format: RE-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -417,7 +417,7 @@
               class="inputs"
               required
             />
-            <small class="form-hint">
+            <small class="hint">
               Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto
             </small>
           </div>
@@ -433,7 +433,7 @@
               <span class="slider round"></span>
             </label>
             <div class="switch-text">
-              <i class="bi bi-percent me-1 icons" aria-hidden="true"></i>
+              <i class="bi bi-percent icons" aria-hidden="true"></i>
               <strong>Skonto gewähren</strong>
             </div>
           </div>

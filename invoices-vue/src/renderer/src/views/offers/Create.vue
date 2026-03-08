@@ -18,7 +18,7 @@
             >Angebotsnummer <span class="stars">*</span></label
           >
           <input id="angebot-id" v-model="offer.id" type="text" class="inputs" readonly />
-          <small class="form-hint">Format: AN-YYYY-XXXX (automatisch generiert)</small>
+          <small class="hint">Format: AN-YYYY-XXXX (automatisch generiert)</small>
         </div>
         <div class="form-row">
           <div class="form-group">
