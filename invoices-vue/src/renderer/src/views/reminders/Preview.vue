@@ -1,5 +1,5 @@
 <template>
-  <main v-if="reminderPreview && auth" class="main-container">
+  <div v-if="reminderPreview && auth" class="main-container">
     <form @submit.prevent="saveReminder">
       <div class="printable">
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -144,17 +144,17 @@
         <!-- Contact Person -->
         <ContactPersonPreview :contactData="auth.contact_person" />
       </div>
-      <footer class="sections btn-container">
+      <div class="sections btn-container">
         <button type="submit" class="btn btn-primary" @click="saveReminder">
           <i class="bi bi-floppy-fill icons" aria-hidden="true"></i>
           Speichern
         </button>
-      </footer>
+      </div>
     </form>
    <router-link to="/reminders/create" class="btn btn-secondary">
       <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

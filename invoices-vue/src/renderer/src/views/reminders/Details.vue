@@ -1,5 +1,5 @@
 <template>
-  <main v-if="reminder && auth" class="main-container">
+  <div v-if="reminder && auth" class="main-container">
     <header class="page-header">
       <h1 class="main-title">{{ title }}</h1>
       <router-link to="/reminders" class="btn btn-secondary">
@@ -145,9 +145,6 @@
       </div>
       <!-- Contact Person -->
       <ContactPersonPreview :contactData="auth.contact_person" />
-
-      <!-- Footer -->
-      <FooterSidePreview />
     </div>
     <RemiderActions v-if="reminder" :tableData="reminder" :fileName="actionFileName" />
     <router-link
@@ -157,7 +154,7 @@
     >
       <i class="bi bi-arrow-left icons" aria-hidden="true"></i>Zurück zur Rechnungserstellung
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

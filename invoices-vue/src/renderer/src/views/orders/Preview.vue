@@ -1,5 +1,5 @@
 <template>
-  <main v-if="orderPreview && auth" class="main-container">
+  <div v-if="orderPreview && auth" class="main-container">
     <form @submit.prevent="saveOrder">
       <section class="printable">
         <!-- Header section -->
@@ -298,7 +298,7 @@
       <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur
       Rechnungserstellung
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

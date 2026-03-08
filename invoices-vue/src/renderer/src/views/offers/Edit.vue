@@ -1,5 +1,5 @@
 <template>
-  <main class="main-container">
+  <div class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
@@ -90,7 +90,7 @@
     <router-link :to="`/offers/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Angebotsdetails
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

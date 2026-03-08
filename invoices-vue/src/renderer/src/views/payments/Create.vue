@@ -1,5 +1,5 @@
 <template>
-  <main v-if="payment" class="main-container">
+  <div v-if="payment" class="main-container">
     <header class="main-header">
       <h1>{{ title }}</h1>
       <router-link to="/invoices" class="btn btn-secondary">
@@ -206,13 +206,13 @@
         </div>
       </section>
 
-      <footer class="sections btn-container">
+      <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
-      </footer>
+      </div>
     </form>
-  </main>
+  </div>
 </template>
 
 <script>

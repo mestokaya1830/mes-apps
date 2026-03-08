@@ -1,5 +1,5 @@
 <template>
-  <main v-if="offer && auth" class="main-container">
+  <div v-if="offer && auth" class="main-container">
     <header class="page-header-right">
       <router-link to="/offers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
@@ -215,7 +215,7 @@
     <OfferActions v-if="offer" :tableData="offer" :fileName="actionFileName" s />
 
     <router-link to="/offers" class="back-link"> ← Zurück zur Angebotsliste </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

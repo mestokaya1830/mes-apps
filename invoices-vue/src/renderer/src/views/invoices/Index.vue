@@ -1,5 +1,5 @@
 <template>
-  <main v-if="invoices" class="main-container">
+  <div v-if="invoices" class="main-container">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
 
@@ -153,7 +153,7 @@
       <h3>Keine Rechnungen</h3>
       <p>Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>

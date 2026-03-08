@@ -1,9 +1,6 @@
 <template>
   <div class="vat-chart-wrapper">
-    <header class="chart-header">
-      <h3 class="chart-title">Umsatzsteuer nach Steuersätzen</h3>
-    </header>
-
+    <h3 class="chart-title">Umsatzsteuer nach Steuersätzen</h3>
     <section class="charts-grid">
       <!-- Bar Chart -->
       <div class="chart-card chart-main">

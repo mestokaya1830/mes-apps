@@ -1,8 +1,6 @@
 <template>
   <div>
-    <header class="chart-header">
-      <h3 class="chart-title">Zahlungsverlauf</h3>
-    </header>
+    <h3 class="chart-title">Zahlungsverlauf</h3>
     <div class="chart-card chart-main">
       <canvas ref="invoiceLineChart" role="img" aria-label="Rechnung Line Chart"></canvas>
     </div>

@@ -536,7 +536,6 @@ input:checked + .slider:before {
   justify-content: center;
   height: calc(100% - 60px);
   margin-top: 60px;
-  overflow-y: auto;
 }
 .go-top-button {
   display: flex;
@@ -565,9 +564,9 @@ input:checked + .slider:before {
 }
 .main-container {
   width: 100%;
-  height: auto;
+  height: 100vh;
   padding: 5rem;
-  background-color: var(--color-white);
+  overflow-y: auto;
 }
 .page-title {
   margin-bottom: 10px;
@@ -832,17 +831,18 @@ input:checked + .slider:before {
 .info-card:hover {
   box-shadow:
     0 3px 8px rgba(0, 0, 0, 0.06),
-    0 8px 16px rgba(0, 0, 0, 0.04);
+    0 8px 16
+    px rgba(0, 0, 0, 0.04);
 }
-.chart-header {
+.chart-header{
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
 }
-.chart-header div {
-  font-size: 1.25rem;
-  color: var(--color-black);
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: var(--spacing-sm);
 }
 .time-filter {
   display: flex;

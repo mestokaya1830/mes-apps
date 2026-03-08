@@ -1,5 +1,5 @@
 <template>
-  <main v-if="offer" class="main-container">
+  <div v-if="offer" class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
@@ -423,13 +423,13 @@
         </div>
       </section>
 
-      <footer class="sections btn-container">
+      <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
-      </footer>
+      </div>
     </form>
-  </main>
+  </div>
 </template>
 
 <script>

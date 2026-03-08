@@ -201,12 +201,12 @@
       </div>
     </div>
 
-    <footer class="sections btn-container">
+    <div class="sections btn-container">
       <button class="btn btn-primary" @click="saveInvoice">
         <i class="bi bi-save form-title icons" aria-hidden="true"></i>
         <span>Speichern</span>
       </button>
-    </footer>
+    </div>
 
     <router-link to="/invoices/create" class="btn btn-secondary">
       <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung

@@ -1,5 +1,5 @@
 <template>
-  <main v-if="offerPreview && auth" class="main-container">
+  <div v-if="offerPreview && auth" class="main-container">
     <div class="printable">
       <!-- Header -->
       <HeaderSidePreview :title="title" :auth="auth" />
@@ -265,7 +265,7 @@
    <router-link to="/offers/create" class="btn btn-secondary">
       <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

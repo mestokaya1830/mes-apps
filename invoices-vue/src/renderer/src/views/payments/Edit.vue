@@ -1,5 +1,5 @@
 <template>
-  <main v-if="$route.params.id" class="main-container">
+  <div v-if="$route.params.id" class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/payments/details/${$route.params.id}`" class="btn btn-secondary">
@@ -70,7 +70,7 @@
     <router-link :to="`/invoices/details/${$route.params.id}`" class="btn back-btn">
       ← Zurück zur Zahlungsdetails
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

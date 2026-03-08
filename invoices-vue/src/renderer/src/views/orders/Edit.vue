@@ -1,5 +1,5 @@
 <template>
-  <main class="main-container">
+  <div class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
@@ -232,7 +232,7 @@
     <router-link :to="`/orders/details/${$route.params.id}`" class="btn back-btn">
       ← Zurück zu den Bestelldetails
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>

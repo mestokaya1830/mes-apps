@@ -77,7 +77,7 @@
     <section class="charts-grid">
       <article class="chart-card chart-main">
         <header class="chart-header">
-          <h2>Umsatzentwicklung</h2>
+          <h2 class="chart-title">Umsatzentwicklung</h2>
           <div class="time-filter">
             <button
               :class="{ active: selectedPeriod === '1M' }"
@@ -112,9 +112,7 @@
         <DashboardChart v-if="chartData" :chartData="chartData" :key="chartKey" />
       </article>
       <article class="chart-card chart-side">
-        <header class="chart-header">
-          <h2>Verteilung</h2>
-        </header>
+        <h2 class="chart-title">Verteilung</h2>
         <DashboardChartDonat v-if="chartDataDonat" :chartData="chartDataDonat" :key="chartKey" />
       </article>
     </section>

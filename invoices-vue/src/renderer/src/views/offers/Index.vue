@@ -1,5 +1,5 @@
 <template>
-  <main v-if="offers" class="main-container">
+  <div v-if="offers" class="main-container">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers" class="btn btn-primary">
@@ -128,7 +128,7 @@
       <h3 class="mt-3">Keine Angebote</h3>
       <p>Erstellen Sie neue Angebote, um sie hier zu sehen.</p>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>

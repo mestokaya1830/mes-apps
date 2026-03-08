@@ -1,5 +1,5 @@
 <template>
-  <main v-if="invoice" class="main-container">
+  <div v-if="invoice" class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
@@ -481,7 +481,7 @@
         </button>
       </div>
     </form>
-  </main>
+  </div>
 </template>
 
 <script>

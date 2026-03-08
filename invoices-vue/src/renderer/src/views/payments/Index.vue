@@ -1,5 +1,5 @@
 <template>
-  <main v-if="payments" class="main-container">
+  <div v-if="payments" class="main-container">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/payments/create" class="btn btn-primary">
@@ -118,12 +118,12 @@
       </div>
     </section>
 
-    <footer v-if="payments.length === 0" class="empty-state">
+    <div v-if="payments.length === 0" class="empty-state">
       <i class="bi bi-people icons" aria-hidden="treu"></i>
       <h3>Keine Kunden</h3>
       <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
-    </footer>
-  </main>
+    </div>
+  </div>
 </template>
 
 

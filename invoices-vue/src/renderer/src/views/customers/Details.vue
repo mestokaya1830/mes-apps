@@ -1,5 +1,5 @@
 <template>
-  <main v-if="customer" class="main-container">
+  <div v-if="customer" class="main-container">
     <!-- Header -->
     <header class="page-header">
       <h1 for="">{{ title }}</h1>
@@ -75,13 +75,13 @@
     </section>
 
     <!-- Actions -->
-    <footer class="sections btn-container">
+    <div class="sections btn-container">
       <router-link :to="`/customers/edit/${customer.id}`" class="btn btn-edit">
         Bearbeiten
       </router-link>
       <button type="button" class="btn btn-delete" @click="deleteCustomer(customer.id)">Löschen</button>
-    </footer>
-  </main>
+    </div>
+  </div>
 </template>
 
 <script>

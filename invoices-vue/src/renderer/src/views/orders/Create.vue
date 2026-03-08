@@ -1,5 +1,5 @@
 <template>
-  <main v-if="order" class="main-container">
+  <div v-if="order" class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
@@ -526,13 +526,13 @@
       </section>
 
       <!-- Vorschau Button -->
-      <footer class="sections btn-container">
+      <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitStore">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
-      </footer>
+      </div>
     </form>
-  </main>
+  </div>
 </template>
 
 <script>

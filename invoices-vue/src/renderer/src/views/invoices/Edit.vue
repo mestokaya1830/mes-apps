@@ -58,9 +58,9 @@
         </section>
       </div>
     </div>
-    <footer class="sections btn-container">
+    <div class="sections btn-container">
       <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
-    </footer>
+    </div>
   </div>
 </template>
 

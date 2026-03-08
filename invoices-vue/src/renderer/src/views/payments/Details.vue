@@ -1,5 +1,5 @@
 <template>
-  <main v-if="payment && auth" class="main-container">
+  <div v-if="payment && auth" class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/payments" class="btn btn-secondary">
@@ -156,7 +156,7 @@
     <router-link :to="`/invoices/details/${payment.invoice_id}`" class="btn back-btn">
       ← Zurück zur Rechnungsdetails
     </router-link>
-  </main>
+  </div>
 </template>
 
 <script>
