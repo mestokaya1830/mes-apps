@@ -631,7 +631,7 @@ export default {
       }
 
       this.summary()
-      await store.setStore('offer', JSON.parse(JSON.stringify(this.offer)))
+      await store.setFilters('offer', JSON.parse(JSON.stringify(this.offer)))
       this.$router.push('/offers/preview')
     }
   }

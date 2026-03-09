@@ -66,17 +66,17 @@ export default {
       }
 
       html2pdf().set(options).from(element).save()
-      this.clearStore()
+      this.clearFilters()
     },
     printDocument() {
       window.print()
     },
     sendEmail() {
-      this.clearStore()
+      this.clearFilters()
     },
-    async clearStore() {
+    async clearFilters() {
       try {
-        await store.clearStore('order')
+        await store.clearFilters('order')
       } catch (error) {
         console.error(error)
       }

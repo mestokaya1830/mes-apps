@@ -13,27 +13,47 @@
           </li>
 
           <li class="nav-item">
-            <router-link to="/customers" exact-active-class="active" class="nav-link">
+            <router-link
+              to="/customers"
+              exact-active-class="active"
+              class="nav-link"
+              @click="clearFilters"
+            >
               <i class="bi bi-people nav-icon" aria-hidden="true"></i>
               <span class="nav-text">Kunden</span>
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/invoices" exact-active-class="active" class="nav-link">
+            <router-link
+              to="/invoices"
+              exact-active-class="active"
+              class="nav-link"
+              @click="clearFilters"
+            >
               <i class="bi bi-receipt nav-icon" aria-hidden="true"></i>
               <span class="nav-text">Rechnungen</span>
             </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link to="/offers" exact-active-class="active" class="nav-link">
+            <router-link
+              to="/offers"
+              exact-active-class="active"
+              class="nav-link"
+              @click="clearFilters"
+            >
               <i class="bi bi-file-earmark-text nav-icon" aria-hidden="true"></i>
               <span class="nav-text">Angebote</span>
             </router-link>
           </li>
 
           <li class="nav-item">
-            <router-link to="/orders" exact-active-class="active" class="nav-link">
+            <router-link
+              to="/orders"
+              exact-active-class="active"
+              class="nav-link"
+              @click="clearFilters"
+            >
               <i class="bi bi-bag-check nav-icon" aria-hidden="true"></i>
               <span class="nav-text">Aufträge</span>
             </router-link>
@@ -91,21 +111,20 @@ export default {
   },
   mounted() {
     this.auth = store.state.auth
-    this.clearDate()
+    this.clearFilters()
   },
   methods: {
     async logout() {
       try {
-        await store.clearStore('auth')
+        await store.clearAuth()
         this.$router.push('/login')
       } catch (error) {
         console.error('Abmeldefehler:', error)
       }
     },
-    async clearDate() {
+    async clearFilters() {
       try {
-        await store.clearStore('date_filter')
-        await store.clearStore('category_filter')
+        await store.clearFilters(['date_filter', 'category_filter', 'search_filter'])
       } catch (error) {
         console.error(error)
       }

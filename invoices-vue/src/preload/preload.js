@@ -24,11 +24,12 @@ contextBridge.exposeInMainWorld('api', {
   addCustomer: async (data) => ipcRenderer.invoke('add-customer', data),
   getCustomers: async (data) => ipcRenderer.invoke('get-customers', data),
   customerDetails: async (id) => ipcRenderer.invoke('customer-details', id),
+  getCustomerById: async (data) => ipcRenderer.invoke('get-customer-by-id', data), //get customer info und lastid for create invoice ,offer,order
   updateCustomerById: async (data) => ipcRenderer.invoke('update-customer-by-id', data),
   cancelCustomerById: async (data) => ipcRenderer.invoke('cancel-customer-by-id', data),
   filterCustomersCategories: async (data) => ipcRenderer.invoke('flter-customers-categories', data),
   searchCustomers: async (data) => ipcRenderer.invoke('search-customers', data),
-  getCustomerById: async (data) => ipcRenderer.invoke('get-customer-by-id', data), //get customer info und lastid for create invoice ,offer,order
+  filterCustomerDate: async (date) => ipcRenderer.invoke('filter-customers-date', date),
 
   //invoice
   addInvoice: async (data) => ipcRenderer.invoke('add-invoice', data),

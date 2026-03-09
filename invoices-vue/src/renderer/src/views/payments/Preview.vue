@@ -208,7 +208,7 @@ export default {
       if (this.paymentPreview) {
         const result = await window.api.addPayment(JSON.parse(JSON.stringify(this.paymentPreview)))
         if (!result.success) return
-        await store.clearStore('payment')
+        await store.clearFilters('payment')
         this.$router.push('/invoices')
       }
     }

@@ -774,7 +774,7 @@ export default {
       }
 
       this.summary()
-      await store.setStore('order', JSON.parse(JSON.stringify(this.order)))
+      await store.setFilters('order', JSON.parse(JSON.stringify(this.order)))
       this.$router.push('/orders/preview')
     }
   }

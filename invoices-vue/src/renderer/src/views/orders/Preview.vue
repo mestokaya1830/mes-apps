@@ -368,7 +368,7 @@ export default {
       if (this.orderPreview) {
         const result = await window.api.addOrder(JSON.parse(JSON.stringify(this.orderPreview)))
         if (!result.success) return
-        await store.clearStore('order')
+        await store.clearFilters('order')
         this.$router.push('/orders')
       }
     }

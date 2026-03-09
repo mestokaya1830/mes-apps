@@ -15,8 +15,9 @@ const state = reactive({
   payment: null,
   deliverie: null,
   reminder: null,
-  category_filter: null,
-  date_filter: null,
+  category_filter: '',
+  date_filter: '',
+  search_filter: '',
   _isClearing: false // IndexedDB temizleme işlemi için flag
 })
 
@@ -43,40 +44,59 @@ async function init() {
 
     const reminder = await localforage.getItem('reminder')
     if (reminder) state.reminder = reminder
-
-    const category_filter = await localforage.getItem('category_filter')
-    if (category_filter) state.category_filter = category_filter
-
-    const date_filter = await localforage.getItem('date_filter')
-    if (date_filter) state.date_filter = date_filter
   } catch (err) {
     console.error('Failed to load stored data:', err)
   }
 }
 
-// set store
-async function setStore(store, data) {
-  state[store] = data
+//auth
+async function setAuth(payload) {
+  state.auth = payload
   try {
-    await localforage.setItem(store, data)
+    await localforage.setItem('auth', payload)
+  } catch (err) {
+    console.error('Failed to save ', err)
+  }
+}
+
+async function clearAuth() {
+  try {
+    state.auth = null
+    await localforage.setItem('auth')
+  } catch (err) {
+    console.error('Failed to save ', err)
+  }
+}
+
+//filters
+async function setFilters(store, payload) {
+  state[store] = payload
+  try {
+    await localforage.setItem(store, payload)
   } catch (err) {
     console.error('Failed to save ' + store + ':', err)
   }
 }
 
-//clear store
-async function clearStore(store) {
-  try {
-    await localforage.removeItem(store)
-    state[store] = undefined
-  } catch (err) {
-    console.error('Failed to clear ' + store + ':', err)
-  }
+async function clearFilters(payload = []) {
+  const items = Array.isArray(payload) ? payload : [payload]
+  await Promise.all(
+    items.map(async (item) => {
+      try {
+        state[item] = ''
+        await localforage.removeItem(item)
+      } catch (err) {
+        console.error('failed removing:', item, err)
+      }
+    })
+  )
 }
 
 export default {
   state: readonly(state),
   init,
-  setStore,
-  clearStore
+  setAuth,
+  clearAuth,
+  setFilters,
+  clearFilters
 }

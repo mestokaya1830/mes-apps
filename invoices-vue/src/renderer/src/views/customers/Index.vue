@@ -28,7 +28,7 @@
         class="inputs"
         placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
         aria-label="Kunden, Firma oder Rechnungs-ID suchen"
-        @input="searchInvoice"
+        @input="searchFilter"
       />
 
       <div class="date-wrapper">
@@ -39,7 +39,7 @@
           type="date"
           class="inputs date"
           aria-label="Startdatum"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -51,7 +51,7 @@
           type="date"
           class="inputs date"
           aria-label="Enddatum"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -150,6 +150,22 @@ export default {
     }
   },
   mounted() {
+    if (store.state.date_filter) {
+      this.date_box_start = store.state.date_filter.start
+      this.date_box_end = store.state.date_filter.end
+      this.filterDate()
+      return
+    }
+    if (store.state.category_filter) {
+      this.categories_filter = store.state.category_filter
+      this.filterCategories()
+      return
+    }
+    if (store.state.search_filter) {
+      this.search_box = store.state.search_filter
+      this.searchFilter()
+      return
+    }
     this.getCustomers()
   },
   methods: {
@@ -169,19 +185,6 @@ export default {
       const last = lastName ? lastName.charAt(0).toUpperCase() : ''
       return first + last || '??'
     },
-    async searchFilter() {
-      const term = this.search_box?.trim()
-      if (!term) {
-        this.getCustomers()
-        return
-      }
-      if (isNaN(term) && term.length < 3) {
-        return
-      }
-      const result = await window.api.searchCustomers(term)
-      if (!result.success) return
-      this.customers = result.rows
-    },
     async filterCategories() {
       try {
         const result = await window.api.filterCustomersCategories(this.categories_filter)
@@ -192,7 +195,51 @@ export default {
         }))
         this.total_count = result.total
         this.current_count = result.rows.length
-        await store.setStore('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
+        await store.setFilters(
+          'category_filter',
+          JSON.parse(JSON.stringify(this.categories_filter))
+        )
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async searchFilter() {
+      const term = this.search_box?.trim()
+      if (!term) {
+        this.getCustomers()
+        return
+      }
+      if (isNaN(term) && term.length < 3) {
+        return
+      }
+
+      const result = await window.api.searchCustomers(term)
+      if (!result.success) return
+      this.customers = result.rows
+      this.total_count = result.total
+      this.current_count = result.rows.length
+      await store.setFilters('search_filter', JSON.parse(JSON.stringify(this.search_box)))
+    },
+    async filterDate() {
+      try {
+        if (!this.date_box_start) return this.$refs.date_box_start.focus()
+        if (!this.date_box_end) return this.$refs.date_box_end.focus()
+        if (this.date_box_start > this.date_box_end) {
+          this.date_box_end = ''
+          return this.$refs.date_box_end.focus()
+        }
+        if (this.date_box_start && this.date_box_end) {
+          const date = {
+            start: this.date_box_start,
+            end: this.date_box_end
+          }
+          const result = await window.api.filterCustomerDate(date)
+          if (!result.success) return
+          this.customers = result.rows
+          this.total_count = result.total
+          this.current_count = result.rows.length
+          await store.setFilters('date_filter', JSON.parse(JSON.stringify(date)))
+        }
       } catch (error) {
         console.error(error)
       }

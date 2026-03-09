@@ -129,7 +129,7 @@ export default {
           this.error.credential = res.message || 'Ungültige Anmeldedaten.'
           return
         }
-        await store.setStore('auth', res.user)
+        await store.setAuth(res.user)
         this.$router.push('/')
       } catch (err) {
         this.error.credential = err.message || 'Serverfehler.'

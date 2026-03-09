@@ -316,7 +316,7 @@ export default {
       if (this.offerPreview) {
         const result = await window.api.addOffer(JSON.parse(JSON.stringify(this.offerPreview)))
         if (!result.success) return
-        await store.clearStore()
+        await store.clearFilters()
         this.$router.push('/offers')
       }
     }

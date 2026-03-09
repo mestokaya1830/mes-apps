@@ -211,7 +211,7 @@ export default {
       )
     },
     async getStore() {
-      // await store.clearStore('reminder')
+      // await store.clearFilters('reminder')
       if (!store.state.reminder) return this.getInvoice()
       this.reminder = JSON.parse(JSON.stringify(store.state.reminder))
       this.updateTexts()
@@ -254,7 +254,7 @@ export default {
     submitStore() {
       if (!this.reminder) return
       if (!this.validate()) return
-      store.setStore('reminder', JSON.parse(JSON.stringify(this.reminder)))
+      store.setFilters('reminder', JSON.parse(JSON.stringify(this.reminder)))
       this.$router.push('/reminders/preview')
     }
   }

@@ -277,7 +277,7 @@ export default {
 
         const result = await window.api.saveInvoicePDF(pdf, fileName)
         if (result.success) {
-          await store.clearStore('invoice')
+          await store.clearFilters('invoice')
           return
         }
       } catch (err) {

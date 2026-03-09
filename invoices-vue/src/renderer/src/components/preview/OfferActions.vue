@@ -74,7 +74,7 @@ export default {
       }
 
       html2pdf().set(options).from(element).save()
-      this.clearStore()
+      this.clearFilters()
     },
     async cancelOffer(id) {
       if (confirm('Sind Sie sicher, dass Sie dieses Angebot löschen möchten?')) {
@@ -91,11 +91,11 @@ export default {
       window.print()
     },
     sendEmail() {
-      this.clearStore()
+      this.clearFilters()
     },
-    async clearStore() {
+    async clearFilters() {
       try {
-        await store.clearStore('offer')
+        await store.clearFilters('offer')
       } catch (error) {
         console.error(error)
       }

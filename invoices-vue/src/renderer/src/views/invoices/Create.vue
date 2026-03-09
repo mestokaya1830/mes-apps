@@ -767,7 +767,7 @@ export default {
         return
       // if (!this.checkPositionsDates(this.invoice.positions)) return
 
-      await store.setStore('invoice', JSON.parse(JSON.stringify(this.invoice)))
+      await store.setFilters('invoice', JSON.parse(JSON.stringify(this.invoice)))
       this.$router.push('/invoices/preview')
     }
   }

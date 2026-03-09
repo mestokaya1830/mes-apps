@@ -289,7 +289,7 @@ export default {
     },
 
     async getStore() {
-      // await store.clearStore('payment')
+      // await store.clearFilters('payment')
       if (!store.state.payment) return await this.getInvoice()
       this.payment = JSON.parse(JSON.stringify(store.state.payment))
       this.outstanding = this.payment.invoice.gross_total - this.payment.payment_total
@@ -429,7 +429,7 @@ export default {
       // }
       if (!this.validate()) return
       if (this.setPaymentStatus()) return
-      await store.setStore('payment', JSON.parse(JSON.stringify(this.payment)))
+      await store.setFilters('payment', JSON.parse(JSON.stringify(this.payment)))
       this.$router.push('/payments/preview')
     }
   }

@@ -9,7 +9,7 @@
       </router-link>
     </header>
 
-     <section class="main-filter" aria-label="customer filter">
+    <section class="main-filter" aria-label="customer filter">
       <select
         v-model="categories_filter"
         class="inputs select"
@@ -46,7 +46,7 @@
           type="date"
           class="inputs date"
           aria-label="Startdatum"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -58,7 +58,7 @@
           type="date"
           class="inputs date"
           aria-label="Enddatum"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -218,7 +218,10 @@ export default {
         }))
         this.total_count = result.total
         this.current_count = result.rows.length
-        await store.setStore('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
+        await store.setFilters(
+          'category_filter',
+          JSON.parse(JSON.stringify(this.categories_filter))
+        )
       } catch (error) {
         console.error(error)
       }
@@ -263,7 +266,7 @@ export default {
           }))
           this.total_count = result.total
           this.current_count = result.rows.length
-          await store.setStore('date_filter', JSON.parse(JSON.stringify(date)))
+          await store.setFilters('date_filter', JSON.parse(JSON.stringify(date)))
         }
       } catch (error) {
         console.error(error)

@@ -877,58 +877,6 @@ ipcMain.handle('cancel-customer-by-id', async (event, payload) => {
   }
 })
 
-ipcMain.handle('search-customers', async (event, term) => {
-  if (!term) {
-    return { success: false, message: 'No data provided' }
-  }
-  let limit = 50
-  if (isNaN(term) && !term.includes('-')) {
-    try {
-      const rows = db
-        .prepare(
-          `SELECT id, company_name, first_name, last_name, is_active FROM customers
-           WHERE company_type LIKE '${term}%' 
-           OR company_name LIKE '%${term}%' 
-           OR first_name LIKE '${term}%' 
-           OR last_name LIKE '${term}%' 
-           OR full_name LIKE '${term}%' 
-           ORDER BY id DESC LIMIT ?`
-        )
-        .all(limit)
-      return { success: true, rows }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
-    }
-  } else {
-    try {
-      if (isNaN(term) && term.includes('-')) {
-        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
-        const rows = db
-          .prepare(
-            `SELECT id, company_name, first_name, last_name, is_active FROM customers 
-            WHERE id BETWEEN ? AND ? AND is_active = 1
-            ORDER BY id DESC LIMIT ?`
-          )
-          .all(start, end, limit)
-        return { success: true, rows }
-      } else {
-        const rows = db
-          .prepare(
-            `SELECT id, company_name, first_name, last_name, is_active FROM customers 
-            WHERE id + 0 LIKE ? AND is_active = 1
-            ORDER BY id DESC LIMIT ?`
-          )
-          .all(term, limit)
-        return { success: true, rows }
-      }
-    } catch (err) {
-      console.error('DB error:', err.message)
-      return { success: false, message: err.message }
-    }
-  }
-})
-
 ipcMain.handle('flter-customers-categories', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
@@ -988,6 +936,58 @@ ipcMain.handle('flter-customers-categories', async (event, payload) => {
   }
 })
 
+ipcMain.handle('search-customers', async (event, term) => {
+  if (!term) {
+    return { success: false, message: 'No data provided' }
+  }
+  let limit = 50
+  if (isNaN(term) && !term.includes('-')) {
+    try {
+      const rows = db
+        .prepare(
+          `SELECT id, company_name, first_name, last_name, is_active FROM customers
+           WHERE company_type LIKE '${term}%' 
+           OR company_name LIKE '%${term}%' 
+           OR first_name LIKE '${term}%' 
+           OR last_name LIKE '${term}%' 
+           OR full_name LIKE '${term}%' 
+           ORDER BY id DESC LIMIT ?`
+        )
+        .all(limit)
+      return { success: true, rows }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  } else {
+    try {
+      if (isNaN(term) && term.includes('-')) {
+        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+        const rows = db
+          .prepare(
+            `SELECT id, company_name, first_name, last_name, is_active FROM customers 
+            WHERE id BETWEEN ? AND ?
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(start, end, limit)
+        return { success: true, rows }
+      } else {
+        const rows = db
+          .prepare(
+            `SELECT id, company_name, first_name, last_name, is_active FROM customers 
+            WHERE id + 0 LIKE ?
+            ORDER BY id DESC LIMIT ?`
+          )
+          .all(term, limit)
+        return { success: true, rows }
+      }
+    } catch (err) {
+      console.error('DB error:', err.message)
+      return { success: false, message: err.message }
+    }
+  }
+})
+
 ipcMain.handle('filter-customers-date', async (event, payload) => {
   if (!payload) {
     return { success: false, message: 'No data provided' }
@@ -999,15 +999,13 @@ ipcMain.handle('filter-customers-date', async (event, payload) => {
       .prepare(
         `SELECT *
         FROM customers
-        WHERE is_active = 1 AND date BETWEEN ? AND ?
+        WHERE date BETWEEN ? AND ?
         ORDER BY id DESC
         LIMIT ?;`
       )
       .all(start, end, limit)
     const total = db
-      .prepare(
-        `SELECT COUNT(id) As total FROM customers WHERE is_active = 1 AND date BETWEEN ? AND ?`
-      )
+      .prepare(`SELECT COUNT(id) AS total FROM customers WHERE date BETWEEN ? AND ?`)
       .get(start, end).total
     return { success: true, rows, total }
   } catch (error) {
@@ -1487,63 +1485,54 @@ ipcMain.handle('search-invoices', async (event, term) => {
     let limit = 50
     let rows = []
     let total = 0
+
     if (isNaN(term) && !term.includes('-')) {
       rows = db
         .prepare(
           `SELECT 
-            id,
-            date,
-            due_date,
-            paid_at,
-            gross_total,
-            gross_total_after_discount,
-            is_active,
-            payment_status,
-            early_payment_offer,
-            early_paid_discount_applied,
-            customer
+            id, date, due_date, paid_at, gross_total, gross_total_after_discount,
+            is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
           FROM invoices
-          WHERE is_active = 1 AND (
-                  json_extract(customer, '$.first_name') LIKE '${term}%'
-                  OR json_extract(customer, '$.last_name') LIKE '${term}%'
-                  OR json_extract(customer, '$.company_name') LIKE '${term}%'
-                )
+          WHERE (
+            json_extract(customer, '$.first_name') LIKE '${term}%'
+            OR json_extract(customer, '$.last_name') LIKE '${term}%'
+            OR json_extract(customer, '$.company_name') LIKE '${term}%'
+          )
           ORDER BY id DESC
           LIMIT ?`
         )
         .all(limit)
-      total = db.prepare(`SELECT COUNT(id) As total FROM invoices WHERE is_active = 1`).get().total
-    } else {
-      if (isNaN(term) && term.includes('-')) {
-        const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
+      total = db.prepare(`SELECT COUNT(id) AS total FROM invoices`).get().total
+    } else if (isNaN(term) && term.includes('-')) {
+      const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
 
-        rows = db
-          .prepare(
-            `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
-            FROM invoices
-            WHERE is_active = 1 AND id BETWEEN ? AND ?
-            ORDER BY id DESC LIMIT ?`
-          )
-          .all(start, end, limit)
-        total = db
-          .prepare(
-            `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id BETWEEN ? AND ?`
-          )
-          .get(start, end).total
-      } else {
-        rows = db
-          .prepare(
-            `SELECT id, date, due_date, gross_total, gross_total_after_discount, is_active,  payment_status, early_payment_offer, early_paid_discount_applied, customer
-            FROM invoices
-            WHERE is_active = 1 AND (id = ? OR customer_id = ?)
-            ORDER BY id DESC LIMIT ?`
-          )
-          .all(term, term, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND id + 0 LIKE ?`)
-          .get(term).total
-      }
+      rows = db
+        .prepare(
+          `SELECT id, date, due_date, gross_total, gross_total_after_discount,
+            is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE id BETWEEN ? AND ?
+          ORDER BY id DESC LIMIT ?`
+        )
+        .all(start, end, limit)
+      total = db
+        .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE id BETWEEN ? AND ?`)
+        .get(start, end).total
+    } else {
+      rows = db
+        .prepare(
+          `SELECT id, date, due_date, gross_total, gross_total_after_discount,
+            is_active, payment_status, early_payment_offer, early_paid_discount_applied, customer
+          FROM invoices
+          WHERE id = ? OR customer_id = ?
+          ORDER BY id DESC LIMIT ?`
+        )
+        .all(term, term, limit)
+      total = db
+        .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE id + 0 LIKE ?`)
+        .get(term).total
     }
+
     return { success: true, rows, total }
   } catch (err) {
     console.error('DB error:', err.message)
@@ -1572,15 +1561,13 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
           early_paid_discount_applied,
           customer
         FROM invoices
-        WHERE is_active = 1 AND payment_status != 'paid' AND date BETWEEN ? AND ?
+        WHERE date BETWEEN ? AND ?
         ORDER BY id DESC
         LIMIT ?;`
       )
       .all(start, end, limit)
     const total = db
-      .prepare(
-        `SELECT COUNT(id) As total FROM invoices WHERE is_active = 1 AND payment_status != 'paid' AND date BETWEEN ? AND ?`
-      )
+      .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE date BETWEEN ? AND ?`)
       .get(start, end).total
     return { success: true, rows, total }
   } catch (error) {

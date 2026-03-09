@@ -140,7 +140,7 @@
       <h2 class="mt-3">Keine Rechnungen</h2>
       <p class="text-secondary">Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
     </section>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -205,7 +205,7 @@ export default {
         }))
         this.total_count = result.total
         this.current_count = result.rows.length
-        await store.setStore('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
+        await store.setFilters('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
       } catch (error) {
         console.error(error)
       }
@@ -250,7 +250,7 @@ export default {
           }))
           this.total_count = result.total
           this.current_count = result.rows.length
-          await store.setStore('date_filter', JSON.parse(JSON.stringify(date)))
+          await store.setFilters('date_filter', JSON.parse(JSON.stringify(date)))
         }
       } catch (error) {
         console.error(error)

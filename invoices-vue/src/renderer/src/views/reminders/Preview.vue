@@ -211,7 +211,7 @@ export default {
           JSON.parse(JSON.stringify(this.reminderPreview))
         )
         if (!result.success) return
-        await store.clearStore('reminder')
+        await store.clearFilters('reminder')
         this.$router.push('/invoices/details/' + this.reminderPreview.invoice_id)
       }
     }

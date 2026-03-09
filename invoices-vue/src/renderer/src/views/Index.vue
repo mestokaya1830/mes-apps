@@ -389,8 +389,8 @@ export default {
 
     async clearDate() {
       try {
-        await store.clearStore('date_filter')
-        await store.clearStore('category_filter')
+        await store.clearFilters('date_filter')
+        await store.clearFilters('category_filter')
       } catch (error) {
         console.error(error)
       }
