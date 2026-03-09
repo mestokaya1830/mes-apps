@@ -114,9 +114,13 @@
 
         <!-- Card Actions -->
         <div class="card-actions">
-          <router-link :to="'/orders/details/' + item.id" class="btn btn-details">
-            <i class="bi bi-eye" aria-hidden="true"></i>
-            Details
+          <router-link
+            :to="`/orders/details/${item.id}`"
+            class="btn btn-action btn-details"
+            aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
+          >
+            <i class="bi bi-eye icons" aria-hidden="true"></i>
+            <span class="btn-actions-text">Details</span>
           </router-link>
         </div>
       </div>

@@ -78,32 +78,12 @@
 
         <div class="card-actions">
           <router-link
-            :to="{ path: '/invoices/create', query: { id: item.id } }"
-            class="btn btn-rechnung"
+            :to="`/mauhnungs/details/${item.id}`"
+            class="btn btn-action btn-details"
+            aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
           >
-            <i class="bi bi-receipt" aria-hidden="true"></i>
-            Rechnung erstellen
-          </router-link>
-
-          <router-link
-            :to="{ path: '/offers/create', query: { id: item.id } }"
-            class="btn btn-angebot"
-          >
-            <i class="bi bi-file-earmark-tex icons" aria-hidden="true"></i>
-            Neues Angebot erstellen
-          </router-link>
-
-          <router-link
-            :to="{ path: '/orders/create', query: { id: item.id } }"
-            class="btn btn-auftrag"
-          >
-            <i class="bi bi-box-seam" aria-hidden="true"></i>
-            Neues Auftrag erstellen
-          </router-link>
-
-          <router-link :to="'/reminders/details/' + item.id" class="btn btn-details">
             <i class="bi bi-eye icons" aria-hidden="true"></i>
-            Details
+            <span class="btn-actions-text">Details</span>
           </router-link>
         </div>
       </div>

@@ -2,9 +2,9 @@
   <div class="main-container">
     <header class="page-header">
       <h1>{{ title }}</h1>
-      <button class="btn btn-secondary" aria-label="Daten exportieren">
+      <button class="btn btn-export" aria-label="Daten exportieren">
         <i class="bi bi-download icons" aria-hidden="true"></i>
-        Exportieren
+        <span class="btn-action-text">Exportieren</span>
       </button>
     </header>
 

@@ -19,22 +19,23 @@
   --color-orange: #f59e0b;
 
   /* fonts---------------------------------------------------- */
-  --font-size-xs: 0.75rem; /* 12px */
-  --font-size-sm: 0.875rem; /* 14px */
-  --font-size-base: 1rem; /* 16px */
-  --font-size-lg: 1.125rem; /* 18px */
-  --font-size-xl: 1.25rem; /* 20px */
-  --font-size-2xl: 1.75rem; /* 28px */
+  --font-size-xs: clamp(12px, 0.6vw, 14px);   /* small screen 12px, big screen max 14px */
+  --font-size-sm: clamp(14px, 0.9vw, 16px);   /* min 14px, max 16px */
+  --font-size-base: clamp(16px, 1vw, 18px);   /* min 16px, max 18px */
+  --font-size-lg: clamp(18px, 1.2vw, 22px);   /* min 18px, max 22px */
+  --font-size-xl: clamp(20px, 1.5vw, 26px);   /* min 20px, max 26px */
+  --font-size-1xl: clamp(24px, 1.7vw, 32px);   /* min 20px, max 26px */
+  --font-size-2xl: clamp(28px, 2vw, 36px);    /* min 28px, max 36px */
 
   /* margin and padding ---------------------------------------*/
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 12px;
-  --spacing-lg: 16px;
-  --spacing-xl: 20px;
-  --spacing-2xl: 24px;
-  --spacing-3xl: 30px;
-  --spacing-4xl: 40px;
+  --spacing-xs: clamp(4px, 0.25vw, 6px);
+  --spacing-sm: clamp(8px, 0.5vw, 10px);
+  --spacing-md: clamp(12px, 0.75vw, 14px);
+  --spacing-lg: clamp(16px, 1vw, 20px);
+  --spacing-xl: clamp(20px, 1.2vw, 24px);
+  --spacing-2xl: clamp(24px, 1.5vw, 28px);
+  --spacing-3xl: clamp(30px, 1.8vw, 36px);
+  --spacing-4xl: clamp(40px, 2vw, 48px);
 
   /* borders----------------------------------------------------- */
   --border-sm: 1px solid #ddd;
@@ -43,19 +44,19 @@
   --border-light: 1px solid #f2ebeb;
 
   /* border radius-------------------------------------------------- */
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-  --border-radius-xl: 20px;
-  --border-radius-full: 50px;
+  --border-radius-sm: clamp(4px, 0.2vw, 6px);
+  --border-radius-md: clamp(8px, 0.4vw, 12px);
+  --border-radius-lg: clamp(12px, 0.6vw, 16px);
+  --border-radius-xl: clamp(20px, 1vw, 24px);
+  --border-radius-full: clamp(50px, 2.5vw, 60px);
   --border-radius-circle: 50%;
 
   /* shadows-------------------------------------------------- */
-  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 clamp(4px, 0.2vw, 6px) clamp(6px, 0.3vw, 8px) rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 clamp(4px, 0.2vw, 6px) clamp(6px, 0.3vw, 10px) rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 clamp(12px, 0.6vw, 16px) clamp(24px, 1.2vw, 28px) rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 clamp(20px, 1vw, 24px) clamp(40px, 2vw, 48px) rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 clamp(4px, 0.2vw, 6px) clamp(12px, 0.6vw, 14px) rgba(0, 0, 0, 0.05);
 
   /* Transitions */
   --transition-fast: 0.2s ease;
@@ -76,14 +77,14 @@
   align-items: center;
   width: fit-content;
   color: white;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: 0 var(--spacing-lg);
   border: none;
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-base);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
-  margin: 0 10px;
+  margin: 0 var(--spacing-md);
 }
 .btn-auth {
   display: flex;
@@ -132,6 +133,11 @@
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: var(--color-white);
 }
+.btn-export {
+  border: var(--border-sm);
+  color: var(--color-black);
+  padding: var(--spacing-sm) var(--spacing-xl);
+}
 .btn:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-button-hover);
@@ -139,7 +145,7 @@
 }
 .inputs {
   width: 100%;
-  height: 40px;
+  height: clamp(36px, 2vw, 50px);
   padding: 0.65rem 0.8rem;
   border: var(--border-sm);
   border-radius: var(--border-radius-md);
@@ -150,8 +156,7 @@
 
 textarea {
   width: 100%;
-  min-height: 100px;
-  max-height: 300px;
+  min-height: clamp(100px, 15vh, 300px);
   padding: 0.75rem 1rem;
   font-family: 'Poppins', sans-serif;
   font-size: var(--font-size-base);
@@ -168,13 +173,13 @@ textarea {
 
 .inputs:focus,
 textarea:focus {
-  border-color: var(--color-blue);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  border-color: var(--color-green);
+  box-shadow: var(--shadow-sm);
   outline: none;
 }
 
 textarea::placeholder {
-  color: #aaa;
+  color: var(--color-gray);
   font-style: italic;
 }
 .select-md{
@@ -182,20 +187,20 @@ textarea::placeholder {
   font-size: var(--font-size-1xl);
 }
 .icons {
-  width: 36px;
+  width: clamp(20px, 2vw, 30px);
   text-align: center;
-  font-size: 24px;
+  font-size: var(--font-size-1xl);
   margin-right: 10px;
 }
 .icons-small {
   text-align: center;
-  font-size: 14px;
-  margin-right: 5px;
+  font-size: var(--font-size-xs);
+  margin-right: var(--spacing-xs);
 }
 .icons-info {
-  width: 36px;
+  width: clamp(28px, 2.5vw, 40px);
   color: var(--color-blue);
-  margin-right: 10px;
+  margin-right: var(--spacing-sm);
   font-size: var();
 }
 .register-info-text {
@@ -222,7 +227,7 @@ textarea::placeholder {
 }
 /* TITLEBAR */
 .titlebar {
-  height: 60px;
+  height: clamp(60px , 3vw, 80px);
   background: linear-gradient(180deg, #1f2937 0%, var(--color-black) 100%);
   color: white;
   -webkit-app-region: drag;
@@ -267,7 +272,7 @@ textarea::placeholder {
   font-weight: 700;
   color: var(--color-black-light);
   margin-bottom: var(--spacing-3xl);
-  padding-bottom: 15px;
+  padding-bottom: var(--spacing-sm);
   border-bottom: 3px solid var(--color-green);
   align-items: center;
   gap: var(--spacing-md);
@@ -1044,7 +1049,10 @@ input:checked + .slider:before {
   padding-top: var(--spacing-xl);
   border-top: var(--border-sm);
 }
-
+.card-actions span{
+  font-size: var(--font-size-sm);
+  color: var(--color-black);
+}
 .status-badge-container {
   display: flex;
   flex-direction: column;
@@ -1069,15 +1077,9 @@ input:checked + .slider:before {
 .btn-preview {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
   justify-content: center;
-  padding: 0.55rem 0.65rem;
-  border: 1.5px solid #d1d5db;
-  border-radius: 8px;
-  font-size: var(--font-size-1xl);
-  font-weight: 600;
   background-color: transparent;
-  color: var(--color-black-light);
+  border: var(--border-sm);
   transition: all 0.2s ease;
 }
 .list-grid .btn-details,
@@ -1087,9 +1089,6 @@ input:checked + .slider:before {
 .btn-preview {
   background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
   color: var(--color-white);
-}
-.btn-action {
-  margin-right: 10px;
 }
 .btn-rechnung i {
   color: var(--color-green);
@@ -1804,37 +1803,7 @@ input:checked + .slider:before {
   color: #9ca3af;
 }
 @media screen and (max-width: 1600px) {
-  .main-container,
-  .main-container {
-    padding: 3rem;
-    width: 90%;
-  }
-  .form-card {
-    padding: var(--spacing-2xl);
-    margin: 10px;
-  }
-
-  .form-header h2 {
-    font-size: var(--spacing-2xl);
-  }
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
-
-  .nav-item {
-    justify-content: center;
-    padding: 1rem;
-  }
-
-  .nav-text {
-    display: none;
-  }
-
-  .nav-icon {
-    margin-right: 0;
-  }
+  
 }
 
 /* PRINT STYLES */
