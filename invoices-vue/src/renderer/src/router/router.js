@@ -108,58 +108,6 @@ const routes = [
     meta: { title: 'Rechnungsvorschau', auth: true }
   },
 
-  //payments
-  {
-    path: '/payments/create/:id',
-    name: 'payments-create',
-    component: () => import('../views/payments/Create.vue'),
-    meta: { title: 'Neue Zahlung', auth: true }
-  },
-  {
-    path: '/payments/details/:id',
-    name: 'payments-details',
-    component: () => import('../views/payments/Details.vue'),
-    meta: { title: 'Erinnerungsdetails', auth: true }
-  },
-  {
-    path: '/payments/edit/:id',
-    name: 'payments-edit',
-    component: () => import('../views/payments/Edit.vue'),
-    meta: { title: 'Zahlung stornieren', auth: true }
-  },
-  {
-    path: '/payments/preview',
-    name: 'payments-preview',
-    component: () => import('../views/payments/Preview.vue'),
-    meta: { title: 'Zahlungsvorschau', auth: true }
-  },
-
-  //reminders
-  {
-    path: '/reminders/create/:id',
-    name: 'reminders-create',
-    component: () => import('../views/reminders/Create.vue'),
-    meta: { title: 'Neue Erinnerung', auth: true }
-  },
-  {
-    path: '/reminders/details/:id',
-    name: 'reminders-details',
-    component: () => import('../views/reminders/Details.vue'),
-    meta: { title: 'Erinnerungsdetails', auth: true }
-  },
-  {
-    path: '/reminders/edit/:id',
-    name: 'reminders-edit',
-    component: () => import('../views/reminders/Edit.vue'),
-    meta: { title: 'Mahnung stornieren', auth: true }
-  },
-  {
-    path: '/reminders/preview',
-    name: 'reminders-preview',
-    component: () => import('../views/reminders/Preview.vue'),
-    meta: { title: 'Erinnerungsvorschau', auth: true }
-  },
-
   //offers
   {
     path: '/offers',
@@ -234,6 +182,70 @@ const routes = [
     name: 'orders-preview',
     component: () => import('../views/orders/Preview.vue'),
     meta: { title: 'Auftragsvorschau', auth: true }
+  },
+
+  //payments
+  {
+    path: '/payments',
+    name: 'payments',
+    component: () => import('../views/payments/Index.vue'),
+    meta: { title: 'Zahlungen', auth: true }
+  },
+  {
+    path: '/payments/create/:id',
+    name: 'payments-create',
+    component: () => import('../views/payments/Create.vue'),
+    meta: { title: 'Neue Zahlung', auth: true }
+  },
+  {
+    path: '/payments/details/:id',
+    name: 'payments-details',
+    component: () => import('../views/payments/Details.vue'),
+    meta: { title: 'Erinnerungsdetails', auth: true }
+  },
+  {
+    path: '/payments/edit/:id',
+    name: 'payments-edit',
+    component: () => import('../views/payments/Edit.vue'),
+    meta: { title: 'Zahlung stornieren', auth: true }
+  },
+  {
+    path: '/payments/preview',
+    name: 'payments-preview',
+    component: () => import('../views/payments/Preview.vue'),
+    meta: { title: 'Zahlungsvorschau', auth: true }
+  },
+
+  //reminders
+  {
+    path: '/reminders',
+    name: 'reminders',
+    component: () => import('../views/reminders/Index.vue'),
+    meta: { title: 'Mahnungen', auth: true }
+  },
+  {
+    path: '/reminders/create/:id',
+    name: 'reminders-create',
+    component: () => import('../views/reminders/Create.vue'),
+    meta: { title: 'Neue Erinnerung', auth: true }
+  },
+  {
+    path: '/reminders/details/:id',
+    name: 'reminders-details',
+    component: () => import('../views/reminders/Details.vue'),
+    meta: { title: 'Erinnerungsdetails', auth: true }
+  },
+  {
+    path: '/reminders/edit/:id',
+    name: 'reminders-edit',
+    component: () => import('../views/reminders/Edit.vue'),
+    meta: { title: 'Mahnung stornieren', auth: true }
+  },
+  {
+    path: '/reminders/preview',
+    name: 'reminders-preview',
+    component: () => import('../views/reminders/Preview.vue'),
+    meta: { title: 'Erinnerungsvorschau', auth: true }
   },
 
   //about

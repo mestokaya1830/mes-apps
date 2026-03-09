@@ -12,22 +12,14 @@
     <section class="main-filter">
       <select
         v-model="categories_filter"
-        aria-label="Kategorie"
+        aria-label="Kategorien"
         class="inputs select"
         @change="filterCategories"
       >
-        <option value="" disabled>Kategorie</option>
-        <option value="all">Alle</option>
-        <option value="active">Aktiv</option>
-        <option value="canceled">Storniert</option>
-        <option value="is_paid">Bezahlt</option>
-        <option value="is_partially_paid">Teilweise bezahlt</option>
-        <option value="unpaid">Unbezahlt</option>
-        <option value="overdue">Überfällig</option>
-        <option value="outstanding">Ausstehend</option>
-        <option value="is_early_paid">Frühzahlung</option>
-        <option value="is_late_paid">Spät bezahlt</option>
-        <option value="is_reminded">Erinnert</option>
+        <option value="" disabled="">Kategorien</option>
+        <template v-for="item in categories" :key="item">
+          <option :value="item.key">{{ item.label }}</option>
+        </template>
       </select>
 
       <input
@@ -46,7 +38,7 @@
           type="date"
           aria-label="Startdatum"
           class="inputs date"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -58,7 +50,7 @@
           type="date"
           aria-label="Enddatum"
           class="inputs date"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -132,6 +124,7 @@
 </template>
 
 <script>
+import store from '../../store/store'
 export default {
   name: 'Offers',
   inject: ['formatOfferId', 'formatDate', 'formatCurrency'],
@@ -146,11 +139,37 @@ export default {
       categories_filter: '',
       total_count: 0,
       current_count: 0,
-      isSort: true
+      isSort: true,
+      categories: [
+        { key: 'all', label: 'Alle Angebote' },
+        { key: 'draft', label: 'Entwürfe' },
+        { key: 'sent', label: 'Gesendet' },
+        { key: 'accepted', label: 'Angenommen' },
+        { key: 'rejected', label: 'Abgelehnt' },
+        { key: 'expired', label: 'Abgelaufen' },
+        { key: 'cancelled', label: 'Storniert' },
+        { key: 'legal', label: 'Vertrag' }
+      ]
     }
   },
 
   mounted() {
+    if (store.state.date_filter) {
+      this.date_box_start = store.state.date_filter.start
+      this.date_box_end = store.state.date_filter.end
+      this.filterDate()
+      return
+    }
+    if (store.state.category_filter) {
+      this.categories_filter = store.state.category_filter
+      this.filterCategories()
+      return
+    }
+    if (store.state.search_filter) {
+      this.search_box = store.state.search_filter
+      this.searchFilter()
+      return
+    }
     this.getOffers()
   },
 

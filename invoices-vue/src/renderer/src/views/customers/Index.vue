@@ -16,11 +16,9 @@
         @change="filterCategories"
       >
         <option value="" disabled>Kategorie</option>
-        <option value="all">Alle</option>
-        <option value="active">Aktiv</option>
-        <option value="canceled">Storniert</option>
-        <option value="first_10">Erste 10 Kunden</option>
-        <option value="last_10">Letzte 10 Kunden</option>
+        <template v-for="item in categories" :key="item">
+          <option :value="item.key">{{ item.label }}</option>
+        </template>
       </select>
 
       <input
@@ -146,7 +144,14 @@ export default {
       date_box_end: '',
       categories_filter: '',
       total_count: 0,
-      current_count: 0
+      current_count: 0,
+      categories: [
+        { key: 'all', label: 'Alle' },
+        { key: 'active', label: 'Aktiv' },
+        { key: 'canceled', label: 'Storniert' },
+        { key: 'first_10', label: 'Erste 10 Kunden' },
+        { key: 'last_10', label: 'Letzte 10 Kunden' }
+      ]
     }
   },
   mounted() {

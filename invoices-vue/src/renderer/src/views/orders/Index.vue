@@ -8,25 +8,17 @@
       </router-link>
     </header>
 
-        <section class="main-filter">
+    <section class="main-filter">
       <select
         v-model="categories_filter"
         aria-label="Kategorie"
         class="inputs select"
         @change="filterCategories"
       >
-        <option value="" disabled>Kategorie</option>
-        <option value="all">Alle</option>
-        <option value="active">Aktiv</option>
-        <option value="canceled">Storniert</option>
-        <option value="is_paid">Bezahlt</option>
-        <option value="is_partially_paid">Teilweise bezahlt</option>
-        <option value="unpaid">Unbezahlt</option>
-        <option value="overdue">Überfällig</option>
-        <option value="outstanding">Ausstehend</option>
-        <option value="is_early_paid">Frühzahlung</option>
-        <option value="is_late_paid">Spät bezahlt</option>
-        <option value="is_reminded">Erinnert</option>
+        <option value="" disabled="">Kategorien</option>
+        <template v-for="item in categories" :key="item">
+          <option :value="item.key">{{ item.label }}</option>
+        </template>
       </select>
 
       <input
@@ -45,7 +37,7 @@
           type="date"
           aria-label="Startdatum"
           class="inputs date"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -57,7 +49,7 @@
           type="date"
           aria-label="Enddatum"
           class="inputs date"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -137,8 +129,8 @@
         style="font-size: 4rem"
       ></i>
 
-      <h2 class="mt-3">Keine Rechnungen</h2>
-      <p class="text-secondary">Erstellen Sie neue Rechnungen, um sie hier zu sehen.</p>
+      <h2 class="mt-3">Keine Aufträge</h2>
+      <p class="text-secondary">Erstellen Sie neue Aufträge, um sie hier zu sehen.</p>
     </section>
   </div>
 </template>
@@ -158,7 +150,23 @@ export default {
       categories_filter: '',
       total_count: 0,
       current_count: 0,
-      isSort: true
+      isSort: true,
+      categories: [
+        { key: 'all', label: 'Alle Bestellungen' },
+
+        { key: 'pending', label: 'Neu' },
+        { key: 'confirmed', label: 'Bestätigt' },
+        { key: 'in_progress', label: 'In Bearbeitung' },
+        { key: 'completed', label: 'Abgeschlossen' },
+
+        { key: 'delivery_pending', label: 'Versand offen' },
+        { key: 'shipped', label: 'Versendet' },
+        { key: 'delivered', label: 'Zugestellt' },
+
+        { key: 'sent', label: 'Gesendet' },
+
+        { key: 'cancelled', label: 'Storniert' }
+      ]
     }
   },
   mounted() {
@@ -171,6 +179,11 @@ export default {
     if (store.state.category_filter) {
       this.categories_filter = store.state.category_filter
       this.filterCategories()
+      return
+    }
+    if (store.state.search_filter) {
+      this.search_box = store.state.search_filter
+      this.searchFilter()
       return
     }
     this.getOrders()
@@ -205,7 +218,10 @@ export default {
         }))
         this.total_count = result.total
         this.current_count = result.rows.length
-        await store.setFilters('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
+        await store.setFilters(
+          'category_filter',
+          JSON.parse(JSON.stringify(this.categories_filter))
+        )
       } catch (error) {
         console.error(error)
       }

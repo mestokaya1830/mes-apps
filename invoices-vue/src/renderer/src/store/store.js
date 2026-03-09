@@ -70,6 +70,7 @@ async function clearAuth() {
 
 //filters
 async function setFilters(store, payload) {
+  this.clearFilters()
   state[store] = payload
   try {
     await localforage.setItem(store, payload)
@@ -78,21 +79,13 @@ async function setFilters(store, payload) {
   }
 }
 
-async function clearFilters(payload = []) {
-  const items = Array.isArray(payload) ? payload : [payload]
-  await Promise.all(
-    items.map(async (item) => {
-      try {
-        state[item] = ''
-        await localforage.removeItem(item)
-      } catch (err) {
-        console.error('failed removing:', item, err)
-      }
-    })
-  )
+async function clearFilters() {
+  state.category_filter = ''
+  state.date_filter = ''
+  state.search_filter = ''
 }
 
-//auth
+//preview
 async function setPreview(store, payload) {
   state[store] = payload
   try {
@@ -110,6 +103,7 @@ async function clearPreview(store) {
     console.error('Failed to save ', err)
   }
 }
+
 export default {
   state: readonly(state),
   init,

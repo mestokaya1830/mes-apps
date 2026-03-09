@@ -4,7 +4,7 @@
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/reminders/create" class="btn btn-primary">
         <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
-        <span>Neue Kunden erstellen</span>
+        <span>Neue Mahnung erstellen</span>
       </router-link>
     </header>
 
@@ -16,17 +16,9 @@
         @change="filterCategories"
       >
         <option value="" disabled>Kategorie</option>
-        <option value="all">Alle</option>
-        <option value="active">Aktiv</option>
-        <option value="canceled">Storniert</option>
-        <option value="is_paid">Bezahlt</option>
-        <option value="is_partially_paid">Teilweise bezahlt</option>
-        <option value="unpaid">Unbezahlt</option>
-        <option value="overdue">Überfällig</option>
-        <option value="outstanding">Ausstehend</option>
-        <option value="is_early_paid">Frühzahlung</option>
-        <option value="is_late_paid">Spät bezahlt</option>
-        <option value="is_reminded">Erinnert</option>
+        <template v-for="item in categories" :key="item">
+          <option :value="item.key">{{ item.label }}</option>
+        </template>
       </select>
 
       <input
@@ -119,8 +111,8 @@
 
     <div v-if="reminders.length === 0" class="empty-state">
       <i class="bi bi-people icons" aria-hidden="true"></i>
-      <h3>Keine Kunden</h3>
-      <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
+      <h3>Keine Mahnungen</h3>
+      <p>Fügen Sie Mahnung hinzu, um sie zu verwalten.</p>
     </div>
   </div>
 </template>
@@ -132,16 +124,44 @@ export default {
   inject: ['formatCustomerId'],
   data() {
     return {
-      title: 'Kunden',
+      title: 'Mahnungen',
       reminders: [],
       search_box: '',
-      isSort: true,
+      date_box_start: '',
+      date_box_end: '',
       categories_filter: '',
       total_count: 0,
-      current_count: 0
+      current_count: 0,
+      isSort: true,
+      categories: [
+        { key: 'all', label: 'Alle Mahnungen' },
+        { key: 'pending', label: 'Offene Mahnungen' },
+        { key: 'sent', label: 'Gesendete Mahnungen' },
+        { key: 'cancelled', label: 'Stornierte Mahnungen' },
+        { key: 'level_1', label: '1. Mahnung' },
+        { key: 'level_2', label: '2. Mahnung' },
+        { key: 'level_3', label: '3. Mahnung' },
+        { key: 'overdue', label: 'Überfällige Mahnungen' }
+      ]
     }
   },
   mounted() {
+    if (store.state.date_filter) {
+      this.date_box_start = store.state.date_filter.start
+      this.date_box_end = store.state.date_filter.end
+      this.filterDate()
+      return
+    }
+    if (store.state.category_filter) {
+      this.categories_filter = store.state.category_filter
+      this.filterCategories()
+      return
+    }
+    if (store.state.search_filter) {
+      this.search_box = store.state.search_filter
+      this.searchFilter()
+      return
+    }
     this.getReminders()
   },
   methods: {
@@ -182,7 +202,37 @@ export default {
         }))
         this.total_count = result.total
         this.current_count = result.rows.length
-        await store.setFilters('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
+        await store.setFilters(
+          'category_filter',
+          JSON.parse(JSON.stringify(this.categories_filter))
+        )
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async filterDate() {
+      try {
+        if (!this.date_box_start) return this.$refs.date_box_start.focus()
+        if (!this.date_box_end) return this.$refs.date_box_end.focus()
+        if (this.date_box_start > this.date_box_end) {
+          this.date_box_end = ''
+          return this.$refs.date_box_end.focus()
+        }
+        if (this.date_box_start && this.date_box_end) {
+          const date = {
+            start: this.date_box_start,
+            end: this.date_box_end
+          }
+          const result = await window.api.filterRemindersDate(date)
+          if (!result.success) return
+          this.reminders = result.rows.map((row) => ({
+            ...row,
+            customer: row.customer ? JSON.parse(row.customer) : null
+          }))
+          this.total_count = result.total
+          this.current_count = result.rows.length
+          await store.setFilters('date_filter', JSON.parse(JSON.stringify(date)))
+        }
       } catch (error) {
         console.error(error)
       }

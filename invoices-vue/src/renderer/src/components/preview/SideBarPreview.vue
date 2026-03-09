@@ -23,6 +23,7 @@
               <span class="nav-text">Kunden</span>
             </router-link>
           </li>
+
           <li class="nav-item">
             <router-link
               to="/invoices"
@@ -58,6 +59,33 @@
               <span class="nav-text">Aufträge</span>
             </router-link>
           </li>
+
+          <!-- Payments -->
+          <li class="nav-item">
+            <router-link
+              to="/payments"
+              exact-active-class="active"
+              class="nav-link"
+              @click="clearFilters"
+            >
+              <i class="bi bi-cash-stack nav-icon" aria-hidden="true"></i>
+              <span class="nav-text">Zahlungen</span>
+            </router-link>
+          </li>
+
+          <!-- Reminders -->
+          <li class="nav-item">
+            <router-link
+              to="/reminders"
+              exact-active-class="active"
+              class="nav-link"
+              @click="clearFilters"
+            >
+              <i class="bi bi-exclamation-circle nav-icon" aria-hidden="true"></i>
+              <span class="nav-text">Mahnungen</span>
+            </router-link>
+          </li>
+
           <li class="nav-item">
             <router-link to="/about" exact-active-class="active" class="nav-link">
               <i class="bi bi-info-circle nav-icon" aria-hidden="true"></i>
@@ -66,6 +94,7 @@
           </li>
         </ul>
       </section>
+
       <section>
         <h2 class="nav-label">Verwaltung</h2>
         <ul>
@@ -124,7 +153,7 @@ export default {
     },
     async clearFilters() {
       try {
-        await store.clearFilters(['date_filter', 'category_filter', 'search_filter'])
+        await store.clearFilters()
       } catch (error) {
         console.error(error)
       }

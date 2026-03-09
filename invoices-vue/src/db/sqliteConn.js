@@ -70,7 +70,7 @@ export default db
 // }
 
 // try {
-//   db.prepare('drop table users').run()
+//   db.prepare('drop table payments').run()
 // } catch (error) {
 //   console.log(error)
 // }

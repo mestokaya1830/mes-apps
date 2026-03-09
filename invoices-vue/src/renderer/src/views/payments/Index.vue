@@ -2,31 +2,23 @@
   <div v-if="payments" class="main-container">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
-      <router-link to="/payments/create" class="btn btn-primary">
+      <router-link to="/invoices" class="btn btn-primary">
         <i class="bi bi-plus-circle icons" aria-hidden="treu"></i>
-        <span>Neue Kunden erstellen</span>
+        Neue Zahlung erstellen
       </router-link>
     </header>
 
-        <section class="main-filter">
+    <section class="main-filter">
       <select
         v-model="categories_filter"
-        aria-label="Kategorie"
+        aria-label="Kategorien"
         class="inputs select"
         @change="filterCategories"
       >
-        <option value="" disabled>Kategorie</option>
-        <option value="all">Alle</option>
-        <option value="active">Aktiv</option>
-        <option value="canceled">Storniert</option>
-        <option value="is_paid">Bezahlt</option>
-        <option value="is_partially_paid">Teilweise bezahlt</option>
-        <option value="unpaid">Unbezahlt</option>
-        <option value="overdue">Überfällig</option>
-        <option value="outstanding">Ausstehend</option>
-        <option value="is_early_paid">Frühzahlung</option>
-        <option value="is_late_paid">Spät bezahlt</option>
-        <option value="is_reminded">Erinnert</option>
+        <option value="" disabled>Kategorien</option>
+        <template v-for="item in categories" :key="item">
+          <option :value="item.key">{{ item.label }}</option>
+        </template>
       </select>
 
       <input
@@ -45,7 +37,7 @@
           type="date"
           aria-label="Startdatum"
           class="inputs date"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -57,7 +49,7 @@
           type="date"
           aria-label="Enddatum"
           class="inputs date"
-          @input="formDate()"
+          @input="filterDate()"
         />
       </div>
 
@@ -86,30 +78,6 @@
         </div>
 
         <div class="card-actions">
-          <router-link
-            :to="{ path: '/invoices/create', query: { id: item.id } }"
-            class="btn btn-rechnung"
-          >
-            <i class="bi bi-receipt icons"></i>
-            Rechnung erstellen
-          </router-link>
-
-          <router-link
-            :to="{ path: '/offers/create', query: { id: item.id } }"
-            class="btn btn-angebot"
-          >
-            <i class="bi bi-file-earmark-text"></i>
-            Neues Angebot erstellen
-          </router-link>
-
-          <router-link
-            :to="{ path: '/orders/create', query: { id: item.id } }"
-            class="btn btn-auftrag"
-          >
-            <i class="bi bi-box-seam"></i>
-            Neues Auftrag erstellen
-          </router-link>
-
           <router-link :to="'/payments/details/' + item.id" class="btn btn-details">
             <i class="bi bi-eye icons" aria-hidden="treu"></i>
             Details
@@ -120,30 +88,58 @@
 
     <div v-if="payments.length === 0" class="empty-state">
       <i class="bi bi-people icons" aria-hidden="treu"></i>
-      <h3>Keine Kunden</h3>
-      <p>Fügen Sie Kunden hinzu, um sie zu verwalten.</p>
+      <h3>Keine Zahlungen</h3>
+      <p>Fügen Sie Zahlung hinzu, um sie zu verwalten.</p>
     </div>
   </div>
 </template>
 
-
 <script>
-import store from '../../store/store';
+import store from '../../store/store'
 export default {
   name: 'Payments',
   inject: ['formatCustomerId'],
   data() {
     return {
-      title: 'Kunden',
+      title: 'Zahlungen',
       payments: [],
       search_box: '',
-      isSort: true,
+      date_box_start: '',
+      date_box_end: '',
       categories_filter: '',
       total_count: 0,
-      current_count: 0
+      current_count: 0,
+      isSort: true,
+      categories: [
+        { key: 'all', label: 'Alle Zahlungen' },
+        { key: 'received', label: 'Erhaltene Zahlungen' },
+        { key: 'cancelled', label: 'Storniert' },
+        { key: 'today', label: 'Heute' },
+        { key: 'this_month', label: 'Dieser Monat' },
+        { key: 'this_year', label: 'Dieses Jahr' },
+        { key: 'bank_transfer', label: 'Überweisung' },
+        { key: 'cash', label: 'Barzahlung' },
+        { key: 'card', label: 'Kartenzahlung' }
+      ]
     }
   },
   mounted() {
+    if (store.state.date_filter) {
+      this.date_box_start = store.state.date_filter.start
+      this.date_box_end = store.state.date_filter.end
+      this.filterDate()
+      return
+    }
+    if (store.state.category_filter) {
+      this.categories_filter = store.state.category_filter
+      this.filterCategories()
+      return
+    }
+    if (store.state.search_filter) {
+      this.search_box = store.state.search_filter
+      this.searchFilter()
+      return
+    }
     this.getPayments()
   },
   methods: {
@@ -151,7 +147,10 @@ export default {
       try {
         const result = await window.api.getPayments()
         if (!result.success) return
-        this.payments = result.rows
+        this.payments = result.rows.map((row) => ({
+          ...row,
+          customer: row.customer ? JSON.parse(row.customer) : null
+        }))
       } catch (error) {
         console.error(error)
       }
@@ -172,7 +171,10 @@ export default {
       }
       const result = await window.api.searchPayments(term)
       if (!result.success) return
-      this.payments = result.rows
+      this.payments = result.rows.map((row) => ({
+        ...row,
+        customer: row.customer ? JSON.parse(row.customer) : null
+      }))
     },
     async filterCategories() {
       try {
@@ -184,7 +186,37 @@ export default {
         }))
         this.total_count = result.total
         this.current_count = result.rows.length
-        await store.setFilters('category_filter', JSON.parse(JSON.stringify(this.categories_filter)))
+        await store.setFilters(
+          'category_filter',
+          JSON.parse(JSON.stringify(this.categories_filter))
+        )
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async filterDate() {
+      try {
+        if (!this.date_box_start) return this.$refs.date_box_start.focus()
+        if (!this.date_box_end) return this.$refs.date_box_end.focus()
+        if (this.date_box_start > this.date_box_end) {
+          this.date_box_end = ''
+          return this.$refs.date_box_end.focus()
+        }
+        if (this.date_box_start && this.date_box_end) {
+          const date = {
+            start: this.date_box_start,
+            end: this.date_box_end
+          }
+          const result = await window.api.filterPaymentsDate(date)
+          if (!result.success) return
+          this.payments = result.rows.map((row) => ({
+            ...row,
+            customer: row.customer ? JSON.parse(row.customer) : null
+          }))
+          this.total_count = result.total
+          this.current_count = result.rows.length
+          await store.setFilters('date_filter', JSON.parse(JSON.stringify(date)))
+        }
       } catch (error) {
         console.error(error)
       }
@@ -197,7 +229,7 @@ export default {
       })
       this.isSort = !this.isSort
     },
-    printDocument(){
+    printDocument() {
       window.print()
     }
   }

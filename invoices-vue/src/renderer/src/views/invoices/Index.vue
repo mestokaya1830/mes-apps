@@ -16,18 +16,10 @@
         aria-label="Kategorien"
         @change="filterCategories"
       >
-        <option value="" disabled>Kategorie</option>
-        <option value="all">Alle</option>
-        <option value="active">Aktiv</option>
-        <option value="canceled">Storniert</option>
-        <option value="is_paid">Bezahlt</option>
-        <option value="is_partially_paid">Teilweise bezahlt</option>
-        <option value="unpaid">Unbezahlt</option>
-        <option value="overdue">Überfällig</option>
-        <option value="outstanding">Ausstehend</option>
-        <option value="is_early_paid">Frühzahlung</option>
-        <option value="is_late_paid">Spät bezahlt</option>
-        <option value="is_reminded">Erinnert</option>
+        <option value="" disabled>Kategorien</option>
+        <template v-for="item in categories" :key="item">
+          <option :value="item.key">{{ item.label }}</option>
+        </template>
       </select>
 
       <input
@@ -35,7 +27,7 @@
         class="inputs"
         placeholder="Kunde, Firma oder Rechnungs-ID suchen..."
         aria-label="Kunden, Firma oder Rechnungs-ID suchen"
-        @input="searchInvoice"
+        @input="searchFilter"
       />
 
       <div class="date-wrapper">
@@ -171,7 +163,20 @@ export default {
       categories_filter: '',
       total_count: 0,
       current_count: 0,
-      isSort: true
+      isSort: true,
+      categories: [
+        { key: 'all', label: 'Alle' },
+        { key: 'active', label: 'Aktiv' },
+        { key: 'canceled', label: 'Storniert' },
+        { key: 'is_paid', label: 'Bezahlt' },
+        { key: 'is_partially_paid', label: 'Teilweise bezahlt' },
+        { key: 'unpaid', label: 'Unbezahlt' },
+        { key: 'overdue', label: 'Überfällig' },
+        { key: 'outstanding', label: 'Ausstehend' },
+        { key: 'is_early_paid', label: 'Frühzahlung' },
+        { key: 'is_late_paid', label: 'Spät bezahlt' },
+        { key: 'is_reminded', label: 'Erinnert' }
+      ]
     }
   },
   mounted() {
@@ -184,6 +189,11 @@ export default {
     if (store.state.category_filter) {
       this.categories_filter = store.state.category_filter
       this.filterCategories()
+      return
+    }
+    if (store.state.search_filter) {
+      this.search_box = store.state.search_filter
+      this.searchFilter()
       return
     }
     this.getInvoices()
@@ -244,6 +254,7 @@ export default {
       }))
       this.total_count = result.total
       this.current_count = result.rows.length
+      await store.setFilters('search_filter', JSON.parse(JSON.stringify(this.search_box)))
     },
     async filterDate() {
       try {
