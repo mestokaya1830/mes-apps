@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1 class="main-title">{{ title }}</h1>
       <router-link :to="`/reminders/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <form @submit.prevent="updateReminder">
@@ -65,7 +65,10 @@
           </div>
         </div>
       </div>
-      <button type="submit" @click="updateReminder" class="btn btn-cancel">Stornieren</button>
+      <button type="submit" @click="updateReminder" class="btn btn-update">
+        <i class="bi bi-save btn-icons" aria-hidden="true"></i>
+        Aktualisieren
+      </button>
     </form>
     <router-link :to="`/invoices/details/${$route.params.id}`" class="btn back-btn">
       ← Zurück zur Rechnungsdetails

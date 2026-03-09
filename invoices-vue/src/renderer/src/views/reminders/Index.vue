@@ -2,10 +2,6 @@
   <div v-if="reminders" class="main-container">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
-      <router-link to="/reminders/create" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
-        <span>Neue Mahnung erstellen</span>
-      </router-link>
     </header>
 
     <section class="main-filter">
@@ -55,7 +51,7 @@
 
       <button class="sort-btn" aria-label="Sortirien" @click="sorting('id')">&#8645;</button>
       <button class="list-print-icon" aria-label="Drucken">
-        <i class="bi bi-printer form-title icons" aria-hidden="true" @click="printDocument"></i>
+        <i class="bi bi-printer  btn-icons" aria-hidden="true" @click="printDocument"></i>
       </button>
     </section>
     <div class="list-grid printable">
@@ -82,7 +78,7 @@
             class="btn btn-action btn-details"
             aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
           >
-            <i class="bi bi-eye icons" aria-hidden="true"></i>
+            <i class="bi bi-eye btn-icons" aria-hidden="true"></i>
             <span class="btn-actions-text">Details</span>
           </router-link>
         </div>

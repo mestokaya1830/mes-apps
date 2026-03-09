@@ -3,14 +3,14 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <form v-if="customer" @submit.prevent="updateCustomer">
       <!-- Base -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-person-badge me-2 form-title icons" aria-hidden="true"></i
+          <i class="bi bi-person-badge icons" aria-hidden="true"></i
           >Kundeninformationen
         </div>
 
@@ -71,7 +71,7 @@
       <!-- Adressdaten -->
       <section class="sections">
         <h2 class="sections-title">
-          <i class="bi bi-geo-alt form-title icons" aria-hidden="true"></i>
+          <i class="bi bi-geo-alt  icons" aria-hidden="true"></i>
           Adressdaten
         </h2>
         <div class="form-row">
@@ -107,7 +107,7 @@
       <!-- Steuerinformationen -->
       <section class="sections">
         <h2 class="sections-title">
-          <i class="bi bi-briefcase form-title icons" aria-hidden="true"></i>Steuerinformationen
+          <i class="bi bi-briefcase  icons" aria-hidden="true"></i>Steuerinformationen
         </h2>
         <div class="form-row">
           <div class="form-group">
@@ -136,7 +136,7 @@
         </div>
 
         <button type="submit" class="btn btn-update">
-          <i class="bi bi-save icons" aria-hidden="true"></i>
+          <i class="bi bi-save btn-icons" aria-hidden="true"></i>
           Aktualisierung
         </button>
       </section>

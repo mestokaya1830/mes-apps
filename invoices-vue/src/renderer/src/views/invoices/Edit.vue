@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/invoices/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <div>
@@ -59,7 +59,10 @@
       </div>
     </div>
     <div class="sections btn-container">
-      <button @click="updateInvoice" class="btn btn-update">Aktualisieren</button>
+      <button @click="updateInvoice" class="btn btn-update">
+        <i class="bi bi-save btn-icons" aria-hidden="true"></i>
+        Aktualisieren
+      </button>
     </div>
   </div>
 </template>

@@ -4,7 +4,7 @@
     <header class="page-header">
       <h1 for="">{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
@@ -87,6 +87,7 @@
         <option v-else value="0">Stornieren</option>
       </select>
       <router-link :to="`/customers/edit/${customer.id}`" class="btn btn-edit">
+        <i class="bi bi-pencil-square btn-icons" aria-hidden="true"></i>
         Bearbeiten
       </router-link>
     </div>

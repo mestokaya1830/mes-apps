@@ -3,7 +3,6 @@
     <img src="/app_logo.png" alt="Firmen logo" class="sidebar-logo" />
     <nav aria-label="Hauptnavigation">
       <section>
-        <h2 class="nav-label">Hauptmenü</h2>
         <ul>
           <li class="nav-item">
             <router-link to="/" exact-active-class="active" class="nav-link">
@@ -85,18 +84,10 @@
               <span class="nav-text">Mahnungen</span>
             </router-link>
           </li>
-
-          <li class="nav-item">
-            <router-link to="/about" exact-active-class="active" class="nav-link">
-              <i class="bi bi-info-circle nav-icon" aria-hidden="true"></i>
-              <span class="nav-text">Über</span>
-            </router-link>
-          </li>
         </ul>
       </section>
 
       <section>
-        <h2 class="nav-label">Verwaltung</h2>
         <ul>
           <li class="nav-item">
             <router-link to="/reports" exact-active-class="active" class="nav-link">
@@ -109,6 +100,12 @@
             <router-link to="/profile" exact-active-class="active" class="nav-link">
               <i class="bi bi-gear nav-icon" aria-hidden="true"></i>
               <span class="nav-text">Einstellungen</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/about" exact-active-class="active" class="nav-link">
+              <i class="bi bi-info-circle nav-icon" aria-hidden="true"></i>
+              <span class="nav-text">Über</span>
             </router-link>
           </li>
         </ul>

@@ -1,7 +1,7 @@
 <template>
   <div v-if="invoice && auth" class="main-container">
     <router-link to="/invoices" class="btn btn-secondary btn-back">
-      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+      <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
     </router-link>
     <section>
       <div class="printable">

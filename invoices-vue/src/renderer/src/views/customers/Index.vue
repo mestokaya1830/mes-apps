@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers/create" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
+        <i class="bi bi-plus-circle btn-icons" aria-hidden="true"></i>
         Neuen Kunden erstellen
       </router-link>
     </header>
@@ -55,7 +55,7 @@
 
       <button class="sort-btn" aria-label="Sortieren" @click="sorting('id')">&#8645;</button>
       <button type="button" class="sort-btn" @click="printDocument" aria-label="Drucken">
-        <i class="bi bi-printer" aria-hidden="true"></i>
+        <i class="bi bi-printer btn-icons" aria-hidden="true"></i>
       </button>
     </section>
 
@@ -85,7 +85,7 @@
                 class="btn btn-action btn-rechnung"
                 aria-label="Rechnung erstellen für {{ item.first_name }} {{ item.last_name }}"
               >
-                <i class="bi bi-receipt icons" aria-hidden="true"></i>
+                <i class="bi bi-receipt btn-icons" aria-hidden="true"></i>
                 <span class="btn-actions-text">Neue Rechnung erstellen</span>
               </router-link>
 
@@ -94,7 +94,7 @@
                 class="btn btn-action btn-angebot"
                 aria-label="Neues Angebot erstellen für {{ item.first_name }} {{ item.last_name }}"
               >
-                <i class="bi bi-file-earmark-text icons" aria-hidden="true"></i>
+                <i class="bi bi-file-earmark-text btn-icons" aria-hidden="true"></i>
                 <span class="btn-actions-text"> Neues Angebot erstellen</span>
               </router-link>
 
@@ -103,7 +103,7 @@
                 class="btn btn-action btn-auftrag"
                 aria-label="Neuen Auftrag erstellen für {{ item.first_name }} {{ item.last_name }}"
               >
-                <i class="bi bi-box-seam icons" aria-hidden="true"></i>
+                <i class="bi bi-box-seam btn-icons" aria-hidden="true"></i>
                 <span class="btn-actions-text">Neuen Auftrag erstellen</span>
               </router-link>
 
@@ -112,7 +112,7 @@
                 class="btn btn-secondary btn-details"
                 aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
               >
-                <i class="bi bi-eye icons" aria-hidden="true"></i>
+                <i class="bi bi-eye btn-icons" aria-hidden="true"></i>
                 <span class="btn-actions-text">Details</span>
               </router-link>
             </nav>

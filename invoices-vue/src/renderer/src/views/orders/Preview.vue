@@ -289,13 +289,13 @@
       <!-- Actions -->
       <div class="sections btn-container">
         <button type="submit" class="btn btn-primary" @click="saveOrder">
-          <i class="bi bi-floppy-fill icons"></i>
+          <i class="bi bi-floppy-fill btn-icons" aria-hidden="treu"></i>
           <span>Speichern</span>
         </button>
       </div>
     </form>
     <router-link to="/orders/create" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur
+      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur
       Rechnungserstellung
     </router-link>
   </div>

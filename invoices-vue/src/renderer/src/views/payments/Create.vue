@@ -3,7 +3,7 @@
     <header class="main-header">
       <h1>{{ title }}</h1>
       <router-link to="/invoices" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
@@ -208,7 +208,7 @@
 
       <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitPreview">
-          <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
+          <i class="bi bi-eye btn-icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
     </form>

@@ -203,13 +203,13 @@
 
     <div class="sections btn-container">
       <button class="btn btn-primary" @click="saveInvoice">
-        <i class="bi bi-save form-title icons" aria-hidden="true"></i>
+        <i class="bi bi-floppy-fill btn-icons" aria-hidden="treu"></i>
         <span>Speichern</span>
       </button>
     </div>
 
     <router-link to="/invoices/create" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
+      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
     </router-link>
   </div>
 </template>

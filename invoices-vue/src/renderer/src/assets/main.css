@@ -21,7 +21,7 @@
   /* fonts---------------------------------------------------- */
   --font-size-xs: clamp(12px, 0.6vw, 14px);   /* small screen 12px, big screen max 14px */
   --font-size-sm: clamp(14px, 0.9vw, 16px);   /* min 14px, max 16px */
-  --font-size-base: clamp(16px, 1vw, 18px);   /* min 16px, max 18px */
+  --font-size-base: clamp(16px, 0.5vw, 18px);   /* min 16px, max 18px */
   --font-size-lg: clamp(18px, 1.2vw, 22px);   /* min 18px, max 22px */
   --font-size-xl: clamp(20px, 1.5vw, 26px);   /* min 20px, max 26px */
   --font-size-1xl: clamp(24px, 1.7vw, 32px);   /* min 20px, max 26px */
@@ -77,7 +77,7 @@
   align-items: center;
   width: fit-content;
   color: white;
-  padding: 0 var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
   border: none;
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-base);
@@ -146,7 +146,7 @@
 .inputs {
   width: 100%;
   height: clamp(36px, 2vw, 50px);
-  padding: 0.65rem 0.8rem;
+  padding: var(--spacing-xs) var(--spacing-md);
   border: var(--border-sm);
   border-radius: var(--border-radius-md);
   font-size: 0.95rem;
@@ -184,13 +184,13 @@ textarea::placeholder {
 }
 .select-md{
   height: 50px;
-  font-size: var(--font-size-1xl);
+  font-size: var(--font-size-sm);
 }
-.icons {
+.btn-icons {
   width: clamp(20px, 2vw, 30px);
-  text-align: center;
-  font-size: var(--font-size-1xl);
-  margin-right: 10px;
+  text-align: right;
+  margin-right: var(--spacing-sm);
+  margin-left: -20px;
 }
 .icons-small {
   text-align: center;
@@ -273,7 +273,7 @@ textarea::placeholder {
   color: var(--color-black-light);
   margin-bottom: var(--spacing-3xl);
   padding-bottom: var(--spacing-sm);
-  border-bottom: 3px solid var(--color-green);
+  border-bottom: var(--border-sm);
   align-items: center;
   gap: var(--spacing-md);
 }
@@ -318,7 +318,6 @@ textarea::placeholder {
 
 .date {
   width: 100%;
-  padding: 0.55rem 0.75rem 0.55rem 2rem;
   border: 1.5px solid #ddd;
   border-radius: var(--border-radius-md);
   font-size: var(--font-size-sm);
@@ -479,15 +478,6 @@ input:checked + .slider:before {
   text-align: center;
   font-size: 24px;
   color: #12b486;
-}
-.nav-label {
-  padding: 0 1.5rem;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #9ca3af;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
 }
 .sidebar-footer {
   padding: 1.5rem;
@@ -714,9 +704,7 @@ input:checked + .slider:before {
   margin-bottom: 0.35rem;
 }
 
-.form-title {
-  margin-right: 10px;
-}
+
 
 .forgot-password {
   color: var(--color-blue);
@@ -1251,32 +1239,14 @@ input:checked + .slider:before {
   margin-bottom: var(--spacing-md);
 }
 
-.add-position-btn {
-  display: flex;
-  width: fit-content;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #12b486 0%, #0d8a6b 100%);
-  color: var(--color-white);
-  border: none;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  margin: var(--spacing-xl) 0;
+.btn-add-position {
   margin-left: auto;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition-fast);
 }
-.delete-position-btn {
-  background: transparent;
-  border: none;
+.bi-trash3{
   color: var(--color-red);
   font-size: var(--font-size-base);
   cursor: pointer;
-}
-.delete-position-btn:hover {
-  transform: scale(1.1);
+  font-size: var(--font-size-xl);
 }
 .positions-table thead {
   background: var(--bg-gray-light);

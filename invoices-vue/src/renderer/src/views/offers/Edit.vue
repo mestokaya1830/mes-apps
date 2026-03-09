@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <form @submit.prevent="updateOffer">
@@ -83,6 +83,7 @@
           class="btn btn-update"
           @click="updateOffer"
         >
+        <i class="bi bi-save btn-icons" aria-hidden="true"></i>
           Aktualisieren
         </button>
       </section>

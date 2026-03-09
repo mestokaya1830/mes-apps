@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
@@ -11,7 +11,7 @@
       <!-- Grunddaten -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-pin-angle-fill form-title" aria-hidden="true"></i>Grunddaten
+          <i class="bi bi-pin-angle-fill" aria-hidden="true"></i>Grunddaten
         </div>
         <div class="form-group">
           <label for="angebot-id" class="form-label"
@@ -73,7 +73,7 @@
       <!-- Kundendaten -->
       <section v-if="offer.customer" class="sections">
         <div class="sections-title">
-          <i class="bi bi-person-fill form-title icons" aria-hidden="true"></i>Kundendaten
+          <i class="bi bi-person-fill icons" aria-hidden="true"></i>Kundendaten
         </div>
         <div v-if="offer.customer?.id" class="customer-details">
           <div class="form-group">
@@ -156,7 +156,7 @@
       <!-- Status -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-info-circle form-title icons" aria-hidden="true"></i>Status
+          <i class="bi bi-info-circle icons" aria-hidden="true"></i>Status
         </div>
 
         <div class="form-group">
@@ -195,7 +195,7 @@
       <!-- Währung -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-currency-exchange form-title icons" aria-hidden="true"></i>Währung
+          <i class="bi bi-currency-exchange icons" aria-hidden="true"></i>Währung
         </div>
         <div class="form-group">
           <label for="waehrung" class="form-label">Währung</label>
@@ -229,8 +229,8 @@
             <div class="sections">
               <div class="positions-header">
                 <span class="position-number"> Position {{ index + 1 }} </span>
-                <button type="button" class="delete-position-btn" @click="deletePosition(index)">
-                  <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Löschen
+                <button type="button" @click="deletePosition(index)">
+                  <i class="bi bi-trash3" aria-hidden="true"></i>
                 </button>
               </div>
 
@@ -326,15 +326,15 @@
             </div>
           </div>
         </div>
-        <button type="button" class="add-position-btn" @click="addPosition">
-          <i class="bi bi-plus-circle icons" aria-hidden="true"></i>Position hinzufügen
+        <button type="button" class="btn btn-primary btn-add-position" @click="addPosition">
+          <i class="bi bi-plus-circle btn-icons" aria-hidden="true"></i>Position hinzufügen
         </button>
       </section>
 
       <!-- Zusätzliche Informationen -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-file-text-fill form-title icons" aria-hidden="true"></i>Zusätzliche
+          <i class="bi bi-file-text-fill icons" aria-hidden="true"></i>Zusätzliche
           Informationen
         </div>
 
@@ -418,14 +418,14 @@
           <span class="slider round"></span>
         </label>
         <div class="switch-text">
-          <i class="bi bi-pencil-square form-title icons"></i
+          <i class="bi bi-pencil-square icons"></i
           ><strong>Legally binding signature</strong>
         </div>
       </section>
 
       <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitPreview">
-          <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
+          <i class="bi bi-eye btn-icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
     </form>

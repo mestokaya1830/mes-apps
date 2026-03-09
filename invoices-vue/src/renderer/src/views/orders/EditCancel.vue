@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <form @suubmit.prevent="updateOrder">
@@ -63,7 +63,10 @@
           </div>
         </div>
       </section>
-      <button type="submit" class="btn btn-cancel" @click="updateOrder">Aktualisieren</button>
+      <button type="submit" class="btn btn-cancel btn-icons" @click="updateOrder">
+        <i class="bi bi-save btn-icons" aria-hidden="true"></i>
+        Aktualisieren
+      </button>
     </form>
     <router-link :to="`/orders/details/${$route.params.id}`" class="back-link">
       ← Zurück zur Auftragsdetails

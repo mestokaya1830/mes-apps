@@ -2,17 +2,17 @@
   <div>
     <div class="sections btn-container" role="toolbar" aria-label="Mahnungaktionen">
       <button class="btn btn-email" @click="sendEmail">
-        <i class="bi bi-envelope form-title icons" aria-hidden="true"></i>
+        <i class="bi bi-envelope btn-icons" aria-hidden="true"></i>
         E-Mail
       </button>
 
       <button class="btn btn-pdf" @click="exportPDF">
-        <i class="bi bi-file-earmark-pdf form-title icons" aria-hidden="true"></i>
+        <i class="bi bi-file-earmark-pdf  btn-icons" aria-hidden="true"></i>
         PDF
       </button>
 
       <button class="btn btn-print" @click="printDocument">
-        <i class="bi bi-printer form-title icons" aria-hidden="true"></i>
+        <i class="bi bi-printer  btn-icons" aria-hidden="true"></i>
         Drucken
       </button>
 
@@ -21,7 +21,7 @@
         :to="`/reminders/edit/${tableData.id}`"
         class="btn btn-cancel"
       >
-        <i class="bi bi-pencil-square icons" aria-hidden="true"></i>
+       <i class="bi bi-x-circle btn-icons" aria-hidden="true"></i>
         Stornieren
       </router-link>
     </div>

@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <form v-if="user" @submit.prevent="updateUser">
@@ -237,8 +237,8 @@
             ></label>
             <input
               id="Vorname"
-              v-model="user.contact_person.first_name"
               ref="contact_person_first_name"
+              v-model="user.contact_person.first_name"
               type="text"
               class="inputs"
               placeholder="Hans Mueller"
@@ -434,7 +434,10 @@
       <div class="form-section btn-container">
         <button type="submit" :disabled="isSubmitting" class="btn btn-update">
           <span v-if="isSubmitting">Wird gespeichert...</span>
-          <span v-else>Aktualisieren</span>
+          <span v-else>
+            <i class="bi bi-save btn-icons" aria-hidden="true"></i>
+            Aktualisieren
+          </span>
         </button>
       </div>
     </form>

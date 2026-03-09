@@ -2,7 +2,7 @@
   <div v-if="order" class="main-container">
     <header class="page-header-right">
       <router-link to="/orders" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill me-1 icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
     <div class="printable">

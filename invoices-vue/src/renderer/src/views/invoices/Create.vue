@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
@@ -11,7 +11,7 @@
       <!-- Grunddaten -->
       <section class="sections">
         <h2 class="sections-title">
-          <i class="bi bi-pin-angle-fill form-title" aria-hidden="true"></i>Grunddaten
+          <i class="bi bi-pin-angle-fill " aria-hidden="true"></i>Grunddaten
         </h2>
         <div class="form-group">
           <label for="rechnung-id" class="form-label"
@@ -245,13 +245,8 @@
             <div class="sections">
               <div class="positions-header">
                 <span class="position-number"> Position {{ index + 1 }} </span>
-                <button
-                  type="button"
-                  class="delete-position-btn"
-                  aria-label="Löschen"
-                  @click="deletePosition(index)"
-                >
-                  <i class="bi bi-trash3 icons" aria-hidden="true"></i>
+                <button type="button" aria-label="Löschen" @click="deletePosition(index)">
+                  <i class="bi bi-trash3" aria-hidden="true"></i>
                 </button>
               </div>
               <!-- FORM FIELDS -->
@@ -393,8 +388,8 @@
             </div>
           </div>
         </div>
-        <button type="button" class="add-position-btn" @click="addPosition">
-          <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
+        <button type="button" class="btn btn-primary btn-add-position" @click="addPosition">
+          <i class="bi bi-plus-circle btn-icons" aria-hidden="true"></i>
           Position hinzufügen
         </button>
       </section>
@@ -417,9 +412,7 @@
               class="inputs"
               required
             />
-            <small class="hint">
-              Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto
-            </small>
+            <small class="hint"> Zahlbar innerhalb {{ invoice.payment_terms }} Tagen netto </small>
           </div>
 
           <div class="switch-container">
@@ -477,7 +470,7 @@
 
       <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitPreview">
-          <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
+          <i class="bi bi-eye btn-icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
     </form>

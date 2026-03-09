@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/payments/details/${$route.params.id}`" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
@@ -65,7 +65,10 @@
           </div>
         </section>
       </div>
-      <button type="submit" @click="updatePayment" class="btn btn-cancel">Stornieren</button>
+      <button type="submit" @click="updatePayment" class="btn btn-update">
+        <i class="bi bi-save btn-icons" aria-hidden="true"></i>
+          Aktualisieren
+      </button>
     </form>
     <router-link :to="`/invoices/details/${$route.params.id}`" class="btn back-btn">
       ← Zurück zur Zahlungsdetails

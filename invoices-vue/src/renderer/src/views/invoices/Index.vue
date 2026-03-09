@@ -4,7 +4,7 @@
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
 
       <router-link to="/customers" class="btn btn-primary">
-        <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
+        <i class="bi bi-plus-circle btn-icons" aria-hidden="true"></i>
         <span>Neue Rechnung erstellen</span>
       </router-link>
     </header>
@@ -56,7 +56,7 @@
 
       <button class="sort-btn" aria-label="Sortieren" @click="sorting('id')">&#8645;</button>
       <button type="button" class="sort-btn" @click="printDocument" aria-label="Drucken">
-        <i class="bi bi-printer" aria-hidden="true"></i>
+        <i class="bi bi-printer btn-icons" aria-hidden="true"></i>
       </button>
     </section>
 
@@ -136,7 +136,7 @@
             class="btn btn-action btn-details"
             aria-label="Details anzeigen für {{ item.first_name }} {{ item.last_name }}"
           >
-            <i class="bi bi-eye icons" aria-hidden="true"></i>
+            <i class="bi bi-eye btn-icons" aria-hidden="true"></i>
             <span class="btn-actions-text">Details</span>
           </router-link>
         </div>

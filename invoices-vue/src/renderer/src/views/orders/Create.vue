@@ -3,7 +3,7 @@
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
-        <i class="bi bi-arrow-left-circle-fill icons" aria-hidden="true"></i>Zurück
+        <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück
       </router-link>
     </header>
 
@@ -11,7 +11,7 @@
       <!-- Grunddaten -->
       <section class="sections">
         <h2 class="sections-title">
-          <i class="bi bi-pin-angle-fill form-title icons" aria-hidden="true"></i>Grunddaten
+          <i class="bi bi-pin-angle-fill icons" aria-hidden="true"></i>Grunddaten
         </h2>
         <div class="form-row">
           <div class="form-group">
@@ -173,7 +173,7 @@
       <!-- Lieferdaten + Versand -->
       <section class="sections" aria-label="Lieferung & Versand">
         <h2 class="sections-title">
-          <i class="bi bi-box-seam form-title icons" aria-hidden="true"></i>Lieferung & Versand
+          <i class="bi bi-box-seam icons" aria-hidden="true"></i>Lieferung & Versand
         </h2>
         <div class="form-group">
           <label for="Lieferbedingungen" class="form-label">Lieferbedingungen</label>
@@ -253,7 +253,7 @@
       <!-- Zahlung & Währung -->
       <section class="sections" aria-label="Zahlung & Währung">
         <h2 class="sections-title">
-          <i class="bi bi-credit-card-2-front-fill form-title icons" aria-hidden="true"></i>Zahlung
+          <i class="bi bi-credit-card-2-front-fill icons" aria-hidden="true"></i>Zahlung
           & Währung
         </h2>
         <div class="form-row">
@@ -331,8 +331,8 @@
             <div class="sections">
               <div class="positions-header">
                 <span class="position-number"> Position {{ index + 1 }} </span>
-                <button type="button" class="delete-position-btn" @click="deletePosition(index)">
-                  <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Löschen
+                <button type="button" @click="deletePosition(index)">
+                  <i class="bi bi-trash3" aria-hidden="true"></i>
                 </button>
               </div>
               <!-- FORM FIELDS -->
@@ -481,8 +481,8 @@
             </div>
           </div>
         </div>
-        <button type="button" class="add-position-btn" @click="addPosition">
-          <i class="bi bi-plus-circle icons" aria-hidden="true"></i>
+        <button type="button" class="btn btn-primary btn-add-position" @click="addPosition">
+          <i class="bi bi-plus-circle btn-icons" aria-hidden="true"></i>
           Position hinzufügen
         </button>
       </section>
@@ -490,7 +490,7 @@
       <!-- Notizen & Texte -->
       <section class="sections">
         <h2 class="sections-title">
-          <i class="bi bi-pencil-square form-title icons" aria-hidden="true"></i>Notizen & Texte
+          <i class="bi bi-pencil-square icons" aria-hidden="true"></i>Notizen & Texte
         </h2>
         <div class="form-group">
           <label for="Einleitungstext" class="form-label">Einleitungstext</label>
@@ -528,7 +528,7 @@
       <!-- Vorschau Button -->
       <div class="sections btn-container">
         <button type="submit" class="btn btn-preview" @click="submitPreview">
-          <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
+          <i class="bi bi-eye btn-icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
     </form>
