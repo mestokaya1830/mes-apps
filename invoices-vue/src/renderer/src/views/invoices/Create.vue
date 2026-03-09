@@ -7,7 +7,7 @@
       </router-link>
     </header>
 
-    <form @submit.prevent="submitStore">
+    <form @submit.prevent="submitPreview">
       <!-- Grunddaten -->
       <section class="sections">
         <h2 class="sections-title">
@@ -476,7 +476,7 @@
       </section>
 
       <div class="sections btn-container">
-        <button type="submit" class="btn btn-preview" @click="submitStore">
+        <button type="submit" class="btn btn-preview" @click="submitPreview">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
@@ -732,7 +732,7 @@ export default {
       )
       this.invoice.early_payment_deadline = early_payment_deadline.toISOString().split('T')[0]
     },
-    async submitStore() {
+    async submitPreview() {
       if (!this.validateDates()) {
         return
       }
@@ -767,7 +767,7 @@ export default {
         return
       // if (!this.checkPositionsDates(this.invoice.positions)) return
 
-      await store.setFilters('invoice', JSON.parse(JSON.stringify(this.invoice)))
+      await store.setPreview('invoice', JSON.parse(JSON.stringify(this.invoice)))
       this.$router.push('/invoices/preview')
     }
   }

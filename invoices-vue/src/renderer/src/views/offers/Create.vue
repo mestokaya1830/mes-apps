@@ -7,7 +7,7 @@
       </router-link>
     </header>
 
-    <form @submit.prevent="submitStore">
+    <form @submit.prevent="submitPreview">
       <!-- Grunddaten -->
       <section class="sections">
         <div class="sections-title">
@@ -424,7 +424,7 @@
       </section>
 
       <div class="sections btn-container">
-        <button type="submit" class="btn btn-preview" @click="submitStore">
+        <button type="submit" class="btn btn-preview" @click="submitPreview">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
@@ -612,7 +612,7 @@ export default {
       this.offer.vat_total = vatTotal.toFixed(2)
       this.offer.gross_total = (netTotal + vatTotal).toFixed(2)
     },
-    async submitStore() {
+    async submitPreview() {
       if (!this.offer) return
       if (!this.validateDates()) {
         return
@@ -631,7 +631,7 @@ export default {
       }
 
       this.summary()
-      await store.setFilters('offer', JSON.parse(JSON.stringify(this.offer)))
+      await store.setPreview('offer', JSON.parse(JSON.stringify(this.offer)))
       this.$router.push('/offers/preview')
     }
   }

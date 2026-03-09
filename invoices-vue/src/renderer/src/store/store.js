@@ -92,11 +92,31 @@ async function clearFilters(payload = []) {
   )
 }
 
+//auth
+async function setPreview(store, payload) {
+  state[store] = payload
+  try {
+    await localforage.setItem(store, payload)
+  } catch (err) {
+    console.error('Failed to save ', err)
+  }
+}
+
+async function clearPreview(store) {
+  try {
+    state[store] = null
+    await localforage.removeItem(store)
+  } catch (err) {
+    console.error('Failed to save ', err)
+  }
+}
 export default {
   state: readonly(state),
   init,
   setAuth,
   clearAuth,
   setFilters,
-  clearFilters
+  clearFilters,
+  setPreview,
+  clearPreview
 }

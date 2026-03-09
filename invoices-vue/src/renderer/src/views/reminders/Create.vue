@@ -7,7 +7,7 @@
       </router-link>
     </header>
 
-    <form @submit.prevent="submitStore">
+    <form @submit.prevent="submitPreview">
       <section class="sections">
         <div class="form-row">
           <div class="form-group">
@@ -136,7 +136,7 @@
       </section>
 
       <div class="sections btn-container">
-        <button type="submit" class="btn btn-preview" @click="submitStore">
+        <button type="submit" class="btn btn-preview" @click="submitPreview">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
@@ -251,10 +251,10 @@ export default {
       }
       return isValid
     },
-    submitStore() {
+    submitPreview() {
       if (!this.reminder) return
       if (!this.validate()) return
-      store.setFilters('reminder', JSON.parse(JSON.stringify(this.reminder)))
+      store.setPreview('reminder', JSON.parse(JSON.stringify(this.reminder)))
       this.$router.push('/reminders/preview')
     }
   }

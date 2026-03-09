@@ -7,7 +7,7 @@
       </router-link>
     </header>
 
-    <form @submit.prevent="submitStore">
+    <form @submit.prevent="submitPreview">
       <section class="sections">
         <h2 class="sections-title">
           <i class="bi bi-file-text icons" aria-hidden="true"></i>Ausgewählte Rechnung
@@ -207,7 +207,7 @@
       </section>
 
       <div class="sections btn-container">
-        <button type="submit" class="btn btn-preview" @click="submitStore">
+        <button type="submit" class="btn btn-preview" @click="submitPreview">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
@@ -421,7 +421,7 @@ export default {
       })
     },
 
-    async submitStore() {
+    async submitPreview() {
       // if (!this.formValid) {
       //   this.scrollToIban()
       //   console.log('Form is invalid. Please correct the errors before submitting.')
@@ -429,7 +429,7 @@ export default {
       // }
       if (!this.validate()) return
       if (this.setPaymentStatus()) return
-      await store.setFilters('payment', JSON.parse(JSON.stringify(this.payment)))
+      await store.setPreview('payment', JSON.parse(JSON.stringify(this.payment)))
       this.$router.push('/payments/preview')
     }
   }

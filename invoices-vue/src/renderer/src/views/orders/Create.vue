@@ -7,7 +7,7 @@
       </router-link>
     </header>
 
-    <form @sunmit.prevent="submitStore">
+    <form @sunmit.prevent="submitPreview">
       <!-- Grunddaten -->
       <section class="sections">
         <h2 class="sections-title">
@@ -527,7 +527,7 @@
 
       <!-- Vorschau Button -->
       <div class="sections btn-container">
-        <button type="submit" class="btn btn-preview" @click="submitStore">
+        <button type="submit" class="btn btn-preview" @click="submitPreview">
           <i class="bi bi-eye icons" aria-hidden="true"></i>Vorschau anzeigen
         </button>
       </div>
@@ -756,7 +756,7 @@ export default {
       this.order.vat_total = vatTotal.toFixed(2)
       this.order.gross_total = (netTotal + vatTotal).toFixed(2)
     },
-    async submitStore() {
+    async submitPreview() {
       if (!this.order) return
       if (!this.validateDates()) return
       // if (!this.checkPositionsDates(this.order.positions)) return
@@ -774,7 +774,7 @@ export default {
       }
 
       this.summary()
-      await store.setFilters('order', JSON.parse(JSON.stringify(this.order)))
+      await store.setPreview('order', JSON.parse(JSON.stringify(this.order)))
       this.$router.push('/orders/preview')
     }
   }
