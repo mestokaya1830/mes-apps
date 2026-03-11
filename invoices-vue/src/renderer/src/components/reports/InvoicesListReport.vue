@@ -56,22 +56,22 @@
 
       <div class="report-summary-cards">
         <article class="report-summary-card">
-          <div class="card-icon text-primary">
-            <i class="bi bi-receipt" aria-hidden="true"></i>
+          <div class="report-card-icon-container text-primary">
+            <i class="bi bi-receipt report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Summe Ø</p>
           </div>
           <div class="card-content">
-            <p class="card-label">Summe Ø</p>
             <h3 class="card-value">{{ formatCurrency(summary.all_total) }}</h3>
             <p class="card-detail">{{ summary.all_count }} Rechnungen (100%)</p>
           </div>
         </article>
 
         <article class="report-summary-card">
-          <div class="card-icon text-success">
-            <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+          <div class="report-card-icon-container text-success">
+            <i class="bi bi-check-circle-fill report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Pünktlich Bezahlt</p>
           </div>
           <div class="card-content">
-            <p class="card-label">Pünktlich Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.paid_total) }}</h3>
             <p class="card-detail">
               {{ summary.paid_count }} Rechnungen ({{ setPercentage.paid_percentage }})
@@ -80,11 +80,11 @@
         </article>
 
         <article class="report-summary-card">
-          <div class="card-icon text-info">
-            <i class="bi bi-circle-half" aria-hidden="true"></i>
+          <div class="report-card-icon-container text-info">
+            <i class="bi bi-circle-half report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Teilzahlig Bezahlt</p>
           </div>
           <div class="card-content">
-            <p class="card-label">Teilzahlig Bezahlt</p>
             <h3 class="card-value">{{ formatCurrency(summary.partially_paid_total) }}</h3>
             <p class="card-detail">
               {{ summary.partially_paid_count }} Rechnungen ({{
@@ -95,11 +95,11 @@
         </article>
 
         <article class="report-summary-card">
-          <div class="card-icon text-secondary">
-            <i class="bi bi bi-clock-fill" aria-hidden="true"></i>
+          <div class="report-card-icon-container text-secondary">
+            <i class="bi bi bi-clock-fill report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Unbezahlt (fällig)</p>
           </div>
           <div class="card-content">
-            <p class="card-label">Unbezahlt (fällig)</p>
             <h3 class="card-value">{{ formatCurrency(summary.unpaid_total) }}</h3>
             <p class="card-detail">
               {{ summary.unpaid_count }} Rechnungen ({{ setPercentage.unpaid_percentage }})
@@ -108,11 +108,11 @@
         </article>
 
         <article class="report-summary-card">
-          <div class="card-icon text-danger">
-            <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+          <div class="report-card-icon-container text-danger">
+            <i class="bi bi-exclamation-triangle-fill report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Überfällig</p>
           </div>
           <div class="card-content">
-            <p class="card-label">Überfällig</p>
             <h3 class="card-value">{{ formatCurrency(summary.overdue_total) }}</h3>
             <p class="card-detail">
               {{ summary.overdue_count }} Rechnungen ({{ setPercentage.overdue_percentage }})

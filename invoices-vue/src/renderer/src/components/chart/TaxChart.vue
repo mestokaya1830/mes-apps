@@ -237,9 +237,9 @@ export default {
     getVatColor(rate) {
       rate = Number(rate)
       if (rate === 19) return '#6366f1'
-      if (rate === 7) return '#8b5cf6'
-      if (rate === 0) return '#ec4899'
-      const colors = ['#f43f5e', '#f97316', '#eab308', '#22c55e', '#06b6d4']
+      if (rate === 7) return '#9f3dea'
+      if (rate === 0) return '#ef4444'
+      const colors = ['#f43f5e', '#6366f1', '#9f3dea', '#ef4444', '#06b6d4']
       return colors[Math.floor(rate / 5) % colors.length]
     },
 

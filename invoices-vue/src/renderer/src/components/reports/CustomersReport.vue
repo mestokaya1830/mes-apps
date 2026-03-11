@@ -53,36 +53,40 @@
       <div class="report-header">
         <h2>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock-history icons-small" aria-hidden="true"></i>Zeitraum:
+          <i class="bi bi-clock-history icons-small report-card-icons" aria-hidden="true"></i>Zeitraum:
           {{ selectedPeriod }}
         </p>
       </div>
 
       <div class="report-summary-cards">
         <article class="report-summary-card" aria-label="Aktive Kunden">
-          <div class="card-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
+          <div class="report-card-icon-container">
+            <i class="bi bi-people-fill report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Aktive Kunden</p>
+          </div>
           <div class="card-content">
-            <p class="card-label">Aktive Kunden</p>
             <h3 class="card-value">{{ reports.length }}</h3>
             <p class="card-detail">Im Zeitraum {{ selectedPeriod }}</p>
           </div>
         </article>
 
         <article class="report-summary-card" aria-label="Ø Gesamtumsatz">
-          <div class="card-icon"><i class="bi bi-cash-stack" aria-hidden="true"></i></div>
+          <div class="report-card-icon-container">
+            <i class="bi bi-cash-stack report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Ø Gesamtumsatz</p>
+          </div>
           <div class="card-content">
-            <p class="card-label">Ø Gesamtumsatz</p>
             <h3 class="card-value">{{ formatCurrency(summary.total_revenue) }}</h3>
             <p class="card-detail">Im Zeitraum</p>
           </div>
         </article>
 
         <article v-if="summary.top_customer" class="report-summary-card" aria-label="Top Kunde">
-          <div class="card-icon">
-            <i class="bi bi-trophy-fill text-warning" aria-hidden="true"></i>
+          <div class="report-card-icon-container">
+            <i class="bi bi-trophy-fill text-warning report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Top Kunde</p>
           </div>
           <div class="card-content">
-            <p class="card-label">Top Kunde</p>
             <h3 class="card-value">{{ formatCurrency(summary.top_customer.invoice_total) }}</h3>
             <p class="card-detail">{{ summary.top_customer.company_name }}</p>
             <p class="card-detail">{{ summary.top_customer.full_name }}</p>
@@ -90,9 +94,11 @@
         </article>
 
         <article class="report-summary-card" aria-label="Umsatz pro Kunde">
-          <div class="card-icon"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i></div>
+          <div class="report-card-icon-container">
+            <i class="bi bi-graph-up-arrow report-card-icons" aria-hidden="true"></i>
+            <p class="repor-card-label">Umsatz pro Kunde</p>
+          </div>
           <div class="card-content">
-            <p class="card-label">Umsatz pro Kunde</p>
             <h3 class="card-value">{{ formatCurrency(summary.total_avarage) }}</h3>
             <p class="card-detail">Durchschnitt</p>
           </div>

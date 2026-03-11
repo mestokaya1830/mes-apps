@@ -6,7 +6,7 @@
   --color-black-light: #444;
   --color-gray: #4a5568;
   --color-gray-light: #f8f9fa;
-  --color-purple: #9f3dea;
+  --color-purple: #9f3dea;  
   --color-red: #ef4444;
   --color-red-medium: #b91c1c;
   --color-red-light: #b45309;
@@ -26,6 +26,7 @@
   --font-size-xl: clamp(20px, 1.5vw, 26px);   /* min 20px, max 26px */
   --font-size-1xl: clamp(24px, 1.7vw, 32px);   /* min 20px, max 26px */
   --font-size-2xl: clamp(28px, 2vw, 36px);    /* min 28px, max 36px */
+  --font-size-3xl: clamp(36px, 2.5vw, 42px);    /* min 28px, max 36px */
 
   /* margin and padding ---------------------------------------*/
   --spacing-xs: clamp(4px, 0.25vw, 6px);
@@ -1522,17 +1523,15 @@ input:checked + .slider:before {
 }
 
 .report-summary-card {
-  min-height: 140px;
-  padding: var(--spacing-lg) var(--spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
   color: var(--bg-white);
-  display: flex;
-  gap: var(--spacing-lg);
-  align-items: center;
-  margin: 10px 0;
   box-shadow: var(--shadow-md);
 }
-
 .report-summary-card:nth-child(1) {
   background: #6366f1;
   color: var(--color-white);
@@ -1557,30 +1556,35 @@ input:checked + .slider:before {
   background: #ef4444;
   color: var(--color-white);
 }
-
-.report-summary-card .card-icon {
-  font-size: 36px;
-  opacity: 0.9;
+.report-card-icon-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
-.report-summary-card .card-content {
-  flex: 1;
+.card-content{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
-
-.report-summary-card .card-label {
+.report-card-icons{
+  font-size: var(--font-size-1xl);
+  margin-right: var(--spacing-md);
+}
+.report-repor-card-label {
   font-size: 13px;
   opacity: 0.9;
   margin: 0 0 var(--spacing-xs) 0;
 }
 
-.report-summary-card .card-value {
-  font-size: var(--font-size-2xl);
+.card-value {
+  font-size: var(--font-size-lg);
   font-weight: 700;
   margin: 0;
   letter-spacing: -0.5px;
 }
 
-.report-summary-card .card-detail {
+.card-detail {
   font-size: var(--font-size-xs);
   opacity: 0.85;
   margin: var(--spacing-xs) 0 0 0;
