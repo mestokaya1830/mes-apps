@@ -23,11 +23,11 @@
       <button
         v-if="showGoTop"
         type="button"
-        class="go-top-button"
+        class="btn-go-top"
         aria-label="Nach oben scrollen"
         @click="scrollToTop"
       >
-        <i class="bi bi-arrow-up" aria-hidden="true"></i>
+        <i class="bi bi-arrow-up go-top-icon" aria-hidden="true"></i>
       </button>
     </footer>
   </div>

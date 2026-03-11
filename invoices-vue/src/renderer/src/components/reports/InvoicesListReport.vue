@@ -50,7 +50,7 @@
       <div class="report-header">
         <h2>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock icons-small" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
+          <i class="bi bi-clock icons-medium" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
         </p>
       </div>
 

@@ -53,7 +53,7 @@
       <div class="report-header">
         <h2>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock-history icons-small report-card-icons" aria-hidden="true"></i>Zeitraum:
+          <i class="bi bi-clock-history icons-medium" aria-hidden="true"></i>Zeitraum:
           {{ selectedPeriod }}
         </p>
       </div>

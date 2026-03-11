@@ -9,65 +9,65 @@
     </header>
 
     <!-- Customer Info Card -->
-    <section class="customer-info card" aria-label="Kundendaten">
-      <dl class="info-grid">
-        <div class="info-item">
+    <section class="customer-details-container" aria-label="Kundendaten">
+      <dl class="customer-details">
+        <div class="customer-details-list">
           <dt>Kunden-Nr.:</dt>
           <dd>{{ formatCustomerId(customer.id) }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Datum:</dt>
           <dd>{{ formatDate(customer.date) }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Firma:</dt>
           <dd>{{ customer.company_name }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Firmentyp:</dt>
           <dd>{{ customer.company_type }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Vorname:</dt>
           <dd>{{ customer.first_name }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Nachname:</dt>
           <dd>{{ customer.last_name }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Email:</dt>
           <dd>{{ customer.email }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Adresse:</dt>
           <dd>{{ customer.address }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>PLZ:</dt>
           <dd>{{ customer.postal_code }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Stadt:</dt>
           <dd>{{ customer.city }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Telefon:</dt>
           <dd>{{ customer.phone }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Website:</dt>
           <dd>{{ customer.website }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>USt-IdNr.:</dt>
           <dd>{{ customer.vat_id }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Steuernummer:</dt>
           <dd>{{ customer.tax_number }}</dd>
         </div>
-        <div class="info-item">
+        <div class="customer-details-list">
           <dt>Aktiv:</dt>
           <dd>{{ customer.is_active ? 'Ja' : 'Nein' }}</dd>
         </div>

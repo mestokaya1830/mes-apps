@@ -22,6 +22,12 @@
 
     <!-- KPI Strip -->
     <section class="kpi-strip">
+      <div class="kpi-item kpi-total" role="listitem">
+        <span class="kpi-dot" :style="`background:#0d8a6b`"></span>
+        <span class="kpi-label">Gesamt MwSt.</span>
+        <span class="kpi-value">{{ formatEur(totalVat.gross) }}</span>
+        <span class="kpi-count">{{ totalVat.count }} Positionen</span>
+      </div>
       <div
         v-for="(vatData, vatRate) in vatRatesData"
         :key="vatRate"
@@ -32,12 +38,6 @@
         <span class="kpi-label">{{ vatRate }}% MwSt.</span>
         <span class="kpi-value">{{ formatEur(vatData.gross) }}</span>
         <span class="kpi-count">{{ vatData.count }} Positionen</span>
-      </div>
-      <div class="kpi-item kpi-total" role="listitem">
-        <span class="kpi-dot" :style="`background:#0d8a6b`"></span>
-        <span class="kpi-label">Gesamt MwSt.</span>
-        <span class="kpi-value">{{ formatEur(totalVat.gross) }}</span>
-        <span class="kpi-count">{{ totalVat.count }} Positionen</span>
       </div>
     </section>
   </div>
@@ -236,10 +236,10 @@ export default {
 
     getVatColor(rate) {
       rate = Number(rate)
-      if (rate === 19) return '#6366f1'
+      if (rate === 19) return '#0d8a6b'
       if (rate === 7) return '#9f3dea'
-      if (rate === 0) return '#ef4444'
-      const colors = ['#f43f5e', '#6366f1', '#9f3dea', '#ef4444', '#06b6d4']
+      if (rate === 0) return '#f59e0b'
+      const colors = ['#6366f1', '#6366f1', '#9f3dea', '#ef4444', '#06b6d4']
       return colors[Math.floor(rate / 5) % colors.length]
     },
 

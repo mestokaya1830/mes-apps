@@ -52,71 +52,124 @@
       <div class="report-header">
         <h2>{{ title }}</h2>
         <p class="report-period">
-          <i class="bi bi-clock icons-small" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
+          <i class="bi bi-clock icons-medium" aria-hidden="true"></i> Zeitraum: {{ selectedPeriod }}
         </p>
       </div>
       <div class="report-summary-cards">
         <article class="report-summary-card">
           <div class="report-card-icon-container text-success">
             <i class="bi bi-receipt report-card-icons" aria-hidden="true"></i>
-            <p class="repor-card-label">Summe</p>
+            <p class="card-label">Summe</p>
           </div>
           <div class="card-content">
-            <label class="tax-card-value">Anzahl: {{ totalVatSummary.totalCount }}</label>
-            <label class="tax-card-value"
-              >Netto: {{ formatCurrency(totalVatSummary.totalNet) }}</label
+            <label class="tax-card-label"
+              >Anzahl <span class="tax-card-label"> {{ totalVatSummary.totalCount }}</span></label
+            >
+            <label class="tax-card-label"
+              >Netto
+              <span class="tax-card-value">{{
+                formatCurrency(totalVatSummary.totalNet)
+              }}</span></label
+            >
+            <label class="tax-card-label"
+              >MwSt.
+              <span class="tax-card-value">{{
+                formatCurrency(totalVatSummary.totalVat)
+              }}</span></label
             >
             <label class="tax-card-value"
-              >MwSt.: {{ formatCurrency(totalVatSummary.totalVat) }}</label
-            >
-            <label class="tax-card-value">Brutto: {{ formatCurrency(totalVatSummary.totalGross) }}</label>
-          </div>
-        </article>
-
-        <article class="report-summary-card">
-          <div class="report-card-icon-container text-primary">
-            <i class="bi bi-receipt report-card-icons" aria-hidden="true"></i>
-            <p class="repor-card-label">19% MwSt.</p>
-          </div>
-          <div class="card-content">
-            <label class="tax-card-value">Anzahl: {{ dynamicVatSummary['19'].count }}</label>
-            <label class="tax-card-value"
-              >Netto: {{ formatCurrency(dynamicVatSummary['19'].net) }}</label
-            >
-            <label class="tax-card-value"
-              >Brutto: {{ formatCurrency(dynamicVatSummary['19'].gross) }}</label
+              >Brutto {{ formatCurrency(totalVatSummary.totalGross) }}</label
             >
           </div>
         </article>
 
         <article class="report-summary-card">
-          <div class="report-card-icon-container text-succes">
+          <div class="report-card-icon-container text-success">
             <i class="bi bi-receipt report-card-icons" aria-hidden="true"></i>
-            <p class="repor-card-label">7% MwSt.</p>
+            <p class="card-label">19% MvSt.</p>
           </div>
           <div class="card-content">
-            <label class="tax-card-value">Anzahl: {{ dynamicVatSummary['7'].count }}</label>
-            <label class="tax-card-value"
-              >Netto: {{ formatCurrency(dynamicVatSummary['7'].net) }}</label
+            <label class="tax-card-label"
+              >Anzahl
+              <span class="tax-card-label"> {{ dynamicVatSummary['19'].count }}</span></label
             >
-            <label class="tax-card-value"
-              >Brutto: {{ formatCurrency(dynamicVatSummary['7'].gross) }}</label
+            <label class="tax-card-label"
+              >Netto
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['19'].net)
+              }}</span></label
+            >
+            <label class="tax-card-label"
+              >MvSt.
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['19'].vat)
+              }}</span></label
+            >
+            <label class="tax-card-label"
+              >Brutto
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['19'].gross)
+              }}</span></label
             >
           </div>
         </article>
 
         <article class="report-summary-card">
-          <div class="report-card-icon-container text-info">
+          <div class="report-card-icon-container text-success">
             <i class="bi bi-receipt report-card-icons" aria-hidden="true"></i>
-            <p class="repor-card-label">0% MwSt. (Steuerfrei)</p>
+            <p class="card-label">7% MvSt.</p>
           </div>
           <div class="card-content">
-            <label class="tax-card-value">Anzahl: {{ dynamicVatSummary['0'].count }}</label>
-            <label class="tax-card-value"
-              >Netto: {{ formatCurrency(dynamicVatSummary['0'].net) }}</label
+            <label class="tax-card-label"
+              >Anzahl <span class="tax-card-label"> {{ dynamicVatSummary['7'].count }}</span></label
             >
-            <label class="tax-card-value"
-              >Brutto: {{ formatCurrency(dynamicVatSummary['0'].gross) }}</label
+            <label class="tax-card-label"
+              >Netto
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['7'].net)
+              }}</span></label
+            >
+            <label class="tax-card-label"
+              >MvSt.
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['7'].vat)
+              }}</span></label
+            >
+            <label class="tax-card-label"
+              >Brutto
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['7'].gross)
+              }}</span></label
+            >
+          </div>
+        </article>
+
+        <article class="report-summary-card">
+          <div class="report-card-icon-container text-success">
+            <i class="bi bi-receipt report-card-icons" aria-hidden="true"></i>
+            <p class="card-label">0% MvSt.</p>
+          </div>
+          <div class="card-content">
+            <label class="tax-card-label"
+              >Anzahl <span class="tax-card-label"> {{ dynamicVatSummary['0'].count }}</span></label
+            >
+            <label class="tax-card-label"
+              >Netto
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['0'].net)
+              }}</span></label
+            >
+            <label class="tax-card-label"
+              >MwSt.
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['0'].vat)
+              }}</span></label
+            >
+            <label class="tax-card-label"
+              >Brutto
+              <span class="tax-card-value">{{
+                formatCurrency(dynamicVatSummary['0'].gross)
+              }}</span></label
             >
           </div>
         </article>

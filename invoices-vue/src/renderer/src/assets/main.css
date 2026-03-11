@@ -198,6 +198,11 @@ textarea::placeholder {
   font-size: var(--font-size-xs);
   margin-right: var(--spacing-xs);
 }
+.icons-medium {
+  text-align: center;
+  font-size: var(--font-size-md);
+  margin-right: var(--spacing-sm);
+}
 .icons-info {
   width: clamp(28px, 2.5vw, 40px);
   color: var(--color-blue);
@@ -536,37 +541,30 @@ input:checked + .slider:before {
   justify-content: center;
   height: calc(100% - 60px);
   margin-top: 60px;
+  padding: 5rem;
+  overflow-y: auto;
 }
-.go-top-button {
+.btn-go-top {
   display: flex;
   align-items: center;
   position: fixed;
   bottom: 30px;
   right: 30px;
   z-index: 1000;
-  color: white;
-  border-radius: 50%;
-  padding: 10px 18px;
+  color: var(--color-white);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
   cursor: pointer;
-  background: linear-gradient(180deg, #1f2937 0%, var(--color-black) 100%);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(180deg, #1f2937 0%, var(--color-green)100%);
   transition: all 0.3s ease;
 }
 
-.go-top-button:hover {
-  background-color: var(--color-blue);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
-.go-top-icon {
-  font-size: 24px;
+.go-top-icon{
+  font-size: var(--font-size-xl);
 }
 .main-container {
   width: 100%;
   height: 100vh;
-  padding: 5rem;
-  overflow-y: auto;
 }
 .page-title {
   margin-bottom: 10px;
@@ -1571,10 +1569,17 @@ input:checked + .slider:before {
   font-size: var(--font-size-1xl);
   margin-right: var(--spacing-md);
 }
-.report-repor-card-label {
-  font-size: 13px;
+.tax-card-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  font-weight: bold;
   opacity: 0.9;
   margin: 0 0 var(--spacing-xs) 0;
+  border-bottom: 1px solid #dddddd75;
+}
+.tax-card-value {
+  font-weight: normal;
 }
 
 .card-value {
@@ -1589,7 +1594,7 @@ input:checked + .slider:before {
   opacity: 0.85;
   margin: var(--spacing-xs) 0 0 0;
 }
-
+.tax-card-label{}
 /* TABLE */
 .report-table-container {
   overflow-x: auto;
@@ -1775,6 +1780,22 @@ input:checked + .slider:before {
 .kpi-count {
   font-size: 0.65rem;
   color: #9ca3af;
+}
+.customer-details{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+}
+.customer-details-list{
+  display: flex;
+  width: 100%;
+  border-bottom: var(--border-sm);
+}
+.customer-details-list dt{
+  min-width: 140px;
+  font-weight: bold;
+  color: var(--color-black-light);
+ margin-right: var(--spacing-md);
 }
 @media screen and (max-width: 1600px) {
   
