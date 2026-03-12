@@ -914,7 +914,7 @@ ipcMain.handle('flter-customers-categories', async (event, payload) => {
       default:
         return { success: false, message: `Unknown category: ${payload}` }
     }
-    rows = db.prepare(query).all(limit)
+    rows = db.prepare(query).all(...(query.includes('?') ? [limit] : []))
     return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
