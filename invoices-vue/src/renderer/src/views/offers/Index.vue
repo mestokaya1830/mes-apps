@@ -183,7 +183,7 @@ export default {
         customer: row.customer ? JSON.parse(row.customer) : null
       }))
 
-      this.total_count = result.total
+      this.total_count = result.rows.length
       this.current_count = result.rows.length
     },
 
@@ -214,14 +214,14 @@ export default {
         customer: row.customer ? JSON.parse(row.customer) : null
       }))
 
-      this.total_count = result.total
+      this.total_count = result.total_count
       this.current_count = result.rows.length
     },
 
     async searchFilter() {
       const term = this.search_box?.trim()
       if (!term) return this.getOffers()
-      if (term.length < 3) return
+      if (isNaN(term) && term.length < 3) return
 
       const result = await window.api.searchOffers(term)
       if (!result.success) return
@@ -231,7 +231,8 @@ export default {
         customer: row.customer ? JSON.parse(row.customer) : null
       }))
 
-      this.total_count = result.total
+      console.log(result)
+      this.total_count = result.total_count
       this.current_count = result.rows.length
     },
 
@@ -251,7 +252,7 @@ export default {
         customer: row.customer ? JSON.parse(row.customer) : null
       }))
 
-      this.total_count = result.total
+      this.total_count = result.total_count
       this.current_count = result.rows.length
     },
 

@@ -16,7 +16,7 @@
     </aside>
 
     <main ref="layouts" class="layouts">
-      <router-view />
+      <router-view class="router"/>
     </main>
 
     <footer>

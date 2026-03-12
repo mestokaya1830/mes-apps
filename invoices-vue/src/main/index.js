@@ -420,30 +420,31 @@ ipcMain.handle('get-dashboard', async () => {
   try {
     const rows = db.transaction(() => {
       return {
-        customers: db.prepare('SELECT COUNT(*) AS count FROM customers WHERE is_active = 1').get()
+        customers: db.prepare('SELECT COUNT(id) AS count FROM customers WHERE is_active = 1').get()
           .count,
-        invoices: db.prepare('SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1').get()
+        invoices: db.prepare('SELECT COUNT(id) AS count FROM invoices WHERE is_active = 1').get()
           .count,
-        offers: db.prepare('SELECT COUNT(*) AS count FROM offers WHERE is_active = 1').get().count,
-        orders: db.prepare('SELECT COUNT(*) AS count FROM orders  WHERE is_active = 1').get().count,
+        offers: db.prepare('SELECT COUNT(id) AS count FROM offers WHERE is_active = 1').get().count,
+        orders: db.prepare('SELECT COUNT(id) AS count FROM orders  WHERE is_active = 1').get()
+          .count,
         paid_count: db
           .prepare(
-            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'paid'"
+            "SELECT COUNT(id) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'paid'"
           )
           .get().count,
         unpaid_count: db
           .prepare(
-            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'unpaid'"
+            "SELECT COUNT(id) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'unpaid'"
           )
           .get().count,
         partially_paid_count: db
           .prepare(
-            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'partially_paid'"
+            "SELECT COUNT(id) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'partially_paid'"
           )
           .get().count,
         overdue_count: db
           .prepare(
-            "SELECT COUNT(*) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'overdue'"
+            "SELECT COUNT(id) AS count FROM invoices WHERE is_active = 1 AND payment_status = 'overdue'"
           )
           .get().count
       }
@@ -765,7 +766,7 @@ ipcMain.handle('get-customers', async () => {
       )
       .all(limit)
 
-    const total = db.prepare(`SELECT COUNT(*) as count FROM customers`).get().count
+    const total = db.prepare(`SELECT COUNT(id) as count FROM customers`).get().count
 
     return { success: true, rows, total }
   } catch (err) {
@@ -842,12 +843,12 @@ ipcMain.handle('customer-details', async (event, id) => {
       .prepare(
         `
           SELECT
-            COALESCE((SELECT COUNT(*) FROM invoices 
+            COALESCE((SELECT COUNT(id) FROM invoices 
                       WHERE json_extract(customer, '$.id') = CAST(:id AS TEXT)), 0) AS invoice_count,
-            COALESCE((SELECT COUNT(*) FROM offers    WHERE customer_id = :id), 0) AS offer_count,
-            COALESCE((SELECT COUNT(*) FROM orders    WHERE customer_id = :id), 0) AS order_count,
-            COALESCE((SELECT COUNT(*) FROM reminders WHERE customer_id = :id), 0) AS reminder_count,
-            COALESCE((SELECT COUNT(*) FROM payments  WHERE customer_id = :id), 0) AS payment_count
+            COALESCE((SELECT COUNT(id) FROM offers    WHERE customer_id = :id), 0) AS offer_count,
+            COALESCE((SELECT COUNT(id) FROM orders    WHERE customer_id = :id), 0) AS order_count,
+            COALESCE((SELECT COUNT(id) FROM reminders WHERE customer_id = :id), 0) AS reminder_count,
+            COALESCE((SELECT COUNT(id) FROM payments  WHERE customer_id = :id), 0) AS payment_count
         `
       )
       .get({ id })
@@ -884,39 +885,34 @@ ipcMain.handle('flter-customers-categories', async (event, payload) => {
 
   try {
     let query = ''
-    let countQuery = ''
-    let count = 0
     let rows = []
     const limit = 50
+
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM customers`).get().total
 
     switch (payload) {
       case 'all':
         query = `SELECT * FROM customers ORDER BY id DESC LIMIT ?`
-        countQuery = `SELECT COUNT(*) as total FROM customers`
         rows = db.prepare(query).all(limit)
         break
 
       case 'active':
         query = `SELECT * FROM customers WHERE is_active = 1 ORDER BY id DESC LIMIT ?`
-        countQuery = `SELECT COUNT(*) as total FROM customers WHERE is_active = 1`
         rows = db.prepare(query).all(limit)
         break
 
       case 'canceled':
         query = `SELECT * FROM customers WHERE is_active = 0 ORDER BY id DESC LIMIT ?`
-        countQuery = `SELECT COUNT(*) as total FROM customers WHERE is_active = 0`
         rows = db.prepare(query).all(limit)
         break
 
       case 'first_10':
         query = `SELECT * FROM customers ORDER BY id ASC LIMIT 10`
-        countQuery = `SELECT COUNT(*) as total FROM customers`
         rows = db.prepare(query).all()
         break
 
       case 'last_10':
         query = `SELECT * FROM customers ORDER BY id DESC LIMIT 10`
-        countQuery = `SELECT COUNT(*) as total FROM customers`
         rows = db.prepare(query).all()
         break
 
@@ -924,12 +920,7 @@ ipcMain.handle('flter-customers-categories', async (event, payload) => {
         return { success: false, message: `Unknown category: ${payload}` }
     }
 
-    if (countQuery) {
-      const countResult = db.prepare(countQuery).get()
-      count = countResult.total
-    }
-
-    return { success: true, rows, count }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -941,6 +932,7 @@ ipcMain.handle('search-customers', async (event, term) => {
     return { success: false, message: 'No data provided' }
   }
   let limit = 50
+  const total_count = db.prepare(`SELECT COUNT(id) as total FROM customers`).get().total
   if (isNaN(term) && !term.includes('-')) {
     try {
       const rows = db
@@ -954,7 +946,7 @@ ipcMain.handle('search-customers', async (event, term) => {
            ORDER BY id DESC LIMIT ?`
         )
         .all(limit)
-      return { success: true, rows }
+      return { success: true, rows, total_count }
     } catch (err) {
       console.error('DB error:', err.message)
       return { success: false, message: err.message }
@@ -970,7 +962,7 @@ ipcMain.handle('search-customers', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(start, end, limit)
-        return { success: true, rows }
+        return { success: true, rows, total_count }
       } else {
         const rows = db
           .prepare(
@@ -979,7 +971,7 @@ ipcMain.handle('search-customers', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, limit)
-        return { success: true, rows }
+        return { success: true, rows, total_count }
       }
     } catch (err) {
       console.error('DB error:', err.message)
@@ -995,7 +987,9 @@ ipcMain.handle('filter-customers-date', async (event, payload) => {
   try {
     let limit = 50
     const { start, end } = payload
-    const rows = db
+    let rows = []
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM customers`).get().total
+    rows = db
       .prepare(
         `SELECT *
         FROM customers
@@ -1004,10 +998,7 @@ ipcMain.handle('filter-customers-date', async (event, payload) => {
         LIMIT ?;`
       )
       .all(start, end, limit)
-    const total = db
-      .prepare(`SELECT COUNT(id) AS total FROM customers WHERE date BETWEEN ? AND ?`)
-      .get(start, end).total
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
@@ -1255,11 +1246,9 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
   try {
     const category = payload
     let query = ''
-    let countQuery = ''
     let rows = []
-    let total = 0
     let limit = 50
-
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM invoices`).get().total
     switch (category) {
       case 'all':
         query = `
@@ -1270,7 +1259,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM invoices`
         break
 
       case 'active':
@@ -1281,11 +1269,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           WHERE is_active = 1 AND payment_status != 'paid'
           ORDER BY id DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1 AND payment_status != 'paid'
         `
         break
 
@@ -1299,11 +1282,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY updated_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 0
-        `
         break
 
       case 'is_paid':
@@ -1314,11 +1292,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           WHERE is_active = 1 AND payment_status = 'paid'
           ORDER BY updated_at DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1 AND payment_status = 'paid'
         `
         break
 
@@ -1331,11 +1304,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY updated_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1 AND payment_status = 'partially_paid'
-        `
         break
 
       case 'unpaid':
@@ -1346,11 +1314,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           WHERE is_active = 1 AND payment_status = 'unpaid'
           ORDER BY updated_at DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1 AND payment_status = 'unpaid'
         `
         break
 
@@ -1365,13 +1328,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY updated_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1
-            AND payment_status = 'unpaid'
-            AND DATE(due_date, 'localtime') < DATE('now', 'localtime')
-        `
         break
 
       case 'is_early_paid':
@@ -1384,13 +1340,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
             AND DATE(paid_at, 'localtime') < DATE(due_date, 'localtime')
           ORDER BY updated_at DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1
-            AND payment_status = 'paid'
-            AND DATE(paid_at, 'localtime') < DATE(due_date, 'localtime')
         `
         break
 
@@ -1405,13 +1354,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY updated_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1
-            AND payment_status = 'paid'
-            AND DATE(paid_at, 'localtime') > DATE(due_date, 'localtime')
-        `
         break
 
       case 'outstanding':
@@ -1424,12 +1366,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY updated_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1
-            AND (payment_status = 'unpaid' OR payment_status = 'overdue')
-        `
         break
 
       case 'is_reminded':
@@ -1441,11 +1377,6 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY updated_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1 AND is_reminded = 1
-        `
         break
 
       default:
@@ -1456,21 +1387,11 @@ ipcMain.handle('flter-invoices-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(id) as total
-          FROM invoices
-          WHERE is_active = 1 AND payment_status != 'paid'
-        `
     }
 
     rows = db.prepare(query).all(limit)
 
-    if (countQuery) {
-      const countResult = db.prepare(countQuery).get()
-      total = countResult.total
-    }
-
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1484,7 +1405,7 @@ ipcMain.handle('search-invoices', async (event, term) => {
   try {
     let limit = 50
     let rows = []
-    let total = 0
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM invoices`).get().total
 
     if (isNaN(term) && !term.includes('-')) {
       rows = db
@@ -1502,7 +1423,6 @@ ipcMain.handle('search-invoices', async (event, term) => {
           LIMIT ?`
         )
         .all(limit)
-      total = db.prepare(`SELECT COUNT(id) AS total FROM invoices`).get().total
     } else if (isNaN(term) && term.includes('-')) {
       const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
 
@@ -1515,9 +1435,6 @@ ipcMain.handle('search-invoices', async (event, term) => {
           ORDER BY id DESC LIMIT ?`
         )
         .all(start, end, limit)
-      total = db
-        .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE id BETWEEN ? AND ?`)
-        .get(start, end).total
     } else {
       rows = db
         .prepare(
@@ -1528,12 +1445,9 @@ ipcMain.handle('search-invoices', async (event, term) => {
           ORDER BY id DESC LIMIT ?`
         )
         .all(term, term, limit)
-      total = db
-        .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE id + 0 LIKE ?`)
-        .get(term).total
     }
 
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1545,8 +1459,11 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
     return { success: false, message: 'No data provided' }
   }
   try {
-    let limit = 50
+    const limit = 50
     const { start, end } = payload
+
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM invoices`).get().total
+
     const rows = db
       .prepare(
         `SELECT 
@@ -1566,10 +1483,8 @@ ipcMain.handle('filter-invoices-date', async (event, payload) => {
         LIMIT ?;`
       )
       .all(start, end, limit)
-    const total = db
-      .prepare(`SELECT COUNT(id) AS total FROM invoices WHERE date BETWEEN ? AND ?`)
-      .get(start, end).total
-    return { success: true, rows, total }
+
+    return { success: true, rows, total_count }
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
@@ -1754,11 +1669,9 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
   try {
     const category = payload
     let query = ''
-    let countQuery = ''
-    let count = 0
     let rows = []
     const limit = 50
-
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM offers`).get().total
     switch (category) {
       case 'all':
         query = `
@@ -1767,7 +1680,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM offers`
         break
 
       case 'draft':
@@ -1777,11 +1689,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           WHERE status = 'draft'
           ORDER BY id DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM offers
-          WHERE status = 'draft'
         `
         break
 
@@ -1793,11 +1700,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM offers
-          WHERE status = 'sent'
-        `
         break
 
       case 'accepted':
@@ -1807,11 +1709,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           WHERE status = 'accepted'
           ORDER BY id DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM offers
-          WHERE status = 'accepted'
         `
         break
 
@@ -1823,11 +1720,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM offers
-          WHERE status = 'rejected'
-        `
         break
 
       case 'cancelled':
@@ -1837,11 +1729,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           WHERE status = 'cancelled'
           ORDER BY cancelled_at DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM offers
-          WHERE status = 'cancelled'
         `
         break
 
@@ -1854,12 +1741,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           ORDER BY valid_until DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM offers
-          WHERE valid_until < date('now')
-          AND status NOT IN ('accepted','rejected','cancelled')
-        `
         break
 
       case 'legal':
@@ -1870,11 +1751,6 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM offers
-          WHERE is_legal = 1
-        `
         break
 
       default:
@@ -1884,17 +1760,11 @@ ipcMain.handle('flter-offers-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM offers`
     }
 
     rows = db.prepare(query).all(limit)
 
-    if (countQuery) {
-      const countResult = db.prepare(countQuery).get()
-      count = countResult.total
-    }
-
-    return { success: true, rows, count }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -1908,6 +1778,7 @@ ipcMain.handle('filter-offers-date', async (event, payload) => {
   try {
     let limit = 50
     const { start, end } = payload
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM offers`).get().total
     const rows = db
       .prepare(
         `SELECT *
@@ -1917,10 +1788,7 @@ ipcMain.handle('filter-offers-date', async (event, payload) => {
         LIMIT ?;`
       )
       .all(start, end, limit)
-    const total = db
-      .prepare(`SELECT COUNT(id) As total FROM offers WHERE is_active = 1 AND date BETWEEN ? AND ?`)
-      .get(start, end).total
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
@@ -1934,7 +1802,7 @@ ipcMain.handle('search-offers', async (event, term) => {
   try {
     let limit = 50
     let rows = []
-    let total = 0
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM offers`).get().total
     if (isNaN(term) && !term.includes('-')) {
       rows = db
         .prepare(
@@ -1949,7 +1817,6 @@ ipcMain.handle('search-offers', async (event, term) => {
           LIMIT ?`
         )
         .all(limit)
-      total = db.prepare(`SELECT COUNT(id) As total FROM offers`).get().total
     } else {
       if (isNaN(term) && term.includes('-')) {
         const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
@@ -1962,9 +1829,6 @@ ipcMain.handle('search-offers', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(start, end, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM offers WHERE id BETWEEN ? AND ?`)
-          .get(start, end).total
       } else {
         rows = db
           .prepare(
@@ -1973,12 +1837,9 @@ ipcMain.handle('search-offers', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, term, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM offers WHERE id + 0 LIKE ?`)
-          .get(term).total
       }
     }
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -2274,11 +2135,9 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
   try {
     const category = payload
     let query = ''
-    let countQuery = ''
-    let count = 0
     let rows = []
     const limit = 50
-
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM orders`).get().total
     switch (category) {
       case 'all':
         query = `
@@ -2287,7 +2146,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM orders`
         break
 
       case 'pending':
@@ -2297,11 +2155,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           WHERE status = 'pending'
           ORDER BY id DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE status = 'pending'
         `
         break
 
@@ -2313,11 +2166,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE status = 'confirmed'
-        `
         break
 
       case 'in_progress':
@@ -2327,11 +2175,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           WHERE status = 'in_progress'
           ORDER BY id DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE status = 'in_progress'
         `
         break
 
@@ -2343,11 +2186,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE status = 'completed'
-        `
         break
 
       case 'delivery_pending':
@@ -2357,11 +2195,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           WHERE delivery_status = 'pending'
           ORDER BY id DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE delivery_status = 'pending'
         `
         break
 
@@ -2373,11 +2206,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE delivery_status = 'shipped'
-        `
         break
 
       case 'delivered':
@@ -2387,11 +2215,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           WHERE delivery_status = 'delivered'
           ORDER BY id DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE delivery_status = 'delivered'
         `
         break
 
@@ -2403,11 +2226,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           ORDER BY sent_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE sent_at IS NOT NULL
-        `
         break
 
       case 'cancelled':
@@ -2418,11 +2236,6 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           ORDER BY cancelled_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM orders
-          WHERE cancelled_at IS NOT NULL
-        `
         break
 
       default:
@@ -2432,17 +2245,11 @@ ipcMain.handle('flter-orders-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM orders`
     }
 
     rows = db.prepare(query).all(limit)
 
-    if (countQuery) {
-      const countResult = db.prepare(countQuery).get()
-      count = countResult.total
-    }
-
-    return { success: true, rows, count }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -2456,6 +2263,7 @@ ipcMain.handle('filter-orders-date', async (event, payload) => {
   try {
     let limit = 50
     const { start, end } = payload
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM orders`).get().total
     const rows = db
       .prepare(
         `SELECT *
@@ -2465,10 +2273,7 @@ ipcMain.handle('filter-orders-date', async (event, payload) => {
         LIMIT ?;`
       )
       .all(start, end, limit)
-    const total = db
-      .prepare(`SELECT COUNT(id) As total FROM orders WHERE date BETWEEN ? AND ?`)
-      .get(start, end).total
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
@@ -2482,7 +2287,7 @@ ipcMain.handle('search-orders', async (event, term) => {
   try {
     let limit = 50
     let rows = []
-    let total = 0
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM orders`).get().total
     if (isNaN(term) && !term.includes('-')) {
       rows = db
         .prepare(
@@ -2497,7 +2302,6 @@ ipcMain.handle('search-orders', async (event, term) => {
           LIMIT ?`
         )
         .all(limit)
-      total = db.prepare(`SELECT COUNT(id) As total FROM orders`).get().total
     } else {
       if (isNaN(term) && term.includes('-')) {
         const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
@@ -2510,9 +2314,6 @@ ipcMain.handle('search-orders', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(start, end, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM orders WHERE id BETWEEN ? AND ?`)
-          .get(start, end).total
       } else {
         rows = db
           .prepare(
@@ -2521,12 +2322,9 @@ ipcMain.handle('search-orders', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, term, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM orders WHERE id + 0 LIKE ?`)
-          .get(term).total
       }
     }
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -2711,11 +2509,9 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
   try {
     const category = payload
     let query = ''
-    let countQuery = ''
-    let count = 0
     let rows = []
     const limit = 50
-
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM payments`).get().total
     switch (category) {
       case 'all':
         query = `
@@ -2724,7 +2520,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM payments`
         break
 
       case 'received':
@@ -2734,11 +2529,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           WHERE cancelled_at IS NULL
           ORDER BY date DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM payments
-          WHERE cancelled_at IS NULL
         `
         break
 
@@ -2750,11 +2540,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           ORDER BY cancelled_at DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM payments
-          WHERE cancelled_at IS NOT NULL
-        `
         break
 
       case 'today':
@@ -2764,11 +2549,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           WHERE date = date('now')
           ORDER BY date DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM payments
-          WHERE date = date('now')
         `
         break
 
@@ -2780,11 +2560,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM payments
-          WHERE strftime('%Y-%m', date) = strftime('%Y-%m','now')
-        `
         break
 
       case 'bank_transfer':
@@ -2794,11 +2569,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           WHERE payment_method = 'bank_transfer'
           ORDER BY date DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM payments
-          WHERE payment_method = 'bank_transfer'
         `
         break
 
@@ -2810,11 +2580,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM payments
-          WHERE payment_method = 'cash'
-        `
         break
 
       case 'card':
@@ -2825,11 +2590,6 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM payments
-          WHERE payment_method = 'card'
-        `
         break
 
       default:
@@ -2839,17 +2599,11 @@ ipcMain.handle('filter-payments-categories', async (event, payload) => {
           ORDER BY id DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM payments`
     }
 
     rows = db.prepare(query).all(limit)
 
-    if (countQuery) {
-      const countResult = db.prepare(countQuery).get()
-      count = countResult.total
-    }
-
-    return { success: true, rows, count }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -2863,6 +2617,7 @@ ipcMain.handle('filter-payments-date', async (event, payload) => {
   try {
     let limit = 50
     const { start, end } = payload
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM payments`).get().total
     const rows = db
       .prepare(
         `SELECT *
@@ -2872,10 +2627,7 @@ ipcMain.handle('filter-payments-date', async (event, payload) => {
         LIMIT ?;`
       )
       .all(start, end, limit)
-    const total = db
-      .prepare(`SELECT COUNT(id) As total FROM payments WHERE date BETWEEN ? AND ?`)
-      .get(start, end).total
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
@@ -2889,7 +2641,7 @@ ipcMain.handle('search-payments', async (event, term) => {
   try {
     let limit = 50
     let rows = []
-    let total = 0
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM payments`).get().total
     if (isNaN(term) && !term.includes('-')) {
       rows = db
         .prepare(
@@ -2904,7 +2656,6 @@ ipcMain.handle('search-payments', async (event, term) => {
           LIMIT ?`
         )
         .all(limit)
-      total = db.prepare(`SELECT COUNT(id) As total FROM payments`).get().total
     } else {
       if (isNaN(term) && term.includes('-')) {
         const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
@@ -2917,9 +2668,6 @@ ipcMain.handle('search-payments', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(start, end, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM payments WHERE id BETWEEN ? AND ?`)
-          .get(start, end).total
       } else {
         rows = db
           .prepare(
@@ -2928,12 +2676,9 @@ ipcMain.handle('search-payments', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, term, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM payments WHERE id + 0 LIKE ?`)
-          .get(term).total
       }
     }
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -3113,11 +2858,9 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
   try {
     const category = payload
     let query = ''
-    let countQuery = ''
-    let count = 0
     let rows = []
     const limit = 50
-
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM reminders`).get().total
     switch (category) {
       case 'all':
         query = `
@@ -3126,7 +2869,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM reminders`
         break
 
       case 'pending':
@@ -3137,12 +2879,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           AND cancelled_at IS NULL
           ORDER BY date DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM reminders
-          WHERE sent_method IS NULL
-          AND cancelled_at IS NULL
         `
         break
 
@@ -3155,12 +2891,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM reminders
-          WHERE sent_method IS NOT NULL
-          AND cancelled_at IS NULL
-        `
         break
 
       case 'cancelled':
@@ -3170,11 +2900,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           WHERE cancelled_at IS NOT NULL
           ORDER BY cancelled_at DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM reminders
-          WHERE cancelled_at IS NOT NULL
         `
         break
 
@@ -3187,12 +2912,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM reminders
-          WHERE level = 1
-          AND cancelled_at IS NULL
-        `
         break
 
       case 'level_2':
@@ -3203,12 +2922,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           AND cancelled_at IS NULL
           ORDER BY date DESC
           LIMIT ?
-        `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM reminders
-          WHERE level = 2
-          AND cancelled_at IS NULL
         `
         break
 
@@ -3221,12 +2934,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM reminders
-          WHERE level = 3
-          AND cancelled_at IS NULL
-        `
         break
 
       case 'overdue':
@@ -3238,12 +2945,6 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           ORDER BY payment_deadline ASC
           LIMIT ?
         `
-        countQuery = `
-          SELECT COUNT(*) as total
-          FROM reminders
-          WHERE payment_deadline < date('now')
-          AND cancelled_at IS NULL
-        `
         break
 
       default:
@@ -3253,17 +2954,11 @@ ipcMain.handle('filter-reminders-categories', async (event, payload) => {
           ORDER BY date DESC
           LIMIT ?
         `
-        countQuery = `SELECT COUNT(*) as total FROM reminders`
     }
 
     rows = db.prepare(query).all(limit)
 
-    if (countQuery) {
-      const countResult = db.prepare(countQuery).get()
-      count = countResult.total
-    }
-
-    return { success: true, rows, count }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }
@@ -3277,6 +2972,7 @@ ipcMain.handle('filter-reminders-date', async (event, payload) => {
   try {
     let limit = 50
     const { start, end } = payload
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM reminders`).get().total
     const rows = db
       .prepare(
         `SELECT *
@@ -3286,10 +2982,7 @@ ipcMain.handle('filter-reminders-date', async (event, payload) => {
         LIMIT ?;`
       )
       .all(start, end, limit)
-    const total = db
-      .prepare(`SELECT COUNT(id) As total FROM reminders WHERE date BETWEEN ? AND ?`)
-      .get(start, end).total
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (error) {
     console.error('dateFilter error:', error)
     return { success: false, message: error.message }
@@ -3303,7 +2996,7 @@ ipcMain.handle('search-reminders', async (event, term) => {
   try {
     let limit = 50
     let rows = []
-    let total = 0
+    const total_count = db.prepare(`SELECT COUNT(id) as total FROM reminders`).get().total
     if (isNaN(term) && !term.includes('-')) {
       rows = db
         .prepare(
@@ -3318,7 +3011,6 @@ ipcMain.handle('search-reminders', async (event, term) => {
           LIMIT ?`
         )
         .all(limit)
-      total = db.prepare(`SELECT COUNT(id) As total FROM reminders`).get().total
     } else {
       if (isNaN(term) && term.includes('-')) {
         const [start, end] = term.split('-').map((item) => parseInt(item.replace(/\D/g, ''), 10))
@@ -3331,9 +3023,6 @@ ipcMain.handle('search-reminders', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(start, end, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM reminders WHERE id BETWEEN ? AND ?`)
-          .get(start, end).total
       } else {
         rows = db
           .prepare(
@@ -3342,12 +3031,9 @@ ipcMain.handle('search-reminders', async (event, term) => {
             ORDER BY id DESC LIMIT ?`
           )
           .all(term, term, limit)
-        total = db
-          .prepare(`SELECT COUNT(id) As total FROM reminders WHERE id + 0 LIKE ?`)
-          .get(term).total
       }
     }
-    return { success: true, rows, total }
+    return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
     return { success: false, message: err.message }

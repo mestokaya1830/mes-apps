@@ -211,7 +211,7 @@ export default {
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
-        this.total_count = result.total
+        this.total_count = result.total_count
         this.current_count = result.rows.length
       } catch (error) {
         console.error(error)
@@ -230,7 +230,7 @@ export default {
           ...row,
           customer: row.customer ? JSON.parse(row.customer) : null
         }))
-        this.total_count = result.total
+        this.total_count = result.total_count
         this.current_count = result.rows.length
         await store.setFilters(
           'category_filter',
@@ -256,7 +256,7 @@ export default {
         ...row,
         customer: row.customer ? JSON.parse(row.customer) : null
       }))
-      this.total_count = result.total
+      this.total_count = result.total_count
       this.current_count = result.rows.length
       await store.setFilters('search_filter', JSON.parse(JSON.stringify(this.search_box)))
     },
@@ -279,7 +279,7 @@ export default {
             ...row,
             customer: row.customer ? JSON.parse(row.customer) : null
           }))
-          this.total_count = result.total
+          this.total_count = result.total_count
           this.current_count = result.rows.length
           await store.setFilters('date_filter', JSON.parse(JSON.stringify(date)))
         }
