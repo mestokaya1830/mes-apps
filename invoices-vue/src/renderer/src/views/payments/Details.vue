@@ -1,5 +1,5 @@
 <template>
-  <div v-if="payment && auth" class="main-container">
+  <div v-if="payment && auth">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/payments" class="btn btn-secondary">
@@ -123,7 +123,12 @@
             </tbody>
           </table>
           <div v-if="payment.file_name" class="download-container">
-            <img :src="`/uploads/payments/${payment.file_name}`" alt="No image" class="img" aria-hidden="true" />
+            <img
+              :src="`/uploads/payments/${payment.file_name}`"
+              alt="No image"
+              class="img"
+              aria-hidden="true"
+            />
             <a :href="`/uploads/payments/${payment.file_name}`" :download="payment.file_name">
               <button type="button" class="btn-download">Datei herunterladen</button>
             </a>

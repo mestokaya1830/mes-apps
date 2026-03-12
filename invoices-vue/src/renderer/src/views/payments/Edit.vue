@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.params.id" class="main-container">
+  <div v-if="$route.params.id">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/payments/details/${$route.params.id}`" class="btn btn-secondary">
@@ -67,7 +67,7 @@
       </div>
       <button type="submit" @click="updatePayment" class="btn btn-update">
         <i class="bi bi-save btn-icons" aria-hidden="true"></i>
-          Aktualisieren
+        Aktualisieren
       </button>
     </form>
     <router-link :to="`/invoices/details/${$route.params.id}`" class="btn back-btn">

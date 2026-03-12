@@ -1,5 +1,5 @@
 <template>
-  <div v-if="reminder" class="main-container">
+  <div v-if="reminder">
     <header class="page-header">
       <h1 class="main-title">{{ title }}</h1>
       <router-link :to="`/invoices/details/${reminder.invoice_id}`" class="btn btn-secondary">

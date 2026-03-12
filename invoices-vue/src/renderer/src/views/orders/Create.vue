@@ -1,5 +1,5 @@
 <template>
-  <div v-if="order" class="main-container">
+  <div v-if="order">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
@@ -253,8 +253,7 @@
       <!-- Zahlung & Währung -->
       <section class="sections" aria-label="Zahlung & Währung">
         <h2 class="sections-title">
-          <i class="bi bi-credit-card-2-front-fill icons" aria-hidden="true"></i>Zahlung
-          & Währung
+          <i class="bi bi-credit-card-2-front-fill icons" aria-hidden="true"></i>Zahlung & Währung
         </h2>
         <div class="form-row">
           <div class="form-group">
@@ -494,7 +493,12 @@
         </h2>
         <div class="form-group">
           <label for="Einleitungstext" class="form-label">Einleitungstext</label>
-          <textarea id="Einleitungstext" v-model="order.intro_text" rows="2" class="inputs"></textarea>
+          <textarea
+            id="Einleitungstext"
+            v-model="order.intro_text"
+            rows="2"
+            class="inputs"
+          ></textarea>
         </div>
         <div class="form-group">
           <label for="Kundennotiz" class="form-label">Kundennotiz</label>

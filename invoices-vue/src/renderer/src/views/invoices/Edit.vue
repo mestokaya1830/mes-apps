@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.params.id" class="main-container">
+  <div v-if="$route.params.id">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/invoices/details/${$route.params.id}`" class="btn btn-secondary">
@@ -17,8 +17,8 @@
 
             <div class="form-group">
               <label for="Storniert am">Storniert am<span class="stars">*</span></label>
-                <div class="date-wrapper">
-                  <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
+              <div class="date-wrapper">
+                <i class="bi bi-calendar calendar-icon" aria-hidden="true"></i>
                 <input
                   v-model="cancelled_at"
                   type="date"
@@ -27,7 +27,9 @@
                   required
                 />
               </div>
-              <div v-if="error.cancelled_at" class="error" role="alert">{{ error.cancelled_at }}</div>
+              <div v-if="error.cancelled_at" class="error" role="alert">
+                {{ error.cancelled_at }}
+              </div>
             </div>
 
             <div class="form-group">
@@ -39,7 +41,9 @@
                 placeholder="Name der Person, die storniert"
                 required
               />
-              <div v-if="error.cancelled_by" class="error" role="alert">{{ error.cancelled_by }}</div>
+              <div v-if="error.cancelled_by" class="error" role="alert">
+                {{ error.cancelled_by }}
+              </div>
             </div>
 
             <div class="form-group">

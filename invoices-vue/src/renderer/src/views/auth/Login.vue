@@ -1,7 +1,7 @@
 <template>
   <div>
     <AuthPage v-if="!register" />
-    <div v-else class="main-container">
+    <div v-else>
       <div class="auth-logo-header">
         <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
       </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div>
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">
@@ -43,9 +43,11 @@
           </div>
 
           <div class="form-group">
-            <label for="Bearbeitet von" class="form-label">Bearbeitet von:<span class="stars">*</span></label>
+            <label for="Bearbeitet von" class="form-label"
+              >Bearbeitet von:<span class="stars">*</span></label
+            >
             <input
-            id="Bearbeitet von"
+              id="Bearbeitet von"
               v-model="offer.status_by"
               type="text"
               class="inputs"
@@ -60,7 +62,13 @@
             >
             <div class="date-wrapper">
               <i class="bi bi-calendar calendar-icon"></i>
-              <input id="Bearbeitet am" v-model="offer.date" type="date" class="inputs date" required />
+              <input
+                id="Bearbeitet am"
+                v-model="offer.date"
+                type="date"
+                class="inputs date"
+                required
+              />
             </div>
             <div v-if="error.cancelled_at" class="error">{{ error.cancelled_at }}</div>
           </div>
@@ -68,7 +76,7 @@
           <div class="form-group">
             <label for="Kommentare" class="form-label">Kommentare:</label>
             <textarea
-            id="Kommentare"
+              id="Kommentare"
               v-model="offer.status_comments"
               class="inputs"
               placeholder="Kommentare oder Notizen hier eingeben"
@@ -83,7 +91,7 @@
           class="btn btn-update"
           @click="updateOffer"
         >
-        <i class="bi bi-save btn-icons" aria-hidden="true"></i>
+          <i class="bi bi-save btn-icons" aria-hidden="true"></i>
           Aktualisieren
         </button>
       </section>

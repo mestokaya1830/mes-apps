@@ -1,5 +1,5 @@
 <template>
-  <div v-if="offers" class="main-container">
+  <div v-if="offers">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers" class="btn btn-primary">
@@ -56,7 +56,7 @@
 
       <button class="sort-btn" aria-label="Sortirien" @click="sorting('id')">&#8645;</button>
       <button class="list-print-icon" aria-label="Drucken">
-        <i class="bi bi-printer  btn-icons" aria-hidden="true" @click="printDocument"></i>
+        <i class="bi bi-printer btn-icons" aria-hidden="true" @click="printDocument"></i>
       </button>
     </section>
 

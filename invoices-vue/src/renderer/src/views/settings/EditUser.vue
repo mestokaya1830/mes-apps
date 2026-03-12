@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div>
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/" class="btn btn-secondary">

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="order" class="main-container">
+  <div v-if="order">
     <header class="page-header-right">
       <router-link to="/orders" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück

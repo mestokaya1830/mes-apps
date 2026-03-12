@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div>
     <header class="page-header">
       <h1>{{ title }}</h1>
     </header>
@@ -11,7 +11,7 @@
         <option value="Mehrwertsteuer">Mehrwertsteuer (MwSt) Bericht</option>
       </select>
     </div>
-    <CustomersReport v-if="report_type == 'Kundenbezogener'"  />
+    <CustomersReport v-if="report_type == 'Kundenbezogener'" />
     <InvoicesListReport v-if="report_type == 'Rechnungsliste'" />
     <TaxReport v-if="report_type == 'Mehrwertsteuer'" />
   </div>

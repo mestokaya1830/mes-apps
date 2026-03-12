@@ -1,5 +1,5 @@
 <template>
-  <div v-if="offer" class="main-container">
+  <div v-if="offer">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
@@ -320,7 +320,13 @@
                 </div>
                 <div class="form-group">
                   <label for="gesamt" class="form-label">Gesamt</label>
-                  <input id="gesamt" type="text" class="inputs" :value="positionTotal(item)" disabled />
+                  <input
+                    id="gesamt"
+                    type="text"
+                    class="inputs"
+                    :value="positionTotal(item)"
+                    disabled
+                  />
                 </div>
               </div>
             </div>
@@ -334,8 +340,7 @@
       <!-- Zusätzliche Informationen -->
       <section class="sections">
         <div class="sections-title">
-          <i class="bi bi-file-text-fill icons" aria-hidden="true"></i>Zusätzliche
-          Informationen
+          <i class="bi bi-file-text-fill icons" aria-hidden="true"></i>Zusätzliche Informationen
         </div>
 
         <div class="form-group">
@@ -418,8 +423,7 @@
           <span class="slider round"></span>
         </label>
         <div class="switch-text">
-          <i class="bi bi-pencil-square icons"></i
-          ><strong>Legally binding signature</strong>
+          <i class="bi bi-pencil-square icons"></i><strong>Legally binding signature</strong>
         </div>
       </section>
 

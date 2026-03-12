@@ -1,5 +1,5 @@
 <template>
-  <div v-if="invoices" class="main-container">
+  <div v-if="invoices">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
 

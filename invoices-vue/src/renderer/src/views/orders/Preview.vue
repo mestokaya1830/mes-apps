@@ -1,5 +1,5 @@
 <template>
-  <div v-if="orderPreview && auth" class="main-container">
+  <div v-if="orderPreview && auth">
     <form @submit.prevent="saveOrder">
       <section class="printable">
         <!-- Header section -->

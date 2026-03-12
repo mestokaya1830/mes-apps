@@ -1,32 +1,30 @@
 <template>
   <div>
-    <div class="main-container">
-      <div class="auth-logo-header">
-        <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
-      </div>
-      <form @submit.prevent="sendEmail">
-        <h2 class="auth-title">E-Mail-Verifizierung</h2>
-        <div class="form-row">
-          <div class="form-group">
-            <label for="email" class="form-label">E-Mail-Adresse</label>
-            <input
-              id="email"
-              v-model="email"
-              type="email"
-              class="inputs"
-              placeholder="beispiel@email.com"
-              @input="error = ''"
-            />
-            <p v-if="error" class="error" role="alert" aria-live="assertive">
-              {{ error }}
-            </p>
-          </div>
-        </div>
-        <div class="btn-container">
-          <button class="btn btn-auth" type="submit">E-Mail senden</button>
-        </div>
-      </form>
+    <div class="auth-logo-header">
+      <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
     </div>
+    <form @submit.prevent="sendEmail">
+      <h2 class="auth-title">E-Mail-Verifizierung</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email" class="form-label">E-Mail-Adresse</label>
+          <input
+            id="email"
+            v-model="email"
+            type="email"
+            class="inputs"
+            placeholder="beispiel@email.com"
+            @input="error = ''"
+          />
+          <p v-if="error" class="error" role="alert" aria-live="assertive">
+            {{ error }}
+          </p>
+        </div>
+      </div>
+      <div class="btn-container">
+        <button class="btn btn-auth" type="submit">E-Mail senden</button>
+      </div>
+    </form>
   </div>
 </template>
 

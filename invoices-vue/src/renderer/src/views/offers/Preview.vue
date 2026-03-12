@@ -1,5 +1,5 @@
 <template>
-  <div v-if="offerPreview && auth" class="main-container">
+  <div v-if="offerPreview && auth">
     <div class="printable">
       <!-- Header -->
       <HeaderSidePreview :title="title" :auth="auth" />
@@ -257,13 +257,14 @@
     <!-- Action Buttons -->
     <div class="sections btn-container">
       <button type="submit" class="btn btn-primary" @click="saveOffer">
-       <i class="bi bi-floppy-fill btn-icons" aria-hidden="treu"></i>
+        <i class="bi bi-floppy-fill btn-icons" aria-hidden="treu"></i>
         Speichern
       </button>
     </div>
 
-   <router-link to="/offers/create" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
+    <router-link to="/offers/create" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur
+      Rechnungserstellung
     </router-link>
   </div>
 </template>

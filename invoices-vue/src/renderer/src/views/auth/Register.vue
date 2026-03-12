@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div>
     <h2 class="page-title">
       <i class="bi bi-person-plus-fill icons" aria-hidden="true"></i>
       Benutzerregistrierungsformular

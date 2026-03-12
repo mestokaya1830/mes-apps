@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <div>
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/orders/details/${$route.params.id}`" class="btn btn-secondary">
@@ -225,8 +225,8 @@
         class="btn btn-update"
         @click="updateOrder"
       >
-      <i class="bi bi-save btn-icons" aria-hidden="true"></i>
-          Aktualisieren
+        <i class="bi bi-save btn-icons" aria-hidden="true"></i>
+        Aktualisieren
       </button>
     </form>
 

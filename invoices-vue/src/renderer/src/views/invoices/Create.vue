@@ -1,5 +1,5 @@
 <template>
-  <div v-if="invoice" class="main-container">
+  <div v-if="invoice">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link to="/customers" class="btn btn-secondary">
@@ -11,7 +11,7 @@
       <!-- Grunddaten -->
       <section class="sections">
         <h2 class="sections-title">
-          <i class="bi bi-pin-angle-fill " aria-hidden="true"></i>Grunddaten
+          <i class="bi bi-pin-angle-fill" aria-hidden="true"></i>Grunddaten
         </h2>
         <div class="form-group">
           <label for="rechnung-id" class="form-label"

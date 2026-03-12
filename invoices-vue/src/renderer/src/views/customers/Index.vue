@@ -1,5 +1,5 @@
 <template>
-  <div v-if="customers" class="main-container">
+  <div v-if="customers">
     <header class="page-header">
       <h1>{{ title }} {{ total_count }} / {{ current_count }}</h1>
       <router-link to="/customers/create" class="btn btn-primary">

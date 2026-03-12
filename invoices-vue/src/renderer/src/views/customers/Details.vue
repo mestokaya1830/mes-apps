@@ -1,5 +1,5 @@
 <template>
-  <div v-if="customer" class="main-container">
+  <div v-if="customer">
     <!-- Header -->
     <header class="page-header">
       <h1 for="">{{ title }}</h1>

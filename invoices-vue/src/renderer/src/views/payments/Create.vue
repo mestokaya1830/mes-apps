@@ -1,5 +1,5 @@
 <template>
-  <div v-if="payment" class="main-container">
+  <div v-if="payment">
     <header class="main-header">
       <h1>{{ title }}</h1>
       <router-link to="/invoices" class="btn btn-secondary">

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="invoicePreview && auth" class="main-container">
+  <div v-if="invoicePreview && auth">
     <div class="printable">
       <HeaderSidePreview :title="title" :auth="auth" />
 
@@ -209,7 +209,8 @@
     </div>
 
     <router-link to="/invoices/create" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
+      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur
+      Rechnungserstellung
     </router-link>
   </div>
 </template>

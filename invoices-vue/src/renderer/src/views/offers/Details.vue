@@ -1,5 +1,5 @@
 <template>
-  <div v-if="offer && auth" class="main-container">
+  <div v-if="offer && auth">
     <header class="page-header-right">
       <router-link to="/offers" class="btn btn-secondary">
         <i class="bi bi-arrow-left-circle btn-icons" aria-hidden="true"></i>Zurück

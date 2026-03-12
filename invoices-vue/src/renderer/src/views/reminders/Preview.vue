@@ -1,5 +1,5 @@
 <template>
-  <div v-if="reminderPreview && auth" class="main-container">
+  <div v-if="reminderPreview && auth">
     <form @submit.prevent="saveReminder">
       <div class="printable">
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -151,8 +151,9 @@
         </button>
       </div>
     </form>
-   <router-link to="/reminders/create" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
+    <router-link to="/reminders/create" class="btn btn-secondary">
+      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur
+      Rechnungserstellung
     </router-link>
   </div>
 </template>

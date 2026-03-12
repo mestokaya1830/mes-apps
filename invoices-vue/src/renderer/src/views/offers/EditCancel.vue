@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.params.id" class="main-container">
+  <div v-if="$route.params.id">
     <header class="page-header">
       <h1>{{ title }}</h1>
       <router-link :to="`/offers/details/${$route.params.id}`" class="btn btn-secondary">

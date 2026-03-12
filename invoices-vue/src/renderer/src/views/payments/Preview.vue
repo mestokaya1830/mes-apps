@@ -1,5 +1,5 @@
 <template>
-  <div v-if="paymentPreview && auth" class="main-container">
+  <div v-if="paymentPreview && auth">
     <form @submit.prevent="savePayment">
       <div class="printable">
         <HeaderSidePreview :title="title" :auth="auth" />
@@ -148,7 +148,8 @@
       </div>
     </form>
     <router-link to="/payments/create" class="btn btn-secondary">
-      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur Rechnungserstellung
+      <i class="bi bi-arrow-left-circle icons" aria-hidden="true"></i> Zurück zur
+      Rechnungserstellung
     </router-link>
   </div>
 </template>

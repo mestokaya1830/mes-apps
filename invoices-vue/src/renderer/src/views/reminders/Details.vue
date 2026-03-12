@@ -1,5 +1,5 @@
 <template>
-  <div v-if="reminder && auth" class="main-container">
+  <div v-if="reminder && auth">
     <header class="page-header">
       <h1 class="main-title">{{ title }}</h1>
       <router-link to="/reminders" class="btn btn-secondary">
