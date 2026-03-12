@@ -893,33 +893,28 @@ ipcMain.handle('flter-customers-categories', async (event, payload) => {
     switch (payload) {
       case 'all':
         query = `SELECT * FROM customers ORDER BY id DESC LIMIT ?`
-        rows = db.prepare(query).all(limit)
         break
 
       case 'active':
         query = `SELECT * FROM customers WHERE is_active = 1 ORDER BY id DESC LIMIT ?`
-        rows = db.prepare(query).all(limit)
         break
 
       case 'canceled':
         query = `SELECT * FROM customers WHERE is_active = 0 ORDER BY id DESC LIMIT ?`
-        rows = db.prepare(query).all(limit)
         break
 
       case 'first_10':
         query = `SELECT * FROM customers ORDER BY id ASC LIMIT 10`
-        rows = db.prepare(query).all()
         break
 
       case 'last_10':
         query = `SELECT * FROM customers ORDER BY id DESC LIMIT 10`
-        rows = db.prepare(query).all()
         break
 
       default:
         return { success: false, message: `Unknown category: ${payload}` }
     }
-
+    rows = db.prepare(query).all(limit)
     return { success: true, rows, total_count }
   } catch (err) {
     console.error('DB error:', err.message)
