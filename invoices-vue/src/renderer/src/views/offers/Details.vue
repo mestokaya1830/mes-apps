@@ -219,7 +219,7 @@
 </template>
 
 <script>
-import store from '../../store/store.js'
+import store from '../../store/index.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import OfferActions from '../../components/preview/OfferActions.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'

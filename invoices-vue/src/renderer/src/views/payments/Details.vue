@@ -165,7 +165,7 @@
 </template>
 
 <script>
-import store from '../../store/store'
+import store from '../../store'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import PaymentActions from '../../components/preview/PaymentActions.vue'

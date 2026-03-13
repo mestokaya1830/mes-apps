@@ -268,7 +268,7 @@
 <script>
 import DashboardChart from '../components/chart/DashboardChart.vue'
 import DashboardChartDonat from '../components/chart/DashBoardChartDonat.vue'
-import store from '../store/store'
+import store from '../store'
 
 export default {
   components: { DashboardChart, DashboardChartDonat },

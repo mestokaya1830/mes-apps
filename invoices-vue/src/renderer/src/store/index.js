@@ -62,7 +62,7 @@ async function setAuth(payload) {
 async function clearAuth() {
   try {
     state.auth = null
-    await localforage.setItem('auth')
+    await localforage.removeItem('auth')
   } catch (err) {
     console.error('Failed to save ', err)
   }

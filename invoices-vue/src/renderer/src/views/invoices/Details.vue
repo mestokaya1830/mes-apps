@@ -248,7 +248,7 @@
 </template>
 
 <script>
-import store from '../../store/store.js'
+import store from '../../store/index.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import InvoiceActions from '../../components/preview/InvoiceActions.vue'

@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import store from '../../store/store'
+import store from '../../store'
 export default {
   name: 'Orders',
   inject: ['formatOrderId', 'formatInvoiceId', 'formatCustomerId', 'formatDate', 'formatCurrency'],

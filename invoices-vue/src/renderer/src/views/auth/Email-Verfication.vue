@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="auth-container">
     <div class="auth-logo-header">
       <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
     </div>

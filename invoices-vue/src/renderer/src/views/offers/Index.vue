@@ -124,7 +124,7 @@
 </template>
 
 <script>
-import store from '../../store/store'
+import store from '../../store'
 export default {
   name: 'Offers',
   inject: ['formatOfferId', 'formatDate', 'formatCurrency'],

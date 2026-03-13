@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="auth-container">
     <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
 
     <form class="form-group" @submit.prevent="reset">

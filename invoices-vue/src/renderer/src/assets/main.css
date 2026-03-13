@@ -583,6 +583,7 @@ input:checked + .slider:before {
   text-align: center;
   animation: fadeInUp 0.6s ease-out;
   margin-top: 100px;
+  padding: 0 300px;
 }
 .auth-logo-header {
   margin-bottom: 35px;

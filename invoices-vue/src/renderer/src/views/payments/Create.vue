@@ -216,7 +216,7 @@
 </template>
 
 <script>
-import store from '../../store/store'
+import store from '../../store'
 import IbanComponent from '../../components/IbanComponent.vue'
 
 export default {

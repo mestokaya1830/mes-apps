@@ -1,7 +1,7 @@
 <template>
   <div>
     <AuthPage v-if="!register" />
-    <div v-else>
+    <div v-else class="auth-container">
       <div class="auth-logo-header">
         <img src="/app_logo.png" class="app-logo" alt="Mes App Logo" />
       </div>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import store from '../../store/store.js'
+import store from '../../store/index.js'
 import AuthPage from '../../components/preview/AuthPage.vue'
 
 export default {

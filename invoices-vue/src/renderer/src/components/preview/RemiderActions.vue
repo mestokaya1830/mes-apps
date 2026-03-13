@@ -30,7 +30,7 @@
 
 <script>
 import html2pdf from 'html2pdf.js'
-import store from '../../store/store.js'
+import store from '../../store/index.js'
 export default {
   name: 'ActionsButton',
   props: {

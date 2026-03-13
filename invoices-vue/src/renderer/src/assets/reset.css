@@ -51,8 +51,8 @@ select {
 article, aside, details, figcaption, figure, footer, header, main, nav, section, summary {
   display: block;
 }
-img, video, canvas, svg {
-  max-width: 100%;
+img, video, canvas, svg, form {
+  width: 100%;
   height: auto;
   display: block;
 }
