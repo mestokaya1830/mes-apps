@@ -529,14 +529,14 @@
       </fieldset>
 
       <!-- Submit -->
-      
+
       <p v-if="showError" class="error" role="alert" aria-live="assertive">{{ showError }}</p>
       <div class="sections btn-container">
         <button type="button" class="btn btn-secondary" @click="fillExampleData">
           <i class="bi bi-clipboard-data icons" aria-hidden="true"></i> Beispieldaten füllen
         </button>
-        <button v-if="!showSuccess" type="submit" class="btn btn-secondary">
-          <i class="bi bi-save icons" aria-hidden="true"></i>
+        <button v-if="!showSuccess" class="btn btn-primary">
+          <i class="bi bi-save btn-icons" aria-hidden="true"></i>
           Benutzer speichern
         </button>
         <button v-else type="button" class="btn btn-auth" @click="goToLogin">

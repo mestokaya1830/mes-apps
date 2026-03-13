@@ -16,7 +16,7 @@
     </aside>
 
     <main ref="layouts" class="layouts">
-      <router-view class="router"/>
+      <router-view class="router" />
     </main>
 
     <footer>
@@ -30,6 +30,7 @@
         <i class="bi bi-arrow-up go-top-icon" aria-hidden="true"></i>
       </button>
     </footer>
+
   </div>
 </template>
 

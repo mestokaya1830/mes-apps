@@ -65,7 +65,7 @@
             <p class="repor-card-label">Aktive Kunden</p>
           </div>
           <div class="card-content">
-            <h3 class="card-value">{{ reports.length }}</h3>
+            <h3 class="card-value">Anzahl {{ reports.length }}</h3>
             <p class="card-detail">Im Zeitraum {{ selectedPeriod }}</p>
           </div>
         </article>
