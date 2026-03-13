@@ -430,11 +430,74 @@
         </div>
       </section>
 
+      <!-- DATEV Export Section -->
+      <section class="sections">
+        <div class="sections-title">
+          <i class="bi bi-file-earmark-spreadsheet icons" aria-hidden="true"></i>
+          DATEV Export Einstellungen
+        </div>
+
+        <!-- Beraternummer -->
+        <div class="form-group">
+          <label for="datev_beraternummer" class="form-field">
+            Beraternummer
+            <i class="bi bi-pencil icons" aria-hidden="true"></i>
+          </label>
+          <input
+            id="datev_beraternummer"
+            ref="datev_beraternummer"
+            v-model="user.datev_beraternummer"
+            type="text"
+            class="inputs"
+            placeholder="z.B. 12345"
+          />
+          <div v-if="error.datev_beraternummer" class="error" role="alert">
+            {{ error.datev_beraternummer }}
+          </div>
+        </div>
+
+        <!-- Mandantennummer -->
+        <div class="form-group">
+          <label for="datev_mandantennummer" class="form-field">
+            Mandantennummer
+            <i class="bi bi-pencil icons" aria-hidden="true"></i>
+          </label>
+          <input
+            id="datev_mandantennummer"
+            ref="datev_mandantennummer"
+            v-model="user.datev_mandantennummer"
+            type="text"
+            class="inputs"
+            placeholder="1"
+          />
+          <div v-if="error.datev_mandantennummer" class="error" role="alert">
+            {{ error.datev_mandantennummer }}
+          </div>
+        </div>
+
+        <!-- Kontenrahmen (SKR) -->
+        <div class="form-group">
+          <label for="datev_skr" class="form-field">
+            Kontenrahmen (SKR)
+            <i class="bi bi-pencil icons" aria-hidden="true"></i>
+          </label>
+          <select id="datev_skr" ref="datev_skr" v-model="user.datev_skr" class="inputs">
+            <option value="" disabled>Wählen Sie einen Kontenrahmen</option>
+            <option value="04">SKR04 - Abschlussgliederungsprinzip (Standard)</option>
+            <option value="03">SKR03 - Prozessgliederungsprinzip</option>
+            <option value="14">SKR14 - Land- und Forstwirtschaft</option>
+          </select>
+          <div v-if="error.datev_skr" class="error" role="alert">
+            {{ error.datev_skr }}
+          </div>
+        </div>
+      </section>
+
       <!-- Submit Button -->
       <div class="form-section btn-container">
-        <button type="submit" :disabled="isSubmitting" class="btn btn-update">
+        <button type="submit" :disabled="isSubmitting">
           <span v-if="isSubmitting">Wird gespeichert...</span>
-          <span v-else>
+          <span v-else class="btn btn-update">
             <i class="bi bi-save btn-icons" aria-hidden="true"></i>
             Aktualisieren
           </span>
@@ -653,7 +716,29 @@ export default {
           valid = false
         }
       }
+      // DATEV Beraternummer
+      if (!this.user.datev_beraternummer) {
+        this.error.datev_beraternummer = 'Bitte Beraternummer eingeben.'
+        valid = false
+      } else if (!/^\d+$/.test(this.user.datev_beraternummer)) {
+        this.error.datev_beraternummer = 'Beraternummer darf nur Zahlen enthalten.'
+        valid = false
+      }
 
+      // DATEV Mandantennummer
+      if (!this.user.datev_mandantennummer) {
+        this.error.datev_mandantennummer = 'Bitte Mandantennummer eingeben.'
+        valid = false
+      } else if (!/^\d+$/.test(this.user.datev_mandantennummer)) {
+        this.error.datev_mandantennummer = 'Mandantennummer darf nur Zahlen enthalten.'
+        valid = false
+      }
+
+      // DATEV SKR
+      if (!this.user.datev_skr) {
+        this.error.datev_skr = 'Bitte Kontenrahmen auswählen.'
+        valid = false
+      }
       // Focus
       if (!valid) {
         this.$nextTick(() => {

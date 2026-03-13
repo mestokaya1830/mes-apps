@@ -243,6 +243,10 @@
           </tbody>
         </table>
       </section>
+      <button @click="exportDATEV" class="btn btn-datev">
+        <i class="bi bi-file-earmark-spreadsheet btn-icons" aria-hidden="true"></i>
+        <span>DATEV Export</span>
+      </button>
     </section>
   </div>
 </template>
@@ -252,6 +256,7 @@ import store from '../../store/index.js'
 import HeaderSidePreview from '../../components/preview/HeaderSidePreview.vue'
 import ContactPersonPreview from '../../components/preview/ContactPersonPreview.vue'
 import InvoiceActions from '../../components/preview/InvoiceActions.vue'
+import DATEVExport from '../../assets/js/DatevExport.js'
 
 export default {
   name: 'InvoicesDetails',
@@ -322,6 +327,85 @@ export default {
       } else {
         console.warn('No auth data in store')
       }
+    },
+    async exportDATEV() {
+      if (!this.invoice || !this.auth) {
+        alert('⚠️ Keine Rechnungsdaten vorhanden')
+        return
+      }
+
+      try {
+        const datevConfig = {
+          beraternummer: this.auth.datev_beraternummer || '1000',
+          mandantennummer: this.auth.datev_mandantennummer || '1',
+          sachkontenrahmen: this.auth.datev_skr || '04',
+          wirtschaftsjahr: new Date(this.invoice.date).getFullYear(),
+          name: `Rechnung ${this.formatInvoiceId(this.invoice.id)}`
+        }
+
+        const invoiceForDATEV = this.prepareInvoiceForDATEV()
+
+        const exporter = new DATEVExport(datevConfig)
+
+        const csvContent = exporter.exportInvoices([invoiceForDATEV])
+
+        const invoiceNumber = this.formatInvoiceId(this.invoice.id)
+        const filename = `EXTF_${invoiceNumber.replace(/\//g, '-')}.csv`
+
+        exporter.saveToFile(csvContent, filename)
+
+        alert(`✅ DATEV Export erfolgreich!\n\nDatei: ${filename}`)
+      } catch (error) {
+        console.error('DATEV Export Error:', error)
+        alert('❌ Fehler beim DATEV Export!\n\nBitte versuchen Sie es erneut.')
+      }
+    },
+    prepareInvoiceForDATEV() {
+      return {
+        number: this.formatInvoiceId(this.invoice.id),
+
+        date: this.invoice.date,
+        service_date: this.invoice.service_date || this.invoice.date,
+        due_date: this.invoice.due_date,
+
+        customer: {
+          customer_number: this.formatCustomerId(this.invoice.customer.id),
+          company_name: this.invoice.customer.company_name || '',
+          first_name: this.invoice.customer.first_name || '',
+          last_name: this.invoice.customer.last_name || ''
+        },
+
+        positions: this.invoice.positions.map((pos) => ({
+          title: pos.title,
+          description: pos.description || '',
+          quantity: pos.quantity,
+          price: pos.price,
+          vat: this.getVatRate(pos),
+          unit: pos.unit || 'Stk',
+          service_period_start: pos.service_period_start || '',
+          service_period_end: pos.service_period_end || ''
+        })),
+
+        payment: {
+          payment_reference:
+            this.invoice.payment_reference || this.invoice.positions[0]?.title || 'Rechnung'
+        },
+
+        is_small_company: this.invoice.is_small_company || false,
+        is_reverse_charge: this.invoice.is_reverse_charge || false,
+        is_eu_delivery: this.invoice.is_eu_delivery || false
+      }
+    },
+
+    getVatRate(position) {
+      if (
+        this.invoice.is_small_company ||
+        this.invoice.is_reverse_charge ||
+        this.invoice.is_eu_delivery
+      ) {
+        return 0
+      }
+      return position.vat || 19
     }
   }
 }

@@ -26,6 +26,10 @@ CREATE TABLE IF NOT EXISTS users (
   court_registration TEXT DEFAULT NULL,
   court_location TEXT DEFAULT NULL,
 
+  datev_beraternummer TEXT DEFAULT '1000',  // Steuerberater'dan alınır
+  datev_mandantennummer TEXT DEFAULT '1',   // Genelde "1"
+  datev_skr TEXT DEFAULT '04',              // SKR04 veya SKR03
+
   logo BLOB DEFAULT NULL,
   image_type TEXT DEFAULT NULL,
 
